@@ -157,7 +157,7 @@ def ensure_tables(conn, reset=False):
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS Convalidacion_links (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          id INTEGER PRIMARY KEY,
           convalidacion_id TEXT NOT NULL,
           rd TEXT,
           link_id INTEGER,

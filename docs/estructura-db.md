@@ -31,6 +31,8 @@ Jerarquía: `Convalidacion` → `Convalidacion_links`
 - `Convalidacion_links.link_id` → `Grados.id` (si `link_item = grado`)
 
 ---
+---
+---
 
 # Documentación de la base de datos de ciclos y módulos (FP)
 
@@ -146,6 +148,8 @@ Parámetros relevantes:
 - No se almacenan códigos oficiales de módulos ni ciclos, solo nombres y títulos.
 
 ---
+---
+---
 
 # Convalidaciones BOE
 
@@ -169,7 +173,7 @@ Relación 1–N: `Convalidacion` (1) → `Convalidacion_links` (N)
 Representa el caso de convalidación y su trazabilidad en el BOE.
 
 ### `Convalidacion_links`
-- `id` (INTEGER, PK autoincremental)
+- `id` (INTEGER, PK)
 - `convalidacion_id` (TEXT, FK → `Convalidacion.id`)
 - `rd` (TEXT)
 - `link_id` (INTEGER, NULLABLE)
