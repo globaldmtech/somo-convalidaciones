@@ -1,0 +1,395 @@
+<section class="form-wrapper">
+  <div class="panel-header">
+    <div>
+      <h2>Convalidaciones recibidas</h2>
+      <p>Listado de solicitudes enviadas por alumnos para revisión interna.</p>
+    </div>
+    <div class="header-actions">
+      <span class="badge">{{ submissions().length }} solicitudes</span>
+    </div>
+  </div>
+
+  <div class="form-section" *ngIf="!hasSubmissions()">
+    <h3>Sin solicitudes todavía</h3>
+    <p class="hint">Cuando un alumno envíe el formulario, aparecerá aquí con todos sus datos.</p>
+  </div>
+
+  <div class="status-group" *ngIf="hasSubmissions()">
+    <div class="group-header">
+      <h3>Formularios a revisar</h3>
+      <div class="group-controls">
+        <label class="pager-select">
+          <span>Ordenar</span>
+          <select
+            [value]="pendingSort()"
+            (change)="onPendingSortChange(readValue($event))"
+          >
+            <option value="recent">Más recientes</option>
+            <option value="old">Más antiguos</option>
+          </select>
+        </label>
+        <label class="pager-select">
+          <span>Mostrar</span>
+          <select
+            [value]="pendingPageSize()"
+            (change)="onPendingPageSizeChange(readValue($event))"
+          >
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="20">20</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          class="group-action"
+          (click)="selectedPendientes().size ? validateSelectedPendientes() : validateAllPendientes()"
+          [disabled]="!pendientes().length"
+        >
+          {{ selectedPendientes().size ? 'Validar seleccionados' : 'Validar todos' }}
+          <span *ngIf="selectedPendientes().size" class="count-pill">
+            {{ selectedPendientes().size }}
+          </span>
+        </button>
+        <span class="group-count">{{ pendientes().length }}</span>
+      </div>
+    </div>
+    <div class="accordion" *ngIf="pendientes().length; else noPendientes">
+      <details class="submission-row" *ngFor="let item of pendientesPage(); trackBy: trackById">
+        <summary class="row-summary">
+          <label class="row-select" (click)="$event.stopPropagation()">
+            <input
+              type="checkbox"
+              [checked]="isPendienteSelected(item.id)"
+              (change)="togglePendienteSelection(item.id, $event)"
+              aria-label="Seleccionar formulario"
+            />
+          </label>
+          <div class="row-main">
+            <p class="row-name">{{ item.personal.nombre }} {{ item.personal.apellidos }}</p>
+            <p class="row-meta">
+              {{ item.personal.nif }} · {{ item.personal.email }} · {{ item.personal.telefonoMovil }}
+            </p>
+          </div>
+          <div class="row-status">
+            <div class="row-badges">
+              <span class="badge">
+                {{ item.academico.normativa || 'Sin normativa' }}
+              </span>
+              <span
+                class="badge badge--status"
+                [class.badge--approved]="getEstadoLabel(item) === 'Aprobado'"
+                [class.badge--review]="getEstadoLabel(item) === 'A revisar'"
+              >
+                {{ getEstadoLabel(item) }}
+              </span>
+            </div>
+            <span>Enviado {{ formatDate(item.createdAt) }}</span>
+          </div>
+          <span class="row-chevron" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="row-body">
+          <div class="info-grid">
+            <div class="info-block">
+              <h4>Datos personales</h4>
+              <dl class="data-grid">
+                <div>
+                  <dt>Domicilio</dt>
+                  <dd>{{ item.personal.domicilio || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Código postal</dt>
+                  <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Localidad</dt>
+                  <dd>{{ item.personal.localidad || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Provincia</dt>
+                  <dd>{{ item.personal.provincia || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Teléfono fijo</dt>
+                  <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="info-block">
+              <h4>Datos académicos</h4>
+              <dl class="data-grid">
+                <div>
+                  <dt>Ciclo matriculado</dt>
+                  <dd>{{ item.academico.cicloMatriculado || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Grado</dt>
+                  <dd>{{ item.academico.grado || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Curso</dt>
+                  <dd>{{ item.academico.curso || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Fecha solicitud</dt>
+                  <dd>{{ item.fechaSolicitud || '—' }}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <h4>Estudios aportados</h4>
+            <div class="study-list" *ngIf="item.estudios.length; else noEstudios">
+              <div class="study-item" *ngFor="let estudio of item.estudios; trackBy: trackByIndex">
+                <p class="study-title">{{ estudio.tipo || 'Sin tipo' }}</p>
+                <p class="study-detail">{{ formatEstudio(estudio) }}</p>
+              </div>
+            </div>
+            <ng-template #noEstudios>
+              <p class="hint">Sin estudios registrados.</p>
+            </ng-template>
+          </div>
+
+          <div class="info-block">
+            <h4>Módulos solicitados</h4>
+            <div class="module-grid" *ngIf="item.modulos.length; else noModulos">
+              <div class="module-pill" *ngFor="let modulo of item.modulos; trackBy: trackByIndex">
+                <strong>{{ modulo.nombre || 'Sin nombre' }}</strong>
+                <span *ngIf="modulo.codigo">Código: {{ modulo.codigo }}</span>
+              </div>
+            </div>
+            <ng-template #noModulos>
+              <p class="hint">Sin módulos registrados.</p>
+            </ng-template>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-block">
+              <h4>Documentación</h4>
+              <div class="doc-list">
+                <span class="doc-chip" [class.active]="item.documentos.dni">DNI</span>
+                <span class="doc-chip" [class.active]="item.documentos.cert">Certificación</span>
+                <span class="doc-chip" [class.active]="item.documentos.acred">Acreditación</span>
+                <span class="doc-chip" [class.active]="item.documentos.justif">Justificante</span>
+              </div>
+            </div>
+
+            <div class="info-block">
+              <h4>Firma</h4>
+              <div class="signature-preview" *ngIf="item.firma; else noFirma">
+                <img [src]="item.firma" alt="Firma del alumno" />
+              </div>
+              <ng-template #noFirma>
+                <p class="hint">Sin firma registrada.</p>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="row-actions">
+            <button type="button" class="row-action" (click)="onValidateOne(item, $event)">
+              Validar
+            </button>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="pager pager-bottom" *ngIf="pendientes().length">
+      <button type="button" (click)="goPendingPrev()" [disabled]="pendingPage() === 1">
+        Anterior
+      </button>
+      <span>Página {{ pendingPage() }} de {{ pendingTotalPages() }}</span>
+      <button
+        type="button"
+        (click)="goPendingNext()"
+        [disabled]="pendingPage() === pendingTotalPages()"
+      >
+        Siguiente
+      </button>
+    </div>
+    <ng-template #noPendientes>
+      <p class="hint">No hay formularios pendientes de revisar.</p>
+    </ng-template>
+  </div>
+
+  <div class="status-group" *ngIf="hasSubmissions()">
+    <div class="group-header">
+      <h3>Formularios aprobados</h3>
+      <div class="group-controls">
+        <label class="pager-select">
+          <span>Ordenar</span>
+          <select
+            [value]="approvedSort()"
+            (change)="onApprovedSortChange(readValue($event))"
+          >
+            <option value="recent">Más recientes</option>
+            <option value="old">Más antiguos</option>
+          </select>
+        </label>
+        <label class="pager-select">
+          <span>Mostrar</span>
+          <select
+            [value]="approvedPageSize()"
+            (change)="onApprovedPageSizeChange(readValue($event))"
+          >
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="20">20</option>
+          </select>
+        </label>
+        <span class="group-count">{{ aprobados().length }}</span>
+      </div>
+    </div>
+    <div class="accordion" *ngIf="aprobados().length; else noAprobados">
+      <details class="submission-row" *ngFor="let item of aprobadosPage(); trackBy: trackById">
+        <summary class="row-summary">
+          <div class="row-main">
+            <p class="row-name">{{ item.personal.nombre }} {{ item.personal.apellidos }}</p>
+            <p class="row-meta">
+              {{ item.personal.nif }} · {{ item.personal.email }} · {{ item.personal.telefonoMovil }}
+            </p>
+          </div>
+          <div class="row-status">
+            <div class="row-badges">
+              <span class="badge">
+                {{ item.academico.normativa || 'Sin normativa' }}
+              </span>
+              <span
+                class="badge badge--status"
+                [class.badge--approved]="getEstadoLabel(item) === 'Aprobado'"
+                [class.badge--review]="getEstadoLabel(item) === 'A revisar'"
+              >
+                {{ getEstadoLabel(item) }}
+              </span>
+            </div>
+            <span>Enviado {{ formatDate(item.createdAt) }}</span>
+          </div>
+          <span class="row-chevron" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="row-body">
+          <div class="info-grid">
+            <div class="info-block">
+              <h4>Datos personales</h4>
+              <dl class="data-grid">
+                <div>
+                  <dt>Domicilio</dt>
+                  <dd>{{ item.personal.domicilio || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Código postal</dt>
+                  <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Localidad</dt>
+                  <dd>{{ item.personal.localidad || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Provincia</dt>
+                  <dd>{{ item.personal.provincia || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Teléfono fijo</dt>
+                  <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="info-block">
+              <h4>Datos académicos</h4>
+              <dl class="data-grid">
+                <div>
+                  <dt>Ciclo matriculado</dt>
+                  <dd>{{ item.academico.cicloMatriculado || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Grado</dt>
+                  <dd>{{ item.academico.grado || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Curso</dt>
+                  <dd>{{ item.academico.curso || '—' }}</dd>
+                </div>
+                <div>
+                  <dt>Fecha solicitud</dt>
+                  <dd>{{ item.fechaSolicitud || '—' }}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <h4>Estudios aportados</h4>
+            <div class="study-list" *ngIf="item.estudios.length; else noEstudios">
+              <div class="study-item" *ngFor="let estudio of item.estudios; trackBy: trackByIndex">
+                <p class="study-title">{{ estudio.tipo || 'Sin tipo' }}</p>
+                <p class="study-detail">{{ formatEstudio(estudio) }}</p>
+              </div>
+            </div>
+            <ng-template #noEstudios>
+              <p class="hint">Sin estudios registrados.</p>
+            </ng-template>
+          </div>
+
+          <div class="info-block">
+            <h4>Módulos solicitados</h4>
+            <div class="module-grid" *ngIf="item.modulos.length; else noModulos">
+              <div class="module-pill" *ngFor="let modulo of item.modulos; trackBy: trackByIndex">
+                <strong>{{ modulo.nombre || 'Sin nombre' }}</strong>
+                <span *ngIf="modulo.codigo">Código: {{ modulo.codigo }}</span>
+              </div>
+            </div>
+            <ng-template #noModulos>
+              <p class="hint">Sin módulos registrados.</p>
+            </ng-template>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-block">
+              <h4>Documentación</h4>
+              <div class="doc-list">
+                <span class="doc-chip" [class.active]="item.documentos.dni">DNI</span>
+                <span class="doc-chip" [class.active]="item.documentos.cert">Certificación</span>
+                <span class="doc-chip" [class.active]="item.documentos.acred">Acreditación</span>
+                <span class="doc-chip" [class.active]="item.documentos.justif">Justificante</span>
+              </div>
+            </div>
+
+            <div class="info-block">
+              <h4>Firma</h4>
+              <div class="signature-preview" *ngIf="item.firma; else noFirma">
+                <img [src]="item.firma" alt="Firma del alumno" />
+              </div>
+              <ng-template #noFirma>
+                <p class="hint">Sin firma registrada.</p>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="row-actions">
+            <button type="button" class="row-action" (click)="onReviewOne(item, $event)">
+              Mandar a revisar
+            </button>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="pager pager-bottom" *ngIf="aprobados().length">
+      <button type="button" (click)="goApprovedPrev()" [disabled]="approvedPage() === 1">
+        Anterior
+      </button>
+      <span>Página {{ approvedPage() }} de {{ approvedTotalPages() }}</span>
+      <button
+        type="button"
+        (click)="goApprovedNext()"
+        [disabled]="approvedPage() === approvedTotalPages()"
+      >
+        Siguiente
+      </button>
+    </div>
+    <ng-template #noAprobados>
+      <p class="hint">No hay formularios aprobados todavía.</p>
+    </ng-template>
+  </div>
+</section>

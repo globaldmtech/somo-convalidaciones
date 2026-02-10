@@ -1,0 +1,496 @@
+import { CommonModule } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  computed,
+  signal
+} from '@angular/core';
+import { DbService } from '../../core/db.service';
+import { CatalogRow, ConvalidacionRow } from '../../core/models';
+
+type FilterKey = 'grado' | 'familia' | 'ciclo' | 'modulo';
+
+type Normativa = 'LOGSE' | 'LOE' | '';
+
+type EstudiosTipo = 'LOGSE' | 'LOE' | 'Universitarios' | 'Otros' | '';
+
+type EstudioEntry = {
+  tipo: EstudiosTipo;
+  grado: string;
+  familia: string;
+  ciclo: string;
+  modulo: string;
+  descripcion: string;
+};
+
+@Component({
+  selector: 'app-formulario-oficial',
+  imports: [CommonModule],
+  templateUrl: './formulario-oficial.component.html',
+  styleUrl: './formulario-oficial.component.css'
+})
+export class FormularioOficialComponent implements AfterViewInit {
+  @ViewChild('signatureCanvas') private signatureCanvas?: ElementRef<HTMLCanvasElement>;
+
+  private readonly rowsSignal = signal<ConvalidacionRow[]>([]);
+  private readonly catalogRowsSignal = signal<CatalogRow[]>([]);
+
+  protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
+  protected readonly submitted = signal(false);
+
+  protected readonly formNif = signal('');
+  protected readonly formNombre = signal('');
+  protected readonly formApellidos = signal('');
+  protected readonly formDomicilio = signal('');
+  protected readonly formCodigoPostal = signal('');
+  protected readonly formLocalidad = signal('');
+  protected readonly formProvincia = signal('');
+  protected readonly formTelefonoFijo = signal('');
+  protected readonly formTelefonoMovil = signal('');
+  protected readonly formEmail = signal('');
+  protected readonly formCicloMatriculado = signal('');
+  protected readonly formNormativa = signal<Normativa>('');
+  protected readonly formGradoActual = signal('');
+  protected readonly formCurso = signal('');
+
+  protected readonly formEstudios = signal<EstudioEntry[]>([
+    { tipo: '', descripcion: '', grado: '', familia: '', ciclo: '', modulo: 'Todos' }
+  ]);
+
+  protected readonly formModulos = signal<Array<{ nombre: string; codigo: string }>>([
+    { nombre: '', codigo: '' }
+  ]);
+
+  protected readonly docDni = signal(false);
+  protected readonly docCert = signal(false);
+  protected readonly docAcred = signal(false);
+  protected readonly docJustif = signal(false);
+
+  protected readonly formFecha = signal('');
+  protected readonly signatureDataUrl = signal<string | null>(null);
+  protected readonly signatureHasInk = signal(false);
+
+  protected readonly suggestedModules = computed(() => this.buildSuggestedModules());
+
+  protected readonly isFormValid = computed(() => {
+    const personalOk = [
+      this.formNif(),
+      this.formNombre(),
+      this.formApellidos(),
+      this.formDomicilio(),
+      this.formCodigoPostal(),
+      this.formLocalidad(),
+      this.formProvincia(),
+      this.formTelefonoMovil(),
+      this.formEmail()
+    ].every((value) => value.trim().length > 0);
+
+    const academicOk = [
+      this.formCicloMatriculado(),
+      this.formNormativa(),
+      this.formGradoActual(),
+      this.formCurso()
+    ].every((value) => String(value).trim().length > 0);
+
+    const estudios = this.formEstudios();
+    const estudiosOk =
+      estudios.length > 0 &&
+      estudios.every((entry) => {
+        if (!entry.tipo) return false;
+        if (this.isCatalogTipo(entry.tipo)) {
+          return Boolean(entry.grado && entry.familia && entry.ciclo && entry.modulo);
+        }
+        return entry.descripcion.trim().length > 0;
+      });
+
+    const requiresCode = this.formNormativa() === 'LOE';
+    const modulos = this.formModulos();
+    const modulosOk =
+      modulos.length > 0 &&
+      modulos.every((row) => row.nombre.trim().length > 0 && (!requiresCode || row.codigo.trim()));
+
+    const docsOk = this.docDni() && (this.docCert() || this.docAcred() || this.docJustif());
+
+    const signatureOk = Boolean(this.signatureDataUrl());
+
+    const fechaOk = Boolean(this.formFecha());
+
+    return personalOk && academicOk && estudiosOk && modulosOk && docsOk && signatureOk && fechaOk;
+  });
+
+  private drawing = false;
+  private ctx?: CanvasRenderingContext2D | null;
+  private strokeDrawn = false;
+
+  constructor(private readonly db: DbService) {
+    this.loadData();
+  }
+
+  ngAfterViewInit(): void {
+    this.initSignatureCanvas();
+  }
+
+  protected trackByIndex(index: number): number {
+    return index;
+  }
+
+  protected addEstudioRow(): void {
+    this.formEstudios.update((rows) => [
+      ...rows,
+      { tipo: '', descripcion: '', grado: '', familia: '', ciclo: '', modulo: 'Todos' }
+    ]);
+  }
+
+  protected removeEstudioRow(index: number): void {
+    this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
+  }
+
+  protected updateEstudioField(index: number, key: keyof EstudioEntry, value: string): void {
+    this.formEstudios.update((rows) =>
+      rows.map((row, current) => (current === index ? { ...row, [key]: value } : row))
+    );
+  }
+
+  protected onTipoChange(index: number, event: Event): void {
+    const value = this.readValue(event) as EstudiosTipo;
+    this.formEstudios.update((rows) =>
+      rows.map((row, current) => {
+        if (current !== index) return row;
+        if (!this.isCatalogTipo(value)) {
+          return { ...row, tipo: value, grado: '', familia: '', ciclo: '', modulo: '' };
+        }
+        return { ...row, tipo: value, modulo: row.modulo || 'Todos' };
+      })
+    );
+  }
+
+  protected onEstudioSelectChange(index: number, key: FilterKey, event: Event): void {
+    const value = this.readValue(event);
+    this.formEstudios.update((rows) =>
+      rows.map((row, current) => {
+        if (current !== index) return row;
+        if (key === 'grado') {
+          return { ...row, grado: value, familia: '', ciclo: '', modulo: 'Todos' };
+        }
+        if (key === 'familia') {
+          return { ...row, familia: value, ciclo: '', modulo: 'Todos' };
+        }
+        if (key === 'ciclo') {
+          return { ...row, ciclo: value, modulo: 'Todos' };
+        }
+        return { ...row, modulo: value };
+      })
+    );
+  }
+
+  protected addModuloRow(): void {
+    this.formModulos.update((rows) => [...rows, { nombre: '', codigo: '' }]);
+  }
+
+  protected removeModuloRow(index: number): void {
+    this.formModulos.update((rows) => rows.filter((_, current) => current !== index));
+  }
+
+  protected updateModuloRow(index: number, key: 'nombre' | 'codigo', value: string): void {
+    this.formModulos.update((rows) =>
+      rows.map((row, current) => (current === index ? { ...row, [key]: value } : row))
+    );
+  }
+
+  protected applySuggestedModule(index: number, value: string): void {
+    if (!value) return;
+    this.updateModuloRow(index, 'nombre', value);
+  }
+
+  protected onNormativaChange(event: Event): void {
+    this.formNormativa.set(this.parseNormativa(this.readValue(event)));
+  }
+
+  protected onGradoActualChange(event: Event): void {
+    const value = this.readValue(event);
+    this.formGradoActual.set(value);
+    if (this.isCursoEspecializacion(value)) {
+      this.formCurso.set('1º');
+    }
+  }
+
+  protected onSignaturePointerDown(event: PointerEvent): void {
+    if (!this.ctx) return;
+    this.drawing = true;
+    this.strokeDrawn = false;
+    this.ctx.beginPath();
+    this.ctx.moveTo(event.offsetX, event.offsetY);
+  }
+
+  protected onSignaturePointerMove(event: PointerEvent): void {
+    if (!this.ctx || !this.drawing) return;
+    this.ctx.lineTo(event.offsetX, event.offsetY);
+    this.ctx.stroke();
+    this.strokeDrawn = true;
+    this.signatureHasInk.set(true);
+  }
+
+  protected onSignaturePointerUp(): void {
+    if (!this.ctx) return;
+    this.drawing = false;
+    if (!this.strokeDrawn) return;
+    this.signatureDataUrl.set(this.signatureCanvas?.nativeElement.toDataURL('image/png') ?? null);
+  }
+
+  protected clearSignature(): void {
+    if (!this.ctx || !this.signatureCanvas) return;
+    const canvas = this.signatureCanvas.nativeElement;
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.signatureDataUrl.set(null);
+    this.signatureHasInk.set(false);
+  }
+
+  protected onSignatureUpload(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : null;
+      this.signatureDataUrl.set(result);
+      this.signatureHasInk.set(Boolean(result));
+      if (result) {
+        this.drawSignatureImage(result);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  protected onDocToggle(key: 'dni' | 'cert' | 'acred' | 'justif', event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const checked = Boolean(target?.checked);
+    switch (key) {
+      case 'dni':
+        this.docDni.set(checked);
+        break;
+      case 'cert':
+        this.docCert.set(checked);
+        break;
+      case 'acred':
+        this.docAcred.set(checked);
+        break;
+      case 'justif':
+        this.docJustif.set(checked);
+        break;
+    }
+  }
+
+  protected submitForm(): void {
+    if (!this.isFormValid()) return;
+    this.submitted.set(true);
+  }
+
+  protected formatGrade(value: string | null): string {
+    if (!value) return 'Sin grado';
+    if (value === 'GM') return 'GM · Grado medio';
+    if (value === 'GS') return 'GS · Grado superior';
+    return value;
+  }
+
+  protected isCatalogTipo(tipo: EstudiosTipo): boolean {
+    return tipo === 'LOGSE' || tipo === 'LOE';
+  }
+
+  protected isDescripcionRequired(tipo: EstudiosTipo): boolean {
+    return tipo === 'Universitarios' || tipo === 'Otros';
+  }
+
+  protected isCursoEspecializacion(grado: string): boolean {
+    return this.normalizeKey(grado) === 'curso de especializacion';
+  }
+
+  protected readValue(event: Event): string {
+    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
+    return target?.value ?? '';
+  }
+
+  protected getEstudioFamiliaOptions(index: number): string[] {
+    const entry = this.formEstudios()[index];
+    if (!entry?.grado) return [];
+    return this.buildFormCatalogOptions('familia', {
+      grado: entry.grado,
+      familia: entry.familia,
+      ciclo: entry.ciclo
+    });
+  }
+
+  protected getEstudioCicloOptions(index: number): string[] {
+    const entry = this.formEstudios()[index];
+    if (!entry?.grado || !entry.familia) return [];
+    return this.buildFormCatalogOptions('ciclo', {
+      grado: entry.grado,
+      familia: entry.familia,
+      ciclo: entry.ciclo
+    });
+  }
+
+  protected getEstudioModuloOptions(index: number): string[] {
+    const entry = this.formEstudios()[index];
+    if (!entry) return [];
+    if (!entry.ciclo) return [];
+    return this.buildFormModuleOptions({
+      grado: entry.grado,
+      familia: entry.familia,
+      ciclo: entry.ciclo,
+      modulo: entry.modulo
+    });
+  }
+
+  protected buildCatalogOptions(key: 'grado' | 'familia' | 'ciclo'): string[] {
+    const rows = this.catalogRowsSignal();
+    const values = new Set<string>();
+    rows.forEach((row) => values.add(row[key]));
+    return Array.from(values).sort((a, b) => a.localeCompare(b));
+  }
+
+  private buildFormCatalogOptions(
+    key: 'familia' | 'ciclo',
+    filters: { grado: string; familia: string; ciclo: string }
+  ): string[] {
+    const rows = this.catalogRowsSignal().filter((row) => {
+      if (filters.grado && row.grado !== filters.grado) return false;
+      if (key === 'ciclo' && filters.familia && row.familia !== filters.familia) return false;
+      if (key === 'familia' && filters.grado && row.grado !== filters.grado) return false;
+      return true;
+    });
+    const values = new Set<string>();
+    rows.forEach((row) => values.add(row[key]));
+    return Array.from(values).sort((a, b) => a.localeCompare(b));
+  }
+
+  private buildFormModuleOptions(filters: Record<FilterKey, string>): string[] {
+    const rows = this.catalogRowsSignal().filter((row) => {
+      if (filters.grado && row.grado !== filters.grado) return false;
+      if (filters.familia && row.familia !== filters.familia) return false;
+      if (filters.ciclo && row.ciclo !== filters.ciclo) return false;
+      return true;
+    });
+    const values = new Set<string>();
+    rows.forEach((row) => values.add(row.modulo));
+    return Array.from(values).sort((a, b) => a.localeCompare(b));
+  }
+
+  private buildSuggestedModules(): string[] {
+    const values = new Set<string>();
+    const estudios = this.formEstudios();
+
+    estudios.forEach((entry) => {
+      const hasFilter = Boolean(entry.grado || entry.familia || entry.ciclo || entry.modulo);
+      if (!hasFilter) return;
+      const filters = {
+        grado: entry.grado,
+        familia: entry.familia,
+        ciclo: entry.ciclo,
+        modulo: entry.modulo
+      };
+      this.rowsSignal().forEach((row) => {
+        if (!this.matchesSideFilters(row, 'origen', filters)) return;
+        this.splitValues(row.modulo_destino).forEach((value) => values.add(value));
+      });
+    });
+
+    return Array.from(values).sort((a, b) => a.localeCompare(b));
+  }
+
+  private matchesSideFilters(
+    row: ConvalidacionRow,
+    side: 'origen' | 'destino',
+    filters: Record<FilterKey, string>
+  ): boolean {
+    return (['grado', 'familia', 'ciclo', 'modulo'] as FilterKey[]).every((key) => {
+      const value = filters[key];
+      if (!value) return true;
+      if (key === 'modulo' && value === 'Todos') return true;
+      const current = row[`${key}_${side}` as keyof ConvalidacionRow] as string | null;
+      return this.listIncludes(current, value);
+    });
+  }
+
+  private splitValues(value: string | null): string[] {
+    if (!value) return [];
+    return value
+      .split(';')
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+
+  private normalizeKey(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
+  private listIncludes(listValue: string | null, target: string): boolean {
+    if (!target) return true;
+    const normalizedTarget = this.normalizeKey(target);
+    return this.splitValues(listValue).some(
+      (entry) => this.normalizeKey(entry) === normalizedTarget
+    );
+  }
+
+  private parseNormativa(value: string): Normativa {
+    if (value === 'LOGSE' || value === 'LOE') {
+      return value;
+    }
+    return '';
+  }
+
+  private async loadData(): Promise<void> {
+    try {
+      this.loading.set(true);
+      const [catalog, convalidaciones] = await Promise.all([
+        this.db.getCatalog(),
+        this.db.getConvalidaciones()
+      ]);
+      this.catalogRowsSignal.set(catalog);
+      this.rowsSignal.set(convalidaciones);
+    } catch (error) {
+      console.error(error);
+      this.error.set('No se pudo cargar la base de datos.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  private initSignatureCanvas(): void {
+    if (!this.signatureCanvas) return;
+    const canvas = this.signatureCanvas.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(320, Math.floor(rect.width));
+    canvas.height = 200;
+    this.ctx = canvas.getContext('2d');
+    if (!this.ctx) return;
+    this.ctx.lineWidth = 2;
+    this.ctx.lineCap = 'round';
+    this.ctx.strokeStyle = '#1f2a33';
+
+    const existing = this.signatureDataUrl();
+    if (existing) {
+      this.signatureHasInk.set(true);
+      this.drawSignatureImage(existing);
+    }
+  }
+
+  private drawSignatureImage(dataUrl: string): void {
+    if (!this.ctx || !this.signatureCanvas) return;
+    const img = new Image();
+    img.onload = () => {
+      const canvas = this.signatureCanvas?.nativeElement;
+      if (!canvas || !this.ctx) return;
+      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    img.src = dataUrl;
+  }
+
+}

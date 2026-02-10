@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.panel-header h2 {
+  margin: 0 0 8px;
+}
+
+.panel-header p {
+  margin: 0;
+  color: var(--brand-gray-600);
+}
+
+.form-section h3 {
+  margin: 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--brand-gray-600);
+}
+
+.checkbox input[type='checkbox'] {
+  accent-color: var(--brand-primary);
+}
+
+.filters {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.doc-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.signature-layout {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.signature-pad {
+  height: 200px;
+}
+
+.signature-side {
+  grid-template-rows: auto 1fr;
+  align-content: stretch;
+}
+
+.signature-preview img {
+  max-width: 220px;
+  max-height: 110px;
+}
+
+@media (min-width: 768px) {
+  .module-row {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
