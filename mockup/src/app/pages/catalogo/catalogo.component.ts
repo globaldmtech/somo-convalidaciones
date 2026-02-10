@@ -104,7 +104,7 @@ export class CatalogoComponent {
 
   protected getPdfLink(page: number | null): string {
     const safePage = page && page > 0 ? page : 1;
-    return `/docs/BOE-A-2020-17274.pdf#page=${safePage}`;
+    return `/somo-convalidaciones/docs/BOE-A-2020-17274.pdf#page=${safePage}`;
   }
 
   protected displayValue(value: string | number | null | undefined): string {
