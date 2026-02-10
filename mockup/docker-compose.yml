@@ -3,8 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "4200:4200"
     volumes:
       - .:/app
       - /app/node_modules
@@ -12,4 +10,11 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - NG_CLI_ANALYTICS=ci
-    command: npm start -- --host 0.0.0.0 --port 4200 --serve-path /somo-convalidaciones --base-href /somo-convalidaciones/
+    command: npm start -- --host 0.0.0.0 --port 4200 --serve-path /somo-convalidaciones
+    networks:
+      - proxy_net
+
+networks:
+  proxy_net:
+    external: true
+    name: nginx_proxy_net

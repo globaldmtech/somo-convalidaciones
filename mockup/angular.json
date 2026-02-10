@@ -61,6 +61,11 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": [
+              "globaldatahub.es"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "mockup:build:production"
