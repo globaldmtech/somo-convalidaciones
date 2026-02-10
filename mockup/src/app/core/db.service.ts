@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import initSqlJs, { Database, QueryExecResult, SqlJsStatic } from 'sql.js';
+import type { Database, QueryExecResult, SqlJsStatic } from 'sql.js';
 import { CatalogRow, ConvalidacionRow } from './models';
 
 type SeenKey = Exclude<keyof ConvalidacionRow, 'source_page'>;
@@ -224,11 +224,11 @@ export class DbService {
     return results;
   }
 
-  private async initDb(path = '/somo-convalidaciones/db/cf-somo.db'): Promise<Database> {
+  private async initDb(path = 'db/cf-somo.db'): Promise<Database> {
     const sqlJs =
       this.sqlJs ??
       (await initSqlJs({
-        locateFile: (file: string) => `/somo-convalidaciones/db/${file}`
+        locateFile: (file: string) => `db/${file}`
       }));
     this.sqlJs = sqlJs;
 

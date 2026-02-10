@@ -19,3 +19,7 @@ declare module 'sql.js' {
   const initSqlJs: (config?: InitSqlJsConfig) => Promise<SqlJsStatic>;
   export default initSqlJs;
 }
+
+declare const initSqlJs: (
+  config?: import('sql.js').InitSqlJsConfig
+) => Promise<import('sql.js').SqlJsStatic>;

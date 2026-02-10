@@ -19,7 +19,6 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "baseHref": "/somo-convalidaciones/",
             "externalDependencies": [
               "fs",
               "path",
@@ -37,6 +36,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/somo-convalidaciones/",
               "budgets": [
                 {
                   "type": "initial",
@@ -68,7 +68,8 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "mockup:build:production"
+              "buildTarget": "mockup:build:production",
+              "servePath": "/somo-convalidaciones/"
             },
             "development": {
               "buildTarget": "mockup:build:development"

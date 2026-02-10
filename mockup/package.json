@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "copy:sql-wasm": "node -e \"const fs=require('fs');const path=require('path');const src=path.join('node_modules','sql.js','dist','sql-wasm.wasm');const dest=path.join('public','db','sql-wasm.wasm');fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(src,dest);console.log('copied',dest);\"",
+    "copy:sql-wasm": "node -e \"const fs=require('fs');const path=require('path');const dist=path.join('node_modules','sql.js','dist');const destDir=path.join('public','db');fs.mkdirSync(destDir,{recursive:true});['sql-wasm.wasm','sql-wasm.js'].forEach((file)=>{const src=path.join(dist,file);const dest=path.join(destDir,file);fs.copyFileSync(src,dest);console.log('copied',dest);});\"",
     "postinstall": "npm run copy:sql-wasm"
   },
   "prettier": {
