@@ -123,75 +123,77 @@
           class="estudio-card grid gap-3 rounded-2xl bg-white p-4"
           *ngFor="let estudio of formEstudios(); let i = index; trackBy: trackByIndex"
         >
-          <div
-            class="filters guided-grid grid w-full min-w-0 gap-4 mb-6 max-md:mb-3 grid-cols-1 [@media(min-width:820px)]:grid-cols-2"
-          >
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Tipo de estudios aportados</span>
-              <select
-                [value]="estudio.tipo"
-                (change)="onTipoChange(i, $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option value="LOGSE">LOGSE</option>
-                <option value="LOE">LOE</option>
-                <option value="Universitarios">Estudios universitarios</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Grado</span>
-              <select
-                [disabled]="!isCatalogTipo(estudio.tipo)"
-                [value]="estudio.grado"
-                (change)="onEstudioSelectChange(i, 'grado', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of buildCatalogOptions('grado')" [value]="option">
-                  {{ formatGrade(option) }}
-                </option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Familia</span>
-              <select
-                [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.grado"
-                [value]="estudio.familia"
-                (change)="onEstudioSelectChange(i, 'familia', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of getEstudioFamiliaOptions(i)" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Ciclo</span>
-              <select
-                [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.familia"
-                [value]="estudio.ciclo"
-                (change)="onEstudioSelectChange(i, 'ciclo', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of getEstudioCicloOptions(i)" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </label>
-            <label class="field wide col-span-full grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Módulo</span>
-              <select
-                [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.ciclo"
-                [value]="estudio.modulo"
-                (change)="onEstudioSelectChange(i, 'modulo', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option value="Todos">Todos</option>
-                <option *ngFor="let option of getEstudioModuloOptions(i)" [value]="option">
-                  {{ option }}
-                </option>
+          <div class="grid w-full min-w-0 gap-4 mb-6 max-md:mb-3">
+            <div class="grid gap-4 md:grid-cols-3">
+              <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+                <span>Tipo de estudios aportados</span>
+                <select
+                  [value]="estudio.tipo"
+                  (change)="onTipoChange(i, $event)"
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="LOGSE">LOGSE</option>
+                  <option value="LOE">LOE</option>
+                  <option value="Universitarios">Estudios universitarios</option>
+                  <option value="Otros">Otros</option>
                 </select>
-            </label>
+              </label>
+              <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+                <span>Grado</span>
+                <select
+                  [disabled]="!isCatalogTipo(estudio.tipo)"
+                  [value]="estudio.grado"
+                  (change)="onEstudioSelectChange(i, 'grado', $event)"
+                >
+                  <option value="">Seleccionar</option>
+                  <option *ngFor="let option of buildCatalogOptions('grado')" [value]="option">
+                    {{ formatGrade(option) }}
+                  </option>
+                </select>
+              </label>
+              <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+                <span>Familia</span>
+                <select
+                  [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.grado"
+                  [value]="estudio.familia"
+                  (change)="onEstudioSelectChange(i, 'familia', $event)"
+                >
+                  <option value="">Seleccionar</option>
+                  <option *ngFor="let option of getEstudioFamiliaOptions(i)" [value]="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </label>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+              <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+                <span>Ciclo</span>
+                <select
+                  [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.familia"
+                  [value]="estudio.ciclo"
+                  (change)="onEstudioSelectChange(i, 'ciclo', $event)"
+                >
+                  <option value="">Seleccionar</option>
+                  <option *ngFor="let option of getEstudioCicloOptions(i)" [value]="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </label>
+              <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+                <span>Módulo</span>
+                <select
+                  [disabled]="!isCatalogTipo(estudio.tipo) || !estudio.ciclo"
+                  [value]="estudio.modulo"
+                  (change)="onEstudioSelectChange(i, 'modulo', $event)"
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="Todos">Todos</option>
+                  <option *ngFor="let option of getEstudioModuloOptions(i)" [value]="option">
+                    {{ option }}
+                  </option>
+                  </select>
+              </label>
+            </div>
           </div>
 
           <label class="field wide col-span-full grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border" *ngIf="isDescripcionRequired(estudio.tipo)">
