@@ -12,4 +12,4 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - NG_CLI_ANALYTICS=ci
-    command: npm start -- --host 0.0.0.0 --port 4200
+    command: npm start -- --host 0.0.0.0 --port 4200 --serve-path /somo-convalidaciones --base-href /somo-convalidaciones/
