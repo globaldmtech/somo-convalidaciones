@@ -291,6 +291,22 @@ export class FormularioOficialComponent implements AfterViewInit {
     this.docJustif.set(value === 'justif');
   }
 
+
+
+  // TODO: Provisional. Simula documentación aportada hasta implementar la carga real de archivos.
+  protected onDocsTodoToggle(event: Event): void {
+    const checked = Boolean((event.target as HTMLInputElement | null)?.checked);
+    this.docDni.set(checked);
+    this.docCert.set(false);
+    this.docAcred.set(false);
+    this.docJustif.set(false);
+    if (checked) {
+      this.docAcred.set(true);
+    }
+  }
+
+
+  
   protected selectedDocOption(): string {
     if (this.docCert()) return 'cert';
     if (this.docAcred()) return 'acred';
