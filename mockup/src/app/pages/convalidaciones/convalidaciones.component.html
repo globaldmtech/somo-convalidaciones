@@ -1,10 +1,12 @@
 <section class="form-wrapper">
-  <div class="panel-header">
-    <div>
-      <h2>Convalidaciones recibidas</h2>
-      <p>Listado de solicitudes enviadas por alumnos para revisión interna.</p>
+  <div class="panel-header flex flex-wrap items-center justify-between gap-4">
+    <div class="min-w-0 space-y-2">
+      <h2 class="text-2xl font-semibold text-slate-900">Convalidaciones recibidas</h2>
+      <p class="text-sm text-slate-600">
+        Listado de solicitudes enviadas por alumnos para revisión interna.
+      </p>
     </div>
-    <div class="header-actions">
+    <div class="header-actions flex shrink-0 items-center gap-2">
       <span class="badge">{{ submissions().length }} solicitudes</span>
     </div>
   </div>
@@ -16,7 +18,7 @@
 
   <div class="status-group" *ngIf="hasSubmissions()">
     <div class="group-header">
-      <h3>Formularios a revisar</h3>
+      <h3 class="text-base font-semibold text-slate-900">Formularios a revisar</h3>
       <div class="group-controls">
         <label class="pager-select">
           <span>Ordenar</span>
@@ -215,7 +217,7 @@
 
   <div class="status-group" *ngIf="hasSubmissions()">
     <div class="group-header">
-      <h3>Formularios aprobados</h3>
+      <h3 class="text-base font-semibold text-slate-900">Formularios aprobados</h3>
       <div class="group-controls">
         <label class="pager-select">
           <span>Ordenar</span>

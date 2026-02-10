@@ -1,8 +1,10 @@
 <section class="form-wrapper grid gap-5">
-  <div class="panel-header flex flex-wrap justify-between gap-4 mb-3">
-    <div>
-      <h2>Formulario de solicitud de convalidación</h2>
-      <p>Completa los datos del solicitante, estudios aportados y módulos a convalidar.</p>
+  <div class="panel-header flex flex-wrap items-center justify-between gap-4">
+    <div class="min-w-0 space-y-2">
+      <h2 class="text-2xl font-semibold text-slate-900">Formulario de solicitud de convalidación</h2>
+      <p class="text-sm text-slate-600">
+        Completa los datos del solicitante, estudios aportados y módulos a convalidar.
+      </p>
     </div>
   </div>
   <p class="hint" *ngIf="loading()">Cargando catálogo desde la base de datos…</p>
@@ -10,7 +12,7 @@
 
   <form class="form-grid grid gap-6">
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3>1. Datos personales del solicitante</h3>
+      <h3 class="text-base font-semibold text-slate-900">1. Datos personales del solicitante</h3>
       <div
         class="filters grid w-full min-w-0 gap-4 mb-6 max-md:mb-3"
       >
@@ -58,7 +60,7 @@
     </div>
 
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3>2. Datos académicos actuales</h3>
+      <h3 class="text-base font-semibold text-slate-900">2. Datos académicos actuales</h3>
       <div
         class="filters grid w-full min-w-0 gap-4 mb-6 max-md:mb-3"
       >
@@ -105,7 +107,9 @@
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
       <div class="section-header flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3>3. Estudios que aporta para la convalidación</h3>
+          <h3 class="text-base font-semibold text-slate-900">
+            3. Estudios que aporta para la convalidación
+          </h3>
           <p class="hint">
             LOE/LOGSE: selecciona grado, familia, ciclo y módulo (puedes usar "Todos"). Universitarios u
             otros: completa la descripción.
@@ -218,7 +222,9 @@
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
       <div class="section-header flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3>4. Módulos profesionales que solicita convalidar</h3>
+          <h3 class="text-base font-semibold text-slate-900">
+            4. Módulos profesionales que solicita convalidar
+          </h3>
           <p class="hint">
             Usa las sugerencias basadas en los estudios aportados o escribe el módulo manualmente.
           </p>
@@ -277,7 +283,7 @@
     </div>
 
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3>5. Documentación que debe aportar</h3>
+      <h3 class="text-base font-semibold text-slate-900">5. Documentación que debe aportar</h3>
       <p class="hint">Marca y adjunta los documentos necesarios.</p>
       <div class="doc-grid grid gap-2">
         <!-- <label class="checkbox flex items-center gap-2 text-sm text-slate-600">
@@ -312,7 +318,7 @@
     </div>
 
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3>6. Declaración final</h3>
+      <h3 class="text-base font-semibold text-slate-900">6. Declaración final</h3>
       <div class="signature-layout grid gap-4 items-stretch">
         <div class="group grid gap-3 self-stretch rounded-2xl bg-white p-4">
           <h3>Firma del solicitante</h3>
