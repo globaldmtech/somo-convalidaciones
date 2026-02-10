@@ -40,6 +40,7 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly submitted = signal(false);
+  protected readonly confirmDialog = signal(false);
 
   protected readonly formNif = signal('');
   protected readonly formNombre = signal('');
@@ -286,6 +287,21 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected submitForm(): void {
     if (!this.isFormValid()) return;
     this.submitted.set(true);
+  }
+
+  protected requestSubmit(): void {
+    if (!this.isFormValid()) return;
+    this.confirmDialog.set(true);
+  }
+
+  protected cancelSubmit(): void {
+    this.confirmDialog.set(false);
+  }
+
+  protected confirmSubmit(): void {
+    if (!this.isFormValid()) return;
+    this.submitForm();
+    this.confirmDialog.set(false);
   }
 
   protected formatGrade(value: string | null): string {
