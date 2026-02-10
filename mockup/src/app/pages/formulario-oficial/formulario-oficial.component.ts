@@ -284,6 +284,20 @@ export class FormularioOficialComponent implements AfterViewInit {
     }
   }
 
+  protected onDocOptionChange(event: Event): void {
+    const value = this.readValue(event);
+    this.docCert.set(value === 'cert');
+    this.docAcred.set(value === 'acred');
+    this.docJustif.set(value === 'justif');
+  }
+
+  protected selectedDocOption(): string {
+    if (this.docCert()) return 'cert';
+    if (this.docAcred()) return 'acred';
+    if (this.docJustif()) return 'justif';
+    return '';
+  }
+
   protected submitForm(): void {
     if (!this.isFormValid()) return;
     this.submitted.set(true);

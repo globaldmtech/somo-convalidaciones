@@ -284,37 +284,42 @@
 
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
       <h3 class="text-base font-semibold text-slate-900">5. Documentación que debe aportar</h3>
-      <p class="hint">Marca y adjunta los documentos necesarios.</p>
-      <div class="doc-grid grid gap-2">
-        <!-- <label class="checkbox flex items-center gap-2 text-sm text-slate-600">
-          <input type="checkbox" [checked]="docDni()" (change)="onDocToggle('dni', $event)" /> Fotocopia del DNI
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600">
-          <input type="checkbox" [checked]="docCert()" (change)="onDocToggle('cert', $event)" /> Certificación académica oficial del ciclo cursado
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600">
-          <input type="checkbox" [checked]="docAcred()" (change)="onDocToggle('acred', $event)" /> Acreditación laboral
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600">
-          <input type="checkbox" [checked]="docJustif()" (change)="onDocToggle('justif', $event)" /> Documento justificativo de la convalidación
-        </label> -->
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600 cursor-pointer transition-colors duration-200 hover:text-[#72cfd5]">
-          <input type="checkbox" [checked]="docDni()" (change)="onDocToggle('dni', $event)" /> Fotocopia del DNI
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600 cursor-pointer transition-colors duration-200 hover:text-[#72cfd5]">
-          <input type="checkbox" [checked]="docCert()" (change)="onDocToggle('cert', $event)" /> Certificación académica oficial del ciclo cursado
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600 cursor-pointer transition-colors duration-200 hover:text-[#72cfd5]">
-          <input type="checkbox" [checked]="docAcred()" (change)="onDocToggle('acred', $event)" /> Acreditación laboral
-        </label>
-        <label class="checkbox flex items-center gap-2 text-sm text-slate-600 cursor-pointer transition-colors duration-200 hover:text-[#72cfd5]">
-          <input type="checkbox" [checked]="docJustif()" (change)="onDocToggle('justif', $event)" /> Documento justificativo de la convalidación
-        </label>
+      <p class="hint">
+        Obligatorio: <span class="text-[#72cfd5] font-semibold">DNI</span> + 1 de los otros
+        <span class="text-[#72cfd5] font-semibold">documentos</span>.
+      </p>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+          <p class="flex h-10 items-center px-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Fotocopia del DNI</p>
+          <label class="dropzone mt-auto flex h-32 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
+            <span>Arrastra el DNI aquí o haz clic para seleccionar</span>
+            <input type="file" class="hidden" />
+          </label>
+        </div>
+        <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+          <!-- <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Elige 1</p> -->
+          <select
+            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
+            [value]="selectedDocOption()"
+            (change)="onDocOptionChange($event)"
+          >
+            <option value="">Seleccionar</option>
+            <option value="cert">Certificación académica oficial del ciclo cursado</option>
+            <option value="acred">Acreditación laboral</option>
+            <option value="justif">Documento justificativo de la convalidación</option>
+          </select>
+          <label
+            class="dropzone mt-auto flex h-32 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 hover:border-[#72cfd5]"
+            [class.pointer-events-none]="!selectedDocOption()"
+            [class.opacity-50]="!selectedDocOption()"
+            [class.cursor-not-allowed]="!selectedDocOption()"
+            [attr.aria-disabled]="!selectedDocOption()"
+          >
+            <span>Arrastra el documento aquí o haz clic para seleccionar</span>
+            <input type="file" class="hidden" [disabled]="!selectedDocOption()" />
+          </label>
+        </div>
       </div>
-      <label class="dropzone grid gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
-        <span>Arrastra los archivos aquí o haz clic para seleccionar</span>
-        <input type="file" multiple class="hidden" />
-      </label>
     </div>
 
     <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
