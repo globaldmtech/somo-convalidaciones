@@ -51,9 +51,3 @@
   max-height: 110px;
 }
 
-@media (min-width: 768px) {
-  .module-row {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-

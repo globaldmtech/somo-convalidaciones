@@ -25,6 +25,19 @@ type EstudioEntry = {
   descripcion: string;
 };
 
+type ManualModuleEntry = {
+  id: string;
+  nombre: string;
+  codigo: string;
+};
+
+type RequestedModule = {
+  id: string;
+  source: 'suggested' | 'manual';
+  nombre: string;
+  codigo?: string;
+};
+
 @Component({
   selector: 'app-formulario-oficial',
   imports: [CommonModule],
@@ -57,13 +70,20 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly formGradoActual = signal('');
   protected readonly formCurso = signal('');
 
-  protected readonly formEstudios = signal<EstudioEntry[]>([
-    { tipo: '', descripcion: '', grado: '', familia: '', ciclo: '', modulo: 'Todos' }
-  ]);
+  protected readonly draftEstudio = signal<EstudioEntry>({
+    tipo: '',
+    descripcion: '',
+    grado: '',
+    familia: '',
+    ciclo: '',
+    modulo: 'Todos'
+  });
 
-  protected readonly formModulos = signal<Array<{ nombre: string; codigo: string }>>([
-    { nombre: '', codigo: '' }
-  ]);
+  protected readonly formEstudios = signal<EstudioEntry[]>([]);
+
+  protected readonly manualModuleDraft = signal({ nombre: '', codigo: '' });
+  protected readonly manualModules = signal<ManualModuleEntry[]>([]);
+  protected readonly selectedSuggestedModules = signal<string[]>([]);
 
   protected readonly docDni = signal(false);
   protected readonly docCert = signal(false);
@@ -75,6 +95,9 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly signatureHasInk = signal(false);
 
   protected readonly suggestedModules = computed(() => this.buildSuggestedModules());
+  protected readonly requestedModules = computed(() => this.buildRequestedModules());
+  protected readonly canAddEstudio = computed(() => this.isEstudioEntryComplete(this.draftEstudio()));
+  protected readonly canAddManualModule = computed(() => this.isManualModuleDraftValid());
 
   protected readonly isFormValid = computed(() => {
     const personalOk = [
@@ -97,21 +120,14 @@ export class FormularioOficialComponent implements AfterViewInit {
     ].every((value) => String(value).trim().length > 0);
 
     const estudios = this.formEstudios();
-    const estudiosOk =
-      estudios.length > 0 &&
-      estudios.every((entry) => {
-        if (!entry.tipo) return false;
-        if (this.isCatalogTipo(entry.tipo)) {
-          return Boolean(entry.grado && entry.familia && entry.ciclo && entry.modulo);
-        }
-        return entry.descripcion.trim().length > 0;
-      });
+    const estudiosOk = estudios.length > 0 && estudios.every((entry) => this.isEstudioEntryComplete(entry));
 
     const requiresCode = this.formNormativa() === 'LOE';
-    const modulos = this.formModulos();
+    const manualOk = this.manualModules().every(
+      (row) => row.nombre.trim().length > 0 && (!requiresCode || row.codigo.trim().length > 0)
+    );
     const modulosOk =
-      modulos.length > 0 &&
-      modulos.every((row) => row.nombre.trim().length > 0 && (!requiresCode || row.codigo.trim()));
+      this.selectedSuggestedModules().length + this.manualModules().length > 0 && manualOk;
 
     const docsOk = this.docDni() && (this.docCert() || this.docAcred() || this.docJustif());
 
@@ -125,6 +141,7 @@ export class FormularioOficialComponent implements AfterViewInit {
   private drawing = false;
   private ctx?: CanvasRenderingContext2D | null;
   private strokeDrawn = false;
+  private manualModuleSequence = 0;
 
   constructor(private readonly db: DbService) {
     this.loadData();
@@ -138,72 +155,82 @@ export class FormularioOficialComponent implements AfterViewInit {
     return index;
   }
 
+  protected trackByRequestedId(_: number, item: RequestedModule): string {
+    return item.id;
+  }
+
   protected addEstudioRow(): void {
-    this.formEstudios.update((rows) => [
-      ...rows,
-      { tipo: '', descripcion: '', grado: '', familia: '', ciclo: '', modulo: 'Todos' }
-    ]);
+    const entry = this.draftEstudio();
+    if (!this.isEstudioEntryComplete(entry)) return;
+    this.formEstudios.update((rows) => [...rows, { ...entry }]);
+    this.resetDraftEstudio(entry.tipo);
   }
 
   protected removeEstudioRow(index: number): void {
     this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
   }
 
-  protected updateEstudioField(index: number, key: keyof EstudioEntry, value: string): void {
-    this.formEstudios.update((rows) =>
-      rows.map((row, current) => (current === index ? { ...row, [key]: value } : row))
-    );
+  protected updateEstudioField(key: keyof EstudioEntry, value: string): void {
+    this.draftEstudio.update((row) => ({ ...row, [key]: value }));
   }
 
-  protected onTipoChange(index: number, event: Event): void {
+  protected onTipoChange(event: Event): void {
     const value = this.readValue(event) as EstudiosTipo;
-    this.formEstudios.update((rows) =>
-      rows.map((row, current) => {
-        if (current !== index) return row;
-        if (!this.isCatalogTipo(value)) {
-          return { ...row, tipo: value, grado: '', familia: '', ciclo: '', modulo: '' };
-        }
-        return { ...row, tipo: value, modulo: row.modulo || 'Todos' };
-      })
-    );
+    this.resetDraftEstudio(value);
   }
 
-  protected onEstudioSelectChange(index: number, key: FilterKey, event: Event): void {
+  protected onEstudioSelectChange(key: FilterKey, event: Event): void {
     const value = this.readValue(event);
-    this.formEstudios.update((rows) =>
-      rows.map((row, current) => {
-        if (current !== index) return row;
-        if (key === 'grado') {
-          return { ...row, grado: value, familia: '', ciclo: '', modulo: 'Todos' };
-        }
-        if (key === 'familia') {
-          return { ...row, familia: value, ciclo: '', modulo: 'Todos' };
-        }
-        if (key === 'ciclo') {
-          return { ...row, ciclo: value, modulo: 'Todos' };
-        }
-        return { ...row, modulo: value };
-      })
-    );
+    this.draftEstudio.update((row) => {
+      if (key === 'grado') {
+        return { ...row, grado: value, familia: '', ciclo: '', modulo: 'Todos' };
+      }
+      if (key === 'familia') {
+        return { ...row, familia: value, ciclo: '', modulo: 'Todos' };
+      }
+      if (key === 'ciclo') {
+        return { ...row, ciclo: value, modulo: 'Todos' };
+      }
+      return { ...row, modulo: value };
+    });
   }
 
-  protected addModuloRow(): void {
-    this.formModulos.update((rows) => [...rows, { nombre: '', codigo: '' }]);
+  protected addManualModule(): void {
+    if (!this.isManualModuleDraftValid()) return;
+    const draft = this.manualModuleDraft();
+    const entry: ManualModuleEntry = {
+      id: this.nextManualModuleId(),
+      nombre: draft.nombre.trim(),
+      codigo: draft.codigo.trim()
+    };
+    this.manualModules.update((rows) => [...rows, entry]);
+    this.manualModuleDraft.set({ nombre: '', codigo: '' });
   }
 
-  protected removeModuloRow(index: number): void {
-    this.formModulos.update((rows) => rows.filter((_, current) => current !== index));
+  protected updateManualModuleDraft(key: 'nombre' | 'codigo', value: string): void {
+    this.manualModuleDraft.update((draft) => ({ ...draft, [key]: value }));
   }
 
-  protected updateModuloRow(index: number, key: 'nombre' | 'codigo', value: string): void {
-    this.formModulos.update((rows) =>
-      rows.map((row, current) => (current === index ? { ...row, [key]: value } : row))
-    );
+  protected toggleSuggestedModule(value: string, event: Event): void {
+    const checked = Boolean((event.target as HTMLInputElement | null)?.checked);
+    this.selectedSuggestedModules.update((items) => {
+      if (checked) {
+        return items.includes(value) ? items : [...items, value];
+      }
+      return items.filter((item) => item !== value);
+    });
   }
 
-  protected applySuggestedModule(index: number, value: string): void {
-    if (!value) return;
-    this.updateModuloRow(index, 'nombre', value);
+  protected isSuggestedSelected(value: string): boolean {
+    return this.selectedSuggestedModules().includes(value);
+  }
+
+  protected removeRequestedModule(item: RequestedModule): void {
+    if (item.source === 'suggested') {
+      this.selectedSuggestedModules.update((items) => items.filter((entry) => entry !== item.nombre));
+      return;
+    }
+    this.manualModules.update((rows) => rows.filter((row) => row.id !== item.id));
   }
 
   protected onNormativaChange(event: Event): void {
@@ -358,9 +385,9 @@ export class FormularioOficialComponent implements AfterViewInit {
     return target?.value ?? '';
   }
 
-  protected getEstudioFamiliaOptions(index: number): string[] {
-    const entry = this.formEstudios()[index];
-    if (!entry?.grado) return [];
+  protected getEstudioFamiliaOptions(): string[] {
+    const entry = this.draftEstudio();
+    if (!entry.grado) return [];
     return this.buildFormCatalogOptions('familia', {
       grado: entry.grado,
       familia: entry.familia,
@@ -368,9 +395,9 @@ export class FormularioOficialComponent implements AfterViewInit {
     });
   }
 
-  protected getEstudioCicloOptions(index: number): string[] {
-    const entry = this.formEstudios()[index];
-    if (!entry?.grado || !entry.familia) return [];
+  protected getEstudioCicloOptions(): string[] {
+    const entry = this.draftEstudio();
+    if (!entry.grado || !entry.familia) return [];
     return this.buildFormCatalogOptions('ciclo', {
       grado: entry.grado,
       familia: entry.familia,
@@ -378,9 +405,8 @@ export class FormularioOficialComponent implements AfterViewInit {
     });
   }
 
-  protected getEstudioModuloOptions(index: number): string[] {
-    const entry = this.formEstudios()[index];
-    if (!entry) return [];
+  protected getEstudioModuloOptions(): string[] {
+    const entry = this.draftEstudio();
     if (!entry.ciclo) return [];
     return this.buildFormModuleOptions({
       grado: entry.grado,
@@ -422,6 +448,21 @@ export class FormularioOficialComponent implements AfterViewInit {
     const values = new Set<string>();
     rows.forEach((row) => values.add(row.modulo));
     return Array.from(values).sort((a, b) => a.localeCompare(b));
+  }
+
+  private buildRequestedModules(): RequestedModule[] {
+    const suggested = this.selectedSuggestedModules().map((value) => ({
+      id: `suggested:${value}`,
+      source: 'suggested' as const,
+      nombre: value
+    }));
+    const manual = this.manualModules().map((entry) => ({
+      id: entry.id,
+      source: 'manual' as const,
+      nombre: entry.nombre,
+      codigo: entry.codigo
+    }));
+    return [...suggested, ...manual];
   }
 
   private buildSuggestedModules(): string[] {
@@ -537,6 +578,59 @@ export class FormularioOficialComponent implements AfterViewInit {
       this.ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     };
     img.src = dataUrl;
+  }
+
+  private resetDraftEstudio(tipo: EstudiosTipo): void {
+    if (!this.isCatalogTipo(tipo)) {
+      this.draftEstudio.set({
+        tipo,
+        descripcion: '',
+        grado: '',
+        familia: '',
+        ciclo: '',
+        modulo: ''
+      });
+      return;
+    }
+    this.draftEstudio.set({
+      tipo,
+      descripcion: '',
+      grado: '',
+      familia: '',
+      ciclo: '',
+      modulo: 'Todos'
+    });
+  }
+
+  private isManualModuleDraftValid(): boolean {
+    const draft = this.manualModuleDraft();
+    const requiresCode = this.formNormativa() === 'LOE';
+    return (
+      draft.nombre.trim().length > 0 &&
+      (!requiresCode || draft.codigo.trim().length > 0)
+    );
+  }
+
+  private nextManualModuleId(): string {
+    this.manualModuleSequence += 1;
+    return `manual-${this.manualModuleSequence}`;
+  }
+
+  private isEstudioEntryComplete(entry: EstudioEntry): boolean {
+    if (!entry.tipo) return false;
+    if (this.isCatalogTipo(entry.tipo)) {
+      return Boolean(entry.grado && entry.familia && entry.ciclo && entry.modulo);
+    }
+    return entry.descripcion.trim().length > 0;
+  }
+
+  protected previewValue(value: string, fallback: string): string {
+    return value?.trim() ? value : fallback;
+  }
+
+  protected previewGrado(entry: EstudioEntry): string {
+    if (!entry.grado) return 'Grado';
+    return this.formatGrade(entry.grado);
   }
 
 }
