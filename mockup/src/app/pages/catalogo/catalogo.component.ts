@@ -358,6 +358,7 @@ export class CatalogoComponent {
     const modulo = this.filterModulo().trim().toLowerCase();
 
     return this.entries().filter((entry) => {
+      if (!this.hasRequiredCiclo(entry)) return false;
       if (search && !this.matchesSearch(entry, search)) return false;
       if (grado && !this.matchesField(entry, 'grado', grado)) return false;
       if (familia && !this.matchesField(entry, 'familia', familia)) return false;
@@ -365,6 +366,13 @@ export class CatalogoComponent {
       if (modulo && !this.matchesField(entry, 'modulo', modulo)) return false;
       return true;
     });
+  }
+
+  private hasRequiredCiclo(entry: CatalogEntry): boolean {
+    const origen = entry.origen.ciclo.trim();
+    const destino = entry.destino.ciclo.trim();
+    // return Boolean(origen || destino); // Requiere al menos un ciclo definido
+    return Boolean(origen && destino); // Requiere ambos ciclos definidos
   }
 
   private matchesSearch(entry: CatalogEntry, search: string): boolean {
