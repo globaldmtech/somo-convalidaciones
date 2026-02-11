@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, LocationStrategy } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 
 import { DbService } from '../../core/db.service';
@@ -86,7 +86,10 @@ export class CatalogoComponent {
     ];
     return required.every((value) => value.trim().length > 0);
   });
-  constructor(private readonly db: DbService) {
+  constructor(
+    private readonly db: DbService,
+    private readonly location: LocationStrategy
+  ) {
     void this.loadData();
   }
 
@@ -104,7 +107,9 @@ export class CatalogoComponent {
 
   protected getPdfLink(page: number | null): string {
     const safePage = page && page > 0 ? page : 1;
-    return `/somo-convalidaciones/docs/BOE-A-2020-17274.pdf#page=${safePage}`;
+    const baseHref = this.location.getBaseHref() || '/';
+    const normalizedBase = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
+    return `${normalizedBase}docs/BOE-A-2020-17274.pdf#page=${safePage}`;
   }
 
   protected displayValue(value: string | number | null | undefined): string {
