@@ -1,53 +1,48 @@
-:host {
-  display: block;
+.stepper-track {
+  position: absolute;
+  top: 26px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: #dbe7ef;
+  overflow: hidden;
 }
 
-.panel-header h2 {
-  margin: 0 0 8px;
-}
-
-.panel-header p {
-  margin: 0;
-  color: var(--brand-gray-600);
-}
-
-.form-section h3 {
-  margin: 0;
-}
-
-.hint {
-  margin: 0;
+.stepper-node {
+  display: flex;
+  height: 32px;
+  width: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid #dbe7ef;
+  background: #ffffff;
+  color: #94a3b8;
   font-size: 0.85rem;
-  color: var(--brand-gray-600);
+  font-weight: 700;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.checkbox input[type='checkbox'] {
-  accent-color: var(--brand-primary);
+.stepper-node.is-active {
+  border-color: #72cfd5;
+  color: #1c1e39;
+  background: #f0fbfc;
+  box-shadow: 0 0 0 6px rgba(114, 207, 213, 0.15);
 }
 
-.filters {
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.stepper-node.is-complete {
+  border-color: #72cfd5;
+  background: #72cfd5;
+  color: #ffffff;
 }
 
-.doc-grid {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+.stepper-step {
+  min-width: 70px;
 }
 
-.signature-layout {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+.stepper-step.is-active .stepper-label,
+.stepper-step.is-complete .stepper-label {
+  color: #1c1e39;
 }
-
-.signature-pad {
-  height: 200px;
-}
-
-.signature-side {
-  grid-template-rows: auto 1fr;
-  align-content: stretch;
-}
-
-.signature-preview img {
-  max-width: 220px;
-  max-height: 110px;
-}
-

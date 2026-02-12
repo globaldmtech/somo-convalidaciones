@@ -1,0 +1,171 @@
+<div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
+  <div class="section-header flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h3 class="m-0 text-base font-semibold text-slate-900">
+        2. Estudios que aporta para la convalidación
+      </h3>
+      <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+        LOE/LOGSE: selecciona grado, familia, ciclo y módulo (puedes usar "Todos"). Universitarios u
+        otros: completa la descripción.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="add inline-flex items-center justify-center rounded-full bg-[#1c1e39] px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:text-[#72cfd5] disabled:opacity-60 disabled:cursor-not-allowed"
+      (click)="addEstudioRow()"
+      [disabled]="!canAdd()"
+    >
+      Agregar estudio
+    </button>
+  </div>
+
+  <div class="estudio-card grid gap-3 rounded-2xl bg-white p-4">
+    <div class="grid w-full min-w-0 gap-4 mb-6 max-md:mb-3">
+      <div class="grid gap-4 md:grid-cols-3">
+        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+          <span>Tipo de estudios aportados</span>
+          <select [value]="draft().tipo" (change)="handleTipoChange($event)">
+            <option value="">Seleccionar</option>
+            <option value="LOGSE">LOGSE</option>
+            <option value="LOE">LOE</option>
+            <option value="Universitarios">Estudios universitarios</option>
+            <option value="Otros">Otros estudios</option>
+          </select>
+        </label>
+        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+          <span>Grado</span>
+          <select
+            [disabled]="!isCatalogTipo(draft().tipo)"
+            [value]="draft().grado"
+            (change)="handleSelectChange('grado', $event)"
+          >
+            <option value="">Seleccionar</option>
+            @for (option of gradoOptions(); track option) {
+              <option [value]="option">
+                {{ formatGrade(option) }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+          <span>Familia profesional</span>
+          <select
+            [disabled]="!isCatalogTipo(draft().tipo) || !draft().grado"
+            [value]="draft().familia"
+            (change)="handleSelectChange('familia', $event)"
+          >
+            <option value="">Seleccionar</option>
+            @for (option of familiaOptions(); track option) {
+              <option [value]="option">
+                {{ option }}
+              </option>
+            }
+          </select>
+        </label>
+      </div>
+      <div class="grid gap-4 md:grid-cols-3">
+        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+          <span>Ciclo formativo</span>
+          <select
+            [disabled]="!isCatalogTipo(draft().tipo) || !draft().familia"
+            [value]="draft().ciclo"
+            (change)="handleSelectChange('ciclo', $event)"
+          >
+            <option value="">Seleccionar</option>
+            @for (option of cicloOptions(); track option) {
+              <option [value]="option">
+                {{ option }}
+              </option>
+            }
+          </select>
+        </label>
+        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
+          <span>Módulo</span>
+          <select
+            [disabled]="!isCatalogTipo(draft().tipo) || !draft().ciclo"
+            [value]="draft().modulo"
+            (change)="handleSelectChange('modulo', $event)"
+          >
+            <option value="">Seleccionar</option>
+            <option value="Todos">Todos</option>
+            @for (option of moduloOptions(); track option) {
+              <option [value]="option">
+                {{ option }}
+              </option>
+            }
+            </select>
+        </label>
+      </div>
+    </div>
+
+    @if (isCatalogTipo(draft().tipo)) {
+      <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
+        <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Previsualización</p>
+        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
+          <span>{{ previewGrado(draft()) }}</span>
+          <span class="text-slate-400">•</span>
+          <span>{{ previewValue(draft().familia, 'Familia') }}</span>
+          <span class="text-slate-400">•</span>
+          <span>{{ previewValue(draft().ciclo, 'Ciclo') }}</span>
+          <span class="text-slate-400">•</span>
+          <span>{{ previewValue(draft().modulo, 'Módulo') }}</span>
+        </div>
+      </div>
+    }
+
+    @if (isDescripcionRequired(draft().tipo)) {
+      <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
+        <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+          Descripción detallada
+        </p>
+        <textarea
+          class="mt-2 w-full min-w-0 max-w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-[0.95rem] text-slate-800 placeholder:text-slate-400 resize-y box-border"
+          rows="3"
+          [value]="draft().descripcion"
+          placeholder="Ej. Título de Técnico en Administración y Finanzas, IES Central (2022)"
+          (input)="handleDescripcionChange($event)"
+        ></textarea>
+      </div>
+    }
+  </div>
+
+  <div class="estudios-list grid gap-4">
+    @for (estudio of estudios(); track $index; let i = $index) {
+      <div class="estudio-card grid gap-3 rounded-2xl bg-white p-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Formación aportada
+          </p>
+          <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+            {{ estudio.tipo || 'Estudio' }}
+          </span>
+        </div>
+        @if (isCatalogTipo(estudio.tipo)) {
+          <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
+            <span>{{ previewGrado(estudio) }}</span>
+            <span class="text-slate-400">•</span>
+            <span>{{ estudio.familia }}</span>
+            <span class="text-slate-400">•</span>
+            <span>{{ estudio.ciclo }}</span>
+            <span class="text-slate-400">•</span>
+            <span>{{ estudio.modulo }}</span>
+          </div>
+        }
+        @if (isDescripcionRequired(estudio.tipo)) {
+          <p class="text-sm font-semibold text-slate-700">
+            {{ estudio.descripcion }}
+          </p>
+        }
+        <div class="estudio-actions flex justify-end">
+          <button
+            type="button"
+            class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+            (click)="removeEstudioRow(i)"
+          >
+            Quitar estudio
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

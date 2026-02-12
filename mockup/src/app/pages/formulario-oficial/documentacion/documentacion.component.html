@@ -1,0 +1,49 @@
+<div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
+  <h3 class="m-0 text-base font-semibold text-slate-900">4. Documentación que debe aportar</h3>
+  <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+    Obligatorio: <span class="text-[#72cfd5] font-semibold">DNI</span> + 1 de los otros
+    <span class="text-[#72cfd5] font-semibold">documentos</span>.
+  </p>
+
+  <!-- TODO: Provisional. Simula la carga de documentación mientras no haya lógica de archivos. -->
+  <label class="inline-flex items-center gap-2 text-xs text-slate-500">
+    <input
+      type="checkbox"
+      class="h-4 w-4 accent-[#72cfd5]"
+      (change)="handleDocsToggle($event)"
+    />
+    <span>Marcar documentación como aportada (p. ej.: "DNI" + "Acreditación Laboral") (TEMPORAL vDesarrollo)</span>
+  </label>
+
+  <div class="grid gap-4 md:grid-cols-2">
+    <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+      <p class="flex h-10 items-center px-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Fotocopia del DNI</p>
+      <label class="dropzone mt-auto flex h-32 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
+        <span>Arrastra el DNI aquí o haz clic para seleccionar</span>
+        <input type="file" class="hidden" />
+      </label>
+    </div>
+    <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
+      <select
+        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
+        [value]="selectedOption()"
+        (change)="handleOptionChange($event)"
+      >
+        <option value="">Seleccionar</option>
+        <option value="cert">Certificación académica oficial del ciclo cursado</option>
+        <option value="acred">Acreditación laboral</option>
+        <option value="justif">Documento justificativo de la convalidación</option>
+      </select>
+      <label
+        class="dropzone mt-auto flex h-32 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 hover:border-[#72cfd5]"
+        [class.pointer-events-none]="!selectedOption()"
+        [class.opacity-50]="!selectedOption()"
+        [class.cursor-not-allowed]="!selectedOption()"
+        [attr.aria-disabled]="!selectedOption()"
+      >
+        <span>Arrastra el documento aquí o haz clic para seleccionar</span>
+        <input type="file" class="hidden" [disabled]="!selectedOption()" />
+      </label>
+    </div>
+  </div>
+</div>

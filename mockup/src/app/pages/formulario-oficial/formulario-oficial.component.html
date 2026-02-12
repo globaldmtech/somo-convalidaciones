@@ -1,546 +1,202 @@
 <section class="form-wrapper grid gap-5">
   <div class="panel-header flex flex-wrap items-center justify-between gap-4">
     <div class="min-w-0 space-y-2">
-      <h2 class="text-2xl font-semibold text-slate-900">Formulario de solicitud de convalidación</h2>
-      <p class="text-sm text-slate-600">
+      <h2 class="m-0 text-2xl font-semibold text-slate-900">Formulario de solicitud de convalidación</h2>
+      <p class="m-0 text-sm text-(--brand-gray-600)">
         Completa los datos del solicitante, estudios aportados y módulos a convalidar.
       </p>
     </div>
   </div>
-  <p class="hint" *ngIf="loading()">Cargando catálogo desde la base de datos…</p>
-  <p class="hint" *ngIf="error() as message">{{ message }}</p>
+  @if (loading()) {
+    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+      Cargando catálogo desde la base de datos…
+    </p>
+  }
+  @if (error(); as message) {
+    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">{{ message }}</p>
+  }
 
   <form class="form-grid grid gap-6">
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3 class="text-base font-semibold text-slate-900">1. Datos personales del solicitante</h3>
-      <div
-        class="filters grid w-full min-w-0 gap-4 mb-6 max-md:mb-3"
-      >
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>NIF / NIE / Pasaporte</span>
-          <input [value]="formNif()" (input)="formNif.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Nombre</span>
-          <input [value]="formNombre()" (input)="formNombre.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Apellidos</span>
-          <input [value]="formApellidos()" (input)="formApellidos.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Domicilio</span>
-          <input [value]="formDomicilio()" (input)="formDomicilio.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Código Postal</span>
-          <input [value]="formCodigoPostal()" (input)="formCodigoPostal.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Localidad</span>
-          <input [value]="formLocalidad()" (input)="formLocalidad.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Provincia</span>
-          <input [value]="formProvincia()" (input)="formProvincia.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Teléfono fijo</span>
-          <input [value]="formTelefonoFijo()" (input)="formTelefonoFijo.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Teléfono móvil</span>
-          <input [value]="formTelefonoMovil()" (input)="formTelefonoMovil.set(readValue($event))" />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Correo electrónico</span>
-          <input type="email" [value]="formEmail()" (input)="formEmail.set(readValue($event))" />
-        </label>
-      </div>
-    </div>
-
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3 class="text-base font-semibold text-slate-900">2. Datos académicos actuales</h3>
-      <div
-        class="filters grid w-full min-w-0 gap-4 mb-6 max-md:mb-3"
-      >
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Normativa</span>
-          <select [value]="formNormativa()" (change)="onNormativaChange($event)">
-            <option value="">Seleccionar</option>
-            <option value="LOGSE">LOGSE</option>
-            <option value="LOE">LOE</option>
-          </select>
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Grado</span>
-          <select [value]="formGradoActual()" (change)="onGradoActualChange($event)">
-            <option value="">Seleccionar</option>
-            <option *ngFor="let option of buildCatalogOptions('grado')" [value]="option">
-              {{ formatGrade(option) }}
-            </option>
-          </select>
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Ciclo formativo matriculado</span>
-          <input
-            placeholder="Ej. Gestión Administrativa"
-            [value]="formCicloMatriculado()"
-            (input)="formCicloMatriculado.set(readValue($event))"
-          />
-        </label>
-        <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-          <span>Curso</span>
-          <select
-            [disabled]="isCursoEspecializacion(formGradoActual())"
-            [value]="formCurso()"
-            (change)="formCurso.set(readValue($event))"
-          >
-            <option value="">Seleccionar</option>
-            <option value="1º">1º</option>
-            <option value="2º">2º</option>
-          </select>
-        </label>
-      </div>
-    </div>
-
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <div class="section-header flex flex-wrap items-center justify-between gap-3">
+    <div class="stepper-panel relative grid gap-4 rounded-2xl border border-slate-200 bg-white p-5">
+      <div class="stepper-header flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 class="text-base font-semibold text-slate-900">
-            3. Estudios que aporta para la convalidación
-          </h3>
-          <p class="hint">
-            LOE/LOGSE: selecciona grado, familia, ciclo y módulo (puedes usar "Todos"). Universitarios u
-            otros: completa la descripción.
+          <p class="stepper-title text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+            Paso {{ currentStep() }} de {{ totalSteps }}
+          </p>
+          <p class="stepper-subtitle text-lg font-semibold text-slate-900">
+            {{ steps[currentStep() - 1]?.label }}
           </p>
         </div>
-        <button
-          type="button"
-          class="add inline-flex items-center justify-center rounded-full bg-[#1c1e39] px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:text-[#72cfd5] disabled:opacity-60 disabled:cursor-not-allowed"
-          (click)="addEstudioRow()"
-          [disabled]="!canAddEstudio()"
-        >
-          Agregar estudio
-        </button>
+        <span class="stepper-status rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">
+          Progreso {{ stepProgress() | number: '1.0-0' }}%
+        </span>
       </div>
-
-      <div class="estudio-card grid gap-3 rounded-2xl bg-white p-4">
-        <div class="grid w-full min-w-0 gap-4 mb-6 max-md:mb-3">
-          <div class="grid gap-4 md:grid-cols-3">
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Tipo de estudios aportados</span>
-              <select
-                [value]="draftEstudio().tipo"
-                (change)="onTipoChange($event)"
-              >
-                <option value="">Seleccionar</option>
-                <option value="LOGSE">LOGSE</option>
-                <option value="LOE">LOE</option>
-                <option value="Universitarios">Estudios universitarios</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Grado</span>
-              <select
-                [disabled]="!isCatalogTipo(draftEstudio().tipo)"
-                [value]="draftEstudio().grado"
-                (change)="onEstudioSelectChange('grado', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of buildCatalogOptions('grado')" [value]="option">
-                  {{ formatGrade(option) }}
-                </option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Familia</span>
-              <select
-                [disabled]="!isCatalogTipo(draftEstudio().tipo) || !draftEstudio().grado"
-                [value]="draftEstudio().familia"
-                (change)="onEstudioSelectChange('familia', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of getEstudioFamiliaOptions()" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </label>
-          </div>
-          <div class="grid gap-4 md:grid-cols-2">
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Ciclo</span>
-              <select
-                [disabled]="!isCatalogTipo(draftEstudio().tipo) || !draftEstudio().familia"
-                [value]="draftEstudio().ciclo"
-                (change)="onEstudioSelectChange('ciclo', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option *ngFor="let option of getEstudioCicloOptions()" [value]="option">
-                  {{ option }}
-                </option>
-              </select>
-            </label>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Módulo</span>
-              <select
-                [disabled]="!isCatalogTipo(draftEstudio().tipo) || !draftEstudio().ciclo"
-                [value]="draftEstudio().modulo"
-                (change)="onEstudioSelectChange('modulo', $event)"
-              >
-                <option value="">Seleccionar</option>
-                <option value="Todos">Todos</option>
-                <option *ngFor="let option of getEstudioModuloOptions()" [value]="option">
-                  {{ option }}
-                </option>
-                </select>
-            </label>
-          </div>
-        </div>
-
-        <div
-          class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600"
-          *ngIf="isCatalogTipo(draftEstudio().tipo)"
-        >
-          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Previsualización</p>
-          <div class="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
-            <span>{{ previewGrado(draftEstudio()) }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ previewValue(draftEstudio().familia, 'Familia') }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ previewValue(draftEstudio().ciclo, 'Ciclo') }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ previewValue(draftEstudio().modulo, 'Módulo') }}</span>
-          </div>
-        </div>
-
-        <div
-          class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600"
-          *ngIf="isDescripcionRequired(draftEstudio().tipo)"
-        >
-          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
-            Descripción detallada
-          </p>
-          <textarea
-            class="mt-2 w-full min-w-0 max-w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-[0.95rem] text-slate-800 placeholder:text-slate-400 resize-y box-border"
-            rows="3"
-            [value]="draftEstudio().descripcion"
-            placeholder="Ej. Título de Técnico en Administración y Finanzas, IES Central (2022)"
-            (input)="updateEstudioField('descripcion', readValue($event))"
-          ></textarea>
-        </div>
-      </div>
-
-      <div class="estudios-list grid gap-4">
-        <div
-          class="estudio-card grid gap-3 rounded-2xl bg-white p-4"
-          *ngFor="let estudio of formEstudios(); let i = index; trackBy: trackByIndex"
-        >
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              Formación aportada
-            </p>
-            <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-              {{ estudio.tipo || 'Estudio' }}
-            </span>
-          </div>
+      <div class="stepper relative px-2 pb-1 pt-3">
+        <div class="stepper-track">
           <div
-            class="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700"
-            *ngIf="isCatalogTipo(estudio.tipo)"
-          >
-            <span>{{ previewGrado(estudio) }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ estudio.familia }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ estudio.ciclo }}</span>
-            <span class="text-slate-400">•</span>
-            <span>{{ estudio.modulo }}</span>
-          </div>
-          <p class="text-sm font-semibold text-slate-700" *ngIf="isDescripcionRequired(estudio.tipo)">
-            {{ estudio.descripcion }}
-          </p>
-          <div class="estudio-actions flex justify-end">
-            <button
-              type="button"
-              class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
-              (click)="removeEstudioRow(i)"
-            >
-              Quitar estudio
-            </button>
-          </div>
+            class="stepper-track-fill h-full rounded-full bg-[#72cfd5] transition-[width] duration-300"
+            [style.width.%]="stepProgress()"
+          ></div>
         </div>
-      </div>
-    </div>
-
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <div class="section-header flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h3 class="text-base font-semibold text-slate-900">
-            4. Módulos profesionales que solicita convalidar
-          </h3>
-          <p class="hint">
-            Usa las sugerencias basadas en los estudios aportados o escribe el módulo manualmente.
-          </p>
-          <p class="hint" *ngIf="formNormativa() === 'LOE'">
-            Código del módulo obligatorio para normativa LOE.
-          </p>
-        </div>
-        <button
-          type="button"
-          class="add inline-flex items-center justify-center rounded-full bg-[#1c1e39] px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:text-[#72cfd5] disabled:opacity-60 disabled:cursor-not-allowed"
-          (click)="addManualModule()"
-          [disabled]="!canAddManualModule()"
-        >
-          Agregar módulo
-        </button>
-      </div>
-      <div class="grid gap-4 lg:grid-cols-2">
-        <div class="grid gap-3 rounded-2xl bg-white p-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Sugerencias</p>
-            <span class="text-xs font-semibold text-slate-500">
-              {{ suggestedModules().length }} sugerencias
-            </span>
-          </div>
-          <p class="hint" *ngIf="suggestedModules().length">
-            Marca los módulos que deseas convalidar.
-          </p>
-          <div class="grid gap-2" *ngIf="suggestedModules().length; else noSuggestedModules">
-            <label
-              class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 transition hover:border-[#72cfd5]"
-              *ngFor="let option of suggestedModules(); trackBy: trackByIndex"
+        <div class="stepper-steps relative z-10 flex justify-between gap-3">
+          @for (step of steps; track step.id) {
+            <div
+              class="stepper-step flex flex-col items-center gap-1.5 text-center"
+              [class.is-active]="currentStep() === step.id"
+              [class.is-complete]="isStepComplete(step.id)"
             >
-              <input
-                type="checkbox"
-                class="mt-1 h-4 w-4 accent-[#72cfd5]"
-                [checked]="isSuggestedSelected(option)"
-                (change)="toggleSuggestedModule(option, $event)"
-              />
-              <span>{{ option }}</span>
-            </label>
-          </div>
-          <ng-template #noSuggestedModules>
-            <div class="grid gap-2 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Sin sugerencias
-              </p>
-              <p>
-                Las sugerencias aparecerán cuando añadas estudios en el apartado 3.
-              </p>
+              <div
+                class="stepper-node"
+                [class.is-active]="currentStep() === step.id"
+                [class.is-complete]="isStepComplete(step.id)"
+              >
+                @if (isStepComplete(step.id)) {
+                  &#10003;
+                } @else {
+                  {{ step.id }}
+                }
+              </div>
+              <span class="stepper-label text-[0.72rem] font-semibold text-slate-400">
+                {{ step.label }}
+              </span>
             </div>
-          </ng-template>
-        </div>
-
-        <div class="grid gap-3 rounded-2xl bg-white p-4">
-          <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Ingreso manual</p>
-          <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200">
-            <span>Nombre del módulo</span>
-            <input
-              placeholder="Ej. Gestión de Compras"
-              [value]="manualModuleDraft().nombre"
-              (input)="updateManualModuleDraft('nombre', readValue($event))"
-            />
-          </label>
-          <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200">
-            <span>Código del módulo (obligatorio si LOE)</span>
-            <input
-              placeholder="Ej. 1234"
-              [value]="manualModuleDraft().codigo"
-              (input)="updateManualModuleDraft('codigo', readValue($event))"
-            />
-          </label>
-          <p class="text-xs text-slate-500">
-            El botón “Agregar módulo” añadirá esta solicitud a la lista inferior.
-          </p>
-        </div>
-      </div>
-
-      <div class="module-list grid gap-3">
-        <div
-          class="module-card grid gap-3 rounded-2xl bg-white p-4"
-          *ngFor="let item of requestedModules(); trackBy: trackByRequestedId"
-        >
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              Solicitud a convalidar
-            </p>
-            <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
-              {{ item.source === 'suggested' ? 'Sugerencia' : 'Manual' }}
-            </span>
-          </div>
-          <div
-            class="text-sm font-semibold text-slate-800"
-            *ngIf="item.source === 'manual' && item.codigo; else requestedName"
-          >
-            {{ item.nombre }} <span class="text-slate-400">•</span> {{ item.codigo }}
-          </div>
-          <ng-template #requestedName>
-            <div class="text-sm font-semibold text-slate-800">{{ item.nombre }}</div>
-          </ng-template>
-          <div class="flex justify-end">
-            <button
-              type="button"
-              class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
-              (click)="removeRequestedModule(item)"
-            >
-              Quitar solicitud
-            </button>
-          </div>
+          }
         </div>
       </div>
     </div>
 
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3 class="text-base font-semibold text-slate-900">5. Documentación que debe aportar</h3>
-      <p class="hint">
-        Obligatorio: <span class="text-[#72cfd5] font-semibold">DNI</span> + 1 de los otros
-        <span class="text-[#72cfd5] font-semibold">documentos</span>.
-      </p>
+    @if (currentStep() === 1) {
+      <app-datos-personales
+        [values]="personalValues()"
+        (fieldChange)="onPersonalFieldChange($event)"
+      ></app-datos-personales>
+    }
 
+    @if (currentStep() === 2) {
+      <app-estudios-aportados
+        [draft]="draftEstudio()"
+        [estudios]="formEstudios()"
+        [canAdd]="canAddEstudio()"
+        [gradoOptions]="gradoOptions()"
+        [familiaOptions]="familiaOptions()"
+        [cicloOptions]="cicloOptions()"
+        [moduloOptions]="moduloOptions()"
+        (tipoChange)="onTipoChange($event)"
+        (selectChange)="onEstudioSelectChange($event.key, $event.value)"
+        (fieldChange)="updateEstudioField($event.key, $event.value)"
+        (addEstudio)="addEstudioRow()"
+        (removeEstudio)="removeEstudioRow($event)"
+      ></app-estudios-aportados>
+    }
 
+    @if (currentStep() === 3) {
+      <app-solicitudes
+        [suggestedModules]="suggestedModules()"
+        [selectedSuggested]="selectedSuggestedModules()"
+        [manualDraft]="manualModuleDraft()"
+        [canAddManual]="canAddManualModule()"
+        [requestedModules]="requestedModules()"
+        (toggleSuggested)="toggleSuggestedModule($event.value, $event.checked)"
+        (manualDraftChange)="updateManualModuleDraft($event.key, $event.value)"
+        (addManual)="addManualModule()"
+        (removeRequested)="removeRequestedModule($event)"
+      ></app-solicitudes>
+    }
 
-      <!-- TODO: Provisional. Simula la carga de documentación mientras no haya lógica de archivos. -->
-      <label class="inline-flex items-center gap-2 text-xs text-slate-500">
-        <input
-          type="checkbox"
-          class="h-4 w-4 accent-[#72cfd5]"
-          (change)="onDocsTodoToggle($event)"
-        />
-        <span>Marcar documentación como aportada (p. ej.: "DNI" + "Acreditación Laboral") (TEMPORAL vDesarrollo)</span>
-      </label>
+    @if (currentStep() === 4) {
+      <app-documentacion
+        [selectedOption]="selectedDocOption()"
+        (optionChange)="onDocOptionChange($event)"
+        (docsTodoToggle)="onDocsTodoToggle($event)"
+      ></app-documentacion>
+    }
 
-
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-          <p class="flex h-10 items-center px-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Fotocopia del DNI</p>
-          <label class="dropzone mt-auto flex h-32 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
-            <span>Arrastra el DNI aquí o haz clic para seleccionar</span>
-            <input type="file" class="hidden" />
-          </label>
-        </div>
-        <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-          <!-- <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Elige 1</p> -->
-          <select
-            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
-            [value]="selectedDocOption()"
-            (change)="onDocOptionChange($event)"
+    <div class="form-actions flex flex-col gap-3">
+      <div
+        class="step-actions flex w-full flex-wrap items-center gap-3"
+        [class.justify-between]="currentStep() > 1"
+        [class.justify-end]="currentStep() === 1"
+      >
+        @if (currentStep() > 1) {
+          <button
+            type="button"
+            class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-4 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+            (click)="previousStep()"
           >
-            <option value="">Seleccionar</option>
-            <option value="cert">Certificación académica oficial del ciclo cursado</option>
-            <option value="acred">Acreditación laboral</option>
-            <option value="justif">Documento justificativo de la convalidación</option>
-          </select>
-          <label
-            class="dropzone mt-auto flex h-32 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 hover:border-[#72cfd5]"
-            [class.pointer-events-none]="!selectedDocOption()"
-            [class.opacity-50]="!selectedDocOption()"
-            [class.cursor-not-allowed]="!selectedDocOption()"
-            [attr.aria-disabled]="!selectedDocOption()"
+            Atrás
+          </button>
+        }
+        @if (currentStep() < totalSteps) {
+          <button
+            type="button"
+            class="submit rounded-full bg-[#72cfd5] px-6 py-3 font-bold text-white transition cursor-pointer enabled:hover:text-[#1c1e39] disabled:hover:text-[#72cfd5] disabled:bg-[#c7d4dd] disabled:cursor-not-allowed"
+            (click)="nextStep()"
+            [disabled]="!currentStepValid()"
           >
-            <span>Arrastra el documento aquí o haz clic para seleccionar</span>
-            <input type="file" class="hidden" [disabled]="!selectedDocOption()" />
-          </label>
-        </div>
+            Siguiente
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="submit rounded-full bg-[#72cfd5] px-6 py-3 font-bold text-white transition cursor-pointer enabled:hover:text-[#1c1e39] disabled:hover:text-[#72cfd5] disabled:bg-[#c7d4dd] disabled:cursor-not-allowed"
+            (click)="requestSubmit()"
+            [disabled]="!currentStepValid()"
+          >
+            Finalizar
+          </button>
+        }
       </div>
-    </div>
-
-    <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
-      <h3 class="text-base font-semibold text-slate-900">6. Declaración final</h3>
-      <div class="signature-layout grid gap-4 items-stretch">
-        <div class="group grid gap-3 self-stretch rounded-2xl bg-white p-4">
-          <h3>Firma del solicitante</h3>
-          <canvas
-            #signatureCanvas
-            class="signature-pad w-full rounded-xl border border-slate-300 bg-white touch-none"
-            (pointerdown)="onSignaturePointerDown($event)"
-            (pointermove)="onSignaturePointerMove($event)"
-            (pointerup)="onSignaturePointerUp()"
-            (pointerleave)="onSignaturePointerUp()"
-          ></canvas>
-          <div class="signature-actions flex flex-wrap gap-3">
-            <button type="button" class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5] disabled:opacity-60 disabled:cursor-not-allowed" (click)="clearSignature()">Limpiar firma</button>
-            <label class="ghost inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5] disabled:opacity-60 disabled:cursor-not-allowed">
-              Importar firma
-              <input type="file" accept="image/*" (change)="onSignatureUpload($event)" class="hidden" />
-            </label>
-          </div>
-        </div>
-        <div class="signature-side grid gap-4">
-          <div class="group grid gap-3 self-stretch rounded-2xl bg-white p-4">
-            <h3>Fecha</h3>
-            <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200 [&>select]:w-full [&>select]:min-w-0 [&>select]:max-w-full [&>select]:rounded-xl [&>select]:border [&>select]:border-slate-300 [&>select]:bg-white [&>select]:px-3 [&>select]:py-2 [&>select]:text-[0.95rem] [&>select]:text-slate-800 [&>select]:box-border [&>select]:disabled:bg-slate-100 [&>select]:disabled:text-slate-400 [&>select]:disabled:cursor-not-allowed [&>select]:disabled:border-slate-200 [&>textarea]:w-full [&>textarea]:max-w-full [&>textarea]:rounded-xl [&>textarea]:border [&>textarea]:border-slate-300 [&>textarea]:bg-white [&>textarea]:px-3 [&>textarea]:py-2 [&>textarea]:text-[0.95rem] [&>textarea]:text-slate-800 [&>textarea]:resize-y [&>textarea]:box-border">
-              <span>Fecha de solicitud</span>
-              <input type="date" [value]="formFecha()" (input)="formFecha.set(readValue($event))" />
-            </label>
-          </div>
-          <div class="group signature-preview-group grid gap-2 self-stretch rounded-2xl bg-white p-3" *ngIf="signatureHasInk() && signatureDataUrl() as sig">
-            <h3>Firma • Vista previa</h3>
-            <div class="signature-preview">
-              <img
-                class="w-full rounded-xl border border-slate-300 bg-white object-contain"
-                [src]="sig"
-                alt="Firma"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-actions flex flex-col items-start gap-3">
-      <p class="hint">El botón se habilita cuando todos los campos obligatorios estén completos.</p>
-      <button type="button" class="submit rounded-full bg-[#72cfd5] px-6 py-3 font-bold text-white transition cursor-pointer enabled:hover:text-[#1c1e39] disabled:hover:text-[#72cfd5] disabled:bg-[#c7d4dd] disabled:cursor-not-allowed" [disabled]="!isFormValid()" (click)="requestSubmit()">
-        Enviar solicitud
-      </button>
-      <p class="hint" *ngIf="submitted()">Solicitud enviada.</p>
+      @if (submitted()) {
+        <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Solicitud enviada.</p>
+      }
     </div>
   </form>
 </section>
 
-<div
-  class="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/40 p-4"
-  *ngIf="confirmDialog()"
->
-  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-    <div class="flex items-start justify-between gap-3">
-      <div>
-        <h3 class="text-lg font-semibold text-slate-900">Enviar solicitud</h3>
-        <p class="text-sm text-slate-600">
-          ¿Seguro que deseas enviar la solicitud de convalidación? Podrás revisar los datos antes
-          de enviar.
-        </p>
+@if (confirmDialog()) {
+  <div class="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900">Enviar solicitud</h3>
+          <p class="text-sm text-slate-600">
+            ¿Seguro que deseas enviar la solicitud de convalidación? Podrás revisar los datos antes
+            de enviar.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="cancelSubmit()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
       </div>
-      <button
-        type="button"
-        class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
-        (click)="cancelSubmit()"
-        aria-label="Cerrar"
-      >
-        ×
-      </button>
-    </div>
 
-    <div class="mt-5 flex flex-wrap items-center justify-end gap-2">
-      <button
-        type="button"
-        class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
-        (click)="cancelSubmit()"
-      >
-        Cancelar
-      </button>
-      <button
-        type="button"
-        class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
-        (click)="confirmSubmit()"
-        [disabled]="!isFormValid()"
-      >
-        Enviar
-      </button>
+      <div class="mt-5 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
+          (click)="cancelSubmit()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
+          (click)="confirmSubmit()"
+          [disabled]="!isFormValid()"
+        >
+          Enviar
+        </button>
+      </div>
     </div>
   </div>
-</div>
+}
+
+
+
 
 
 

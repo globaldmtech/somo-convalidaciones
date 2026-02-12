@@ -1,52 +1,38 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  ViewChild,
-  computed,
-  signal
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { DbService } from '../../core/db.service';
 import { CatalogRow, ConvalidacionRow } from '../../core/models';
-
-type FilterKey = 'grado' | 'familia' | 'ciclo' | 'modulo';
-
-type Normativa = 'LOGSE' | 'LOE' | '';
-
-type EstudiosTipo = 'LOGSE' | 'LOE' | 'Universitarios' | 'Otros' | '';
-
-type EstudioEntry = {
-  tipo: EstudiosTipo;
-  grado: string;
-  familia: string;
-  ciclo: string;
-  modulo: string;
-  descripcion: string;
-};
-
-type ManualModuleEntry = {
-  id: string;
-  nombre: string;
-  codigo: string;
-};
-
-type RequestedModule = {
-  id: string;
-  source: 'suggested' | 'manual';
-  nombre: string;
-  codigo?: string;
-};
+import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
+import { DocumentacionComponent } from './documentacion/documentacion.component';
+import { EstudiosAportadosComponent } from './estudios-aportados/estudios-aportados.component';
+import { SolicitudesComponent } from './solicitudes/solicitudes.component';
+import {
+  EstudioEntry,
+  EstudiosTipo,
+  FilterKey,
+  ManualModuleEntry,
+  ManualModuleDraft,
+  PersonalFieldKey,
+  PersonalValues,
+  RequestedModule
+} from './formulario-oficial.types';
 
 @Component({
   selector: 'app-formulario-oficial',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    DatosPersonalesComponent,
+    EstudiosAportadosComponent,
+    SolicitudesComponent,
+    DocumentacionComponent
+  ],
   templateUrl: './formulario-oficial.component.html',
-  styleUrl: './formulario-oficial.component.css'
+  host: { class: 'block' },
+  styleUrl: './formulario-oficial.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormularioOficialComponent implements AfterViewInit {
-  @ViewChild('signatureCanvas') private signatureCanvas?: ElementRef<HTMLCanvasElement>;
-
+export class FormularioOficialComponent {
+  private readonly db = inject(DbService);
   private readonly rowsSignal = signal<ConvalidacionRow[]>([]);
   private readonly catalogRowsSignal = signal<CatalogRow[]>([]);
 
@@ -54,6 +40,14 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly error = signal<string | null>(null);
   protected readonly submitted = signal(false);
   protected readonly confirmDialog = signal(false);
+  protected readonly steps = [
+    { id: 1, label: 'Datos personales' },
+    { id: 2, label: 'Estudios aportados' },
+    { id: 3, label: 'Módulos solicitados' },
+    { id: 4, label: 'Documentación' }
+  ] as const;
+  protected readonly totalSteps = this.steps.length;
+  protected readonly currentStep = signal(1);
 
   protected readonly formNif = signal('');
   protected readonly formNombre = signal('');
@@ -65,10 +59,18 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly formTelefonoFijo = signal('');
   protected readonly formTelefonoMovil = signal('');
   protected readonly formEmail = signal('');
-  protected readonly formCicloMatriculado = signal('');
-  protected readonly formNormativa = signal<Normativa>('');
-  protected readonly formGradoActual = signal('');
-  protected readonly formCurso = signal('');
+  protected readonly personalValues = computed<PersonalValues>(() => ({
+    nif: this.formNif(),
+    nombre: this.formNombre(),
+    apellidos: this.formApellidos(),
+    domicilio: this.formDomicilio(),
+    codigoPostal: this.formCodigoPostal(),
+    localidad: this.formLocalidad(),
+    provincia: this.formProvincia(),
+    telefonoFijo: this.formTelefonoFijo(),
+    telefonoMovil: this.formTelefonoMovil(),
+    email: this.formEmail()
+  }));
 
   protected readonly draftEstudio = signal<EstudioEntry>({
     tipo: '',
@@ -81,7 +83,7 @@ export class FormularioOficialComponent implements AfterViewInit {
 
   protected readonly formEstudios = signal<EstudioEntry[]>([]);
 
-  protected readonly manualModuleDraft = signal({ nombre: '', codigo: '' });
+  protected readonly manualModuleDraft = signal<ManualModuleDraft>({ nombre: '', codigo: '' });
   protected readonly manualModules = signal<ManualModuleEntry[]>([]);
   protected readonly selectedSuggestedModules = signal<string[]>([]);
 
@@ -90,73 +92,97 @@ export class FormularioOficialComponent implements AfterViewInit {
   protected readonly docAcred = signal(false);
   protected readonly docJustif = signal(false);
 
-  protected readonly formFecha = signal('');
-  protected readonly signatureDataUrl = signal<string | null>(null);
-  protected readonly signatureHasInk = signal(false);
-
   protected readonly suggestedModules = computed(() => this.buildSuggestedModules());
   protected readonly requestedModules = computed(() => this.buildRequestedModules());
   protected readonly canAddEstudio = computed(() => this.isEstudioEntryComplete(this.draftEstudio()));
   protected readonly canAddManualModule = computed(() => this.isManualModuleDraftValid());
-
-  protected readonly isFormValid = computed(() => {
-    const personalOk = [
-      this.formNif(),
-      this.formNombre(),
-      this.formApellidos(),
-      this.formDomicilio(),
-      this.formCodigoPostal(),
-      this.formLocalidad(),
-      this.formProvincia(),
-      this.formTelefonoMovil(),
-      this.formEmail()
-    ].every((value) => value.trim().length > 0);
-
-    const academicOk = [
-      this.formCicloMatriculado(),
-      this.formNormativa(),
-      this.formGradoActual(),
-      this.formCurso()
-    ].every((value) => String(value).trim().length > 0);
-
-    const estudios = this.formEstudios();
-    const estudiosOk = estudios.length > 0 && estudios.every((entry) => this.isEstudioEntryComplete(entry));
-
-    const requiresCode = this.formNormativa() === 'LOE';
-    const manualOk = this.manualModules().every(
-      (row) => row.nombre.trim().length > 0 && (!requiresCode || row.codigo.trim().length > 0)
-    );
-    const modulosOk =
-      this.selectedSuggestedModules().length + this.manualModules().length > 0 && manualOk;
-
-    const docsOk = this.docDni() && (this.docCert() || this.docAcred() || this.docJustif());
-
-    const signatureOk = Boolean(this.signatureDataUrl());
-
-    const fechaOk = Boolean(this.formFecha());
-
-    return personalOk && academicOk && estudiosOk && modulosOk && docsOk && signatureOk && fechaOk;
+  protected readonly gradoOptions = computed(() => this.buildCatalogOptions('grado'));
+  protected readonly familiaOptions = computed(() => this.getEstudioFamiliaOptions());
+  protected readonly cicloOptions = computed(() => this.getEstudioCicloOptions());
+  protected readonly moduloOptions = computed(() => this.getEstudioModuloOptions());
+  protected readonly currentStepValid = computed(() => this.isStepValid(this.currentStep()));
+  protected readonly stepProgress = computed(() => {
+    if (this.totalSteps <= 1) return 0;
+    return ((this.currentStep() - 1) / (this.totalSteps - 1)) * 100;
   });
 
-  private drawing = false;
-  private ctx?: CanvasRenderingContext2D | null;
-  private strokeDrawn = false;
+  protected readonly isFormValid = computed(() => {
+    return (
+      this.isPersonalValid() &&
+      this.isEstudiosValid() &&
+      this.isModulosValid() &&
+      this.isDocsValid()
+    );
+  });
+
   private manualModuleSequence = 0;
 
-  constructor(private readonly db: DbService) {
+  constructor() {
     this.loadData();
   }
 
-  ngAfterViewInit(): void {
-    this.initSignatureCanvas();
+  protected onPersonalFieldChange(change: { key: PersonalFieldKey; value: string }): void {
+    switch (change.key) {
+      case 'nif':
+        this.formNif.set(change.value);
+        break;
+      case 'nombre':
+        this.formNombre.set(change.value);
+        break;
+      case 'apellidos':
+        this.formApellidos.set(change.value);
+        break;
+      case 'domicilio':
+        this.formDomicilio.set(change.value);
+        break;
+      case 'codigoPostal':
+        this.formCodigoPostal.set(change.value);
+        break;
+      case 'localidad':
+        this.formLocalidad.set(change.value);
+        break;
+      case 'provincia':
+        this.formProvincia.set(change.value);
+        break;
+      case 'telefonoFijo':
+        this.formTelefonoFijo.set(change.value);
+        break;
+      case 'telefonoMovil':
+        this.formTelefonoMovil.set(change.value);
+        break;
+      case 'email':
+        this.formEmail.set(change.value);
+        break;
+    }
   }
 
-  protected trackByIndex(index: number): number {
-    return index;
+  protected previousStep(): void {
+    if (this.currentStep() <= 1) return;
+    this.currentStep.update((step) => Math.max(1, step - 1));
   }
 
-  protected trackByRequestedId(_: number, item: RequestedModule): string {
-    return item.id;
+  protected nextStep(): void {
+    if (this.currentStep() >= this.totalSteps || !this.isStepValid(this.currentStep())) return;
+    this.currentStep.update((step) => Math.min(this.totalSteps, step + 1));
+  }
+
+  protected isStepComplete(step: number): boolean {
+    return step < this.currentStep() && this.isStepValid(step);
+  }
+
+  protected isStepValid(step: number): boolean {
+    switch (step) {
+      case 1:
+        return this.isPersonalValid();
+      case 2:
+        return this.isEstudiosValid();
+      case 3:
+        return this.isModulosValid();
+      case 4:
+        return this.isDocsValid();
+      default:
+        return false;
+    }
   }
 
   protected addEstudioRow(): void {
@@ -174,13 +200,11 @@ export class FormularioOficialComponent implements AfterViewInit {
     this.draftEstudio.update((row) => ({ ...row, [key]: value }));
   }
 
-  protected onTipoChange(event: Event): void {
-    const value = this.readValue(event) as EstudiosTipo;
+  protected onTipoChange(value: EstudiosTipo): void {
     this.resetDraftEstudio(value);
   }
 
-  protected onEstudioSelectChange(key: FilterKey, event: Event): void {
-    const value = this.readValue(event);
+  protected onEstudioSelectChange(key: FilterKey, value: string): void {
     this.draftEstudio.update((row) => {
       if (key === 'grado') {
         return { ...row, grado: value, familia: '', ciclo: '', modulo: 'Todos' };
@@ -207,22 +231,17 @@ export class FormularioOficialComponent implements AfterViewInit {
     this.manualModuleDraft.set({ nombre: '', codigo: '' });
   }
 
-  protected updateManualModuleDraft(key: 'nombre' | 'codigo', value: string): void {
+  protected updateManualModuleDraft(key: keyof ManualModuleDraft, value: string): void {
     this.manualModuleDraft.update((draft) => ({ ...draft, [key]: value }));
   }
 
-  protected toggleSuggestedModule(value: string, event: Event): void {
-    const checked = Boolean((event.target as HTMLInputElement | null)?.checked);
+  protected toggleSuggestedModule(value: string, checked: boolean): void {
     this.selectedSuggestedModules.update((items) => {
       if (checked) {
         return items.includes(value) ? items : [...items, value];
       }
       return items.filter((item) => item !== value);
     });
-  }
-
-  protected isSuggestedSelected(value: string): boolean {
-    return this.selectedSuggestedModules().includes(value);
   }
 
   protected removeRequestedModule(item: RequestedModule): void {
@@ -233,86 +252,7 @@ export class FormularioOficialComponent implements AfterViewInit {
     this.manualModules.update((rows) => rows.filter((row) => row.id !== item.id));
   }
 
-  protected onNormativaChange(event: Event): void {
-    this.formNormativa.set(this.parseNormativa(this.readValue(event)));
-  }
-
-  protected onGradoActualChange(event: Event): void {
-    const value = this.readValue(event);
-    this.formGradoActual.set(value);
-    if (this.isCursoEspecializacion(value)) {
-      this.formCurso.set('1º');
-    }
-  }
-
-  protected onSignaturePointerDown(event: PointerEvent): void {
-    if (!this.ctx) return;
-    this.drawing = true;
-    this.strokeDrawn = false;
-    this.ctx.beginPath();
-    this.ctx.moveTo(event.offsetX, event.offsetY);
-  }
-
-  protected onSignaturePointerMove(event: PointerEvent): void {
-    if (!this.ctx || !this.drawing) return;
-    this.ctx.lineTo(event.offsetX, event.offsetY);
-    this.ctx.stroke();
-    this.strokeDrawn = true;
-    this.signatureHasInk.set(true);
-  }
-
-  protected onSignaturePointerUp(): void {
-    if (!this.ctx) return;
-    this.drawing = false;
-    if (!this.strokeDrawn) return;
-    this.signatureDataUrl.set(this.signatureCanvas?.nativeElement.toDataURL('image/png') ?? null);
-  }
-
-  protected clearSignature(): void {
-    if (!this.ctx || !this.signatureCanvas) return;
-    const canvas = this.signatureCanvas.nativeElement;
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-    this.signatureDataUrl.set(null);
-    this.signatureHasInk.set(false);
-  }
-
-  protected onSignatureUpload(event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    const file = target?.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = typeof reader.result === 'string' ? reader.result : null;
-      this.signatureDataUrl.set(result);
-      this.signatureHasInk.set(Boolean(result));
-      if (result) {
-        this.drawSignatureImage(result);
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-
-  protected onDocToggle(key: 'dni' | 'cert' | 'acred' | 'justif', event: Event): void {
-    const target = event.target as HTMLInputElement | null;
-    const checked = Boolean(target?.checked);
-    switch (key) {
-      case 'dni':
-        this.docDni.set(checked);
-        break;
-      case 'cert':
-        this.docCert.set(checked);
-        break;
-      case 'acred':
-        this.docAcred.set(checked);
-        break;
-      case 'justif':
-        this.docJustif.set(checked);
-        break;
-    }
-  }
-
-  protected onDocOptionChange(event: Event): void {
-    const value = this.readValue(event);
+  protected onDocOptionChange(value: string): void {
     this.docCert.set(value === 'cert');
     this.docAcred.set(value === 'acred');
     this.docJustif.set(value === 'justif');
@@ -321,8 +261,7 @@ export class FormularioOficialComponent implements AfterViewInit {
 
 
   // TODO: Provisional. Simula documentación aportada hasta implementar la carga real de archivos.
-  protected onDocsTodoToggle(event: Event): void {
-    const checked = Boolean((event.target as HTMLInputElement | null)?.checked);
+  protected onDocsTodoToggle(checked: boolean): void {
     this.docDni.set(checked);
     this.docCert.set(false);
     this.docAcred.set(false);
@@ -361,28 +300,36 @@ export class FormularioOficialComponent implements AfterViewInit {
     this.confirmDialog.set(false);
   }
 
-  protected formatGrade(value: string | null): string {
-    if (!value) return 'Sin grado';
-    if (value === 'GM') return 'GM · Grado medio';
-    if (value === 'GS') return 'GS · Grado superior';
-    return value;
-  }
-
   protected isCatalogTipo(tipo: EstudiosTipo): boolean {
     return tipo === 'LOGSE' || tipo === 'LOE';
   }
 
-  protected isDescripcionRequired(tipo: EstudiosTipo): boolean {
-    return tipo === 'Universitarios' || tipo === 'Otros';
+  private isPersonalValid(): boolean {
+    return [
+      this.formNif(),
+      this.formNombre(),
+      this.formApellidos(),
+      this.formDomicilio(),
+      this.formCodigoPostal(),
+      this.formLocalidad(),
+      this.formProvincia(),
+      this.formTelefonoMovil(),
+      this.formEmail()
+    ].every((value) => value.trim().length > 0);
   }
 
-  protected isCursoEspecializacion(grado: string): boolean {
-    return this.normalizeKey(grado) === 'curso de especializacion';
+  private isEstudiosValid(): boolean {
+    const estudios = this.formEstudios();
+    return estudios.length > 0 && estudios.every((entry) => this.isEstudioEntryComplete(entry));
   }
 
-  protected readValue(event: Event): string {
-    const target = event.target as HTMLInputElement | HTMLSelectElement | null;
-    return target?.value ?? '';
+  private isModulosValid(): boolean {
+    const manualOk = this.manualModules().every((row) => row.nombre.trim().length > 0);
+    return this.selectedSuggestedModules().length + this.manualModules().length > 0 && manualOk;
+  }
+
+  private isDocsValid(): boolean {
+    return this.docDni() && (this.docCert() || this.docAcred() || this.docJustif());
   }
 
   protected getEstudioFamiliaOptions(): string[] {
@@ -525,13 +472,6 @@ export class FormularioOficialComponent implements AfterViewInit {
     );
   }
 
-  private parseNormativa(value: string): Normativa {
-    if (value === 'LOGSE' || value === 'LOE') {
-      return value;
-    }
-    return '';
-  }
-
   private async loadData(): Promise<void> {
     try {
       this.loading.set(true);
@@ -547,37 +487,6 @@ export class FormularioOficialComponent implements AfterViewInit {
     } finally {
       this.loading.set(false);
     }
-  }
-
-  private initSignatureCanvas(): void {
-    if (!this.signatureCanvas) return;
-    const canvas = this.signatureCanvas.nativeElement;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = Math.max(320, Math.floor(rect.width));
-    canvas.height = 200;
-    this.ctx = canvas.getContext('2d');
-    if (!this.ctx) return;
-    this.ctx.lineWidth = 2;
-    this.ctx.lineCap = 'round';
-    this.ctx.strokeStyle = '#1f2a33';
-
-    const existing = this.signatureDataUrl();
-    if (existing) {
-      this.signatureHasInk.set(true);
-      this.drawSignatureImage(existing);
-    }
-  }
-
-  private drawSignatureImage(dataUrl: string): void {
-    if (!this.ctx || !this.signatureCanvas) return;
-    const img = new Image();
-    img.onload = () => {
-      const canvas = this.signatureCanvas?.nativeElement;
-      if (!canvas || !this.ctx) return;
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
-    img.src = dataUrl;
   }
 
   private resetDraftEstudio(tipo: EstudiosTipo): void {
@@ -604,11 +513,7 @@ export class FormularioOficialComponent implements AfterViewInit {
 
   private isManualModuleDraftValid(): boolean {
     const draft = this.manualModuleDraft();
-    const requiresCode = this.formNormativa() === 'LOE';
-    return (
-      draft.nombre.trim().length > 0 &&
-      (!requiresCode || draft.codigo.trim().length > 0)
-    );
+    return draft.nombre.trim().length > 0;
   }
 
   private nextManualModuleId(): string {
@@ -622,15 +527,6 @@ export class FormularioOficialComponent implements AfterViewInit {
       return Boolean(entry.grado && entry.familia && entry.ciclo && entry.modulo);
     }
     return entry.descripcion.trim().length > 0;
-  }
-
-  protected previewValue(value: string, fallback: string): string {
-    return value?.trim() ? value : fallback;
-  }
-
-  protected previewGrado(entry: EstudioEntry): string {
-    if (!entry.grado) return 'Grado';
-    return this.formatGrade(entry.grado);
   }
 
 }
