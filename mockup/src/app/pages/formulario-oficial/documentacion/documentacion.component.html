@@ -3,47 +3,202 @@
   <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
     Obligatorio: <span class="text-[#72cfd5] font-semibold">DNI</span> + 1 de los otros
     <span class="text-[#72cfd5] font-semibold">documentos</span>.
+    Asocia cada documento al estudio o estudios que acredita.
   </p>
 
-  <!-- TODO: Provisional. Simula la carga de documentación mientras no haya lógica de archivos. -->
-  <label class="inline-flex items-center gap-2 text-xs text-slate-500">
-    <input
-      type="checkbox"
-      class="h-4 w-4 accent-[#72cfd5]"
-      (change)="handleDocsToggle($event)"
-    />
-    <span>Marcar documentación como aportada (p. ej.: "DNI" + "Acreditación Laboral") (TEMPORAL vDesarrollo)</span>
-  </label>
+  <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+    <div class="flex h-full min-h-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          Fotocopia del DNI
+        </p>
+        <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <span>Documento único</span>
+          <span class="relative inline-flex items-center">
+            <input
+              type="checkbox"
+              class="peer sr-only"
+              [checked]="dniModeSingle()"
+              (change)="handleDniModeToggle($event)"
+            />
+            <span class="h-5 w-9 rounded-full bg-slate-200 transition peer-checked:bg-[#72cfd5]"></span>
+            <span class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition peer-checked:translate-x-4"></span>
+          </span>
+        </label>
+      </div>
 
-  <div class="grid gap-4 md:grid-cols-2">
-    <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-      <p class="flex h-10 items-center px-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Fotocopia del DNI</p>
-      <label class="dropzone mt-auto flex h-32 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
-        <span>Arrastra el DNI aquí o haz clic para seleccionar</span>
-        <input type="file" class="hidden" />
-      </label>
+      @if (dniModeSingle()) {
+        @if (!dniSingleAttached()) {
+          <label class="dropzone flex flex-1 min-h-40 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
+            <span>Arrastra el DNI aquí o haz clic para seleccionar</span>
+            <input type="file" class="hidden" (change)="handleDniSingleChange($event)" />
+          </label>
+        } @else {
+          <div class="flex flex-1 flex-col rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div class="grid gap-1">
+              <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                Documento adjunto
+              </p>
+              <p class="text-sm font-semibold text-slate-800 break-all">
+                {{ dniSingleFileName() || 'DNI adjunto' }}
+              </p>
+            </div>
+            <div class="mt-auto flex justify-end pt-3">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                (click)="handleDniSingleRemove()"
+              >
+                Quitar
+              </button>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="grid flex-1 gap-4">
+          <div class="grid gap-2">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              Anverso / Frontal
+            </p>
+            @if (!dniFrontAttached()) {
+              <label class="dropzone flex h-24 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center text-sm font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
+                Arrastra el anverso aquí o haz clic para seleccionar
+                <input type="file" class="hidden" (change)="handleDniFrontChange($event)" />
+              </label>
+            } @else {
+              <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-700">
+                <span class="break-all">{{ dniFrontFileName() || 'Anverso adjunto' }}</span>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                  (click)="handleDniFrontRemove()"
+                >
+                  Quitar
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="grid gap-2">
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              Reverso / Trasera
+            </p>
+            @if (!dniBackAttached()) {
+              <label class="dropzone flex h-24 items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center text-sm font-semibold text-slate-600 cursor-pointer hover:border-[#72cfd5]">
+                Arrastra el reverso aquí o haz clic para seleccionar
+                <input type="file" class="hidden" (change)="handleDniBackChange($event)" />
+              </label>
+            } @else {
+              <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm font-semibold text-slate-700">
+                <span class="break-all">{{ dniBackFileName() || 'Reverso adjunto' }}</span>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                  (click)="handleDniBackRemove()"
+                >
+                  Quitar
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
-    <div class="flex h-full flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4">
-      <select
-        class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
-        [value]="selectedOption()"
-        (change)="handleOptionChange($event)"
-      >
-        <option value="">Seleccionar</option>
-        <option value="cert">Certificación académica oficial del ciclo cursado</option>
-        <option value="acred">Acreditación laboral</option>
-        <option value="justif">Documento justificativo de la convalidación</option>
-      </select>
-      <label
-        class="dropzone mt-auto flex h-32 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-5 text-center font-semibold text-slate-600 hover:border-[#72cfd5]"
-        [class.pointer-events-none]="!selectedOption()"
-        [class.opacity-50]="!selectedOption()"
-        [class.cursor-not-allowed]="!selectedOption()"
-        [attr.aria-disabled]="!selectedOption()"
-      >
-        <span>Arrastra el documento aquí o haz clic para seleccionar</span>
-        <input type="file" class="hidden" [disabled]="!selectedOption()" />
-      </label>
+
+    <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+        Documentación adicional
+      </p>
+      @if (!estudios().length) {
+        <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+          Aún no hay estudios aportados para vincular.
+        </div>
+      } @else {
+        <div class="grid gap-4 max-h-96 overflow-y-auto pr-2">
+        <!-- <div class="grid gap-4 max-h-128 overflow-y-auto pr-2"> -->
+          @for (estudio of estudios(); track $index; let idx = $index) {
+            <div class="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p class="text-sm font-semibold text-slate-700">
+                    {{ formatEstudio(estudio, idx) }}
+                  </p>
+                </div>
+              </div>
+              <select
+                class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                aria-label="Tipo de documento"
+                (change)="handleGlobalTipoChange(idx, $event)"
+              >
+                <option value="">Tipo de documento</option>
+                <option value="cert">Certificación académica oficial</option>
+                <option value="acred">Acreditación laboral</option>
+                <option value="justif">Documento justificativo</option>
+              </select>
+              @if (getSelectedTipo(idx)) {
+                <label
+                  class="dropzone flex h-24 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center text-sm font-semibold text-slate-600 transition hover:border-[#72cfd5]"
+                >
+                  Arrastra el documento aquí o haz clic para seleccionar
+                  <input
+                    type="file"
+                    class="hidden"
+                    (change)="handleStudyDocAdd(idx, getSelectedTipo(idx), $event)"
+                  />
+                </label>
+              }
+
+              @if (!docsForStudy(idx).length) {
+              } @else {
+                <div class="grid gap-3">
+                  @for (doc of docsForStudy(idx); track doc.id) {
+                    <div class="grid gap-3 rounded-2xl border border-slate-200 bg-white p-3">
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                          {{ formatDocTipo(doc.tipo) }}
+                        </p>
+                        <p class="text-sm font-semibold text-slate-700">
+                          {{ formatDocName(doc) }}
+                        </p>
+                      </div>
+
+                      <div class="flex flex-wrap items-center justify-between gap-3 pt-3">
+                        <div class="grid gap-2 text-xs text-slate-500">
+                          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                            Vinculado a
+                          </p>
+                          <div class="flex flex-wrap gap-2">
+                            @for (est of estudios(); track $index; let sIdx = $index) {
+                              <label
+                                class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
+                              >
+                                <input
+                                  type="checkbox"
+                                  class="h-3 w-3 accent-[#72cfd5]"
+                                  [checked]="isStudyLinked(doc, sIdx)"
+                                  (change)="handleStudyToggle(doc.id, sIdx, $event)"
+                                />
+                                Estudio {{ sIdx + 1 }}
+                              </label>
+                            }
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                          (click)="removeDoc.emit(doc.id)"
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
     </div>
   </div>
 </div>

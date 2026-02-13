@@ -29,7 +29,7 @@
         <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
           Marca los módulos que deseas convalidar.
         </p>
-        <div class="grid gap-2">
+        <div class="grid gap-2 max-h-60 overflow-y-auto pr-2">
           @for (option of suggestedModules(); track option) {
             <label
               class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 transition hover:border-[#72cfd5]"

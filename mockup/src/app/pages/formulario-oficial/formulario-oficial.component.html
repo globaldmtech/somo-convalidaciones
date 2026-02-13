@@ -105,9 +105,23 @@
 
     @if (currentStep() === 4) {
       <app-documentacion
-        [selectedOption]="selectedDocOption()"
-        (optionChange)="onDocOptionChange($event)"
-        (docsTodoToggle)="onDocsTodoToggle($event)"
+        [estudios]="formEstudios()"
+        [docEntries]="docEntries()"
+        [dniModeSingle]="docDniModeSingle()"
+        [dniSingleAttached]="docDniSingleAttached()"
+        [dniFrontAttached]="docDniFrontAttached()"
+        [dniBackAttached]="docDniBackAttached()"
+        [dniSingleFileName]="docDniFileName()"
+        [dniFrontFileName]="docDniFrontName()"
+        [dniBackFileName]="docDniBackName()"
+        (dniModeChange)="onDniModeChange($event)"
+        (dniSingleChange)="onDniSingleChange($event)"
+        (dniFrontChange)="onDniFrontChange($event)"
+        (dniBackChange)="onDniBackChange($event)"
+        (addDocForStudy)="addDocEntryForStudy($event.studyIndex, $event.file, $event.tipo)"
+        (removeDoc)="removeDocEntry($event)"
+        (docTypeChange)="updateDocEntryType($event.id, $event.value)"
+        (docStudyToggle)="toggleDocEntryStudy($event.id, $event.studyIndex, $event.checked)"
       ></app-documentacion>
     }
 

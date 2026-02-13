@@ -12,6 +12,8 @@ import {
   FilterKey,
   ManualModuleEntry,
   ManualModuleDraft,
+  DocumentoEntry,
+  DocumentoTipo,
   PersonalFieldKey,
   PersonalValues,
   RequestedModule
@@ -87,10 +89,17 @@ export class FormularioOficialComponent {
   protected readonly manualModules = signal<ManualModuleEntry[]>([]);
   protected readonly selectedSuggestedModules = signal<string[]>([]);
 
-  protected readonly docDni = signal(false);
-  protected readonly docCert = signal(false);
-  protected readonly docAcred = signal(false);
-  protected readonly docJustif = signal(false);
+  protected readonly docDniModeSingle = signal(true);
+  protected readonly docDniFileSingle = signal<File | null>(null);
+  protected readonly docDniFileFront = signal<File | null>(null);
+  protected readonly docDniFileBack = signal<File | null>(null);
+  protected readonly docDniFileName = computed(() => this.docDniFileSingle()?.name ?? '');
+  protected readonly docDniFrontName = computed(() => this.docDniFileFront()?.name ?? '');
+  protected readonly docDniBackName = computed(() => this.docDniFileBack()?.name ?? '');
+  protected readonly docDniSingleAttached = computed(() => Boolean(this.docDniFileSingle()));
+  protected readonly docDniFrontAttached = computed(() => Boolean(this.docDniFileFront()));
+  protected readonly docDniBackAttached = computed(() => Boolean(this.docDniFileBack()));
+  protected readonly docEntries = signal<DocumentoEntry[]>([]);
 
   protected readonly suggestedModules = computed(() => this.buildSuggestedModules());
   protected readonly requestedModules = computed(() => this.buildRequestedModules());
@@ -116,6 +125,7 @@ export class FormularioOficialComponent {
   });
 
   private manualModuleSequence = 0;
+  private docEntrySequence = 0;
 
   constructor() {
     this.loadData();
@@ -194,6 +204,16 @@ export class FormularioOficialComponent {
 
   protected removeEstudioRow(index: number): void {
     this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
+    this.docEntries.update((entries) =>
+      entries
+        .map((entry) => {
+          const normalized = entry.estudioIndices
+            .filter((value) => value !== index)
+            .map((value) => (value > index ? value - 1 : value));
+          return { ...entry, estudioIndices: normalized };
+        })
+        .filter((entry) => entry.estudioIndices.length > 0)
+    );
   }
 
   protected updateEstudioField(key: keyof EstudioEntry, value: string): void {
@@ -252,32 +272,69 @@ export class FormularioOficialComponent {
     this.manualModules.update((rows) => rows.filter((row) => row.id !== item.id));
   }
 
-  protected onDocOptionChange(value: string): void {
-    this.docCert.set(value === 'cert');
-    this.docAcred.set(value === 'acred');
-    this.docJustif.set(value === 'justif');
-  }
-
-
-
-  // TODO: Provisional. Simula documentación aportada hasta implementar la carga real de archivos.
-  protected onDocsTodoToggle(checked: boolean): void {
-    this.docDni.set(checked);
-    this.docCert.set(false);
-    this.docAcred.set(false);
-    this.docJustif.set(false);
-    if (checked) {
-      this.docAcred.set(true);
+  protected onDniModeChange(single: boolean): void {
+    this.docDniModeSingle.set(single);
+    if (single) {
+      this.docDniFileFront.set(null);
+      this.docDniFileBack.set(null);
+    } else {
+      this.docDniFileSingle.set(null);
     }
   }
 
+  protected onDniSingleChange(file: File | null): void {
+    this.docDniFileSingle.set(file);
+  }
 
-  
-  protected selectedDocOption(): string {
-    if (this.docCert()) return 'cert';
-    if (this.docAcred()) return 'acred';
-    if (this.docJustif()) return 'justif';
-    return '';
+  protected onDniFrontChange(file: File | null): void {
+    this.docDniFileFront.set(file);
+  }
+
+  protected onDniBackChange(file: File | null): void {
+    this.docDniFileBack.set(file);
+  }
+
+  protected addDocEntryForStudy(
+    studyIndex: number,
+    file: File | null,
+    tipo: DocumentoTipo
+  ): void {
+    if (!file) return;
+    const entry: DocumentoEntry = {
+      id: this.nextDocEntryId(),
+      tipo,
+      estudioIndices: [studyIndex],
+      fileName: file.name,
+      file
+    };
+    this.docEntries.update((entries) => [...entries, entry]);
+  }
+
+  protected removeDocEntry(id: string): void {
+    this.docEntries.update((entries) => entries.filter((entry) => entry.id !== id));
+  }
+
+  protected updateDocEntryType(id: string, value: DocumentoTipo): void {
+    this.docEntries.update((entries) =>
+      entries.map((entry) => (entry.id === id ? { ...entry, tipo: value } : entry))
+    );
+  }
+
+  protected toggleDocEntryStudy(id: string, studyIndex: number, checked: boolean): void {
+    this.docEntries.update((entries) =>
+      entries
+        .map((entry) => {
+          if (entry.id !== id) return entry;
+          const next = new Set(entry.estudioIndices);
+          if (checked) {
+            next.add(studyIndex);
+          } else {
+            next.delete(studyIndex);
+          }
+          return { ...entry, estudioIndices: Array.from(next).sort((a, b) => a - b) };
+        })
+        .filter((entry) => entry.estudioIndices.length > 0)
+    );
   }
 
   protected submitForm(): void {
@@ -329,7 +386,20 @@ export class FormularioOficialComponent {
   }
 
   private isDocsValid(): boolean {
-    return this.docDni() && (this.docCert() || this.docAcred() || this.docJustif());
+    const hasDni = this.docDniModeSingle()
+      ? Boolean(this.docDniFileSingle())
+      : Boolean(this.docDniFileFront()) && Boolean(this.docDniFileBack());
+    if (!hasDni) return false;
+    const entries = this.docEntries();
+    if (!entries.length) return false;
+    if (entries.some((entry) => !entry.tipo || !entry.fileName || entry.estudioIndices.length === 0)) {
+      return false;
+    }
+    const totalStudies = this.formEstudios().length;
+    if (!totalStudies) return false;
+    const covered = new Set<number>();
+    entries.forEach((entry) => entry.estudioIndices.forEach((index) => covered.add(index)));
+    return covered.size >= totalStudies;
   }
 
   protected getEstudioFamiliaOptions(): string[] {
@@ -519,6 +589,11 @@ export class FormularioOficialComponent {
   private nextManualModuleId(): string {
     this.manualModuleSequence += 1;
     return `manual-${this.manualModuleSequence}`;
+  }
+
+  private nextDocEntryId(): string {
+    this.docEntrySequence += 1;
+    return `doc-${this.docEntrySequence}`;
   }
 
   private isEstudioEntryComplete(entry: EstudioEntry): boolean {
