@@ -163,29 +163,31 @@
                       </div>
 
                       <div class="flex flex-wrap items-center justify-between gap-3 pt-3">
-                        <div class="grid gap-2 text-xs text-slate-500">
-                          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                            Vinculado a
-                          </p>
-                          <div class="flex flex-wrap gap-2">
-                            @for (est of estudios(); track $index; let sIdx = $index) {
-                              <label
-                                class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
-                              >
-                                <input
-                                  type="checkbox"
-                                  class="h-3 w-3 accent-[#72cfd5]"
-                                  [checked]="isStudyLinked(doc, sIdx)"
-                                  (change)="handleStudyToggle(doc.id, sIdx, $event)"
-                                />
-                                Estudio {{ sIdx + 1 }}
-                              </label>
-                            }
+                        @if (estudios().length > 1) {
+                          <div class="grid gap-2 text-xs text-slate-500">
+                            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                              Vinculado a
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                              @for (est of estudios(); track $index; let sIdx = $index) {
+                                <label
+                                  class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-600"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    class="h-3 w-3 accent-[#72cfd5]"
+                                    [checked]="isStudyLinked(doc, sIdx)"
+                                    (change)="handleStudyToggle(doc.id, sIdx, $event)"
+                                  />
+                                  Estudio {{ sIdx + 1 }}
+                                </label>
+                              }
+                            </div>
                           </div>
-                        </div>
+                        }
                         <button
                           type="button"
-                          class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                          class="ml-auto inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-3 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
                           (click)="removeDoc.emit(doc.id)"
                         >
                           Quitar
