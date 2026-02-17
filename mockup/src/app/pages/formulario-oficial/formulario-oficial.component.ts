@@ -41,6 +41,7 @@ export class FormularioOficialComponent {
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly submitted = signal(false);
+  protected readonly fechaSolicitud = signal<string | null>(null);
   protected readonly confirmDialog = signal(false);
   protected readonly steps = [
     { id: 1, label: 'Datos personales' },
@@ -339,6 +340,7 @@ export class FormularioOficialComponent {
 
   protected submitForm(): void {
     if (!this.isFormValid()) return;
+    this.fechaSolicitud.set(new Date().toISOString());
     this.submitted.set(true);
   }
 
@@ -359,6 +361,19 @@ export class FormularioOficialComponent {
 
   protected isCatalogTipo(tipo: EstudiosTipo): boolean {
     return tipo === 'LOGSE' || tipo === 'LOE';
+  }
+
+  protected formatFechaSolicitud(value: string | null): string {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   private isPersonalValid(): boolean {

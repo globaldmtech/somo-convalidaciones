@@ -161,7 +161,9 @@
         }
       </div>
       @if (submitted()) {
-        <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Solicitud enviada.</p>
+        <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+          Solicitud enviada @if (fechaSolicitud()) { el {{ formatFechaSolicitud(fechaSolicitud()) }} }.
+        </p>
       }
     </div>
   </form>
