@@ -1,7 +1,17 @@
-import { CommonModule } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { FormularioEstudio, FormularioSubmission } from '../../core/models';
+import { FormularioAConvalidar, FormularioEstudio, FormularioSubmission } from '../../core/models';
+
+type ValidationDialogMode = 'one' | 'selected' | 'all';
+
+type ValidationDialogState = {
+  mode: ValidationDialogMode;
+  ids: string[];
+  title: string;
+  message: string;
+};
 
 @Component({
   selector: 'app-convalidaciones',
@@ -11,6 +21,8 @@ import { FormularioEstudio, FormularioSubmission } from '../../core/models';
 })
 export class ConvalidacionesComponent {
   private readonly submissionsSignal = signal<FormularioSubmission[]>([]);
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly documentRef = inject(DOCUMENT);
 
   protected readonly submissions = computed(() => this.submissionsSignal());
   protected readonly hasSubmissions = computed(() => this.submissions().length > 0);
@@ -70,20 +82,19 @@ export class ConvalidacionesComponent {
     });
   }
 
-  protected formatEstudio(estudio: FormularioEstudio): string {
-    if (this.isCatalogTipo(estudio.tipo)) {
-      return [
-        estudio.grado || 'Sin grado',
-        estudio.familia || 'Sin familia',
-        estudio.ciclo || 'Sin ciclo',
-        estudio.modulo || 'Sin módulo'
-      ].join(' · ');
-    }
-    return estudio.descripcion || 'Sin descripción';
-  }
-
   protected isCatalogTipo(tipo: string): boolean {
     return tipo === 'LOGSE' || tipo === 'LOE';
+  }
+
+  protected getTipoEstudiosLabel(item: FormularioSubmission): string {
+    const tipos = Array.from(
+      new Set(
+        item.estudios
+          .map((estudio) => estudio.tipo.trim())
+          .filter((tipo) => tipo.length > 0)
+      )
+    );
+    return tipos.length ? tipos.join(' / ') : 'Sin tipo';
   }
 
   protected getEstadoLabel(item: FormularioSubmission): 'Aprobado' | 'A revisar' {
@@ -119,25 +130,47 @@ export class ConvalidacionesComponent {
     return target?.value ?? '';
   }
 
-  protected validateAllPendientes(): void {
-    this.submissionsSignal.update((items) =>
-      items.map((item) =>
-        this.getEstadoLabel(item) === 'A revisar' ? { ...item, estado: 'Aprobado' } : item
-      )
-    );
-    this.selectedPendientes.set(new Set());
-    this.normalizePages();
+  protected requestValidatePendientes(): void {
+    const selectedIds = Array.from(this.selectedPendientes());
+    if (selectedIds.length) {
+      const selectedMessage =
+        selectedIds.length === 1
+          ? 'Se validará 1 solicitud seleccionada. Pasará a estado "Aprobado".'
+          : `Se validarán ${selectedIds.length} solicitudes seleccionadas. Pasarán a estado "Aprobado".`;
+      this.validationDialog.set({
+        mode: 'selected',
+        ids: selectedIds,
+        title: 'Validar seleccionados',
+        message: selectedMessage
+      });
+      return;
+    }
+
+    const pendingIds = this.pendientes().map((item) => item.id);
+    if (!pendingIds.length) return;
+    const pendingMessage =
+      pendingIds.length === 1
+        ? 'Se validará 1 solicitud pendiente. Pasará a estado "Aprobado".'
+        : `Se validarán ${pendingIds.length} solicitudes pendientes. Pasarán a estado "Aprobado".`;
+    this.validationDialog.set({
+      mode: 'all',
+      ids: pendingIds,
+      title: 'Validar todos',
+      message: pendingMessage
+    });
   }
 
   protected onValidateOne(item: FormularioSubmission, event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    this.submissionsSignal.update((items) =>
-      items.map((current) =>
-        current.id === item.id ? { ...current, estado: 'Aprobado' } : current
-      )
-    );
-    this.normalizePages();
+    const fullName = `${item.personal.nombre} ${item.personal.apellidos}`.trim();
+    const applicant = fullName || 'este solicitante';
+    this.validationDialog.set({
+      mode: 'one',
+      ids: [item.id],
+      title: 'Validar convalidación',
+      message: `Se validará la solicitud de ${applicant}. Pasará a estado "Aprobado".`
+    });
   }
 
   protected onReviewOne(item: FormularioSubmission, event: Event): void {
@@ -151,7 +184,46 @@ export class ConvalidacionesComponent {
     this.normalizePages();
   }
 
+  protected openDocumentViewer(
+    url: string | null | undefined,
+    item: FormularioSubmission | null = null,
+    docLabel = 'Documento',
+    event?: Event
+  ): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+    const safeUrl = url?.trim() || 'docs/dni.pdf';
+    const resolvedUrl = new URL(safeUrl, this.documentRef.baseURI).toString();
+    this.documentViewerTitle.set(this.buildDocumentViewerTitle(docLabel, item));
+    this.documentViewerUrl.set(
+      this.sanitizer.bypassSecurityTrustResourceUrl(resolvedUrl)
+    );
+    this.documentViewerOpen.set(true);
+  }
+
+  protected closeDocumentViewer(): void {
+    this.documentViewerOpen.set(false);
+    this.documentViewerUrl.set(null);
+    this.documentViewerTitle.set('Documento adjunto');
+  }
+
+  protected cancelValidation(): void {
+    this.validationDialog.set(null);
+  }
+
+  protected confirmValidation(): void {
+    const dialog = this.validationDialog();
+    if (!dialog) return;
+    this.validationDialog.set(null);
+    if (!dialog.ids.length) return;
+    this.applyValidation(dialog.ids);
+  }
+
   protected readonly selectedPendientes = signal(new Set<string>());
+  protected readonly validationDialog = signal<ValidationDialogState | null>(null);
+  protected readonly documentViewerOpen = signal(false);
+  protected readonly documentViewerUrl = signal<SafeResourceUrl | null>(null);
+  protected readonly documentViewerTitle = signal('Documento adjunto');
 
   protected togglePendienteSelection(id: string, event: Event): void {
     event.stopPropagation();
@@ -170,18 +242,6 @@ export class ConvalidacionesComponent {
 
   protected isPendienteSelected(id: string): boolean {
     return this.selectedPendientes().has(id);
-  }
-
-  protected validateSelectedPendientes(): void {
-    const selected = this.selectedPendientes();
-    if (!selected.size) return;
-    this.submissionsSignal.update((items) =>
-      items.map((item) =>
-        selected.has(item.id) ? { ...item, estado: 'Aprobado' } : item
-      )
-    );
-    this.selectedPendientes.set(new Set());
-    this.normalizePages();
   }
 
   protected clearPendienteSelection(): void {
@@ -226,8 +286,8 @@ export class ConvalidacionesComponent {
   private sortByDate(items: FormularioSubmission[], mode: 'recent' | 'old'): FormularioSubmission[] {
     const direction = mode === 'old' ? 1 : -1;
     return [...items].sort((a, b) => {
-      const aTime = this.parseDate(a.createdAt);
-      const bTime = this.parseDate(b.createdAt);
+      const aTime = this.parseDate(a.fechaSolicitud || a.createdAt);
+      const bTime = this.parseDate(b.fechaSolicitud || b.createdAt);
       return (aTime - bTime) * direction;
     });
   }
@@ -235,6 +295,105 @@ export class ConvalidacionesComponent {
   private parseDate(value: string): number {
     const time = new Date(value).getTime();
     return Number.isNaN(time) ? 0 : time;
+  }
+
+  protected formatEstudio(estudio: FormularioEstudio): string {
+    if (this.isCatalogTipo(estudio.tipo)) {
+      const parts = [estudio.ciclo, estudio.modulo]
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0);
+      return parts.length ? parts.join(' · ') : 'Sin descripción';
+    }
+    const descripcion = estudio.descripcion.trim();
+    return descripcion || 'Sin descripción';
+  }
+
+  protected getEstudioTitle(estudio: FormularioEstudio): string {
+    if (this.isCatalogTipo(estudio.tipo)) {
+      const familia = estudio.familia.trim();
+      return familia || 'Sin familia';
+    }
+    const descripcion = estudio.descripcion.trim();
+    return descripcion || 'Sin descripción';
+  }
+
+  protected formatAConvalidar(convalidacion: FormularioAConvalidar): string {
+    if (this.isCatalogTipo(convalidacion.tipo)) {
+      const parts = [
+        convalidacion.familia,
+        convalidacion.ciclo,
+        convalidacion.modulo
+      ]
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0);
+      return parts.length ? parts.join(' · ') : 'Sin descripción';
+    }
+    return convalidacion.modulo.trim() || 'Sin descripción';
+  }
+
+  protected getGradoChipLabel(grado: string): string {
+    const key = this.getGradoChipKey(grado);
+    if (key === 'gb') return 'GB';
+    if (key === 'gm') return 'GM';
+    if (key === 'gs') return 'GS';
+    if (key === 'ce') return 'CE';
+    return '—';
+  }
+
+  private getGradoChipKey(grado: string): 'gb' | 'gm' | 'gs' | 'ce' | 'other' {
+    const normalized = this.normalizeChipValue(grado);
+    if (!normalized) return 'other';
+    if (normalized === 'gb' || normalized.includes('basico') || normalized.includes('basica')) {
+      return 'gb';
+    }
+    if (normalized === 'gm' || normalized.includes('medio') || normalized.includes('media')) {
+      return 'gm';
+    }
+    if (normalized === 'gs' || normalized.includes('superior')) {
+      return 'gs';
+    }
+    if (
+      normalized === 'ce' ||
+      normalized.includes('especializacion') ||
+      normalized.includes('especialista')
+    ) {
+      return 'ce';
+    }
+    return 'other';
+  }
+
+  private normalizeChipValue(value: string): string {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
+  private applyValidation(ids: string[]): void {
+    const selectedIds = new Set(ids);
+    this.submissionsSignal.update((items) =>
+      items.map((item) =>
+        selectedIds.has(item.id) ? { ...item, estado: 'Aprobado' } : item
+      )
+    );
+    this.selectedPendientes.update((current) => {
+      const next = new Set(current);
+      ids.forEach((id) => next.delete(id));
+      return next;
+    });
+    this.normalizePages();
+  }
+
+  private buildDocumentViewerTitle(
+    docLabel: string,
+    item: FormularioSubmission | null
+  ): string {
+    const label = docLabel.trim() || 'Documento';
+    if (!item) return label;
+    const nif = item.personal.nif.trim();
+    const fullName = `${item.personal.nombre} ${item.personal.apellidos}`.trim();
+    return [label, nif, fullName].filter((part) => part.length > 0).join(' • ') || label;
   }
 
   private normalizePages(): void {
@@ -247,10 +406,14 @@ export class ConvalidacionesComponent {
   }
 }
 
+const MOCK_DOCUMENT_PATH = 'docs/dni.pdf';
+const MOCK_ESTUDIO_DOCUMENT_PATH = 'docs/estudio_aportado.pdf';
+
 const MOCK_SUBMISSIONS: FormularioSubmission[] = [
   {
     id: 'mock-laura',
     createdAt: '2026-02-06T09:10:00.000Z',
+    fechaSolicitud: '2026-02-06T09:10:00.000Z',
     estado: 'A revisar',
     personal: {
       nif: '12345678Z',
@@ -264,12 +427,6 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
       telefonoMovil: '600123456',
       email: 'laura.garcia@email.com'
     },
-    academico: {
-      cicloMatriculado: 'Gestión Administrativa',
-      normativa: 'LOE',
-      grado: 'Grado Medio',
-      curso: '1º'
-    },
     estudios: [
       {
         tipo: 'LOE',
@@ -280,25 +437,27 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
         descripcion: ''
       }
     ],
-    modulos: [
+    a_convalidar: [
       {
-        nombre: 'Comunicación empresarial',
+        tipo: 'LOE',
+        grado: 'Grado Medio',
+        familia: 'Administración y Gestión',
+        ciclo: 'Gestión Administrativa',
+        modulo: 'Comunicación empresarial',
         codigo: '0001'
       }
     ],
     documentos: {
-      dni: true,
-      cert: true,
-      acred: false,
-      justif: false
-    },
-    fechaSolicitud: '2026-02-06',
-    firma:
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'><path d='M10 70 Q60 30 120 60 T250 60' stroke='%231c1e39' stroke-width='4' fill='none' stroke-linecap='round'/></svg>"
+      dni: MOCK_DOCUMENT_PATH,
+      cert: MOCK_ESTUDIO_DOCUMENT_PATH,
+      acred: null,
+      justif: null
+    }
   },
   {
     id: 'mock-pablo',
     createdAt: '2026-02-01T12:20:00.000Z',
+    fechaSolicitud: '2026-02-01T12:20:00.000Z',
     estado: 'Aprobado',
     personal: {
       nif: '98765432X',
@@ -312,12 +471,6 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
       telefonoMovil: '620998877',
       email: 'pablo.serrano@email.com'
     },
-    academico: {
-      cicloMatriculado: 'Desarrollo de Aplicaciones Web',
-      normativa: 'LOGSE',
-      grado: 'Grado Superior',
-      curso: '2º'
-    },
     estudios: [
       {
         tipo: 'LOGSE',
@@ -328,29 +481,35 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
         descripcion: ''
       }
     ],
-    modulos: [
+    a_convalidar: [
       {
-        nombre: 'Entornos de desarrollo',
+        tipo: 'LOGSE',
+        grado: 'Grado Superior',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Desarrollo de Aplicaciones Web',
+        modulo: 'Entornos de desarrollo',
         codigo: ''
       },
       {
-        nombre: 'Bases de datos',
+        tipo: 'LOGSE',
+        grado: 'Grado Superior',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Desarrollo de Aplicaciones Web',
+        modulo: 'Bases de datos',
         codigo: ''
       }
     ],
     documentos: {
-      dni: true,
-      cert: true,
-      acred: false,
-      justif: true
-    },
-    fechaSolicitud: '2026-02-01',
-    firma:
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'><path d='M12 70 Q70 20 140 55 T248 58' stroke='%231c1e39' stroke-width='4' fill='none' stroke-linecap='round'/></svg>"
+      dni: MOCK_DOCUMENT_PATH,
+      cert: null,
+      acred: MOCK_ESTUDIO_DOCUMENT_PATH,
+      justif: null
+    }
   },
   {
     id: 'mock-lucia',
     createdAt: '2026-02-05T10:45:00.000Z',
+    fechaSolicitud: '2026-02-05T10:45:00.000Z',
     estado: 'A revisar',
     personal: {
       nif: '34567890M',
@@ -364,41 +523,37 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
       telefonoMovil: '650112233',
       email: 'lucia.martin@email.com'
     },
-    academico: {
-      cicloMatriculado: 'Atención a Personas en Situación de Dependencia',
-      normativa: 'LOE',
-      grado: 'Grado Medio',
-      curso: '2º'
-    },
     estudios: [
       {
         tipo: 'LOE',
-        grado: 'Grado Medio',
+        grado: 'Grado Básico',
         familia: 'Servicios Socioculturales y a la Comunidad',
         ciclo: 'Atención a Personas en Situación de Dependencia',
         modulo: 'Todos',
         descripcion: ''
       }
     ],
-    modulos: [
+    a_convalidar: [
       {
-        nombre: 'Características y necesidades de las personas en situación de dependencia',
+        tipo: 'LOE',
+        grado: 'Grado Básico',
+        familia: 'Servicios Socioculturales y a la Comunidad',
+        ciclo: 'Atención a Personas en Situación de Dependencia',
+        modulo: 'Características y necesidades de las personas en situación de dependencia',
         codigo: '0023'
       }
     ],
     documentos: {
-      dni: true,
-      cert: false,
-      acred: true,
-      justif: false
-    },
-    fechaSolicitud: '2026-02-05',
-    firma:
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'><path d='M16 72 Q70 35 130 58 T246 52' stroke='%231c1e39' stroke-width='4' fill='none' stroke-linecap='round'/></svg>"
+      dni: MOCK_DOCUMENT_PATH,
+      cert: null,
+      acred: null,
+      justif: MOCK_ESTUDIO_DOCUMENT_PATH
+    }
   },
   {
     id: 'mock-samuel',
     createdAt: '2026-02-03T16:05:00.000Z',
+    fechaSolicitud: '2026-02-03T16:05:00.000Z',
     estado: 'A revisar',
     personal: {
       nif: '56473829H',
@@ -412,12 +567,6 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
       telefonoMovil: '633445566',
       email: 'samuel.ortega@email.com'
     },
-    academico: {
-      cicloMatriculado: 'Sistemas Microinformáticos y Redes',
-      normativa: 'LOGSE',
-      grado: 'Grado Medio',
-      curso: '1º'
-    },
     estudios: [
       {
         tipo: 'LOGSE',
@@ -426,31 +575,53 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
         ciclo: 'Sistemas Microinformáticos y Redes',
         modulo: 'Todos',
         descripcion: ''
+      },
+      {
+        tipo: 'Universitarios',
+        grado: '',
+        familia: '',
+        ciclo: '',
+        modulo: '',
+        descripcion: 'Grado en Ingeniería Informática'
       }
     ],
-    modulos: [
+    a_convalidar: [
       {
-        nombre: 'Montaje y mantenimiento de equipos',
+        tipo: 'LOGSE',
+        grado: 'Grado Medio',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Sistemas Microinformáticos y Redes',
+        modulo: 'Montaje y mantenimiento de equipos',
         codigo: ''
       },
       {
-        nombre: 'Redes locales',
+        tipo: 'LOGSE',
+        grado: 'Grado Medio',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Sistemas Microinformáticos y Redes',
+        modulo: 'Redes locales',
+        codigo: ''
+      },
+      {
+        tipo: 'LOGSE',
+        grado: 'Grado Medio',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Sistemas Microinformáticos y Redes',
+        modulo: 'Sistemas operativos en red',
         codigo: ''
       }
     ],
     documentos: {
-      dni: true,
-      cert: true,
-      acred: false,
-      justif: false
-    },
-    fechaSolicitud: '2026-02-03',
-    firma:
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'><path d='M14 68 Q66 18 120 54 T248 64' stroke='%231c1e39' stroke-width='4' fill='none' stroke-linecap='round'/></svg>"
+      dni: MOCK_DOCUMENT_PATH,
+      cert: MOCK_ESTUDIO_DOCUMENT_PATH,
+      acred: null,
+      justif: null
+    }
   },
   {
     id: 'mock-irene',
     createdAt: '2026-01-30T09:35:00.000Z',
+    fechaSolicitud: '2026-01-30T09:35:00.000Z',
     estado: 'Aprobado',
     personal: {
       nif: '11223344J',
@@ -464,40 +635,39 @@ const MOCK_SUBMISSIONS: FormularioSubmission[] = [
       telefonoMovil: '699221144',
       email: 'irene.campos@email.com'
     },
-    academico: {
-      cicloMatriculado: 'Administración y Finanzas',
-      normativa: 'LOE',
-      grado: 'Grado Superior',
-      curso: '2º'
-    },
     estudios: [
       {
         tipo: 'LOE',
-        grado: 'Grado Superior',
-        familia: 'Administración y Gestión',
-        ciclo: 'Administración y Finanzas',
+        grado: 'Curso de Especialización',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Ciberseguridad en Entornos de las Tecnologías de la Información',
         modulo: 'Todos',
         descripcion: ''
       }
     ],
-    modulos: [
+    a_convalidar: [
       {
-        nombre: 'Gestión de la documentación jurídica y empresarial',
-        codigo: '0645'
+        tipo: 'LOE',
+        grado: 'Curso de Especialización',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Ciberseguridad en Entornos de las Tecnologías de la Información',
+        modulo: 'Análisis forense informático',
+        codigo: '5071'
       },
       {
-        nombre: 'Recursos humanos y responsabilidad social corporativa',
-        codigo: '0647'
+        tipo: 'LOE',
+        grado: 'Curso de Especialización',
+        familia: 'Informática y Comunicaciones',
+        ciclo: 'Ciberseguridad en Entornos de las Tecnologías de la Información',
+        modulo: 'Bastionado de redes y sistemas',
+        codigo: '5072'
       }
     ],
     documentos: {
-      dni: true,
-      cert: true,
-      acred: false,
-      justif: true
-    },
-    fechaSolicitud: '2026-01-30',
-    firma:
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'><path d='M18 74 Q78 22 132 56 T244 50' stroke='%231c1e39' stroke-width='4' fill='none' stroke-linecap='round'/></svg>"
+      dni: MOCK_DOCUMENT_PATH,
+      cert: null,
+      acred: MOCK_ESTUDIO_DOCUMENT_PATH,
+      justif: null
+    }
   }
 ];

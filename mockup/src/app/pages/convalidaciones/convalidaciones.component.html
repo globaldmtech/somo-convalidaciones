@@ -1,28 +1,38 @@
-<section class="form-wrapper">
+<section class="grid gap-5">
   <div class="panel-header flex flex-wrap items-center justify-between gap-4">
-    <div class="min-w-0 space-y-2">
-      <h2 class="text-2xl font-semibold text-slate-900">Convalidaciones recibidas</h2>
-      <p class="text-sm text-slate-600">
+    <div class="min-w-0">
+      <h2 class="m-0 mb-1.5 text-2xl font-semibold text-slate-900">Convalidaciones recibidas</h2>
+      <p class="m-0 text-sm text-(--brand-gray-600)">
         Listado de solicitudes enviadas por alumnos para revisión interna.
       </p>
     </div>
-    <div class="header-actions flex shrink-0 items-center gap-2">
-      <span class="badge">{{ submissions().length }} solicitudes</span>
+    <div class="flex shrink-0 flex-wrap items-center gap-2.5">
+      <span
+        class="inline-flex items-center justify-center rounded-full bg-(--brand-dark) px-3 py-1.5 text-xs font-semibold text-white"
+      >
+        {{ submissions().length }} solicitudes
+      </span>
     </div>
   </div>
 
-  <div class="form-section" *ngIf="!hasSubmissions()">
-    <h3>Sin solicitudes todavía</h3>
-    <p class="hint">Cuando un alumno envíe el formulario, aparecerá aquí con todos sus datos.</p>
-  </div>
+  @if (!hasSubmissions()) {
+    <div class="grid gap-3 rounded-2xl bg-(--brand-gray-100) p-5">
+      <h3>Sin solicitudes todavía</h3>
+      <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+        Cuando un alumno envíe el formulario, aparecerá aquí con todos sus datos.
+      </p>
+    </div>
+  }
 
-  <div class="status-group" *ngIf="hasSubmissions()">
-    <div class="group-header">
-      <h3 class="text-base font-semibold text-slate-900">Formularios a revisar</h3>
-      <div class="group-controls">
-        <label class="pager-select">
+  @if (hasSubmissions()) {
+    <div class="grid gap-3 rounded-2xl bg-(--brand-gray-100) p-5">
+    <div class="flex items-center justify-between gap-2.5">
+      <h3 class="m-0 text-base font-semibold text-slate-900">Formularios a revisar</h3>
+      <div class="group-controls flex flex-wrap items-center gap-2.5">
+        <label class="pager-select inline-flex items-center gap-1.5 text-[0.8rem] text-(--brand-gray-600)">
           <span>Ordenar</span>
           <select
+            class="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[0.8rem]"
             [value]="pendingSort()"
             (change)="onPendingSortChange(readValue($event))"
           >
@@ -30,9 +40,10 @@
             <option value="old">Más antiguos</option>
           </select>
         </label>
-        <label class="pager-select">
+        <label class="pager-select inline-flex items-center gap-1.5 text-[0.8rem] text-(--brand-gray-600)">
           <span>Mostrar</span>
           <select
+            class="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[0.8rem]"
             [value]="pendingPageSize()"
             (change)="onPendingPageSizeChange(readValue($event))"
           >
@@ -43,355 +54,779 @@
         </label>
         <button
           type="button"
-          class="group-action"
-          (click)="selectedPendientes().size ? validateSelectedPendientes() : validateAllPendientes()"
+          class="group-action inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-dashed border-[#9eb0bd] bg-white px-3 py-1 text-xs font-semibold text-(--brand-dark) hover:border-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50"
+          (click)="requestValidatePendientes()"
           [disabled]="!pendientes().length"
         >
           {{ selectedPendientes().size ? 'Validar seleccionados' : 'Validar todos' }}
-          <span *ngIf="selectedPendientes().size" class="count-pill">
-            {{ selectedPendientes().size }}
-          </span>
+          @if (selectedPendientes().size) {
+            <span
+              class="inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-[#1c1e39] px-1.5 text-[0.7rem] font-bold text-white"
+            >
+              {{ selectedPendientes().size }}
+            </span>
+          }
         </button>
-        <span class="group-count">{{ pendientes().length }}</span>
+        <span
+          class="inline-flex min-w-7 items-center justify-center rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-(--brand-dark)"
+        >
+          {{ pendientes().length }}
+        </span>
       </div>
     </div>
-    <div class="accordion" *ngIf="pendientes().length; else noPendientes">
-      <details class="submission-row" *ngFor="let item of pendientesPage(); trackBy: trackById">
-        <summary class="row-summary">
-          <label class="row-select" (click)="$event.stopPropagation()">
+    @if (pendientes().length) {
+      <div class="grid gap-4 rounded-none bg-transparent p-0">
+        <details
+          class="submission-row overflow-hidden rounded-2xl border border-slate-200 bg-white"
+          *ngFor="let item of pendientesPage(); trackBy: trackById"
+        >
+        <summary class="row-summary grid cursor-pointer grid-cols-[auto_minmax(220px,1fr)_auto_auto] items-center gap-3 bg-white px-5 py-4">
+          <label class="row-select inline-flex items-center" (click)="$event.stopPropagation()">
             <input
               type="checkbox"
+              class="h-4.5 w-4.5 accent-[#72cfd5]"
               [checked]="isPendienteSelected(item.id)"
               (change)="togglePendienteSelection(item.id, $event)"
               aria-label="Seleccionar formulario"
             />
           </label>
-          <div class="row-main">
-            <p class="row-name">{{ item.personal.nombre }} {{ item.personal.apellidos }}</p>
-            <p class="row-meta">
+          <div class="grid min-w-55 gap-1">
+            <p class="m-0 font-semibold text-(--brand-dark)">
+              {{ item.personal.nombre }} {{ item.personal.apellidos }}
+            </p>
+            <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
               {{ item.personal.nif }} · {{ item.personal.email }} · {{ item.personal.telefonoMovil }}
             </p>
           </div>
-          <div class="row-status">
-            <div class="row-badges">
-              <span class="badge">
-                {{ item.academico.normativa || 'Sin normativa' }}
+          <div class="row-status grid justify-items-end gap-1 text-right text-[0.8rem] text-(--brand-gray-600)">
+            <div class="row-badges flex flex-wrap justify-end gap-2">
+              <span
+                class="inline-flex items-center justify-center rounded-full bg-(--brand-dark) px-3 py-1.5 text-xs font-semibold text-white"
+              >
+                {{ getTipoEstudiosLabel(item) }}
               </span>
               <span
-                class="badge badge--status"
-                [class.badge--approved]="getEstadoLabel(item) === 'Aprobado'"
-                [class.badge--review]="getEstadoLabel(item) === 'A revisar'"
+                class="inline-flex items-center justify-center rounded-full bg-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-800"
+                [class.bg-emerald-100]="getEstadoLabel(item) === 'Aprobado'"
+                [class.text-emerald-800]="getEstadoLabel(item) === 'Aprobado'"
+                [class.bg-amber-200]="getEstadoLabel(item) === 'A revisar'"
+                [class.text-amber-800]="getEstadoLabel(item) === 'A revisar'"
               >
                 {{ getEstadoLabel(item) }}
               </span>
             </div>
-            <span>Enviado {{ formatDate(item.createdAt) }}</span>
+            <span>Enviado {{ formatDate(item.fechaSolicitud || item.createdAt) }}</span>
           </div>
           <span class="row-chevron" aria-hidden="true">▾</span>
         </summary>
 
-        <div class="row-body">
-          <div class="info-grid">
-            <div class="info-block">
-              <h4>Datos personales</h4>
-              <dl class="data-grid">
-                <div>
-                  <dt>Domicilio</dt>
-                  <dd>{{ item.personal.domicilio || '—' }}</dd>
+        <div class="row-body grid gap-4 px-5 pb-5 pt-4">
+          <div class="grid gap-4">
+            <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-stretch">
+              <div class="grid h-full content-start gap-2.5 rounded-2xl bg-white p-3.5">
+                <div class="flex items-center justify-between gap-2.5">
+                  <h4 class="m-0">Datos personales</h4>
                 </div>
-                <div>
-                  <dt>Código postal</dt>
-                  <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                <dl class="data-grid data-grid--two-cols grid m-0 grid-cols-2 gap-x-3.5 gap-y-2.5 [&>div]:grid [&>div]:gap-0.5 [&_dd]:m-0 [&_dd]:text-[0.9rem] [&_dd]:text-(--brand-dark) [&_dt]:text-xs [&_dt]:font-semibold [&_dt]:text-(--brand-gray-600)">
+                  <div>
+                    <dt>Nombre</dt>
+                    <dd>{{ item.personal.nombre || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Apellidos</dt>
+                    <dd>{{ item.personal.apellidos || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>NIF</dt>
+                    <dd>{{ item.personal.nif || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Email</dt>
+                    <dd>{{ item.personal.email || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Teléfono móvil</dt>
+                    <dd>{{ item.personal.telefonoMovil || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Teléfono fijo</dt>
+                    <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Domicilio</dt>
+                    <dd>{{ item.personal.domicilio || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Código postal</dt>
+                    <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Localidad</dt>
+                    <dd>{{ item.personal.localidad || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Provincia</dt>
+                    <dd>{{ item.personal.provincia || '—' }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="grid h-full content-start gap-2.5 rounded-2xl bg-white p-3.5">
+                <div class="flex items-center justify-between gap-2.5">
+                  <h4 class="m-0">Documentación</h4>
                 </div>
-                <div>
-                  <dt>Localidad</dt>
-                  <dd>{{ item.personal.localidad || '—' }}</dd>
+                <div class="flex flex-wrap items-start content-start gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex self-start cursor-pointer items-center justify-center gap-1.5 rounded-full border border-[#72cfd5] bg-[#e7faf9] px-3 py-1.5 text-xs font-semibold leading-[1.2] text-slate-900 hover:border-[#56bec7]"
+                    aria-label="Ver DNI"
+                    (click)="openDocumentViewer(item.documentos.dni, item, 'DNI', $event)"
+                  >
+                    <span>DNI</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-arrows-angle-expand"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                      />
+                    </svg>
+                  </button>
                 </div>
-                <div>
-                  <dt>Provincia</dt>
-                  <dd>{{ item.personal.provincia || '—' }}</dd>
+                <div class="flex flex-wrap items-start content-start gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.cert"
+                    [ngClass]="
+                      item.documentos.cert
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver certificación"
+                    (click)="openDocumentViewer(item.documentos.cert, item, 'Certificación', $event)"
+                  >
+                    <span>Certificación</span>
+                    @if (item.documentos.cert) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.acred"
+                    [ngClass]="
+                      item.documentos.acred
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver acreditación"
+                    (click)="openDocumentViewer(item.documentos.acred, item, 'Acreditación', $event)"
+                  >
+                    <span>Acreditación</span>
+                    @if (item.documentos.acred) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.justif"
+                    [ngClass]="
+                      item.documentos.justif
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver justificante"
+                    (click)="openDocumentViewer(item.documentos.justif, item, 'Justificante', $event)"
+                  >
+                    <span>Justificante</span>
+                    @if (item.documentos.justif) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
                 </div>
-                <div>
-                  <dt>Teléfono fijo</dt>
-                  <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
-                </div>
-              </dl>
+              </div>
             </div>
 
-            <div class="info-block">
-              <h4>Datos académicos</h4>
-              <dl class="data-grid">
-                <div>
-                  <dt>Ciclo matriculado</dt>
-                  <dd>{{ item.academico.cicloMatriculado || '—' }}</dd>
+            <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-start">
+              <div class="grid gap-2.5">
+                <h4 class="m-0 text-[1.05rem] font-medium text-(--brand-dark)">Estudios aportados</h4>
+                <div class="grid gap-2">
+                  <article
+                    class="rounded-xl border border-dashed border-slate-300 bg-transparent px-3 py-2.5"
+                    *ngFor="let estudio of item.estudios; trackBy: trackByIndex"
+                  >
+                    <div class="mb-1 flex flex-wrap items-start justify-end gap-1.5">
+                      <span class="inline-flex items-center rounded-full border border-transparent bg-(--brand-dark) px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-white">
+                        {{ estudio.tipo || 'Sin tipo' }}
+                      </span>
+                      @if (getGradoChipLabel(estudio.grado) !== '—') {
+                        <span class="inline-flex items-center rounded-full border border-sky-300 bg-sky-100 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-sky-800">
+                          {{ getGradoChipLabel(estudio.grado) }}
+                        </span>
+                      }
+                    </div>
+                    <p class="m-0 text-sm font-semibold text-(--brand-dark)">{{ getEstudioTitle(estudio) }}</p>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">{{ formatEstudio(estudio) }}</p>
+                  </article>
+                  @if (!item.estudios.length) {
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Sin estudios registrados.</p>
+                  }
                 </div>
-                <div>
-                  <dt>Grado</dt>
-                  <dd>{{ item.academico.grado || '—' }}</dd>
+              </div>
+
+              <div class="grid gap-2.5">
+                <h4 class="m-0 text-[1.05rem] font-medium text-(--brand-dark)">Módulos solicitados</h4>
+                <div class="grid gap-2.5">
+                  <article
+                    class="rounded-xl border border-dashed border-slate-300 bg-transparent px-3 py-2.5"
+                    *ngFor="let convalidacion of item.a_convalidar; trackBy: trackByIndex"
+                  >
+                    <div class="mb-1 flex flex-wrap items-start justify-end gap-1.5">
+                      <span class="inline-flex items-center rounded-full border border-transparent bg-(--brand-dark) px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-white">
+                        {{ convalidacion.tipo || 'Sin tipo' }}
+                      </span>
+                      <span class="inline-flex items-center rounded-full border border-sky-300 bg-sky-100 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-sky-800">
+                        {{ getGradoChipLabel(convalidacion.grado) }}
+                      </span>
+                    </div>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">{{ formatAConvalidar(convalidacion) }}</p>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Código: {{ convalidacion.codigo || '—' }}</p>
+                  </article>
+                  @if (!item.a_convalidar.length) {
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Sin módulos registrados.</p>
+                  }
                 </div>
-                <div>
-                  <dt>Curso</dt>
-                  <dd>{{ item.academico.curso || '—' }}</dd>
-                </div>
-                <div>
-                  <dt>Fecha solicitud</dt>
-                  <dd>{{ item.fechaSolicitud || '—' }}</dd>
-                </div>
-              </dl>
+              </div>
             </div>
           </div>
 
-          <div class="info-block">
-            <h4>Estudios aportados</h4>
-            <div class="study-list" *ngIf="item.estudios.length; else noEstudios">
-              <div class="study-item" *ngFor="let estudio of item.estudios; trackBy: trackByIndex">
-                <p class="study-title">{{ estudio.tipo || 'Sin tipo' }}</p>
-                <p class="study-detail">{{ formatEstudio(estudio) }}</p>
-              </div>
-            </div>
-            <ng-template #noEstudios>
-              <p class="hint">Sin estudios registrados.</p>
-            </ng-template>
-          </div>
-
-          <div class="info-block">
-            <h4>Módulos solicitados</h4>
-            <div class="module-grid" *ngIf="item.modulos.length; else noModulos">
-              <div class="module-pill" *ngFor="let modulo of item.modulos; trackBy: trackByIndex">
-                <strong>{{ modulo.nombre || 'Sin nombre' }}</strong>
-                <span *ngIf="modulo.codigo">Código: {{ modulo.codigo }}</span>
-              </div>
-            </div>
-            <ng-template #noModulos>
-              <p class="hint">Sin módulos registrados.</p>
-            </ng-template>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-block">
-              <h4>Documentación</h4>
-              <div class="doc-list">
-                <span class="doc-chip" [class.active]="item.documentos.dni">DNI</span>
-                <span class="doc-chip" [class.active]="item.documentos.cert">Certificación</span>
-                <span class="doc-chip" [class.active]="item.documentos.acred">Acreditación</span>
-                <span class="doc-chip" [class.active]="item.documentos.justif">Justificante</span>
-              </div>
-            </div>
-
-            <div class="info-block">
-              <h4>Firma</h4>
-              <div class="signature-preview" *ngIf="item.firma; else noFirma">
-                <img [src]="item.firma" alt="Firma del alumno" />
-              </div>
-              <ng-template #noFirma>
-                <p class="hint">Sin firma registrada.</p>
-              </ng-template>
-            </div>
-          </div>
-
-          <div class="row-actions">
-            <button type="button" class="row-action" (click)="onValidateOne(item, $event)">
+          <div class="flex items-center justify-between gap-2.5">
+            <!-- TODO: implementar exportación individual -->
+            <button
+              type="button"
+              class="row-action mr-auto cursor-pointer rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-(--brand-dark) hover:border-[#72cfd5] hover:text-slate-900"
+              aria-label="Exportar"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-download"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+              >
+                <path
+                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                />
+                <path
+                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="row-action cursor-pointer rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-(--brand-dark) hover:border-[#72cfd5] hover:text-slate-900"
+              (click)="onValidateOne(item, $event)"
+            >
               Validar
             </button>
           </div>
         </div>
-      </details>
-    </div>
-    <div class="pager pager-bottom" *ngIf="pendientes().length">
-      <button type="button" (click)="goPendingPrev()" [disabled]="pendingPage() === 1">
-        Anterior
-      </button>
-      <span>Página {{ pendingPage() }} de {{ pendingTotalPages() }}</span>
-      <button
-        type="button"
-        (click)="goPendingNext()"
-        [disabled]="pendingPage() === pendingTotalPages()"
-      >
-        Siguiente
-      </button>
-    </div>
-    <ng-template #noPendientes>
-      <p class="hint">No hay formularios pendientes de revisar.</p>
-    </ng-template>
-  </div>
-
-  <div class="status-group" *ngIf="hasSubmissions()">
-    <div class="group-header">
-      <h3 class="text-base font-semibold text-slate-900">Formularios aprobados</h3>
-      <div class="group-controls">
-        <label class="pager-select">
-          <span>Ordenar</span>
-          <select
-            [value]="approvedSort()"
-            (change)="onApprovedSortChange(readValue($event))"
-          >
-            <option value="recent">Más recientes</option>
-            <option value="old">Más antiguos</option>
-          </select>
-        </label>
-        <label class="pager-select">
-          <span>Mostrar</span>
-          <select
-            [value]="approvedPageSize()"
-            (change)="onApprovedPageSizeChange(readValue($event))"
-          >
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="20">20</option>
-          </select>
-        </label>
-        <span class="group-count">{{ aprobados().length }}</span>
+        </details>
       </div>
+      <div class="pager pager-bottom mt-1 inline-flex items-center justify-end gap-2 text-[0.8rem] text-(--brand-gray-600) max-[720px]:justify-start">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs text-(--brand-dark) disabled:cursor-not-allowed disabled:opacity-50"
+          (click)="goPendingPrev()"
+          [disabled]="pendingPage() === 1"
+        >
+          Anterior
+        </button>
+        <span>Página {{ pendingPage() }} de {{ pendingTotalPages() }}</span>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs text-(--brand-dark) disabled:cursor-not-allowed disabled:opacity-50"
+          (click)="goPendingNext()"
+          [disabled]="pendingPage() === pendingTotalPages()"
+        >
+          Siguiente
+        </button>
+      </div>
+    } @else {
+      <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">No hay formularios pendientes de revisar.</p>
+    }
     </div>
-    <div class="accordion" *ngIf="aprobados().length; else noAprobados">
-      <details class="submission-row" *ngFor="let item of aprobadosPage(); trackBy: trackById">
-        <summary class="row-summary">
-          <div class="row-main">
-            <p class="row-name">{{ item.personal.nombre }} {{ item.personal.apellidos }}</p>
-            <p class="row-meta">
+  }
+
+  @if (hasSubmissions()) {
+    <div class="grid gap-3 rounded-2xl bg-(--brand-gray-100) p-5">
+      <div class="flex items-center justify-between gap-2.5">
+        <h3 class="m-0 text-base font-semibold text-slate-900">Formularios aprobados</h3>
+        <div class="group-controls flex flex-wrap items-center gap-2.5">
+          <label class="pager-select inline-flex items-center gap-1.5 text-[0.8rem] text-(--brand-gray-600)">
+            <span>Ordenar</span>
+            <select
+              class="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[0.8rem]"
+              [value]="approvedSort()"
+              (change)="onApprovedSortChange(readValue($event))"
+            >
+              <option value="recent">Más recientes</option>
+              <option value="old">Más antiguos</option>
+            </select>
+          </label>
+          <label class="pager-select inline-flex items-center gap-1.5 text-[0.8rem] text-(--brand-gray-600)">
+            <span>Mostrar</span>
+            <select
+              class="rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[0.8rem]"
+              [value]="approvedPageSize()"
+              (change)="onApprovedPageSizeChange(readValue($event))"
+            >
+              <option [value]="5">5</option>
+              <option [value]="10">10</option>
+              <option [value]="20">20</option>
+            </select>
+          </label>
+          <span
+            class="inline-flex min-w-7 items-center justify-center rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-(--brand-dark)"
+          >
+            {{ aprobados().length }}
+          </span>
+        </div>
+      </div>
+      @if (aprobados().length) {
+        <div class="grid gap-4 rounded-none bg-transparent p-0">
+          <details
+            class="submission-row overflow-hidden rounded-2xl border border-slate-200 bg-white"
+            *ngFor="let item of aprobadosPage(); trackBy: trackById"
+          >
+        <summary class="row-summary grid cursor-pointer grid-cols-[auto_minmax(220px,1fr)_auto_auto] items-center gap-3 bg-white px-5 py-4">
+          <div class="grid min-w-55 gap-1">
+            <p class="m-0 font-semibold text-(--brand-dark)">{{ item.personal.nombre }} {{ item.personal.apellidos }}</p>
+            <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
               {{ item.personal.nif }} · {{ item.personal.email }} · {{ item.personal.telefonoMovil }}
             </p>
           </div>
-          <div class="row-status">
-            <div class="row-badges">
-              <span class="badge">
-                {{ item.academico.normativa || 'Sin normativa' }}
+          <div class="row-status grid justify-items-end gap-1 text-right text-[0.8rem] text-(--brand-gray-600)">
+            <div class="row-badges flex flex-wrap justify-end gap-2">
+              <span
+                class="inline-flex items-center justify-center rounded-full bg-(--brand-dark) px-3 py-1.5 text-xs font-semibold text-white"
+              >
+                {{ getTipoEstudiosLabel(item) }}
               </span>
               <span
-                class="badge badge--status"
-                [class.badge--approved]="getEstadoLabel(item) === 'Aprobado'"
-                [class.badge--review]="getEstadoLabel(item) === 'A revisar'"
+                class="inline-flex items-center justify-center rounded-full bg-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-800"
+                [class.bg-emerald-100]="getEstadoLabel(item) === 'Aprobado'"
+                [class.text-emerald-800]="getEstadoLabel(item) === 'Aprobado'"
+                [class.bg-amber-200]="getEstadoLabel(item) === 'A revisar'"
+                [class.text-amber-800]="getEstadoLabel(item) === 'A revisar'"
               >
                 {{ getEstadoLabel(item) }}
               </span>
             </div>
-            <span>Enviado {{ formatDate(item.createdAt) }}</span>
+            <span>Enviado {{ formatDate(item.fechaSolicitud || item.createdAt) }}</span>
           </div>
           <span class="row-chevron" aria-hidden="true">▾</span>
         </summary>
 
-        <div class="row-body">
-          <div class="info-grid">
-            <div class="info-block">
-              <h4>Datos personales</h4>
-              <dl class="data-grid">
-                <div>
-                  <dt>Domicilio</dt>
-                  <dd>{{ item.personal.domicilio || '—' }}</dd>
+        <div class="row-body grid gap-4 px-5 pb-5 pt-4">
+          <div class="grid gap-4">
+            <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-stretch">
+              <div class="grid h-full content-start gap-2.5 rounded-2xl bg-white p-3.5">
+                <div class="flex items-center justify-between gap-2.5">
+                  <h4 class="m-0">Datos personales</h4>
                 </div>
-                <div>
-                  <dt>Código postal</dt>
-                  <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                <dl class="data-grid data-grid--two-cols grid m-0 grid-cols-2 gap-x-3.5 gap-y-2.5 [&>div]:grid [&>div]:gap-0.5 [&_dd]:m-0 [&_dd]:text-[0.9rem] [&_dd]:text-(--brand-dark) [&_dt]:text-xs [&_dt]:font-semibold [&_dt]:text-(--brand-gray-600)">
+                  <div>
+                    <dt>Nombre</dt>
+                    <dd>{{ item.personal.nombre || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Apellidos</dt>
+                    <dd>{{ item.personal.apellidos || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>NIF</dt>
+                    <dd>{{ item.personal.nif || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Email</dt>
+                    <dd>{{ item.personal.email || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Teléfono móvil</dt>
+                    <dd>{{ item.personal.telefonoMovil || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Teléfono fijo</dt>
+                    <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Domicilio</dt>
+                    <dd>{{ item.personal.domicilio || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Código postal</dt>
+                    <dd>{{ item.personal.codigoPostal || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Localidad</dt>
+                    <dd>{{ item.personal.localidad || '—' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Provincia</dt>
+                    <dd>{{ item.personal.provincia || '—' }}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="grid h-full content-start gap-2.5 rounded-2xl bg-white p-3.5">
+                <div class="flex items-center justify-between gap-2.5">
+                  <h4 class="m-0">Documentación</h4>
                 </div>
-                <div>
-                  <dt>Localidad</dt>
-                  <dd>{{ item.personal.localidad || '—' }}</dd>
+                <div class="flex flex-wrap items-start content-start gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex self-start cursor-pointer items-center justify-center gap-1.5 rounded-full border border-[#72cfd5] bg-[#e7faf9] px-3 py-1.5 text-xs font-semibold leading-[1.2] text-slate-900 hover:border-[#56bec7]"
+                    aria-label="Ver DNI"
+                    (click)="openDocumentViewer(item.documentos.dni, item, 'DNI', $event)"
+                  >
+                    <span>DNI</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      class="bi bi-arrows-angle-expand"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                      />
+                    </svg>
+                  </button>
                 </div>
-                <div>
-                  <dt>Provincia</dt>
-                  <dd>{{ item.personal.provincia || '—' }}</dd>
+                <div class="flex flex-wrap items-start content-start gap-2">
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.cert"
+                    [ngClass]="
+                      item.documentos.cert
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver certificación"
+                    (click)="openDocumentViewer(item.documentos.cert, item, 'Certificación', $event)"
+                  >
+                    <span>Certificación</span>
+                    @if (item.documentos.cert) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.acred"
+                    [ngClass]="
+                      item.documentos.acred
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver acreditación"
+                    (click)="openDocumentViewer(item.documentos.acred, item, 'Acreditación', $event)"
+                  >
+                    <span>Acreditación</span>
+                    @if (item.documentos.acred) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
+                  <button
+                    type="button"
+                    class="inline-flex self-start items-center justify-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold leading-[1.2]"
+                    [disabled]="!item.documentos.justif"
+                    [ngClass]="
+                      item.documentos.justif
+                        ? 'cursor-pointer border-[#72cfd5] bg-[#e7faf9] text-slate-900 hover:border-[#56bec7]'
+                        : 'cursor-default border-slate-300 bg-white text-slate-500'
+                    "
+                    aria-label="Ver justificante"
+                    (click)="openDocumentViewer(item.documentos.justif, item, 'Justificante', $event)"
+                  >
+                    <span>Justificante</span>
+                    @if (item.documentos.justif) {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-angle-expand"
+                        viewBox="0 0 16 16"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707m4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"
+                        />
+                      </svg>
+                    }
+                  </button>
                 </div>
-                <div>
-                  <dt>Teléfono fijo</dt>
-                  <dd>{{ item.personal.telefonoFijo || '—' }}</dd>
-                </div>
-              </dl>
+              </div>
             </div>
 
-            <div class="info-block">
-              <h4>Datos académicos</h4>
-              <dl class="data-grid">
-                <div>
-                  <dt>Ciclo matriculado</dt>
-                  <dd>{{ item.academico.cicloMatriculado || '—' }}</dd>
+            <div class="grid gap-4 grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-start">
+              <div class="grid gap-2.5">
+                <h4 class="m-0 text-[1.05rem] font-medium text-(--brand-dark)">Estudios aportados</h4>
+                <div class="grid gap-2">
+                  <article
+                    class="rounded-xl border border-dashed border-slate-300 bg-transparent px-3 py-2.5"
+                    *ngFor="let estudio of item.estudios; trackBy: trackByIndex"
+                  >
+                    <div class="mb-1 flex flex-wrap items-start justify-end gap-1.5">
+                      <span class="inline-flex items-center rounded-full border border-transparent bg-(--brand-dark) px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-white">
+                        {{ estudio.tipo || 'Sin tipo' }}
+                      </span>
+                      @if (getGradoChipLabel(estudio.grado) !== '—') {
+                        <span class="inline-flex items-center rounded-full border border-sky-300 bg-sky-100 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-sky-800">
+                          {{ getGradoChipLabel(estudio.grado) }}
+                        </span>
+                      }
+                    </div>
+                    <p class="m-0 text-sm font-semibold text-(--brand-dark)">{{ getEstudioTitle(estudio) }}</p>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">{{ formatEstudio(estudio) }}</p>
+                  </article>
+                  @if (!item.estudios.length) {
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Sin estudios registrados.</p>
+                  }
                 </div>
-                <div>
-                  <dt>Grado</dt>
-                  <dd>{{ item.academico.grado || '—' }}</dd>
+              </div>
+
+              <div class="grid gap-2.5">
+                <h4 class="m-0 text-[1.05rem] font-medium text-(--brand-dark)">Módulos solicitados</h4>
+                <div class="grid gap-2.5">
+                  <article
+                    class="rounded-xl border border-dashed border-slate-300 bg-transparent px-3 py-2.5"
+                    *ngFor="let convalidacion of item.a_convalidar; trackBy: trackByIndex"
+                  >
+                    <div class="mb-1 flex flex-wrap items-start justify-end gap-1.5">
+                      <span class="inline-flex items-center rounded-full border border-transparent bg-(--brand-dark) px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-white">
+                        {{ convalidacion.tipo || 'Sin tipo' }}
+                      </span>
+                      <span class="inline-flex items-center rounded-full border border-sky-300 bg-sky-100 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.06em] text-sky-800">
+                        {{ getGradoChipLabel(convalidacion.grado) }}
+                      </span>
+                    </div>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">{{ formatAConvalidar(convalidacion) }}</p>
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Código: {{ convalidacion.codigo || '—' }}</p>
+                  </article>
+                  @if (!item.a_convalidar.length) {
+                    <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">Sin módulos registrados.</p>
+                  }
                 </div>
-                <div>
-                  <dt>Curso</dt>
-                  <dd>{{ item.academico.curso || '—' }}</dd>
-                </div>
-                <div>
-                  <dt>Fecha solicitud</dt>
-                  <dd>{{ item.fechaSolicitud || '—' }}</dd>
-                </div>
-              </dl>
+              </div>
             </div>
           </div>
 
-          <div class="info-block">
-            <h4>Estudios aportados</h4>
-            <div class="study-list" *ngIf="item.estudios.length; else noEstudios">
-              <div class="study-item" *ngFor="let estudio of item.estudios; trackBy: trackByIndex">
-                <p class="study-title">{{ estudio.tipo || 'Sin tipo' }}</p>
-                <p class="study-detail">{{ formatEstudio(estudio) }}</p>
-              </div>
-            </div>
-            <ng-template #noEstudios>
-              <p class="hint">Sin estudios registrados.</p>
-            </ng-template>
-          </div>
-
-          <div class="info-block">
-            <h4>Módulos solicitados</h4>
-            <div class="module-grid" *ngIf="item.modulos.length; else noModulos">
-              <div class="module-pill" *ngFor="let modulo of item.modulos; trackBy: trackByIndex">
-                <strong>{{ modulo.nombre || 'Sin nombre' }}</strong>
-                <span *ngIf="modulo.codigo">Código: {{ modulo.codigo }}</span>
-              </div>
-            </div>
-            <ng-template #noModulos>
-              <p class="hint">Sin módulos registrados.</p>
-            </ng-template>
-          </div>
-
-          <div class="info-grid">
-            <div class="info-block">
-              <h4>Documentación</h4>
-              <div class="doc-list">
-                <span class="doc-chip" [class.active]="item.documentos.dni">DNI</span>
-                <span class="doc-chip" [class.active]="item.documentos.cert">Certificación</span>
-                <span class="doc-chip" [class.active]="item.documentos.acred">Acreditación</span>
-                <span class="doc-chip" [class.active]="item.documentos.justif">Justificante</span>
-              </div>
-            </div>
-
-            <div class="info-block">
-              <h4>Firma</h4>
-              <div class="signature-preview" *ngIf="item.firma; else noFirma">
-                <img [src]="item.firma" alt="Firma del alumno" />
-              </div>
-              <ng-template #noFirma>
-                <p class="hint">Sin firma registrada.</p>
-              </ng-template>
-            </div>
-          </div>
-
-          <div class="row-actions">
-            <button type="button" class="row-action" (click)="onReviewOne(item, $event)">
+          <div class="flex items-center justify-between gap-2.5">
+            <!-- TODO: implementar exportación individual -->
+            <button
+              type="button"
+              class="row-action mr-auto cursor-pointer rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-(--brand-dark) hover:border-[#72cfd5] hover:text-slate-900"
+              aria-label="Exportar"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-download"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+              >
+                <path
+                  d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"
+                />
+                <path
+                  d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="row-action cursor-pointer rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-(--brand-dark) hover:border-[#72cfd5] hover:text-slate-900"
+              (click)="onReviewOne(item, $event)"
+            >
               Mandar a revisar
             </button>
           </div>
         </div>
-      </details>
+          </details>
+        </div>
+        <div class="pager pager-bottom mt-1 inline-flex items-center justify-end gap-2 text-[0.8rem] text-(--brand-gray-600) max-[720px]:justify-start">
+          <button
+            type="button"
+            class="cursor-pointer rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs text-(--brand-dark) disabled:cursor-not-allowed disabled:opacity-50"
+            (click)="goApprovedPrev()"
+            [disabled]="approvedPage() === 1"
+          >
+            Anterior
+          </button>
+          <span>Página {{ approvedPage() }} de {{ approvedTotalPages() }}</span>
+          <button
+            type="button"
+            class="cursor-pointer rounded-full border border-slate-300 bg-white px-2.5 py-1 text-xs text-(--brand-dark) disabled:cursor-not-allowed disabled:opacity-50"
+            (click)="goApprovedNext()"
+            [disabled]="approvedPage() === approvedTotalPages()"
+          >
+            Siguiente
+          </button>
+        </div>
+      } @else {
+      <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">No hay formularios aprobados todavía.</p>
+      }
     </div>
-    <div class="pager pager-bottom" *ngIf="aprobados().length">
-      <button type="button" (click)="goApprovedPrev()" [disabled]="approvedPage() === 1">
-        Anterior
-      </button>
-      <span>Página {{ approvedPage() }} de {{ approvedTotalPages() }}</span>
-      <button
-        type="button"
-        (click)="goApprovedNext()"
-        [disabled]="approvedPage() === approvedTotalPages()"
-      >
-        Siguiente
-      </button>
-    </div>
-    <ng-template #noAprobados>
-      <p class="hint">No hay formularios aprobados todavía.</p>
-    </ng-template>
-  </div>
+  }
 </section>
+
+@if (validationDialog(); as dialog) {
+  <div class="fixed inset-0 z-75 flex items-center justify-center bg-slate-900/40 p-4" (click)="cancelValidation()">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl" (click)="$event.stopPropagation()">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="m-0 text-lg font-semibold text-slate-900">{{ dialog.title }}</h3>
+          <p class="m-0 mt-1 text-sm text-slate-600">
+            {{ dialog.message }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="cancelValidation()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
+          (click)="cancelValidation()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5]"
+          (click)="confirmValidation()"
+        >
+          Validar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (documentViewerOpen()) {
+  <div class="fixed inset-0 z-70 flex items-center justify-center p-5 bg-slate-900/40" (click)="closeDocumentViewer()">
+    <div
+      class="flex w-full max-w-240 max-h-[90vh] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <h3 class="m-0 text-base text-slate-900">{{ documentViewerTitle() }}</h3>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="closeDocumentViewer()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+      <iframe
+        class="h-[70vh] max-h-180 w-full border-0 bg-slate-50"
+        [src]="documentViewerUrl()"
+        [title]="documentViewerTitle()"
+      ></iframe>
+    </div>
+  </div>
+}

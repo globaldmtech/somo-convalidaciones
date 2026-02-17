@@ -28,14 +28,19 @@ export type FormularioEstudio = {
   descripcion: string;
 };
 
-export type FormularioModulo = {
-  nombre: string;
+export type FormularioAConvalidar = {
+  tipo: string;
+  grado: string;
+  familia: string;
+  ciclo: string;
+  modulo: string;
   codigo: string;
 };
 
 export type FormularioSubmission = {
   id: string;
   createdAt: string;
+  fechaSolicitud: string;
   estado?: 'Aprobado' | 'A revisar';
   personal: {
     nif: string;
@@ -49,20 +54,12 @@ export type FormularioSubmission = {
     telefonoMovil: string;
     email: string;
   };
-  academico: {
-    cicloMatriculado: string;
-    normativa: string;
-    grado: string;
-    curso: string;
-  };
   estudios: FormularioEstudio[];
-  modulos: FormularioModulo[];
+  a_convalidar: FormularioAConvalidar[];
   documentos: {
-    dni: boolean;
-    cert: boolean;
-    acred: boolean;
-    justif: boolean;
+    dni: string;
+    cert: string | null;
+    acred: string | null;
+    justif: string | null;
   };
-  fechaSolicitud: string;
-  firma: string | null;
 };
