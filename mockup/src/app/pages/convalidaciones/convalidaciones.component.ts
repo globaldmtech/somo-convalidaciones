@@ -320,7 +320,6 @@ export class ConvalidacionesComponent {
   protected formatAConvalidar(convalidacion: FormularioAConvalidar): string {
     if (this.isCatalogTipo(convalidacion.tipo)) {
       const parts = [
-        convalidacion.familia,
         convalidacion.ciclo,
         convalidacion.modulo
       ]
@@ -329,6 +328,15 @@ export class ConvalidacionesComponent {
       return parts.length ? parts.join(' · ') : 'Sin descripción';
     }
     return convalidacion.modulo.trim() || 'Sin descripción';
+  }
+
+  protected getAConvalidarTitle(convalidacion: FormularioAConvalidar): string {
+    if (this.isCatalogTipo(convalidacion.tipo)) {
+      const familia = convalidacion.familia.trim();
+      return familia || 'Sin familia';
+    }
+    const modulo = convalidacion.modulo.trim();
+    return modulo || 'Sin descripción';
   }
 
   protected getGradoChipLabel(grado: string): string {
