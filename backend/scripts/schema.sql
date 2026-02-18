@@ -1,0 +1,99 @@
+-- SQLite schema for Somorrostro Convalidaciones
+-- TODO: complete table definitions based on the roadmap interno.
+
+-- Catalog
+CREATE TABLE IF NOT EXISTS grados (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS familias (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  id_grado INTEGER NOT NULL,
+  FOREIGN KEY (id_grado) REFERENCES grados(id)
+);
+
+CREATE TABLE IF NOT EXISTS ciclos (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  id_oficial TEXT,
+  normativa TEXT,
+  id_familia INTEGER NOT NULL,
+  FOREIGN KEY (id_familia) REFERENCES familias(id)
+);
+
+CREATE TABLE IF NOT EXISTS modulos (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  id_oficial TEXT,
+  id_ciclo INTEGER NOT NULL,
+  FOREIGN KEY (id_ciclo) REFERENCES ciclos(id)
+);
+
+-- Convalidaciones
+CREATE TABLE IF NOT EXISTS convalidacion (
+  id INTEGER PRIMARY KEY,
+  source_link TEXT,
+  source_page INTEGER,
+  id_modulo_destino INTEGER NOT NULL,
+  FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id)
+);
+
+CREATE TABLE IF NOT EXISTS convalidacion_origen (
+  conv_id INTEGER NOT NULL,
+  id_modulo INTEGER NOT NULL,
+  PRIMARY KEY (conv_id, id_modulo),
+  FOREIGN KEY (conv_id) REFERENCES convalidacion(id),
+  FOREIGN KEY (id_modulo) REFERENCES modulos(id)
+);
+
+-- Usuarios y formularios (placeholders for later phases)
+CREATE TABLE IF NOT EXISTS usuarios (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  email TEXT NOT NULL,
+  rol TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS formularios (
+  id INTEGER PRIMARY KEY,
+  id_alumno INTEGER NOT NULL,
+  enviado_at TEXT,
+  estado TEXT NOT NULL,
+  validado_por INTEGER,
+  anotaciones TEXT,
+  validado_at TEXT,
+  FOREIGN KEY (id_alumno) REFERENCES usuarios(id),
+  FOREIGN KEY (validado_por) REFERENCES usuarios(id)
+);
+
+CREATE TABLE IF NOT EXISTS formulario_solicitudes (
+  id INTEGER PRIMARY KEY,
+  id_formulario INTEGER NOT NULL,
+  id_modulo INTEGER,
+  id_convalidacion INTEGER,
+  descripcion TEXT,
+  FOREIGN KEY (id_formulario) REFERENCES formularios(id),
+  FOREIGN KEY (id_modulo) REFERENCES modulos(id),
+  FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id)
+);
+
+CREATE TABLE IF NOT EXISTS formulario_modulos_aportados (
+  id INTEGER PRIMARY KEY,
+  id_formulario INTEGER NOT NULL,
+  id_modulo INTEGER,
+  descripcion TEXT,
+  FOREIGN KEY (id_formulario) REFERENCES formularios(id),
+  FOREIGN KEY (id_modulo) REFERENCES modulos(id)
+);
+
+CREATE TABLE IF NOT EXISTS formulario_archivos (
+  id INTEGER PRIMARY KEY,
+  id_formulario INTEGER NOT NULL,
+  nombre_archivo TEXT NOT NULL,
+  descripcion TEXT,
+  ruta_almacenamiento TEXT NOT NULL,
+  FOREIGN KEY (id_formulario) REFERENCES formularios(id)
+);
