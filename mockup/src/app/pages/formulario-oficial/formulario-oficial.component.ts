@@ -207,16 +207,6 @@ export class FormularioOficialComponent {
   protected removeEstudioRow(index: number): void {
     this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
     this.pruneSelectedSuggestedModules();
-    this.docEntries.update((entries) =>
-      entries
-        .map((entry) => {
-          const normalized = entry.estudioIndices
-            .filter((value) => value !== index)
-            .map((value) => (value > index ? value - 1 : value));
-          return { ...entry, estudioIndices: normalized };
-        })
-        .filter((entry) => entry.estudioIndices.length > 0)
-    );
   }
 
   protected updateEstudioField(key: keyof EstudioEntry, value: string): void {
@@ -298,16 +288,13 @@ export class FormularioOficialComponent {
     this.docDniFileBack.set(file);
   }
 
-  protected addDocEntryForStudy(
-    studyIndex: number,
-    file: File | null,
-    tipo: DocumentoTipo
-  ): void {
-    if (!file) return;
+  protected addDocEntry(change: { file: File | null; tipo: DocumentoTipo }): void {
+    const file = change.file;
+    const tipo = change.tipo;
+    if (!file || !tipo) return;
     const entry: DocumentoEntry = {
       id: this.nextDocEntryId(),
       tipo,
-      estudioIndices: [studyIndex],
       fileName: file.name,
       file
     };
@@ -316,29 +303,6 @@ export class FormularioOficialComponent {
 
   protected removeDocEntry(id: string): void {
     this.docEntries.update((entries) => entries.filter((entry) => entry.id !== id));
-  }
-
-  protected updateDocEntryType(id: string, value: DocumentoTipo): void {
-    this.docEntries.update((entries) =>
-      entries.map((entry) => (entry.id === id ? { ...entry, tipo: value } : entry))
-    );
-  }
-
-  protected toggleDocEntryStudy(id: string, studyIndex: number, checked: boolean): void {
-    this.docEntries.update((entries) =>
-      entries
-        .map((entry) => {
-          if (entry.id !== id) return entry;
-          const next = new Set(entry.estudioIndices);
-          if (checked) {
-            next.add(studyIndex);
-          } else {
-            next.delete(studyIndex);
-          }
-          return { ...entry, estudioIndices: Array.from(next).sort((a, b) => a - b) };
-        })
-        .filter((entry) => entry.estudioIndices.length > 0)
-    );
   }
 
   protected submitForm(): void {
@@ -411,14 +375,7 @@ export class FormularioOficialComponent {
     if (!hasDni) return false;
     const entries = this.docEntries();
     if (!entries.length) return false;
-    if (entries.some((entry) => !entry.tipo || !entry.fileName || entry.estudioIndices.length === 0)) {
-      return false;
-    }
-    const totalStudies = this.formEstudios().length;
-    if (!totalStudies) return false;
-    const covered = new Set<number>();
-    entries.forEach((entry) => entry.estudioIndices.forEach((index) => covered.add(index)));
-    return covered.size >= totalStudies;
+    return entries.every((entry) => Boolean(entry.tipo && entry.fileName?.trim()));
   }
 
   protected getEstudioFamiliaOptions(): string[] {
