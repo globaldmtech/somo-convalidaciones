@@ -478,6 +478,7 @@ export class FormularioOficialComponent {
       if (!this.isCatalogTipo(entry.tipo)) return;
       const hasFilter = Boolean(entry.grado || entry.familia || entry.ciclo || entry.modulo);
       if (!hasFilter) return;
+      const originLabel = this.formatSuggestedOrigin(entry);
       const filters = {
         grado: entry.grado,
         familia: entry.familia,
@@ -497,14 +498,21 @@ export class FormularioOficialComponent {
           const familia = familias[index] || familias[0] || entry.familia.trim();
           const grado = grados[index] || grados[0] || entry.grado.trim();
           const key = this.normalizeKey(modulo);
-          if (options.has(key)) return;
+          const existing = options.get(key);
+          if (existing) {
+            if (!existing.origenes.includes(originLabel)) {
+              existing.origenes = [...existing.origenes, originLabel];
+            }
+            return;
+          }
           options.set(key, {
             id: modulo,
             nombre: modulo,
             ciclo,
             familia,
             grado,
-            tipo: entry.tipo.trim()
+            tipo: entry.tipo.trim(),
+            origenes: [originLabel]
           });
         });
       });
@@ -567,6 +575,14 @@ export class FormularioOficialComponent {
     return this.splitValues(listValue).some(
       (entry) => this.normalizeKey(entry) === normalizedTarget
     );
+  }
+
+  private formatSuggestedOrigin(entry: EstudioEntry): string {
+    const grado = entry.grado.trim() || 'Sin grado';
+    const familia = entry.familia.trim() || 'Sin familia';
+    const ciclo = entry.ciclo.trim() || 'Sin ciclo';
+    const modulo = entry.modulo.trim() || 'Todos';
+    return `${grado} • ${familia} • ${ciclo} • ${modulo}`;
   }
 
   private getValidSelectedSuggestedModuleIds(): string[] {

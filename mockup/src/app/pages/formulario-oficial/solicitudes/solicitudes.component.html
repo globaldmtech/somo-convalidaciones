@@ -36,18 +36,25 @@
             >
               <input
                 type="checkbox"
-                class="mt-1 h-4 w-4 accent-[#72cfd5]"
+                class="h-4 w-4 self-center accent-[#72cfd5]"
                 [checked]="isSuggestedSelected(option.id)"
                 (change)="handleSuggestedToggle(option.id, $event)"
               />
-              <span>
-                {{ option.grado || 'Sin grado' }}
-                <span class="text-slate-400">·</span>
-                {{ option.familia || 'Sin familia' }}
-                <span class="text-slate-400">·</span>
-                {{ option.ciclo || 'Sin ciclo' }}
-                <span class="text-slate-400">·</span>
-                {{ option.nombre }}
+              <span class="block min-w-0">
+                <span class="block min-w-0">
+                  {{ option.grado || 'Sin grado' }}
+                  <span class="text-slate-400">·</span>
+                  {{ option.familia || 'Sin familia' }}
+                  <span class="text-slate-400">·</span>
+                  {{ option.ciclo || 'Sin ciclo' }}
+                  <span class="text-slate-400">·</span>
+                  {{ option.nombre }}
+                </span>
+                @if (option.origenes.length) {
+                  <span class="block min-w-0 text-[0.75rem] text-slate-500">
+                    Sugerido por: {{ option.origenes.join(' · ') }}
+                  </span>
+                }
               </span>
             </label>
           }

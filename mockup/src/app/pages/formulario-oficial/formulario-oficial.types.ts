@@ -29,6 +29,7 @@ export type SuggestedModuleOption = {
   familia: string;
   grado: string;
   tipo: string;
+  origenes: string[];
 };
 
 export type RequestedModule = {
