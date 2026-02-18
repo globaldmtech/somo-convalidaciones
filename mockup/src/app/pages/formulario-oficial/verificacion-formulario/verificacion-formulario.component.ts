@@ -21,16 +21,17 @@ export class VerificacionFormularioComponent {
   private readonly router = inject(Router);
   private readonly draftService = inject(FormularioOficialDraftService);
 
-  protected readonly snapshot = computed<FormularioDraftSnapshot | null>(() => this.draftService.getSnapshot());
+  protected readonly draft = computed<FormularioDraftSnapshot>(
+    () => this.draftService.getSnapshot() as FormularioDraftSnapshot
+  );
   protected readonly confirmDialog = signal(false);
 
   protected volverAlFormulario(): void {
-    void this.router.navigate(['/formulario-oficial'], { queryParams: { step: 4 } });
+    void this.router.navigate(['/formulario-oficial']);
   }
 
   protected requestEnviarSolicitud(): void {
-    const snapshot = this.snapshot();
-    if (!snapshot || snapshot.submitted) return;
+    if (this.draft().submitted) return;
     this.confirmDialog.set(true);
   }
 
@@ -39,8 +40,7 @@ export class VerificacionFormularioComponent {
   }
 
   protected enviarSolicitud(): void {
-    const snapshot = this.snapshot();
-    if (!snapshot || snapshot.submitted) return;
+    if (this.draft().submitted) return;
     const fechaSolicitud = new Date().toISOString();
     this.draftService.updateSubmission(fechaSolicitud);
     this.confirmDialog.set(false);

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { verificacionFormularioGuard } from './pages/formulario-oficial/verificacion-formulario/verificacion-formulario.guard';
 
 export const routes: Routes = [
   {
@@ -8,6 +9,7 @@ export const routes: Routes = [
   },
   {
     path: 'formulario-oficial/verificacion',
+    canActivate: [verificacionFormularioGuard],
     loadComponent: () =>
       import('./pages/formulario-oficial/verificacion-formulario/verificacion-formulario.component').then(
         (m) => m.VerificacionFormularioComponent

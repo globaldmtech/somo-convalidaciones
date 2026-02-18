@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { DbService } from '../../core/db.service';
 import { CatalogRow, ConvalidacionRow } from '../../core/models';
 import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
@@ -36,9 +36,8 @@ import {
   styleUrl: './formulario-oficial.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormularioOficialComponent implements OnDestroy {
+export class FormularioOficialComponent {
   private readonly db = inject(DbService);
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly draftService = inject(FormularioOficialDraftService);
   private readonly rowsSignal = signal<ConvalidacionRow[]>([]);
@@ -136,12 +135,7 @@ export class FormularioOficialComponent implements OnDestroy {
 
   constructor() {
     this.restoreDraftSnapshot();
-    this.applyStepFromQueryParam();
     this.loadData();
-  }
-
-  ngOnDestroy(): void {
-    this.saveDraftSnapshot();
   }
 
   protected onPersonalFieldChange(change: { key: PersonalFieldKey; value: string }): void {
@@ -347,15 +341,6 @@ export class FormularioOficialComponent implements OnDestroy {
       hour: '2-digit',
       minute: '2-digit'
     });
-  }
-
-  private applyStepFromQueryParam(): void {
-    const stepParam = this.route.snapshot.queryParamMap.get('step');
-    if (!stepParam) return;
-    const parsed = Number(stepParam);
-    if (!Number.isInteger(parsed)) return;
-    const bounded = Math.min(this.totalSteps, Math.max(1, parsed));
-    this.currentStep.set(bounded);
   }
 
   private saveDraftSnapshot(): void {
