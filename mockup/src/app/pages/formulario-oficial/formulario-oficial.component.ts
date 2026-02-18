@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DbService } from '../../core/db.service';
 import { CatalogRow, ConvalidacionRow } from '../../core/models';
 import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
 import { DocumentacionComponent } from './documentacion/documentacion.component';
 import { EstudiosAportadosComponent } from './estudios-aportados/estudios-aportados.component';
+import { FormularioOficialDraftService } from './formulario-oficial-draft.service';
 import { SolicitudesComponent } from './solicitudes/solicitudes.component';
 import {
+  FormularioDraftSnapshot,
   EstudioEntry,
   EstudiosTipo,
   FilterKey,
@@ -33,8 +36,11 @@ import {
   styleUrl: './formulario-oficial.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormularioOficialComponent {
+export class FormularioOficialComponent implements OnDestroy {
   private readonly db = inject(DbService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly draftService = inject(FormularioOficialDraftService);
   private readonly rowsSignal = signal<ConvalidacionRow[]>([]);
   private readonly catalogRowsSignal = signal<CatalogRow[]>([]);
 
@@ -129,7 +135,13 @@ export class FormularioOficialComponent {
   private docEntrySequence = 0;
 
   constructor() {
+    this.restoreDraftSnapshot();
+    this.applyStepFromQueryParam();
     this.loadData();
+  }
+
+  ngOnDestroy(): void {
+    this.saveDraftSnapshot();
   }
 
   protected onPersonalFieldChange(change: { key: PersonalFieldKey; value: string }): void {
@@ -304,12 +316,6 @@ export class FormularioOficialComponent {
     this.docEntries.update((entries) => entries.filter((entry) => entry.id !== id));
   }
 
-  protected submitForm(): void {
-    if (!this.isFormValid()) return;
-    this.fechaSolicitud.set(new Date().toISOString());
-    this.submitted.set(true);
-  }
-
   protected requestSubmit(): void {
     if (!this.isFormValid()) return;
     this.confirmDialog.set(true);
@@ -321,8 +327,9 @@ export class FormularioOficialComponent {
 
   protected confirmSubmit(): void {
     if (!this.isFormValid()) return;
-    this.submitForm();
     this.confirmDialog.set(false);
+    this.saveDraftSnapshot();
+    void this.router.navigate(['/formulario-oficial/verificacion']);
   }
 
   protected isCatalogTipo(tipo: EstudiosTipo): boolean {
@@ -340,6 +347,84 @@ export class FormularioOficialComponent {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  private applyStepFromQueryParam(): void {
+    const stepParam = this.route.snapshot.queryParamMap.get('step');
+    if (!stepParam) return;
+    const parsed = Number(stepParam);
+    if (!Number.isInteger(parsed)) return;
+    const bounded = Math.min(this.totalSteps, Math.max(1, parsed));
+    this.currentStep.set(bounded);
+  }
+
+  private saveDraftSnapshot(): void {
+    const snapshot: FormularioDraftSnapshot = {
+      currentStep: this.currentStep(),
+      personalValues: { ...this.personalValues() },
+      draftEstudio: { ...this.draftEstudio() },
+      formEstudios: this.formEstudios().map((entry) => ({ ...entry })),
+      manualModuleDraft: { ...this.manualModuleDraft() },
+      manualModules: this.manualModules().map((entry) => ({ ...entry })),
+      selectedSuggestedModules: [...this.selectedSuggestedModules()],
+      requestedModules: this.requestedModules().map((entry) => ({ ...entry })),
+      docDniModeSingle: this.docDniModeSingle(),
+      docDniFileSingle: this.docDniFileSingle(),
+      docDniFileFront: this.docDniFileFront(),
+      docDniFileBack: this.docDniFileBack(),
+      docEntries: this.docEntries().map((entry) => ({ ...entry })),
+      submitted: this.submitted(),
+      fechaSolicitud: this.fechaSolicitud()
+    };
+    this.draftService.saveSnapshot(snapshot);
+  }
+
+  private restoreDraftSnapshot(): void {
+    const snapshot = this.draftService.getSnapshot();
+    if (!snapshot) return;
+
+    this.currentStep.set(Math.min(this.totalSteps, Math.max(1, snapshot.currentStep || 1)));
+    this.formNif.set(snapshot.personalValues.nif ?? '');
+    this.formNombre.set(snapshot.personalValues.nombre ?? '');
+    this.formApellidos.set(snapshot.personalValues.apellidos ?? '');
+    this.formDomicilio.set(snapshot.personalValues.domicilio ?? '');
+    this.formCodigoPostal.set(snapshot.personalValues.codigoPostal ?? '');
+    this.formLocalidad.set(snapshot.personalValues.localidad ?? '');
+    this.formProvincia.set(snapshot.personalValues.provincia ?? '');
+    this.formTelefonoFijo.set(snapshot.personalValues.telefonoFijo ?? '');
+    this.formTelefonoMovil.set(snapshot.personalValues.telefonoMovil ?? '');
+    this.formEmail.set(snapshot.personalValues.email ?? '');
+
+    this.draftEstudio.set({ ...snapshot.draftEstudio });
+    this.formEstudios.set(snapshot.formEstudios.map((entry) => ({ ...entry })));
+    this.manualModuleDraft.set({ ...snapshot.manualModuleDraft });
+    this.manualModules.set(snapshot.manualModules.map((entry) => ({ ...entry })));
+    this.selectedSuggestedModules.set([...snapshot.selectedSuggestedModules]);
+
+    this.docDniModeSingle.set(snapshot.docDniModeSingle);
+    this.docDniFileSingle.set(snapshot.docDniFileSingle);
+    this.docDniFileFront.set(snapshot.docDniFileFront);
+    this.docDniFileBack.set(snapshot.docDniFileBack);
+    this.docEntries.set(snapshot.docEntries.map((entry) => ({ ...entry })));
+
+    this.submitted.set(snapshot.submitted);
+    this.fechaSolicitud.set(snapshot.fechaSolicitud);
+    this.confirmDialog.set(false);
+
+    this.manualModuleSequence = this.getMaxSequence(snapshot.manualModules.map((entry) => entry.id), 'manual-');
+    this.docEntrySequence = this.getMaxSequence(snapshot.docEntries.map((entry) => entry.id), 'doc-');
+  }
+
+  private getMaxSequence(ids: string[], prefix: string): number {
+    let max = 0;
+    ids.forEach((id) => {
+      if (!id.startsWith(prefix)) return;
+      const parsed = Number(id.slice(prefix.length));
+      if (Number.isInteger(parsed) && parsed > max) {
+        max = parsed;
+      }
+    });
+    return max;
   }
 
   private isPersonalValid(): boolean {

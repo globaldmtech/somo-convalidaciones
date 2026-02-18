@@ -64,3 +64,21 @@ export type DocumentoEntry = {
   fileName?: string;
   file?: File | null;
 };
+
+export type FormularioDraftSnapshot = {
+  currentStep: number;
+  personalValues: PersonalValues;
+  draftEstudio: EstudioEntry;
+  formEstudios: EstudioEntry[];
+  manualModuleDraft: ManualModuleDraft;
+  manualModules: ManualModuleEntry[];
+  selectedSuggestedModules: string[];
+  requestedModules: RequestedModule[];
+  docDniModeSingle: boolean;
+  docDniFileSingle: File | null;
+  docDniFileFront: File | null;
+  docDniFileBack: File | null;
+  docEntries: DocumentoEntry[];
+  submitted: boolean;
+  fechaSolicitud: string | null;
+};
