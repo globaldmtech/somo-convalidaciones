@@ -41,6 +41,10 @@
                 (change)="handleSuggestedToggle(option.id, $event)"
               />
               <span>
+                {{ option.grado || 'Sin grado' }}
+                <span class="text-slate-400">·</span>
+                {{ option.familia || 'Sin familia' }}
+                <span class="text-slate-400">·</span>
                 {{ option.ciclo || 'Sin ciclo' }}
                 <span class="text-slate-400">·</span>
                 {{ option.nombre }}
