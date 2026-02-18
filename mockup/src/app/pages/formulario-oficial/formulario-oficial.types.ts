@@ -58,11 +58,9 @@ export type PersonalValues = {
 
 export type PersonalFieldKey = keyof PersonalValues;
 
-export type DocumentoTipo = 'cert' | 'acred' | 'justif' | '';
-
 export type DocumentoEntry = {
   id: string;
-  tipo: DocumentoTipo;
+  titulo: string;
   fileName?: string;
   file?: File | null;
 };

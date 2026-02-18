@@ -13,7 +13,6 @@ import {
   ManualModuleEntry,
   ManualModuleDraft,
   DocumentoEntry,
-  DocumentoTipo,
   PersonalFieldKey,
   PersonalValues,
   RequestedModule,
@@ -288,13 +287,13 @@ export class FormularioOficialComponent {
     this.docDniFileBack.set(file);
   }
 
-  protected addDocEntry(change: { file: File | null; tipo: DocumentoTipo }): void {
+  protected addDocEntry(change: { file: File | null; titulo: string }): void {
     const file = change.file;
-    const tipo = change.tipo;
-    if (!file || !tipo) return;
+    const titulo = change.titulo.trim();
+    if (!file || !titulo) return;
     const entry: DocumentoEntry = {
       id: this.nextDocEntryId(),
-      tipo,
+      titulo,
       fileName: file.name,
       file
     };
@@ -375,7 +374,7 @@ export class FormularioOficialComponent {
     if (!hasDni) return false;
     const entries = this.docEntries();
     if (!entries.length) return false;
-    return entries.every((entry) => Boolean(entry.tipo && entry.fileName?.trim()));
+    return entries.every((entry) => Boolean(entry.titulo?.trim() && entry.fileName?.trim()));
   }
 
   protected getEstudioFamiliaOptions(): string[] {

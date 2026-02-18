@@ -42,7 +42,6 @@
                 </p>
                 <p
                   class="m-0 min-w-0 truncate text-[0.82rem] font-semibold text-slate-700"
-                  [title]="dniSingleFileName() || 'DNI adjunto'"
                 >
                   {{ dniSingleFileName() || 'DNI adjunto' }}
                 </p>
@@ -70,7 +69,7 @@
               </label>
             } @else {
               <div class="flex items-center justify-between gap-2 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-[0.82rem] font-semibold text-slate-700">
-                <span class="min-w-0 flex-1 truncate" [title]="dniFrontFileName() || 'Anverso adjunto'">
+                <span class="min-w-0 flex-1 truncate">
                   {{ dniFrontFileName() || 'Anverso adjunto' }}
                 </span>
                 <button
@@ -95,7 +94,7 @@
               </label>
             } @else {
               <div class="flex items-center justify-between gap-2 rounded-2xl border border-slate-300 bg-white px-3 py-2 text-[0.82rem] font-semibold text-slate-700">
-                <span class="min-w-0 flex-1 truncate" [title]="dniBackFileName() || 'Reverso adjunto'">
+                <span class="min-w-0 flex-1 truncate">
                   {{ dniBackFileName() || 'Reverso adjunto' }}
                 </span>
                 <button
@@ -113,46 +112,18 @@
     </div>
 
     <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4">
-      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Documentación adicional
-      </p>
-      <select
-        class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
-        [value]="selectedAdditionalTipo()"
-        aria-label="Tipo de documento adicional"
-        (change)="handleAdditionalTipoChange($event)"
-      >
-        <option value="">Selecciona tipo de documento</option>
-        <option value="cert">Certificación académica oficial</option>
-        <option value="acred">Acreditación laboral</option>
-        <option value="justif">Documento justificativo</option>
-      </select>
-
-      <label
-        class="dropzone flex min-h-32 items-center justify-center rounded-2xl border-2 border-dashed p-5 text-center font-semibold transition"
-        [class.cursor-pointer]="canAttachAdditional()"
-        [class.cursor-not-allowed]="!canAttachAdditional()"
-        [class.pointer-events-none]="!canAttachAdditional()"
-        [class.border-slate-300]="canAttachAdditional()"
-        [class.border-slate-200]="!canAttachAdditional()"
-        [class.bg-white]="canAttachAdditional()"
-        [class.bg-slate-50]="!canAttachAdditional()"
-        [class.text-slate-600]="canAttachAdditional()"
-        [class.text-slate-400]="!canAttachAdditional()"
-        [class.hover:border-[#72cfd5]]="canAttachAdditional()"
-      >
-        @if (canAttachAdditional()) {
-          Arrastra el documento aquí o haz clic para seleccionar
-        } @else {
-          Selecciona primero un tipo de documento para habilitar la carga
-        }
-        <input
-          type="file"
-          class="hidden"
-          [disabled]="!canAttachAdditional()"
-          (change)="handleAdditionalDocAdd($event)"
-        />
-      </label>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          Documentación adicional
+        </p>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-full bg-[#1c1e39] px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:text-[#72cfd5]"
+          (click)="openAdditionalModal()"
+        >
+          {{ docEntries().length ? 'Agregar otro documento' : 'Agregar documento' }}
+        </button>
+      </div>
 
       @if (docEntries().length) {
         <div class="grid gap-2 max-h-96 overflow-y-auto pr-2">
@@ -160,11 +131,11 @@
             <div class="grid gap-1.5 rounded-2xl border border-slate-300 bg-white px-3 py-2">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="min-w-0 flex-1">
-                  <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                    {{ formatDocTipo(doc.tipo) }}
+                  <p class="m-0 min-w-0 truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    {{ doc.titulo.trim() || 'Documento sin titulo' }}
                   </p>
-                  <p class="m-0 min-w-0 truncate text-[0.82rem] font-semibold text-slate-700" [title]="formatDocName(doc)">
-                    {{ formatDocName(doc) }}
+                  <p class="m-0 min-w-0 truncate text-[0.82rem] font-semibold text-slate-700">
+                    {{ doc.fileName?.trim() || 'Archivo sin nombre' }}
                   </p>
                 </div>
                 <button
@@ -178,7 +149,130 @@
             </div>
           }
         </div>
+      } @else {
+        <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-4">
+          <p class="m-0 text-sm text-(--brand-gray-600)">
+            Aún no hay documentación adicional adjunta. Pulsa «Agregar documento» para añadir al menos una.
+          </p>
+        </div>
       }
     </div>
   </div>
 </div>
+
+@if (additionalModalOpen()) {
+  <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeAdditionalModal()">
+    <div
+      class="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="additionalModalTitleId"
+      [attr.aria-describedby]="additionalModalDescriptionId"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <div>
+          <h3 class="m-0 text-base font-semibold text-slate-900" [id]="additionalModalTitleId">
+            Agregar documento adicional
+          </h3>
+          <p class="m-0 text-[0.8rem] text-(--brand-gray-600)" [id]="additionalModalDescriptionId">
+            Escribe un nombre o descripción, adjunta el archivo y pulsa «Agregar».
+          </p>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="closeAdditionalModal()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="grid gap-4 bg-slate-100 p-4">
+        <div class="grid gap-4 rounded-2xl bg-white p-4">
+          @if (!additionalDocFile()) {
+            <label class="grid gap-2 text-sm text-slate-600">
+              <span>Nombre o descripción del documento</span>
+              <input
+                type="text"
+                class="h-10 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                [value]="additionalDocTitle()"
+                placeholder="Ej. Certificación académica del grado de peluquería"
+                (input)="handleAdditionalTitleChange($event)"
+              />
+            </label>
+            <label
+              class="dropzone flex min-h-32 items-center justify-center rounded-2xl border-2 border-dashed p-5 text-center font-semibold transition"
+              [class.cursor-pointer]="canAttachAdditional()"
+              [class.cursor-not-allowed]="!canAttachAdditional()"
+              [class.pointer-events-none]="!canAttachAdditional()"
+              [class.border-slate-300]="canAttachAdditional()"
+              [class.border-slate-200]="!canAttachAdditional()"
+              [class.bg-white]="canAttachAdditional()"
+              [class.bg-slate-50]="!canAttachAdditional()"
+              [class.text-slate-600]="canAttachAdditional()"
+              [class.text-slate-400]="!canAttachAdditional()"
+              [class.hover:border-[#72cfd5]]="canAttachAdditional()"
+            >
+              @if (canAttachAdditional()) {
+                Arrastra el documento aquí o haz clic para seleccionar
+              } @else {
+                Escribe primero un nombre o descripción para habilitar la carga
+              }
+              <input
+                type="file"
+                class="hidden"
+                [disabled]="!canAttachAdditional()"
+                (change)="handleAdditionalDocAdd($event)"
+              />
+            </label>
+          } @else {
+            <div class="grid gap-2">
+              <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                Previsualización del documento a agregar
+              </p>
+              <div class="grid gap-1.5 rounded-2xl border border-slate-300 bg-white px-3 py-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="min-w-0 flex-1">
+                  <p class="m-0 min-w-0 truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    {{ additionalDocTitle().trim() || 'Documento sin titulo' }}
+                  </p>
+                  <p class="m-0 min-w-0 truncate text-[0.82rem] font-semibold text-slate-700">
+                    {{ additionalDocFile()?.name || 'Archivo sin nombre' }}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                  (click)="removeAdditionalDocDraft()"
+                >
+                  Quitar
+                </button>
+              </div>
+            </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
+          (click)="closeAdditionalModal()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
+          (click)="confirmAdditionalDoc()"
+          [disabled]="!canConfirmAdditionalDoc()"
+        >
+          Agregar
+        </button>
+      </div>
+    </div>
+  </div>
+}

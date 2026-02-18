@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { DocumentoEntry, DocumentoTipo } from '../formulario-oficial.types';
+import { DocumentoEntry } from '../formulario-oficial.types';
 
 @Component({
   selector: 'app-documentacion',
@@ -8,6 +8,8 @@ import { DocumentoEntry, DocumentoTipo } from '../formulario-oficial.types';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentacionComponent {
+  protected readonly additionalModalTitleId = 'add-additional-doc-modal-title';
+  protected readonly additionalModalDescriptionId = 'add-additional-doc-modal-description';
   readonly docEntries = input<DocumentoEntry[]>([]);
   readonly dniModeSingle = input(true);
   readonly dniSingleAttached = input(false);
@@ -21,9 +23,11 @@ export class DocumentacionComponent {
   readonly dniSingleChange = output<File | null>();
   readonly dniFrontChange = output<File | null>();
   readonly dniBackChange = output<File | null>();
-  readonly addDoc = output<{ file: File | null; tipo: DocumentoTipo }>();
+  readonly addDoc = output<{ file: File | null; titulo: string }>();
   readonly removeDoc = output<string>();
-  protected readonly selectedAdditionalTipo = signal<DocumentoTipo>('');
+  protected readonly additionalModalOpen = signal(false);
+  protected readonly additionalDocTitle = signal('');
+  protected readonly additionalDocFile = signal<File | null>(null);
 
   protected handleDniModeToggle(event: Event): void {
     const checked = Boolean((event.target as HTMLInputElement | null)?.checked);
@@ -69,13 +73,23 @@ export class DocumentacionComponent {
     this.dniBackChange.emit(null);
   }
 
-  protected handleAdditionalTipoChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement | null)?.value ?? '';
-    this.selectedAdditionalTipo.set(value as DocumentoTipo);
+  protected handleAdditionalTitleChange(event: Event): void {
+    const value = (event.target as HTMLInputElement | null)?.value ?? '';
+    this.additionalDocTitle.set(value);
+  }
+
+  protected openAdditionalModal(): void {
+    this.resetAdditionalDraft();
+    this.additionalModalOpen.set(true);
+  }
+
+  protected closeAdditionalModal(): void {
+    this.additionalModalOpen.set(false);
+    this.resetAdditionalDraft();
   }
 
   protected canAttachAdditional(): boolean {
-    return Boolean(this.selectedAdditionalTipo());
+    return this.additionalDocTitle().trim().length > 0;
   }
 
   protected handleAdditionalDocAdd(event: Event): void {
@@ -85,26 +99,34 @@ export class DocumentacionComponent {
       if (input) input.value = '';
       return;
     }
-    const tipo = this.selectedAdditionalTipo();
-    if (!tipo) {
+    if (!this.canAttachAdditional()) {
       if (input) input.value = '';
       return;
     }
-    this.addDoc.emit({ file, tipo });
-    this.selectedAdditionalTipo.set('');
+    this.additionalDocFile.set(file);
     if (input) {
       input.value = '';
     }
   }
 
-  protected formatDocName(entry: DocumentoEntry): string {
-    return entry.fileName?.trim() || 'Documento sin nombre';
+  protected removeAdditionalDocDraft(): void {
+    this.additionalDocFile.set(null);
   }
 
-  protected formatDocTipo(tipo: DocumentoTipo): string {
-    if (tipo === 'cert') return 'Certificación académica oficial';
-    if (tipo === 'acred') return 'Acreditación laboral';
-    if (tipo === 'justif') return 'Documento justificativo';
-    return 'Sin tipo';
+  protected canConfirmAdditionalDoc(): boolean {
+    return this.canAttachAdditional() && Boolean(this.additionalDocFile());
+  }
+
+  protected confirmAdditionalDoc(): void {
+    const file = this.additionalDocFile();
+    const titulo = this.additionalDocTitle().trim();
+    if (!file || !titulo) return;
+    this.addDoc.emit({ file, titulo });
+    this.closeAdditionalModal();
+  }
+
+  private resetAdditionalDraft(): void {
+    this.additionalDocTitle.set('');
+    this.additionalDocFile.set(null);
   }
 }
