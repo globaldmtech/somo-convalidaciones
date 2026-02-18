@@ -135,6 +135,33 @@ export class EstudiosAportadosComponent {
     return value;
   }
 
+  protected getEstudioTipoDisplay(entry: EstudioEntry): string {
+    const tipo = entry.tipo.trim();
+    if (!tipo) return '—';
+    if (tipo === 'Universitarios') return 'Estudios universitarios';
+    if (tipo === 'Otros') return 'Otros estudios';
+    return tipo;
+  }
+
+  protected getEstudioGradoDisplay(entry: EstudioEntry): string {
+    if (!this.isCatalogTipo(entry.tipo)) return '—';
+    const grado = entry.grado.trim();
+    return grado ? this.formatGrade(grado) : '—';
+  }
+
+  protected getEstudioValue(value: string): string {
+    const normalized = value.trim();
+    return normalized || '—';
+  }
+
+  protected getEstudioModuloDisplay(entry: EstudioEntry): string {
+    if (this.isCatalogTipo(entry.tipo)) {
+      return this.getEstudioValue(entry.modulo);
+    }
+    const descripcion = entry.descripcion.trim();
+    return descripcion || '—';
+  }
+
   private normalizeChipValue(value: string): string {
     return value
       .normalize('NFD')

@@ -61,44 +61,37 @@ export class SolicitudesComponent {
     this.removeRequested.emit(item);
   }
 
-  protected getRequestedTitle(item: RequestedModule): string {
-    const familia = item.familia.trim();
-    if (familia) return familia;
-    return item.nombre.trim() || 'Sin módulo';
-  }
-
-  protected getRequestedDetail(item: RequestedModule): string {
-    const parts = [item.ciclo, item.nombre]
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0);
-    const base = parts.length ? parts.join(' · ') : item.nombre.trim() || 'Sin detalle';
-    const code = item.codigo?.trim();
-    if (!code) return base;
-    return `${base} · Código ${code}`;
-  }
-
-  protected getTipoChipLabel(tipo: string): string {
+  protected getRequestedTipoDisplay(tipo: string): string {
     const value = tipo.trim();
     if (!value) return '—';
-    if (value === 'Universitarios') return 'UNIV';
-    if (value === 'Otros') return 'OTROS';
+    if (value === 'Universitarios') return 'Estudios universitarios';
+    if (value === 'Otros') return 'Otros estudios';
     return value;
   }
 
-  protected getGradoChipLabel(grado: string): string {
-    const key = this.normalizeChipValue(grado);
-    if (!key) return '—';
-    if (key === 'gb' || key.includes('basico') || key.includes('basica')) return 'GB';
-    if (key === 'gm' || key.includes('medio') || key.includes('media')) return 'GM';
-    if (key === 'gs' || key.includes('superior')) return 'GS';
-    if (
-      key === 'ce' ||
-      key.includes('especializacion') ||
-      key.includes('especialista')
-    ) {
-      return 'CE';
+  protected getRequestedGradoDisplay(grado: string): string {
+    const value = grado.trim();
+    if (!value) return '—';
+    const key = this.normalizeChipValue(value);
+    if (key === 'gb' || key.includes('basico') || key.includes('basica')) return 'Grado básico';
+    if (key === 'gm' || key.includes('medio') || key.includes('media')) return 'Grado medio';
+    if (key === 'gs' || key.includes('superior')) return 'Grado superior';
+    if (key === 'ce' || key.includes('especializacion') || key.includes('especialista')) {
+      return 'Curso de especialización';
     }
-    return '—';
+    return value;
+  }
+
+  protected getRequestedValue(value: string): string {
+    const normalized = value.trim();
+    return normalized || '—';
+  }
+
+  protected getRequestedModuloDisplay(item: RequestedModule): string {
+    const base = item.nombre.trim() || 'Sin módulo';
+    const code = item.codigo?.trim();
+    if (!code) return base;
+    return `${base} · Código ${code}`;
   }
 
   private normalizeChipValue(value: string): string {
