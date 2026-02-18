@@ -7,6 +7,13 @@ export const routes: Routes = [
     redirectTo: 'formulario-oficial'
   },
   {
+    path: 'formulario-oficial/verificacion',
+    loadComponent: () =>
+      import('./pages/formulario-oficial/verificacion-formulario/verificacion-formulario.component').then(
+        (m) => m.VerificacionFormularioComponent
+      )
+  },
+  {
     path: 'formulario-oficial',
     loadComponent: () =>
       import('./pages/formulario-oficial/formulario-oficial.component').then(
