@@ -16,7 +16,8 @@ import {
   DocumentoTipo,
   PersonalFieldKey,
   PersonalValues,
-  RequestedModule
+  RequestedModule,
+  SuggestedModuleOption
 } from './formulario-oficial.types';
 
 @Component({
@@ -205,6 +206,7 @@ export class FormularioOficialComponent {
 
   protected removeEstudioRow(index: number): void {
     this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
+    this.pruneSelectedSuggestedModules();
     this.docEntries.update((entries) =>
       entries
         .map((entry) => {
@@ -267,7 +269,8 @@ export class FormularioOficialComponent {
 
   protected removeRequestedModule(item: RequestedModule): void {
     if (item.source === 'suggested') {
-      this.selectedSuggestedModules.update((items) => items.filter((entry) => entry !== item.nombre));
+      const suggestedId = item.id.startsWith('suggested:') ? item.id.slice(10) : item.id;
+      this.selectedSuggestedModules.update((items) => items.filter((entry) => entry !== suggestedId));
       return;
     }
     this.manualModules.update((rows) => rows.filter((row) => row.id !== item.id));
@@ -397,7 +400,8 @@ export class FormularioOficialComponent {
 
   private isModulosValid(): boolean {
     const manualOk = this.manualModules().every((row) => row.nombre.trim().length > 0);
-    return this.selectedSuggestedModules().length + this.manualModules().length > 0 && manualOk;
+    const suggestedCount = this.getValidSelectedSuggestedModuleIds().length;
+    return suggestedCount + this.manualModules().length > 0 && manualOk;
   }
 
   private isDocsValid(): boolean {
@@ -483,25 +487,38 @@ export class FormularioOficialComponent {
   }
 
   private buildRequestedModules(): RequestedModule[] {
-    const suggested = this.selectedSuggestedModules().map((value) => ({
-      id: `suggested:${value}`,
-      source: 'suggested' as const,
-      nombre: value
-    }));
+    const fallbackContext = this.getFallbackRequestedContext();
+    const suggestedLookup = new Map(this.suggestedModules().map((option) => [option.id, option]));
+    const suggested: RequestedModule[] = [];
+    this.selectedSuggestedModules().forEach((id) => {
+      const option = suggestedLookup.get(id);
+      if (!option) return;
+      suggested.push({
+        id: `suggested:${id}`,
+        source: 'suggested' as const,
+        nombre: option.nombre,
+        tipo: option.tipo,
+        grado: option.grado,
+        familia: option.familia,
+        ciclo: option.ciclo
+      });
+    });
     const manual = this.manualModules().map((entry) => ({
       id: entry.id,
       source: 'manual' as const,
       nombre: entry.nombre,
-      codigo: entry.codigo
+      codigo: entry.codigo,
+      ...fallbackContext
     }));
     return [...suggested, ...manual];
   }
 
-  private buildSuggestedModules(): string[] {
-    const values = new Set<string>();
+  private buildSuggestedModules(): SuggestedModuleOption[] {
+    const options = new Map<string, SuggestedModuleOption>();
     const estudios = this.formEstudios();
 
     estudios.forEach((entry) => {
+      if (!this.isCatalogTipo(entry.tipo)) return;
       const hasFilter = Boolean(entry.grado || entry.familia || entry.ciclo || entry.modulo);
       if (!hasFilter) return;
       const filters = {
@@ -512,11 +529,49 @@ export class FormularioOficialComponent {
       };
       this.rowsSignal().forEach((row) => {
         if (!this.matchesSideFilters(row, 'origen', filters)) return;
-        this.splitValues(row.modulo_destino).forEach((value) => values.add(value));
+        const modulos = this.splitValues(row.modulo_destino);
+        if (!modulos.length) return;
+        const ciclos = this.splitValues(row.ciclo_destino);
+        const familias = this.splitValues(row.familia_destino);
+        const grados = this.splitValues(row.grado_destino);
+
+        modulos.forEach((modulo, index) => {
+          const ciclo = ciclos[index] || ciclos[0] || entry.ciclo.trim();
+          const familia = familias[index] || familias[0] || entry.familia.trim();
+          const grado = grados[index] || grados[0] || entry.grado.trim();
+          const key = this.normalizeKey(modulo);
+          if (options.has(key)) return;
+          options.set(key, {
+            id: modulo,
+            nombre: modulo,
+            ciclo,
+            familia,
+            grado,
+            tipo: entry.tipo.trim()
+          });
+        });
       });
     });
 
-    return Array.from(values).sort((a, b) => a.localeCompare(b));
+    return Array.from(options.values()).sort((a, b) => {
+      const byCycle = a.ciclo.localeCompare(b.ciclo, 'es');
+      if (byCycle !== 0) return byCycle;
+      return a.nombre.localeCompare(b.nombre, 'es');
+    });
+  }
+
+  private getFallbackRequestedContext(): Pick<RequestedModule, 'tipo' | 'grado' | 'familia' | 'ciclo'> {
+    const estudios = this.formEstudios();
+    const base = estudios.find((entry) => this.isCatalogTipo(entry.tipo)) ?? estudios[0];
+    if (!base) {
+      return { tipo: '', grado: '', familia: '', ciclo: '' };
+    }
+    return {
+      tipo: base.tipo.trim(),
+      grado: base.grado.trim(),
+      familia: base.familia.trim(),
+      ciclo: base.ciclo.trim()
+    };
   }
 
   private matchesSideFilters(
@@ -555,6 +610,19 @@ export class FormularioOficialComponent {
     return this.splitValues(listValue).some(
       (entry) => this.normalizeKey(entry) === normalizedTarget
     );
+  }
+
+  private getValidSelectedSuggestedModuleIds(): string[] {
+    const validIds = new Set(this.suggestedModules().map((option) => option.id));
+    return this.selectedSuggestedModules().filter((id) => validIds.has(id));
+  }
+
+  private pruneSelectedSuggestedModules(): void {
+    this.selectedSuggestedModules.update((ids) => {
+      const validIds = new Set(this.suggestedModules().map((option) => option.id));
+      const next = ids.filter((id) => validIds.has(id));
+      return next.length === ids.length ? ids : next;
+    });
   }
 
   private async loadData(): Promise<void> {

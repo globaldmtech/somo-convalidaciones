@@ -22,11 +22,24 @@ export type ManualModuleEntry = {
   codigo: string;
 };
 
+export type SuggestedModuleOption = {
+  id: string;
+  nombre: string;
+  ciclo: string;
+  familia: string;
+  grado: string;
+  tipo: string;
+};
+
 export type RequestedModule = {
   id: string;
   source: 'suggested' | 'manual';
   nombre: string;
   codigo?: string;
+  tipo: string;
+  grado: string;
+  familia: string;
+  ciclo: string;
 };
 
 export type PersonalValues = {
