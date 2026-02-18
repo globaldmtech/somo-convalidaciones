@@ -133,11 +133,13 @@ export class FormularioOficialComponent {
   private manualModuleSequence = 0;
   private docEntrySequence = 0;
 
+  // Restaura el borrador guardado y carga los datos base del formulario.
   constructor() {
     this.restoreDraftSnapshot();
     this.loadData();
   }
 
+  // Actualiza el campo de datos personales segun la clave recibida.
   protected onPersonalFieldChange(change: { key: PersonalFieldKey; value: string }): void {
     switch (change.key) {
       case 'nif':
@@ -173,20 +175,24 @@ export class FormularioOficialComponent {
     }
   }
 
+  // Retrocede al paso anterior sin bajar del paso 1.
   protected previousStep(): void {
     if (this.currentStep() <= 1) return;
     this.currentStep.update((step) => Math.max(1, step - 1));
   }
 
+  // Avanza al siguiente paso solo si el paso actual es valido.
   protected nextStep(): void {
     if (this.currentStep() >= this.totalSteps || !this.isStepValid(this.currentStep())) return;
     this.currentStep.update((step) => Math.min(this.totalSteps, step + 1));
   }
 
+  // Indica si un paso ya esta completado respecto al paso actual.
   protected isStepComplete(step: number): boolean {
     return step < this.currentStep() && this.isStepValid(step);
   }
 
+  // Valida cada paso segun sus reglas de negocio.
   protected isStepValid(step: number): boolean {
     switch (step) {
       case 1:
@@ -202,6 +208,7 @@ export class FormularioOficialComponent {
     }
   }
 
+  // Agrega el estudio en borrador al listado si esta completo.
   protected addEstudioRow(): void {
     const entry = this.draftEstudio();
     if (!this.isEstudioEntryComplete(entry)) return;
@@ -209,19 +216,23 @@ export class FormularioOficialComponent {
     this.resetDraftEstudio(entry.tipo);
   }
 
+  // Elimina un estudio por indice y depura sugerencias invalidadas.
   protected removeEstudioRow(index: number): void {
     this.formEstudios.update((rows) => rows.filter((_, current) => current !== index));
     this.pruneSelectedSuggestedModules();
   }
 
+  // Actualiza un campo concreto del estudio en borrador.
   protected updateEstudioField(key: keyof EstudioEntry, value: string): void {
     this.draftEstudio.update((row) => ({ ...row, [key]: value }));
   }
 
+  // Cambia el tipo de estudio y reinicia dependencias del borrador.
   protected onTipoChange(value: EstudiosTipo): void {
     this.resetDraftEstudio(value);
   }
 
+  // Gestiona cambios en grado/familia/ciclo/modulo reseteando dependencias.
   protected onEstudioSelectChange(key: FilterKey, value: string): void {
     this.draftEstudio.update((row) => {
       if (key === 'grado') {
@@ -237,6 +248,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Agrega un modulo manual al listado y limpia el borrador.
   protected addManualModule(): void {
     if (!this.isManualModuleDraftValid()) return;
     const draft = this.manualModuleDraft();
@@ -249,10 +261,12 @@ export class FormularioOficialComponent {
     this.manualModuleDraft.set({ nombre: '', codigo: '' });
   }
 
+  // Actualiza el borrador del modulo manual.
   protected updateManualModuleDraft(key: keyof ManualModuleDraft, value: string): void {
     this.manualModuleDraft.update((draft) => ({ ...draft, [key]: value }));
   }
 
+  // Marca o desmarca un modulo sugerido seleccionado por el usuario.
   protected toggleSuggestedModule(value: string, checked: boolean): void {
     this.selectedSuggestedModules.update((items) => {
       if (checked) {
@@ -262,6 +276,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Elimina una solicitud ya agregada, sugerida o manual.
   protected removeRequestedModule(item: RequestedModule): void {
     if (item.source === 'suggested') {
       const suggestedId = item.id.startsWith('suggested:') ? item.id.slice(10) : item.id;
@@ -271,6 +286,7 @@ export class FormularioOficialComponent {
     this.manualModules.update((rows) => rows.filter((row) => row.id !== item.id));
   }
 
+  // Cambia el modo de DNI y limpia los archivos incompatibles.
   protected onDniModeChange(single: boolean): void {
     this.docDniModeSingle.set(single);
     if (single) {
@@ -281,18 +297,22 @@ export class FormularioOficialComponent {
     }
   }
 
+  // Guarda el archivo de DNI en modo documento unico.
   protected onDniSingleChange(file: File | null): void {
     this.docDniFileSingle.set(file);
   }
 
+  // Guarda el archivo del anverso del DNI.
   protected onDniFrontChange(file: File | null): void {
     this.docDniFileFront.set(file);
   }
 
+  // Guarda el archivo del reverso del DNI.
   protected onDniBackChange(file: File | null): void {
     this.docDniFileBack.set(file);
   }
 
+  // Agrega una entrada de documentacion adicional con titulo y archivo.
   protected addDocEntry(change: { file: File | null; titulo: string }): void {
     const file = change.file;
     const titulo = change.titulo.trim();
@@ -306,19 +326,23 @@ export class FormularioOficialComponent {
     this.docEntries.update((entries) => [...entries, entry]);
   }
 
+  // Elimina un documento adicional por id.
   protected removeDocEntry(id: string): void {
     this.docEntries.update((entries) => entries.filter((entry) => entry.id !== id));
   }
 
+  // Abre el modal de previsualizacion final cuando el formulario es valido.
   protected requestSubmit(): void {
     if (!this.isFormValid()) return;
     this.confirmDialog.set(true);
   }
 
+  // Cierra el modal de previsualizacion final.
   protected cancelSubmit(): void {
     this.confirmDialog.set(false);
   }
 
+  // Guarda el borrador y navega a la pantalla de verificacion final.
   protected confirmSubmit(): void {
     if (!this.isFormValid()) return;
     this.confirmDialog.set(false);
@@ -326,10 +350,12 @@ export class FormularioOficialComponent {
     void this.router.navigate(['/formulario-oficial/verificacion']);
   }
 
+  // Comprueba si el tipo de estudio usa catalogo oficial.
   protected isCatalogTipo(tipo: EstudiosTipo): boolean {
     return tipo === 'LOGSE' || tipo === 'LOE';
   }
 
+  // Formatea una fecha ISO al formato local visible.
   protected formatFechaSolicitud(value: string | null): string {
     if (!value) return '';
     const date = new Date(value);
@@ -343,6 +369,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Construye y guarda una copia completa del estado actual del formulario.
   private saveDraftSnapshot(): void {
     const snapshot: FormularioDraftSnapshot = {
       currentStep: this.currentStep(),
@@ -364,6 +391,7 @@ export class FormularioOficialComponent {
     this.draftService.saveSnapshot(snapshot);
   }
 
+  // Restaura en memoria el ultimo borrador disponible.
   private restoreDraftSnapshot(): void {
     const snapshot = this.draftService.getSnapshot();
     if (!snapshot) return;
@@ -400,6 +428,7 @@ export class FormularioOficialComponent {
     this.docEntrySequence = this.getMaxSequence(snapshot.docEntries.map((entry) => entry.id), 'doc-');
   }
 
+  // Obtiene el mayor sufijo numerico para continuar secuencias de ids.
   private getMaxSequence(ids: string[], prefix: string): number {
     let max = 0;
     ids.forEach((id) => {
@@ -412,6 +441,7 @@ export class FormularioOficialComponent {
     return max;
   }
 
+  // Valida que los datos personales obligatorios esten informados.
   private isPersonalValid(): boolean {
     return [
       this.formNif(),
@@ -426,17 +456,20 @@ export class FormularioOficialComponent {
     ].every((value) => value.trim().length > 0);
   }
 
+  // Valida que exista al menos un estudio completo.
   private isEstudiosValid(): boolean {
     const estudios = this.formEstudios();
     return estudios.length > 0 && estudios.every((entry) => this.isEstudioEntryComplete(entry));
   }
 
+  // Valida que exista al menos un modulo solicitado valido.
   private isModulosValid(): boolean {
     const manualOk = this.manualModules().every((row) => row.nombre.trim().length > 0);
     const suggestedCount = this.getValidSelectedSuggestedModuleIds().length;
     return suggestedCount + this.manualModules().length > 0 && manualOk;
   }
 
+  // Valida la documentacion obligatoria de DNI y documentos adicionales.
   private isDocsValid(): boolean {
     const hasDni = this.docDniModeSingle()
       ? Boolean(this.docDniFileSingle())
@@ -447,6 +480,7 @@ export class FormularioOficialComponent {
     return entries.every((entry) => Boolean(entry.titulo?.trim() && entry.fileName?.trim()));
   }
 
+  // Obtiene familias disponibles segun el grado seleccionado.
   protected getEstudioFamiliaOptions(): string[] {
     const entry = this.draftEstudio();
     if (!entry.grado) return [];
@@ -457,6 +491,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Obtiene ciclos disponibles segun grado y familia seleccionados.
   protected getEstudioCicloOptions(): string[] {
     const entry = this.draftEstudio();
     if (!entry.grado || !entry.familia) return [];
@@ -467,6 +502,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Obtiene modulos disponibles segun los filtros del estudio en borrador.
   protected getEstudioModuloOptions(): string[] {
     const entry = this.draftEstudio();
     if (!entry.ciclo) return [];
@@ -478,6 +514,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Genera opciones unicas del catalogo para grado/familia/ciclo.
   protected buildCatalogOptions(key: 'grado' | 'familia' | 'ciclo'): string[] {
     const rows = this.catalogRowsSignal();
     const values = new Set<string>();
@@ -485,6 +522,7 @@ export class FormularioOficialComponent {
     return Array.from(values).sort((a, b) => a.localeCompare(b));
   }
 
+  // Genera opciones filtradas de familia o ciclo para el formulario.
   private buildFormCatalogOptions(
     key: 'familia' | 'ciclo',
     filters: { grado: string; familia: string; ciclo: string }
@@ -500,6 +538,7 @@ export class FormularioOficialComponent {
     return Array.from(values).sort((a, b) => a.localeCompare(b));
   }
 
+  // Genera opciones de modulo filtradas por grado/familia/ciclo.
   private buildFormModuleOptions(filters: Record<FilterKey, string>): string[] {
     const rows = this.catalogRowsSignal().filter((row) => {
       if (filters.grado && row.grado !== filters.grado) return false;
@@ -512,6 +551,7 @@ export class FormularioOficialComponent {
     return Array.from(values).sort((a, b) => a.localeCompare(b));
   }
 
+  // Construye la lista final de solicitudes (sugeridas + manuales).
   private buildRequestedModules(): RequestedModule[] {
     const fallbackContext = this.getFallbackRequestedContext();
     const suggestedLookup = new Map(this.suggestedModules().map((option) => [option.id, option]));
@@ -539,6 +579,7 @@ export class FormularioOficialComponent {
     return [...suggested, ...manual];
   }
 
+  // Construye sugerencias de modulos a partir de estudios y convalidaciones.
   private buildSuggestedModules(): SuggestedModuleOption[] {
     const options = new Map<string, SuggestedModuleOption>();
     const estudios = this.formEstudios();
@@ -594,6 +635,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Obtiene contexto por defecto para modulos manuales sin origen explicito.
   private getFallbackRequestedContext(): Pick<RequestedModule, 'tipo' | 'grado' | 'familia' | 'ciclo'> {
     const estudios = this.formEstudios();
     const base = estudios.find((entry) => this.isCatalogTipo(entry.tipo)) ?? estudios[0];
@@ -608,6 +650,7 @@ export class FormularioOficialComponent {
     };
   }
 
+  // Comprueba si una fila cumple los filtros del lado origen/destino.
   private matchesSideFilters(
     row: ConvalidacionRow,
     side: 'origen' | 'destino',
@@ -622,6 +665,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Divide un campo con valores separados por ';' en una lista limpia.
   private splitValues(value: string | null): string[] {
     if (!value) return [];
     return value
@@ -630,6 +674,7 @@ export class FormularioOficialComponent {
       .filter(Boolean);
   }
 
+  // Normaliza texto para comparaciones insensibles a tildes y mayusculas.
   private normalizeKey(value: string): string {
     return value
       .normalize('NFD')
@@ -638,6 +683,7 @@ export class FormularioOficialComponent {
       .trim();
   }
 
+  // Comprueba si un valor objetivo existe dentro de una lista serializada.
   private listIncludes(listValue: string | null, target: string): boolean {
     if (!target) return true;
     const normalizedTarget = this.normalizeKey(target);
@@ -646,6 +692,7 @@ export class FormularioOficialComponent {
     );
   }
 
+  // Formatea el estudio origen mostrado en "Sugerido por".
   private formatSuggestedOrigin(entry: EstudioEntry): string {
     const grado = entry.grado.trim() || 'Sin grado';
     const familia = entry.familia.trim() || 'Sin familia';
@@ -654,11 +701,13 @@ export class FormularioOficialComponent {
     return `${grado} • ${familia} • ${ciclo} • ${modulo}`;
   }
 
+  // Devuelve ids sugeridos seleccionados que siguen siendo validos.
   private getValidSelectedSuggestedModuleIds(): string[] {
     const validIds = new Set(this.suggestedModules().map((option) => option.id));
     return this.selectedSuggestedModules().filter((id) => validIds.has(id));
   }
 
+  // Elimina del estado las sugerencias seleccionadas que ya no existen.
   private pruneSelectedSuggestedModules(): void {
     this.selectedSuggestedModules.update((ids) => {
       const validIds = new Set(this.suggestedModules().map((option) => option.id));
@@ -667,6 +716,7 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Carga catalogo y convalidaciones desde la base de datos.
   private async loadData(): Promise<void> {
     try {
       this.loading.set(true);
@@ -684,6 +734,7 @@ export class FormularioOficialComponent {
     }
   }
 
+  // Reinicia el estudio en borrador segun el tipo seleccionado.
   private resetDraftEstudio(tipo: EstudiosTipo): void {
     if (!this.isCatalogTipo(tipo)) {
       this.draftEstudio.set({
@@ -706,21 +757,25 @@ export class FormularioOficialComponent {
     });
   }
 
+  // Valida si el borrador del modulo manual permite agregarlo.
   private isManualModuleDraftValid(): boolean {
     const draft = this.manualModuleDraft();
     return draft.nombre.trim().length > 0;
   }
 
+  // Genera el siguiente id incremental para modulos manuales.
   private nextManualModuleId(): string {
     this.manualModuleSequence += 1;
     return `manual-${this.manualModuleSequence}`;
   }
 
+  // Genera el siguiente id incremental para documentos adicionales.
   private nextDocEntryId(): string {
     this.docEntrySequence += 1;
     return `doc-${this.docEntrySequence}`;
   }
 
+  // Comprueba si un estudio tiene los campos minimos requeridos.
   private isEstudioEntryComplete(entry: EstudioEntry): boolean {
     if (!entry.tipo) return false;
     if (this.isCatalogTipo(entry.tipo)) {
