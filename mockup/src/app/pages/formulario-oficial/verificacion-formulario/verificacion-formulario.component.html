@@ -1,0 +1,207 @@
+<section class="grid gap-5">
+  <div class="space-y-2">
+    <h2 class="m-0 text-2xl font-semibold text-slate-900">Verificación final de solicitud</h2>
+    <p class="m-0 text-sm text-(--brand-gray-600)">
+      Revisa toda la información antes del envío final. En esta pantalla no se puede editar.
+    </p>
+  </div>
+
+  @if (snapshot(); as draft) {
+    <div class="grid gap-4 rounded-2xl bg-slate-100 p-5">
+      <h3 class="m-0 text-base font-semibold text-slate-900">1. Datos personales</h3>
+      <div class="grid gap-2 rounded-2xl border border-slate-300 bg-white p-4 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">NIF/NIE:</span> {{ getDisplayValue(draft.personalValues.nif) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Nombre:</span> {{ getDisplayValue(draft.personalValues.nombre) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Apellidos:</span> {{ getDisplayValue(draft.personalValues.apellidos) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Domicilio:</span> {{ getDisplayValue(draft.personalValues.domicilio) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Código postal:</span> {{ getDisplayValue(draft.personalValues.codigoPostal) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Localidad:</span> {{ getDisplayValue(draft.personalValues.localidad) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Provincia:</span> {{ getDisplayValue(draft.personalValues.provincia) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Tel. fijo:</span> {{ getDisplayValue(draft.personalValues.telefonoFijo) }}</p>
+        <p class="m-0 text-sm text-slate-700"><span class="font-semibold">Tel. móvil:</span> {{ getDisplayValue(draft.personalValues.telefonoMovil) }}</p>
+        <p class="m-0 text-sm text-slate-700 sm:col-span-2 lg:col-span-3"><span class="font-semibold">Email:</span> {{ getDisplayValue(draft.personalValues.email) }}</p>
+      </div>
+    </div>
+
+    <div class="grid gap-4 rounded-2xl bg-slate-100 p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="m-0 text-base font-semibold text-slate-900">2. Estudios aportados</h3>
+        <span class="rounded-full bg-slate-200 px-2.5 py-1 text-[0.72rem] font-semibold text-slate-600">
+          {{ draft.formEstudios.length }} {{ draft.formEstudios.length === 1 ? 'estudio' : 'estudios' }}
+        </span>
+      </div>
+      <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+        <table class="min-w-245 w-full text-sm text-slate-700">
+          <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <tr>
+              <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+              <th class="px-3 py-2 text-left">Grado</th>
+              <th class="px-3 py-2 text-left">Familia profesional</th>
+              <th class="px-3 py-2 text-left">Ciclo formativo</th>
+              <th class="px-3 py-2 text-left">Módulo</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            @for (estudio of draft.formEstudios; track $index) {
+              <tr class="align-top">
+                <td class="px-3 py-2">{{ getEstudioTipoDisplay(estudio) }}</td>
+                <td class="px-3 py-2">{{ getEstudioGradoDisplay(estudio) }}</td>
+                <td class="px-3 py-2">{{ getDisplayValue(estudio.familia) }}</td>
+                <td class="px-3 py-2">{{ getDisplayValue(estudio.ciclo) }}</td>
+                <td class="px-3 py-2">{{ getEstudioModuloDisplay(estudio) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid gap-4 rounded-2xl bg-slate-100 p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="m-0 text-base font-semibold text-slate-900">3. Módulos solicitados</h3>
+        <span class="rounded-full bg-slate-200 px-2.5 py-1 text-[0.72rem] font-semibold text-slate-600">
+          {{ draft.requestedModules.length }}
+          {{ draft.requestedModules.length === 1 ? 'solicitud' : 'solicitudes' }}
+        </span>
+      </div>
+      <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+        <table class="min-w-245 w-full text-sm text-slate-700">
+          <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <tr>
+              <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+              <th class="px-3 py-2 text-left">Grado</th>
+              <th class="px-3 py-2 text-left">Familia profesional</th>
+              <th class="px-3 py-2 text-left">Ciclo formativo</th>
+              <th class="px-3 py-2 text-left">Módulo</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            @for (item of draft.requestedModules; track item.id) {
+              <tr class="align-top">
+                <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
+                <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
+                <td class="px-3 py-2">{{ getDisplayValue(item.familia) }}</td>
+                <td class="px-3 py-2">{{ getDisplayValue(item.ciclo) }}</td>
+                <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid gap-4 rounded-2xl bg-slate-100 p-5">
+      <h3 class="m-0 text-base font-semibold text-slate-900">4. Documentación</h3>
+      <div class="grid gap-3 rounded-2xl border border-slate-300 bg-white p-4">
+        <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Fotocopia del DNI</p>
+        <p class="m-0 text-sm text-slate-700">{{ getDniResumen(draft) }}</p>
+      </div>
+      <div class="grid gap-2 rounded-2xl border border-slate-300 bg-white p-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+            Documentación adicional
+          </p>
+          <span class="rounded-full bg-slate-200 px-2.5 py-1 text-[0.72rem] font-semibold text-slate-600">
+            {{ draft.docEntries.length }}
+            {{ draft.docEntries.length === 1 ? 'documento' : 'documentos' }}
+          </span>
+        </div>
+        @if (draft.docEntries.length) {
+          <div class="grid gap-2">
+            @for (doc of draft.docEntries; track doc.id) {
+              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                <p class="m-0 min-w-0 truncate text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                  {{ doc.titulo.trim() || 'Documento sin titulo' }}
+                </p>
+                <p class="m-0 min-w-0 truncate text-[0.82rem] font-semibold text-slate-700">
+                  {{ getDocFileName(doc) }}
+                </p>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="m-0 text-sm text-(--brand-gray-600)">No hay documentación adicional adjunta.</p>
+        }
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-4 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+        (click)="volverAlFormulario()"
+      >
+        Volver
+      </button>
+      <button
+        type="button"
+        class="rounded-full bg-[#72cfd5] px-6 py-3 font-bold text-white transition cursor-pointer enabled:hover:text-[#1c1e39] disabled:hover:text-[#72cfd5] disabled:bg-[#c7d4dd] disabled:cursor-not-allowed"
+        (click)="requestEnviarSolicitud()"
+        [disabled]="draft.submitted"
+      >
+        Enviar
+      </button>
+    </div>
+
+    @if (draft.submitted) {
+      <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
+        Solicitud enviada @if (draft.fechaSolicitud) { el {{ formatFechaSolicitud(draft.fechaSolicitud) }} }.
+      </p>
+    }
+  } @else {
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-4">
+      <p class="m-0 text-sm text-(--brand-gray-600)">
+        No hay datos de formulario para previsualizar. Vuelve al formulario y completa los pasos.
+      </p>
+    </div>
+    <div class="flex justify-start">
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-dashed border-slate-300 bg-transparent px-4 py-2 text-sm font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+        (click)="volverAlFormulario()"
+      >
+        Volver al formulario
+      </button>
+    </div>
+  }
+</section>
+
+@if (confirmDialog()) {
+  <div class="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/40 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900">Enviar solicitud</h3>
+          <p class="text-sm text-slate-600">
+            ¿Seguro que deseas enviar la solicitud de convalidación?
+          </p>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="cancelEnviarSolicitud()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="mt-5 flex flex-wrap items-center justify-end gap-2">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
+          (click)="cancelEnviarSolicitud()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5]"
+          (click)="enviarSolicitud()"
+        >
+          Enviar
+        </button>
+      </div>
+    </div>
+  </div>
+}
