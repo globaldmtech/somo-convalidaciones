@@ -566,7 +566,8 @@ export class FormularioOficialComponent {
         tipo: option.tipo,
         grado: option.grado,
         familia: option.familia,
-        ciclo: option.ciclo
+        ciclo: option.ciclo,
+        origenes: [...option.origenes]
       });
     });
     const manual = this.manualModules().map((entry) => ({
@@ -574,6 +575,7 @@ export class FormularioOficialComponent {
       source: 'manual' as const,
       nombre: entry.nombre,
       codigo: entry.codigo,
+      origenes: ['Añadido manualmente'],
       ...fallbackContext
     }));
     return [...suggested, ...manual];

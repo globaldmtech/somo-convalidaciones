@@ -112,6 +112,15 @@ export class VerificacionFormularioComponent {
     return modulo || '—';
   }
 
+  // Devuelve los textos de origen de cada solicitud para la verificación final.
+  protected getRequestedOrigenes(item: RequestedModule): string[] {
+    const originList = (item.origenes ?? [])
+      .map((origen) => origen.trim())
+      .filter((origen) => origen.length > 0);
+    if (originList.length) return originList;
+    return item.source === 'manual' ? ['Añadido manualmente'] : ['Sin origen identificado'];
+  }
+
   // Construye el resumen del DNI según modo único o anverso/reverso.
   protected getDniResumen(snapshot: FormularioDraftSnapshot): string {
     if (snapshot.docDniModeSingle) {

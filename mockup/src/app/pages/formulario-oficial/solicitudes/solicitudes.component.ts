@@ -106,6 +106,15 @@ export class SolicitudesComponent {
     return `${base} · Código ${code}`;
   }
 
+  // Devuelve los textos de origen de la solicitud para mostrarlos en tabla.
+  protected getRequestedOrigenes(item: RequestedModule): string[] {
+    const originList = (item.origenes ?? [])
+      .map((origen) => origen.trim())
+      .filter((origen) => origen.length > 0);
+    if (originList.length) return originList;
+    return item.source === 'manual' ? ['Añadido manualmente'] : ['Sin origen identificado'];
+  }
+
   // Normaliza un texto para comparaciones sin tildes y en minúsculas.
   private normalizeChipValue(value: string): string {
     return value

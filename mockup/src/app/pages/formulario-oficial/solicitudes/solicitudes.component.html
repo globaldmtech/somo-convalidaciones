@@ -85,7 +85,8 @@
         <table class="min-w-245 w-full text-sm text-slate-700">
           <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
             <tr>
-              <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+              <th class="px-3 py-2 text-left">Origen de la solicitud</th>
+              <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
               <th class="px-3 py-2 text-left">Grado</th>
               <th class="px-3 py-2 text-left">Familia profesional</th>
               <th class="px-3 py-2 text-left">Ciclo formativo</th>
@@ -96,11 +97,18 @@
           <tbody class="divide-y divide-slate-200">
             @for (item of requestedModules(); track item.id) {
               <tr class="align-top">
+                <td class="px-3 py-2">
+                  <div class="grid gap-0.5">
+                    @for (origen of getRequestedOrigenes(item); track $index) {
+                      <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                    }
+                  </div>
+                </td>
                 <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
                 <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
                 <td class="px-3 py-2">{{ getRequestedValue(item.familia) }}</td>
                 <td class="px-3 py-2">{{ getRequestedValue(item.ciclo) }}</td>
-                <td class="px-3 py-2" [title]="getRequestedModuloDisplay(item)">
+                <td class="px-3 py-2">
                   {{ getRequestedModuloDisplay(item) }}
                 </td>
                 <td class="px-3 py-2 text-right">

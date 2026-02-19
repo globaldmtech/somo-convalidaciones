@@ -41,6 +41,7 @@ export type RequestedModule = {
   grado: string;
   familia: string;
   ciclo: string;
+  origenes?: string[];
 };
 
 export type PersonalValues = {

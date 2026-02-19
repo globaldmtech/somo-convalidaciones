@@ -67,11 +67,12 @@
       <table class="min-w-245 w-full text-sm text-slate-700">
         <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
           <tr>
-            <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+            <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
             <th class="px-3 py-2 text-left">Grado</th>
             <th class="px-3 py-2 text-left">Familia profesional</th>
             <th class="px-3 py-2 text-left">Ciclo formativo</th>
             <th class="px-3 py-2 text-left">Módulo</th>
+            <th class="px-3 py-2 text-left">Origen de la solicitud</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
@@ -82,6 +83,13 @@
               <td class="px-3 py-2">{{ getDisplayValue(item.familia) }}</td>
               <td class="px-3 py-2">{{ getDisplayValue(item.ciclo) }}</td>
               <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
+              <td class="px-3 py-2">
+                <div class="grid gap-0.5">
+                  @for (origen of getRequestedOrigenes(item); track $index) {
+                    <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                  }
+                </div>
+              </td>
             </tr>
           }
         </tbody>
