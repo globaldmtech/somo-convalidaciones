@@ -5,13 +5,13 @@
         3. Módulos profesionales que solicita convalidar
       </h3>
       <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
-        Usa las sugerencias basadas en los estudios aportados o escribe el módulo manualmente.
+        Usa las sugerencias basadas en los estudios aportados o agrega módulos manualmente.
       </p>
     </div>
     <button
       type="button"
       class="add inline-flex items-center justify-center rounded-full bg-[#1c1e39] px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:text-[#72cfd5]"
-      (click)="openManualModal()"
+      (click)="openAddModuleModal()"
     >
       Agregar módulo
     </button>
@@ -64,9 +64,15 @@
           <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
             Sin sugerencias
           </p>
-          <p>
-            Las sugerencias aparecerán cuando añadas estudios en el apartado 2.
-          </p>
+          @if (hasEstudiosAportados()) {
+            <p>
+              No se han encontrado sugerencias de convalidación para los estudios aportados.
+            </p>
+          } @else {
+            <p>
+              Las sugerencias aparecerán cuando añadas estudios en el apartado de Estudios aportados.
+            </p>
+          }
         </div>
       }
     </div>
@@ -81,50 +87,96 @@
           {{ requestedModules().length === 1 ? 'solicitud añadida' : 'solicitudes añadidas' }}
         </span>
       </div>
-      <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
-        <table class="min-w-245 w-full text-sm text-slate-700">
-          <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-            <tr>
-              <th class="px-3 py-2 text-left">Origen de la solicitud</th>
-              <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
-              <th class="px-3 py-2 text-left">Grado</th>
-              <th class="px-3 py-2 text-left">Familia profesional</th>
-              <th class="px-3 py-2 text-left">Ciclo formativo</th>
-              <th class="px-3 py-2 text-left">Módulo</th>
-              <th class="px-3 py-2 text-right"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            @for (item of requestedModules(); track item.id) {
-              <tr class="align-top">
-                <td class="px-3 py-2">
-                  <div class="grid gap-0.5">
-                    @for (origen of getRequestedOrigenes(item); track $index) {
-                      <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
-                    }
-                  </div>
-                </td>
-                <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
-                <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
-                <td class="px-3 py-2">{{ getRequestedValue(item.familia) }}</td>
-                <td class="px-3 py-2">{{ getRequestedValue(item.ciclo) }}</td>
-                <td class="px-3 py-2">
-                  {{ getRequestedModuloDisplay(item) }}
-                </td>
-                <td class="px-3 py-2 text-right">
-                  <button
-                    type="button"
-                    class="ghost inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
-                    (click)="removeRequestedModule(item)"
-                    [attr.aria-label]="'Quitar solicitud ' + getRequestedModuloDisplay(item)"
-                  >
-                    Quitar
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      <div class="grid gap-3">
+        @if (requestedSuggestedModules().length) {
+          <div class="grid gap-2">
+            <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+              <table class="min-w-245 w-full text-sm text-slate-700">
+                <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Origen de la solicitud</th>
+                    <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
+                    <th class="px-3 py-2 text-left">Grado</th>
+                    <th class="px-3 py-2 text-left">Familia profesional</th>
+                    <th class="px-3 py-2 text-left">Ciclo formativo</th>
+                    <th class="px-3 py-2 text-left">Módulo</th>
+                    <th class="px-3 py-2 text-right"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  @for (item of requestedSuggestedModules(); track item.id) {
+                    <tr class="align-top">
+                      <td class="px-3 py-2">
+                        <div class="grid gap-0.5">
+                          @for (origen of getRequestedOrigenes(item); track $index) {
+                            <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                          }
+                        </div>
+                      </td>
+                      <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
+                      <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
+                      <td class="px-3 py-2">{{ getRequestedValue(item.familia) }}</td>
+                      <td class="px-3 py-2">{{ getRequestedValue(item.ciclo) }}</td>
+                      <td class="px-3 py-2">
+                        {{ getRequestedModuloDisplay(item) }}
+                      </td>
+                      <td class="px-3 py-2 text-right">
+                        <button
+                          type="button"
+                          class="ghost inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                          (click)="removeRequestedModule(item)"
+                          [attr.aria-label]="'Quitar solicitud ' + getRequestedModuloDisplay(item)"
+                        >
+                          Quitar
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        @if (requestedManualModules().length) {
+          <div class="grid gap-2">
+            <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+              <table class="min-w-140 w-full text-sm text-slate-700">
+                <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Origen de la solicitud</th>
+                    <th class="px-3 py-2 text-left">Convalidación manual</th>
+                    <th class="px-3 py-2 text-right"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  @for (item of requestedManualModules(); track item.id) {
+                    <tr class="align-top">
+                      <td class="px-3 py-2">
+                        <div class="grid gap-0.5">
+                          @for (origen of getRequestedOrigenes(item); track $index) {
+                            <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                          }
+                        </div>
+                      </td>
+                      <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
+                      <td class="px-3 py-2 text-right">
+                        <button
+                          type="button"
+                          class="ghost inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                          (click)="removeRequestedModule(item)"
+                          [attr.aria-label]="'Quitar módulo manual ' + getRequestedModuloDisplay(item)"
+                        >
+                          Quitar
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
       </div>
     } @else {
       <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-4">
@@ -137,27 +189,27 @@
   </div>
 </div>
 
-@if (manualModalOpen()) {
-  <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeManualModal()">
+@if (addModuleModalOpen()) {
+  <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeAddModuleModal()">
     <div
-      class="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
+      class="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
       role="dialog"
       aria-modal="true"
-      [attr.aria-labelledby]="manualModalTitleId"
-      [attr.aria-describedby]="manualModalDescriptionId"
+      [attr.aria-labelledby]="addModuleModalTitleId"
+      [attr.aria-describedby]="addModuleModalDescriptionId"
       (click)="$event.stopPropagation()"
     >
       <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
         <div>
-          <h3 class="m-0 text-base font-semibold text-slate-900" [id]="manualModalTitleId">Agregar módulo manual</h3>
-          <p class="m-0 text-[0.8rem] text-(--brand-gray-600)" [id]="manualModalDescriptionId">
-            Completa el nombre y, si lo tienes, el código del módulo.
+          <h3 class="m-0 text-base font-semibold text-slate-900" [id]="addModuleModalTitleId">Agregar módulo</h3>
+          <p class="m-0 text-[0.8rem] text-(--brand-gray-600)" [id]="addModuleModalDescriptionId">
+            Escribe un módulo y pulsa «Agregar» para incluirlo en la previsualización.
           </p>
         </div>
         <button
           type="button"
           class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
-          (click)="closeManualModal()"
+          (click)="closeAddModuleModal()"
           aria-label="Cerrar"
         >
           ×
@@ -166,22 +218,69 @@
 
       <div class="grid gap-4 bg-slate-100 p-4">
         <div class="grid gap-3 rounded-2xl bg-white p-4">
-          <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200">
-            <span>Nombre del módulo</span>
-            <input
-              placeholder="Ej. Gestión de Compras"
-              [value]="manualDraft().nombre"
-              (input)="handleManualDraftChange('nombre', $event)"
-            />
-          </label>
-          <label class="field grid gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border [&>input]:disabled:bg-slate-100 [&>input]:disabled:text-slate-400 [&>input]:disabled:cursor-not-allowed [&>input]:disabled:border-slate-200">
-            <span>Código del módulo (opcional)</span>
-            <input
-              placeholder="Ej. 1234"
-              [value]="manualDraft().codigo"
-              (input)="handleManualDraftChange('codigo', $event)"
-            />
-          </label>
+          <div class="flex items-end gap-2">
+            <label class="grid flex-1 gap-2 text-sm text-slate-600 min-w-0 w-full [&>input]:w-full [&>input]:min-w-0 [&>input]:max-w-full [&>input]:rounded-xl [&>input]:border [&>input]:border-slate-300 [&>input]:bg-white [&>input]:px-3 [&>input]:py-2 [&>input]:text-[0.95rem] [&>input]:text-slate-800 [&>input]:placeholder:text-slate-400 [&>input]:box-border">
+              <span>Módulo</span>
+              <input
+                placeholder="Escribe el módulo manual"
+                [value]="manualModuleInput()"
+                (input)="handleManualModuleInput($event)"
+              />
+            </label>
+            @if (canQueueManualModuleFromInput()) {
+              <button
+                type="button"
+                class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full bg-slate-900 px-4 text-xs font-semibold text-white transition cursor-pointer hover:bg-slate-800 hover:text-[#72cfd5]"
+                (click)="queueManualModuleFromInput()"
+              >
+                Agregar
+              </button>
+            }
+          </div>
+
+          @if (!queuedManualModuleEntries().length) {
+            <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
+              Escribe un módulo en el input y pulsa «Agregar». Después podrás revisarlo en la previsualización y confirmar con el botón «Agregar» del modal.
+            </div>
+          }
+
+          @if (queuedManualModuleEntries().length) {
+            <div class="grid gap-2.5">
+              <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                Previsualización
+              </p>
+
+              <div class="max-h-72 overflow-y-auto overflow-x-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                <table class="w-full table-fixed text-[0.9rem] text-slate-700">
+                  <thead class="bg-slate-100 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <tr>
+                      <th class="px-2.5 py-2 text-left">Origen de la solicitud</th>
+                      <th class="px-2.5 py-2 text-left">Convalidación manual</th>
+                      <th class="px-2.5 py-2 text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (entry of queuedManualModuleEntries(); track $index) {
+                      <tr class="align-top">
+                        <td class="px-2.5 py-2 wrap-break-words">Añadido manualmente</td>
+                        <td class="px-2.5 py-2 wrap-break-words">{{ entry.nombre }}</td>
+                        <td class="px-2.5 py-2 text-right">
+                          <button
+                            type="button"
+                            class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                            (click)="removeQueuedManualModuleEntry($index)"
+                            [attr.aria-label]="'Quitar módulo manual ' + entry.nombre"
+                          >
+                            Quitar
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
@@ -189,15 +288,15 @@
         <button
           type="button"
           class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
-          (click)="closeManualModal()"
+          (click)="closeAddModuleModal()"
         >
           Cancelar
         </button>
         <button
           type="button"
           class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
-          (click)="confirmManualModal()"
-          [disabled]="!canAddManual()"
+          (click)="confirmAddModuleModal()"
+          [disabled]="!canConfirmAddModuleModal()"
         >
           Agregar
         </button>

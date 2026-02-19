@@ -25,6 +25,18 @@ export class VerificacionFormularioComponent {
     () => this.draftService.getSnapshot() as FormularioDraftSnapshot
   );
   protected readonly confirmDialog = signal(false);
+  protected readonly estudiosFpRows = computed(() =>
+    this.draft().formEstudios.filter((entry) => this.isCatalogTipo(entry.tipo))
+  );
+  protected readonly estudiosDescripcionRows = computed(() =>
+    this.draft().formEstudios.filter((entry) => this.isDescripcionTipo(entry.tipo))
+  );
+  protected readonly requestedSuggestedModules = computed(() =>
+    this.draft().requestedModules.filter((item) => item.source === 'suggested')
+  );
+  protected readonly requestedManualModules = computed(() =>
+    this.draft().requestedModules.filter((item) => item.source === 'manual')
+  );
 
   // Vuelve al formulario principal para permitir ajustes antes de enviar.
   protected volverAlFormulario(): void {
@@ -72,9 +84,9 @@ export class VerificacionFormularioComponent {
   // Devuelve el tipo de estudio en formato legible para verificación.
   protected getEstudioTipoDisplay(entry: EstudioEntry): string {
     const tipo = entry.tipo.trim() as EstudiosTipo;
+    if (tipo === 'Universitarios') return 'Estudios universitarios';
+    if (tipo === 'Otros') return 'Otros estudios';
     if (tipo === 'LOE' || tipo === 'LOGSE') return tipo;
-    if (tipo === 'Universitarios') return 'Universitarios';
-    if (tipo === 'Otros') return 'Otros';
     return '—';
   }
 
@@ -83,19 +95,23 @@ export class VerificacionFormularioComponent {
     return this.formatGrado(entry.grado);
   }
 
-  // Devuelve el módulo o la descripción del estudio en la previsualización.
+  // Devuelve el módulo del estudio FP en la previsualización.
   protected getEstudioModuloDisplay(entry: EstudioEntry): string {
-    if (entry.modulo?.trim()) return entry.modulo;
-    if (entry.descripcion?.trim()) return entry.descripcion;
-    return '—';
+    return entry.modulo?.trim() || '—';
+  }
+
+  // Devuelve el detalle del estudio para universitarios/otros.
+  protected getEstudioDetalleDisplay(entry: EstudioEntry): string {
+    return entry.descripcion?.trim() || '—';
   }
 
   // Devuelve el tipo de solicitud mostrado en la tabla final.
   protected getRequestedTipoDisplay(value: string): string {
     const tipo = value.trim();
     if (!tipo) return '—';
-    if (tipo === 'Universitarios') return 'Universitarios';
-    if (tipo === 'Otros') return 'Otros';
+    if (tipo === 'Universitarios') return 'Estudios universitarios';
+    if (tipo === 'Otros') return 'Otros estudios';
+    if (tipo === 'LOE' || tipo === 'LOGSE') return tipo;
     return tipo;
   }
 
@@ -104,12 +120,9 @@ export class VerificacionFormularioComponent {
     return this.formatGrado(value);
   }
 
-  // Devuelve el nombre del módulo solicitado con código opcional.
+  // Devuelve el nombre del módulo solicitado.
   protected getRequestedModuloDisplay(item: RequestedModule): string {
-    const modulo = item.nombre.trim();
-    const codigo = item.codigo?.trim();
-    if (modulo && codigo) return `${modulo} (${codigo})`;
-    return modulo || '—';
+    return item.nombre.trim() || '—';
   }
 
   // Devuelve los textos de origen de cada solicitud para la verificación final.
@@ -142,5 +155,15 @@ export class VerificacionFormularioComponent {
     if (/^grado superior$/i.test(value)) return 'Grado Superior';
     if (/^grado medio$/i.test(value)) return 'Grado Medio';
     return value;
+  }
+
+  // Indica si un tipo corresponde a estudios de FP con columnas de grado/familia/ciclo.
+  private isCatalogTipo(tipo: EstudiosTipo): boolean {
+    return tipo === 'LOE' || tipo === 'LOGSE';
+  }
+
+  // Indica si un tipo corresponde a estudios con descripción libre.
+  private isDescripcionTipo(tipo: EstudiosTipo): boolean {
+    return tipo === 'Universitarios' || tipo === 'Otros';
   }
 }

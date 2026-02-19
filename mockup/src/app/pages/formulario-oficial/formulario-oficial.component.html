@@ -77,14 +77,12 @@
         [draft]="draftEstudio()"
         [estudios]="formEstudios()"
         [canAdd]="canAddEstudio()"
-        [gradoOptions]="gradoOptions()"
-        [familiaOptions]="familiaOptions()"
-        [cicloOptions]="cicloOptions()"
-        [moduloOptions]="moduloOptions()"
+        [fpEstudioOptions]="fpEstudioOptions()"
+        [moduloOptionsByEstudio]="formEstudiosModuloOptions()"
         (tipoChange)="onTipoChange($event)"
-        (selectChange)="onEstudioSelectChange($event.key, $event.value)"
         (fieldChange)="updateEstudioField($event.key, $event.value)"
-        (addEstudio)="addEstudioRow()"
+        (addEstudios)="addEstudioRows($event)"
+        (estudioModuloChange)="updateEstudioRowModulo($event.index, $event.value)"
         (removeEstudio)="removeEstudioRow($event)"
       ></app-estudios-aportados>
     }
@@ -93,12 +91,10 @@
       <app-solicitudes
         [suggestedModules]="suggestedModules()"
         [selectedSuggested]="selectedSuggestedModules()"
-        [manualDraft]="manualModuleDraft()"
-        [canAddManual]="canAddManualModule()"
         [requestedModules]="requestedModules()"
+        [hasEstudiosAportados]="formEstudios().length > 0"
         (toggleSuggested)="toggleSuggestedModule($event.value, $event.checked)"
-        (manualDraftChange)="updateManualModuleDraft($event.key, $event.value)"
-        (addManual)="addManualModule()"
+        (addManualModuleEntries)="addManualModuleEntries($event)"
         (removeRequested)="removeRequestedModule($event)"
       ></app-solicitudes>
     }
@@ -206,17 +202,3 @@
     </div>
   </div>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,8 +5,7 @@
         2. Estudios que aporta para la convalidación
       </h3>
       <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
-        LOE/LOGSE: selecciona grado, familia, ciclo y módulo (puedes usar "Todos"). Universitarios u
-        otros: completa la descripción.
+        Selecciona el tipo y busca el estudio para agregarlo. Puedes acumular varios antes de confirmar.
       </p>
     </div>
     <button
@@ -29,43 +28,94 @@
             {{ estudios().length }} {{ estudios().length === 1 ? 'estudio añadido' : 'estudios añadidos' }}
           </span>
         </div>
-        <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
-          <table class="min-w-245 w-full text-sm text-slate-700">
-            <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-              <tr>
-                <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
-                <th class="px-3 py-2 text-left">Grado</th>
-                <th class="px-3 py-2 text-left">Familia profesional</th>
-                <th class="px-3 py-2 text-left">Ciclo formativo</th>
-                <th class="px-3 py-2 text-left">Módulo</th>
-                <th class="px-3 py-2 text-right"></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              @for (estudio of estudios(); track $index; let i = $index) {
-                <tr class="align-top">
-                  <td class="px-3 py-2">{{ getEstudioTipoDisplay(estudio) }}</td>
-                  <td class="px-3 py-2">{{ getEstudioGradoDisplay(estudio) }}</td>
-                  <td class="px-3 py-2">{{ getEstudioValue(estudio.familia) }}</td>
-                  <td class="px-3 py-2">{{ getEstudioValue(estudio.ciclo) }}</td>
-                  <td class="px-3 py-2" [title]="getEstudioModuloDisplay(estudio)">
-                    {{ getEstudioModuloDisplay(estudio) }}
-                  </td>
-                  <td class="px-3 py-2 text-right">
-                    <button
-                      type="button"
-                      class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
-                      (click)="removeEstudioAt(i)"
-                      [attr.aria-label]="'Quitar estudio ' + getEstudioTipoDisplay(estudio)"
-                    >
-                      Quitar
-                    </button>
-                  </td>
+        @if (estudiosFpRows().length) {
+          <div class="overflow-hidden rounded-2xl border border-slate-300 bg-white">
+            <table class="w-full table-fixed text-[0.9rem] text-slate-700">
+              <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                <tr>
+                  <th class="px-2.5 py-2 text-left">Tipo de estudios aportados</th>
+                  <th class="px-2.5 py-2 text-left">Grado</th>
+                  <th class="px-2.5 py-2 text-left">Familia profesional</th>
+                  <th class="px-2.5 py-2 text-left">Ciclo formativo</th>
+                  <th class="w-56 px-2.5 py-2 text-left">Módulo</th>
+                  <th class="w-24 px-2.5 py-2 text-right"></th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                @for (row of estudiosFpRows(); track row.index) {
+                  <tr class="align-top">
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioTipoDisplay(row.entry) }}</td>
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioGradoDisplay(row.entry) }}</td>
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(row.entry.familia) }}</td>
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(row.entry.ciclo) }}</td>
+                    <td class="w-56 px-2.5 py-2">
+                      <div class="flex items-center gap-2">
+                        <span class="whitespace-nowrap text-[0.92rem] leading-snug text-slate-700">
+                          {{ getEstudioModuloSummary(row.entry) }}
+                        </span>
+                        @if (canEditFpEstudioModulos(row.entry, row.index)) {
+                          <button
+                            type="button"
+                            class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-dashed border-slate-300 bg-white text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                            (click)="openModuloPicker(row.index)"
+                            aria-label="Editar módulos"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16" aria-hidden="true">
+                              <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+                              <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0"/>
+                            </svg>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                    <td class="w-24 px-2.5 py-2 text-right">
+                      <button
+                        type="button"
+                        class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                        (click)="removeEstudioAt(row.index)"
+                        [attr.aria-label]="'Quitar estudio ' + getEstudioTipoDisplay(row.entry)"
+                      >
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (estudiosDescripcionRows().length) {
+          <div class="overflow-hidden rounded-2xl border border-slate-300 bg-white">
+            <table class="w-full table-fixed text-[0.9rem] text-slate-700">
+              <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                <tr>
+                  <th class="px-2.5 py-2 text-left">Tipo de estudios aportados</th>
+                  <th class="px-2.5 py-2 text-left">Detalle del estudio</th>
+                  <th class="w-24 px-2.5 py-2 text-right"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                @for (row of estudiosDescripcionRows(); track row.index) {
+                  <tr class="align-top">
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioTipoDisplay(row.entry) }}</td>
+                    <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(row.entry.descripcion) }}</td>
+                    <td class="w-24 px-2.5 py-2 text-right">
+                      <button
+                        type="button"
+                        class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                        (click)="removeEstudioAt(row.index)"
+                        [attr.aria-label]="'Quitar estudio ' + getEstudioTipoDisplay(row.entry)"
+                      >
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
       </div>
     } @else {
       <div class="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-4">
@@ -89,7 +139,7 @@
         <div>
           <h3 class="m-0 text-base font-semibold text-slate-900" [id]="addModalTitleId">Agregar estudio</h3>
           <p class="m-0 text-[0.8rem] text-(--brand-gray-600)" [id]="addModalDescriptionId">
-            Completa los datos del estudio y pulsa «Agregar» para incorporarlo al listado.
+            Selecciona uno o varios estudios y pulsa «Agregar» para incorporarlos al listado.
           </p>
         </div>
         <button
@@ -104,111 +154,141 @@
 
       <div class="grid gap-4 bg-slate-100 p-4">
         <div class="grid gap-3 rounded-2xl bg-white p-4">
-          <div class="grid w-full min-w-0 gap-4 max-md:mb-3">
-            <div class="grid gap-4 md:grid-cols-3">
-              <label [class]="selectFieldClass">
-                <span>Tipo de estudios aportados</span>
-                <select [value]="draft().tipo" (change)="handleTipoChange($event)">
-                  <option value="">Seleccionar</option>
-                  <option value="LOGSE">LOGSE</option>
-                  <option value="LOE">LOE</option>
-                  <option value="Universitarios">Estudios universitarios</option>
-                  <option value="Otros">Otros estudios</option>
-                </select>
-              </label>
-              <label [class]="selectFieldClass">
-                <span>Grado</span>
-                <select
-                  [disabled]="!isCatalogTipo(draft().tipo)"
-                  [value]="draft().grado"
-                  (change)="handleSelectChange('grado', $event)"
-                >
-                  <option value="">Seleccionar</option>
-                  @for (option of gradoOptions(); track option) {
-                    <option [value]="option">
-                      {{ formatGrade(option) }}
-                    </option>
+          <div class="grid gap-4">
+            <label [class]="selectFieldClass">
+              <span>Tipo de estudios aportados</span>
+              <select [value]="getTipoEstudioSelection()" (change)="handleTipoEstudioChange($event)">
+                <option value="">Seleccionar</option>
+                <option value="LOGSE">LOGSE</option>
+                <option value="LOE">LOE</option>
+                <option value="Universitarios">Estudios universitarios</option>
+                <option value="Otros">Otros estudios</option>
+              </select>
+            </label>
+
+            <div class="relative isolate z-30" data-estudio-search>
+              <div class="flex items-end gap-2">
+                <label [class]="inputFieldClass + ' flex-1'">
+                  <span>{{ isFpModalSelection() ? 'Buscar estudio' : 'Detalle del estudio' }}</span>
+                  <input
+                    [value]="getSearchOrDescriptionValue()"
+                    [placeholder]="getSearchOrDescriptionPlaceholder()"
+                    [disabled]="isSearchOrDescriptionDisabled()"
+                    (input)="handleSearchOrDescriptionInput($event)"
+                    (focus)="handleSearchOrDescriptionFocus()"
+                  />
+                </label>
+                @if (canAddCurrentEstudioFromInput()) {
+                  <button
+                    type="button"
+                    class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full bg-slate-900 px-4 text-xs font-semibold text-white transition cursor-pointer hover:bg-slate-800 hover:text-[#72cfd5]"
+                    (click)="addCurrentEstudioFromInput()"
+                  >
+                    Agregar
+                  </button>
+                }
+              </div>
+
+              @if (showFpAutocomplete()) {
+                <div class="absolute left-0 right-0 top-[calc(100%+0.35rem)] z-50 max-h-64 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+                  @if (hasFpMatches()) {
+                    <div class="grid gap-0.5 p-1">
+                      @for (option of filteredFpEstudioOptions(); track option.id) {
+                        <button
+                          type="button"
+                          class="grid gap-1 rounded-lg px-3 py-2 text-left transition cursor-pointer hover:bg-slate-100"
+                          [class.bg-slate-100]="isFpOptionSelected(option)"
+                          (click)="pickFpEstudioOption(option)"
+                        >
+                          <span class="text-sm font-semibold text-slate-800">{{ option.ciclo }}</span>
+                          <span class="text-[0.75rem] text-slate-500">{{ getFpOptionMeta(option) }}</span>
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p class="m-0 px-3 py-2 text-sm text-slate-500">No hay coincidencias para esta búsqueda.</p>
                   }
-                </select>
-              </label>
-              <label [class]="selectFieldClass">
-                <span>Familia profesional</span>
-                <select
-                  [disabled]="!isCatalogTipo(draft().tipo) || !draft().grado"
-                  [value]="draft().familia"
-                  (change)="handleSelectChange('familia', $event)"
-                >
-                  <option value="">Seleccionar</option>
-                  @for (option of familiaOptions(); track option) {
-                    <option [value]="option">
-                      {{ option }}
-                    </option>
-                  }
-                </select>
-              </label>
-            </div>
-            <div class="grid gap-4 md:grid-cols-3">
-              <label [class]="selectFieldClass">
-                <span>Ciclo formativo</span>
-                <select
-                  [disabled]="!isCatalogTipo(draft().tipo) || !draft().familia"
-                  [value]="draft().ciclo"
-                  (change)="handleSelectChange('ciclo', $event)"
-                >
-                  <option value="">Seleccionar</option>
-                  @for (option of cicloOptions(); track option) {
-                    <option [value]="option">
-                      {{ option }}
-                    </option>
-                  }
-                </select>
-              </label>
-              <label [class]="selectFieldClass">
-                <span>Módulo</span>
-                <select
-                  [disabled]="!isCatalogTipo(draft().tipo) || !draft().ciclo"
-                  [value]="draft().modulo"
-                  (change)="handleSelectChange('modulo', $event)"
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="Todos">Todos</option>
-                  @for (option of moduloOptions(); track option) {
-                    <option [value]="option">
-                      {{ option }}
-                    </option>
-                  }
-                </select>
-              </label>
+                </div>
+              }
             </div>
           </div>
 
-          @if (isCatalogTipo(draft().tipo)) {
+          @if (isFpModalSelection() && !modalQueuedEstudios().length) {
             <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
-              <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Previsualización</p>
-              <div class="mt-2 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
-                <span>{{ previewGrado(draft()) }}</span>
-                <span class="text-slate-400">•</span>
-                <span>{{ previewValue(draft().familia, 'Familia') }}</span>
-                <span class="text-slate-400">•</span>
-                <span>{{ previewValue(draft().ciclo, 'Ciclo') }}</span>
-                <span class="text-slate-400">•</span>
-                <span>{{ previewValue(draft().modulo, 'Módulo') }}</span>
-              </div>
+              Selecciona un ciclo del buscador. Si no aparece, escribe el nombre y pulsa «Agregar» para incorporarlo manualmente.
             </div>
           }
 
-          @if (isDescripcionRequired(draft().tipo)) {
-            <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-600">
-              <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Descripción detallada
-              </p>
-              <textarea
-                class="mt-2 w-full min-w-0 max-w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-[0.95rem] text-slate-800 placeholder:text-slate-400 resize-y box-border"
-                rows="3"
-                [value]="draft().descripcion"
-                placeholder="Ej. Título de Técnico en Administración y Finanzas, IES Central (2022)"
-                (input)="handleDescripcionChange($event)"
-              ></textarea>
+          @if (modalQueuedEstudios().length) {
+            <div class="grid gap-2.5">
+              <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Previsualización</p>
+              @if (queuedFpEstudios().length) {
+              <div class="max-h-88 overflow-y-auto overflow-x-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                <table class="w-full table-fixed text-[0.9rem] text-slate-700">
+                  <thead class="bg-slate-100 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <tr>
+                      <th class="px-2.5 py-2 text-left">Tipo de estudios aportados</th>
+                      <th class="px-2.5 py-2 text-left">Grado</th>
+                      <th class="px-2.5 py-2 text-left">Familia profesional</th>
+                      <th class="px-2.5 py-2 text-left">Ciclo formativo</th>
+                      <th class="px-2.5 py-2 text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (queued of queuedFpEstudios(); track queued) {
+                      <tr class="align-top">
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioTipoDisplay(queued) }}</td>
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioGradoDisplay(queued) }}</td>
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(queued.familia) }}</td>
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(queued.ciclo) }}</td>
+                        <td class="px-2.5 py-2 text-right">
+                          <button
+                            type="button"
+                            class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                            (click)="removeQueuedModalEstudioEntry(queued)"
+                            aria-label="Quitar de la previsualización"
+                          >
+                            Quitar
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              }
+
+              @if (queuedDescripcionEstudios().length) {
+              <div class="max-h-88 overflow-y-auto overflow-x-hidden rounded-2xl border border-slate-200 bg-slate-50">
+                <table class="w-full table-fixed text-[0.9rem] text-slate-700">
+                  <thead class="bg-slate-100 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    <tr>
+                      <th class="px-2.5 py-2 text-left">Tipo de estudios aportados</th>
+                      <th class="px-2.5 py-2 text-left">Detalle del estudio</th>
+                      <th class="px-2.5 py-2 text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (queued of queuedDescripcionEstudios(); track queued) {
+                      <tr class="align-top">
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioTipoDisplay(queued) }}</td>
+                        <td class="px-2.5 py-2 wrap-break-words">{{ getEstudioValue(queued.descripcion) }}</td>
+                        <td class="px-2.5 py-2 text-right">
+                          <button
+                            type="button"
+                            class="inline-flex min-w-16 shrink-0 items-center justify-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-transparent px-2.5 py-1 text-xs font-semibold text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
+                            (click)="removeQueuedModalEstudioEntry(queued)"
+                            aria-label="Quitar de la previsualización"
+                          >
+                            Quitar
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              }
             </div>
           }
         </div>
@@ -226,9 +306,160 @@
           type="button"
           class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
           (click)="confirmAddEstudio()"
-          [disabled]="!canAdd()"
+          [disabled]="!canConfirmAddModal()"
         >
           Agregar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (moduloPickerOpen() && moduloPickerIndex() !== null) {
+  <div class="fixed inset-0 z-90 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeModuloPicker()">
+    <div
+      class="w-full max-w-245 max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Seleccionar módulos"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+        <div>
+          <h3 class="m-0 text-base font-semibold text-slate-900">Seleccionar módulos</h3>
+          <p class="m-0 text-[0.8rem] text-(--brand-gray-600)">
+            Marca uno o varios módulos, o usa el switch para marcar/desmarcar toda la lista.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-transparent text-lg font-semibold text-slate-400 transition hover:text-[#72cfd5]"
+          (click)="closeModuloPicker()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="grid gap-4 p-4">
+        <button
+          type="button"
+          role="switch"
+          class="inline-flex w-fit items-center gap-3 bg-transparent px-0 py-0 text-base font-semibold text-[#334e6d] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+          [attr.aria-checked]="areAllModuloPickerOptionsSelected()"
+          [disabled]="!canToggleAllModuloPicker()"
+          (click)="toggleAllModuloPickerSwitch()"
+        >
+          <span
+            class="relative inline-flex h-6 w-11 items-center rounded-full transition"
+            [class.bg-[#72cfd5]]="areAllModuloPickerOptionsSelected()"
+            [class.bg-[#1c1e39]]="!areAllModuloPickerOptionsSelected()"
+          >
+            <span
+              class="inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform"
+              [class.translate-x-1]="!areAllModuloPickerOptionsSelected()"
+              [class.translate-x-5]="areAllModuloPickerOptionsSelected()"
+            ></span>
+          </span>
+          <span class="text-[#334e6d]">{{ areAllModuloPickerOptionsSelected() ? 'Desmarcar todos' : 'Marcar todos' }}</span>
+        </button>
+
+        <div class="grid items-stretch gap-4 xl:grid-cols-[minmax(0,1.8fr)_minmax(20rem,1fr)]">
+          <div class="grid content-start gap-4">
+            <div class="max-h-88 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-2">
+              @if (canToggleAllModuloPicker()) {
+                <div class="grid gap-1">
+                  @for (option of getModuloPickerOptions(); track option) {
+                    <label class="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-slate-700 hover:bg-slate-100">
+                      <input
+                        type="checkbox"
+                        class="h-4 w-4 accent-slate-900"
+                        [checked]="isModuloPickerOptionChecked(option)"
+                        (change)="toggleModuloPickerOption(option, $event)"
+                      />
+                      <span class="wrap-break-words leading-snug">{{ option }}</span>
+                    </label>
+                  }
+                </div>
+              } @else {
+                <div class="rounded-lg border border-dashed border-slate-200 bg-white px-4 py-4 text-sm text-slate-600">
+                  <p class="m-0 font-semibold text-slate-700">Aún no hay módulos para este ciclo.</p>
+                  <ol class="m-0 mt-2 list-decimal space-y-1 pl-5">
+                    <li>Escribe uno en «Añadir módulo manual».</li>
+                    <li>Pulsa «Añadir módulo».</li>
+                    <li>El módulo se añadirá al listado de la izquierda con su checkbox marcado.</li>
+                    <li>También aparecerá en «Previsualización» para que puedas revisarlo.</li>
+                    <li>Si todo está correcto, pulsa «Aplicar» para guardarlo en el estudio.</li>
+                  </ol>
+                </div>
+              }
+            </div>
+
+            <div class="grid content-start gap-2">
+              <label [class]="inputFieldClass">
+                <span>Añadir módulo manual</span>
+                <input
+                  [value]="moduloPickerManualDraft()"
+                  placeholder="Escribe un módulo no listado"
+                  (input)="handleModuloPickerManualDraftInput($event)"
+                />
+              </label>
+              <div class="flex items-center justify-end">
+                <button
+                  type="button"
+                  class="inline-flex h-10 min-w-32 items-center justify-center self-auto rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition cursor-pointer hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  (click)="addModuloPickerManualOption()"
+                  [disabled]="!moduloPickerManualDraft().trim()"
+                >
+                  Añadir módulo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="grid h-124 min-h-124 max-h-124 rounded-xl border border-slate-200 bg-slate-50 p-3 grid-rows-[auto_minmax(0,1fr)]
+">
+            <div class="flex items-center justify-between gap-2">
+              <p class="m-0 text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Previsualización</p>
+              <span class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-600">
+                {{ moduloPickerSelected().length }}
+              </span>
+            </div>
+
+            @if (moduloPickerSelected().length) {
+              <div class="h-full min-h-0 overflow-y-auto overflow-x-hidden rounded-lg border border-slate-200 bg-white p-2">
+                <ul class="m-0 list-disc space-y-0.5 pl-5 marker:text-slate-500">
+                  @for (selected of moduloPickerSelected(); track selected) {
+                    <li class="px-0 py-0.5 text-sm leading-snug text-slate-700 wrap-break-words">
+                      {{ selected }}
+                    </li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <div class="h-full min-h-0 overflow-y-auto rounded-lg border border-dashed border-slate-200 bg-white px-3 py-3 text-sm text-slate-500">
+                No hay módulos seleccionados.
+              </div>
+            }
+          </aside>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 border-t border-slate-200 px-4 py-3">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-[#72cfd5]"
+          (click)="closeModuloPicker()"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:text-[#72cfd5] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-slate-900 disabled:hover:text-white"
+          (click)="applyModuloPickerSelection()"
+          [disabled]="!canApplyModuloPickerSelection()"
+        >
+          Aplicar
         </button>
       </div>
     </div>

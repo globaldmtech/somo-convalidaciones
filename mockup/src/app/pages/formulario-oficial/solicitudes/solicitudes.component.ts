@@ -1,5 +1,17 @@
-import { ChangeDetectionStrategy, Component, HostListener, input, output, signal } from '@angular/core';
-import { ManualModuleDraft, RequestedModule, SuggestedModuleOption } from '../formulario-oficial.types';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  input,
+  output,
+  signal
+} from '@angular/core';
+import {
+  ManualModuleEntryDraft,
+  RequestedModule,
+  SuggestedModuleOption
+} from '../formulario-oficial.types';
 
 @Component({
   selector: 'app-solicitudes',
@@ -8,19 +20,32 @@ import { ManualModuleDraft, RequestedModule, SuggestedModuleOption } from '../fo
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SolicitudesComponent {
-  protected readonly manualModalOpen = signal(false);
-  protected readonly manualModalTitleId = 'solicitudes-manual-modal-title';
-  protected readonly manualModalDescriptionId = 'solicitudes-manual-modal-description';
+  protected readonly addModuleModalOpen = signal(false);
+  protected readonly addModuleModalTitleId = 'solicitudes-add-module-modal-title';
+  protected readonly addModuleModalDescriptionId = 'solicitudes-add-module-modal-description';
+  protected readonly manualModuleInput = signal('');
+  protected readonly queuedManualModuleEntries = signal<ManualModuleEntryDraft[]>([]);
+
   readonly suggestedModules = input<SuggestedModuleOption[]>([]);
   readonly selectedSuggested = input<string[]>([]);
-  readonly manualDraft = input.required<ManualModuleDraft>();
-  readonly canAddManual = input(false);
   readonly requestedModules = input<RequestedModule[]>([]);
+  readonly hasEstudiosAportados = input(false);
 
   readonly toggleSuggested = output<{ value: string; checked: boolean }>();
-  readonly manualDraftChange = output<{ key: keyof ManualModuleDraft; value: string }>();
-  readonly addManual = output<void>();
+  readonly addManualModuleEntries = output<ManualModuleEntryDraft[]>();
   readonly removeRequested = output<RequestedModule>();
+  protected readonly requestedSuggestedModules = computed(() =>
+    this.requestedModules().filter((item) => item.source === 'suggested')
+  );
+  protected readonly requestedManualModules = computed(() =>
+    this.requestedModules().filter((item) => item.source === 'manual')
+  );
+  protected readonly canQueueManualModuleFromInput = computed(
+    () => this.manualModuleInput().trim().length > 0
+  );
+  protected readonly canConfirmAddModuleModal = computed(() => {
+    return this.queuedManualModuleEntries().length > 0;
+  });
 
   // Indica si una sugerencia está actualmente seleccionada.
   protected isSuggestedSelected(value: string): boolean {
@@ -33,35 +58,58 @@ export class SolicitudesComponent {
     this.toggleSuggested.emit({ value, checked });
   }
 
-  // Emite cambios en el borrador de módulo manual.
-  protected handleManualDraftChange(key: keyof ManualModuleDraft, event: Event): void {
+  // Controla el input manual de módulo dentro del modal.
+  protected handleManualModuleInput(event: Event): void {
     const value = (event.target as HTMLInputElement | null)?.value ?? '';
-    this.manualDraftChange.emit({ key, value });
+    this.manualModuleInput.set(value);
   }
 
-  // Abre el modal para agregar un módulo manual.
-  protected openManualModal(): void {
-    this.manualModalOpen.set(true);
+  // Abre el modal de agregar módulo y reinicia su estado temporal.
+  protected openAddModuleModal(): void {
+    this.resetAddModuleModalState();
+    this.addModuleModalOpen.set(true);
   }
 
-  // Cierra el modal de módulo manual.
-  protected closeManualModal(): void {
-    if (!this.manualModalOpen()) return;
-    this.manualModalOpen.set(false);
+  // Cierra el modal y limpia el estado temporal sin persistir.
+  protected closeAddModuleModal(): void {
+    if (!this.addModuleModalOpen()) return;
+    this.resetAddModuleModalState();
+    this.addModuleModalOpen.set(false);
   }
 
-  // Confirma el alta del módulo manual desde el modal.
-  protected confirmManualModal(): void {
-    if (!this.canAddManual()) return;
-    this.addManual.emit();
-    this.manualModalOpen.set(false);
+  // Añade el módulo escrito a la cola de previsualización.
+  protected queueManualModuleFromInput(): void {
+    if (!this.canQueueManualModuleFromInput()) return;
+    const nombre = this.manualModuleInput().trim();
+    this.queuedManualModuleEntries.update((entries) => [...entries, { nombre }]);
+    this.manualModuleInput.set('');
+  }
+
+  // Quita un módulo manual acumulado en la previsualización del modal.
+  protected removeQueuedManualModuleEntry(index: number): void {
+    this.queuedManualModuleEntries.update((entries) =>
+      entries.filter((_, current) => current !== index)
+    );
+  }
+
+  // Confirma el alta en lote de módulos manuales desde el modal.
+  protected confirmAddModuleModal(): void {
+    if (!this.canConfirmAddModuleModal()) return;
+
+    const manualToAdd = this.queuedManualModuleEntries().map((entry) => ({ ...entry }));
+    if (manualToAdd.length) {
+      this.addManualModuleEntries.emit(manualToAdd);
+    }
+
+    this.addModuleModalOpen.set(false);
+    this.resetAddModuleModalState();
   }
 
   // Cierra el modal al pulsar Escape.
   @HostListener('document:keydown.escape')
   protected onEscapeKey(): void {
-    if (!this.manualModalOpen()) return;
-    this.closeManualModal();
+    if (!this.addModuleModalOpen()) return;
+    this.closeAddModuleModal();
   }
 
   // Solicita eliminar una solicitud del listado final.
@@ -98,12 +146,9 @@ export class SolicitudesComponent {
     return normalized || '—';
   }
 
-  // Devuelve el texto final del módulo solicitado con código si existe.
+  // Devuelve el texto final del módulo solicitado.
   protected getRequestedModuloDisplay(item: RequestedModule): string {
-    const base = item.nombre.trim() || 'Sin módulo';
-    const code = item.codigo?.trim();
-    if (!code) return base;
-    return `${base} · Código ${code}`;
+    return item.nombre.trim() || 'Sin módulo';
   }
 
   // Devuelve los textos de origen de la solicitud para mostrarlos en tabla.
@@ -122,5 +167,11 @@ export class SolicitudesComponent {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .trim();
+  }
+
+  // Reinicia todos los datos temporales del modal de agregar.
+  private resetAddModuleModalState(): void {
+    this.manualModuleInput.set('');
+    this.queuedManualModuleEntries.set([]);
   }
 }

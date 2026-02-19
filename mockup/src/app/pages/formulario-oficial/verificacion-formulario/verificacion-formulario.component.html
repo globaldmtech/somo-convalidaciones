@@ -29,29 +29,54 @@
         {{ draft().formEstudios.length }} {{ draft().formEstudios.length === 1 ? 'estudio' : 'estudios' }}
       </span>
     </div>
-    <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
-        <table class="min-w-245 w-full text-sm text-slate-700">
-        <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-          <tr>
-            <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
-            <th class="px-3 py-2 text-left">Grado</th>
-            <th class="px-3 py-2 text-left">Familia profesional</th>
-            <th class="px-3 py-2 text-left">Ciclo formativo</th>
-            <th class="px-3 py-2 text-left">Módulo</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          @for (estudio of draft().formEstudios; track $index) {
-            <tr class="align-top">
-              <td class="px-3 py-2">{{ getEstudioTipoDisplay(estudio) }}</td>
-              <td class="px-3 py-2">{{ getEstudioGradoDisplay(estudio) }}</td>
-              <td class="px-3 py-2">{{ getDisplayValue(estudio.familia) }}</td>
-              <td class="px-3 py-2">{{ getDisplayValue(estudio.ciclo) }}</td>
-              <td class="px-3 py-2">{{ getEstudioModuloDisplay(estudio) }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="grid gap-3">
+      @if (estudiosFpRows().length) {
+        <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+          <table class="min-w-245 w-full text-sm text-slate-700">
+            <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <tr>
+                <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+                <th class="px-3 py-2 text-left">Grado</th>
+                <th class="px-3 py-2 text-left">Familia profesional</th>
+                <th class="px-3 py-2 text-left">Ciclo formativo</th>
+                <th class="px-3 py-2 text-left">Módulo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              @for (estudio of estudiosFpRows(); track $index) {
+                <tr class="align-top">
+                  <td class="px-3 py-2">{{ getEstudioTipoDisplay(estudio) }}</td>
+                  <td class="px-3 py-2">{{ getEstudioGradoDisplay(estudio) }}</td>
+                  <td class="px-3 py-2">{{ getDisplayValue(estudio.familia) }}</td>
+                  <td class="px-3 py-2">{{ getDisplayValue(estudio.ciclo) }}</td>
+                  <td class="px-3 py-2">{{ getEstudioModuloDisplay(estudio) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (estudiosDescripcionRows().length) {
+        <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+          <table class="min-w-180 w-full text-sm text-slate-700">
+            <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <tr>
+                <th class="px-3 py-2 text-left">Tipo de estudios aportados</th>
+                <th class="px-3 py-2 text-left">Detalle del estudio</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              @for (estudio of estudiosDescripcionRows(); track $index) {
+                <tr class="align-top">
+                  <td class="px-3 py-2">{{ getEstudioTipoDisplay(estudio) }}</td>
+                  <td class="px-3 py-2">{{ getEstudioDetalleDisplay(estudio) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </div>
   </div>
 
@@ -63,37 +88,68 @@
         {{ draft().requestedModules.length === 1 ? 'solicitud' : 'solicitudes' }}
       </span>
     </div>
-    <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
-      <table class="min-w-245 w-full text-sm text-slate-700">
-        <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
-          <tr>
-            <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
-            <th class="px-3 py-2 text-left">Grado</th>
-            <th class="px-3 py-2 text-left">Familia profesional</th>
-            <th class="px-3 py-2 text-left">Ciclo formativo</th>
-            <th class="px-3 py-2 text-left">Módulo</th>
-            <th class="px-3 py-2 text-left">Origen de la solicitud</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          @for (item of draft().requestedModules; track item.id) {
-            <tr class="align-top">
-              <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
-              <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
-              <td class="px-3 py-2">{{ getDisplayValue(item.familia) }}</td>
-              <td class="px-3 py-2">{{ getDisplayValue(item.ciclo) }}</td>
-              <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
-              <td class="px-3 py-2">
-                <div class="grid gap-0.5">
-                  @for (origen of getRequestedOrigenes(item); track $index) {
-                    <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="grid gap-3">
+      @if (requestedSuggestedModules().length) {
+        <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+          <table class="min-w-245 w-full text-sm text-slate-700">
+            <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <tr>
+                <th class="px-3 py-2 text-left">Origen de la solicitud</th>
+                <th class="px-3 py-2 text-left">Tipo de estudio solicitado</th>
+                <th class="px-3 py-2 text-left">Grado</th>
+                <th class="px-3 py-2 text-left">Familia profesional</th>
+                <th class="px-3 py-2 text-left">Ciclo formativo</th>
+                <th class="px-3 py-2 text-left">Módulo</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              @for (item of requestedSuggestedModules(); track item.id) {
+                <tr class="align-top">
+                  <td class="px-3 py-2">
+                    <div class="grid gap-0.5">
+                      @for (origen of getRequestedOrigenes(item); track $index) {
+                        <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                      }
+                    </div>
+                  </td>
+                  <td class="px-3 py-2">{{ getRequestedTipoDisplay(item.tipo) }}</td>
+                  <td class="px-3 py-2">{{ getRequestedGradoDisplay(item.grado) }}</td>
+                  <td class="px-3 py-2">{{ getDisplayValue(item.familia) }}</td>
+                  <td class="px-3 py-2">{{ getDisplayValue(item.ciclo) }}</td>
+                  <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (requestedManualModules().length) {
+        <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
+          <table class="min-w-180 w-full text-sm text-slate-700">
+            <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <tr>
+                <th class="px-3 py-2 text-left">Origen de la solicitud</th>
+                <th class="px-3 py-2 text-left">Convalidación manual</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              @for (item of requestedManualModules(); track item.id) {
+                <tr class="align-top">
+                  <td class="px-3 py-2">
+                    <div class="grid gap-0.5">
+                      @for (origen of getRequestedOrigenes(item); track $index) {
+                        <p class="m-0 text-[0.78rem] leading-snug text-slate-600">{{ origen }}</p>
+                      }
+                    </div>
+                  </td>
+                  <td class="px-3 py-2">{{ getRequestedModuloDisplay(item) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
     </div>
   </div>
 

@@ -11,15 +11,20 @@ export type EstudioEntry = {
   descripcion: string;
 };
 
-export type ManualModuleDraft = {
-  nombre: string;
-  codigo: string;
+export type FpEstudioOption = {
+  id: string;
+  grado: string;
+  familia: string;
+  ciclo: string;
 };
 
 export type ManualModuleEntry = {
   id: string;
   nombre: string;
-  codigo: string;
+};
+
+export type ManualModuleEntryDraft = {
+  nombre: string;
 };
 
 export type SuggestedModuleOption = {
@@ -36,7 +41,6 @@ export type RequestedModule = {
   id: string;
   source: 'suggested' | 'manual';
   nombre: string;
-  codigo?: string;
   tipo: string;
   grado: string;
   familia: string;
@@ -71,7 +75,6 @@ export type FormularioDraftSnapshot = {
   personalValues: PersonalValues;
   draftEstudio: EstudioEntry;
   formEstudios: EstudioEntry[];
-  manualModuleDraft: ManualModuleDraft;
   manualModules: ManualModuleEntry[];
   selectedSuggestedModules: string[];
   requestedModules: RequestedModule[];
