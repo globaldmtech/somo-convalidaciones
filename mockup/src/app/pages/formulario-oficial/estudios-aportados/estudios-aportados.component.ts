@@ -23,7 +23,6 @@ export class EstudiosAportadosComponent {
   protected readonly addModalDescriptionId = 'estudios-add-modal-description';
   readonly draft = input.required<EstudioEntry>();
   readonly estudios = input<EstudioEntry[]>([]);
-  readonly canAdd = input(false);
   readonly fpEstudioOptions = input<FpEstudioOption[]>([]);
   readonly moduloOptionsByEstudio = input<string[][]>([]);
 
@@ -216,11 +215,6 @@ export class EstudiosAportadosComponent {
     this.clearModalDraftForNextSelection();
   }
 
-  // Elimina una fila de la previsualización acumulada del modal.
-  protected removeQueuedModalEstudio(index: number): void {
-    this.modalQueuedEstudios.update((rows) => rows.filter((_, current) => current !== index));
-  }
-
   // Elimina una fila concreta de la previsualización acumulada del modal.
   protected removeQueuedModalEstudioEntry(entry: EstudioEntry): void {
     this.modalQueuedEstudios.update((rows) => {
@@ -283,7 +277,7 @@ export class EstudiosAportadosComponent {
   // Abre el modal de módulos para seleccionar múltiples opciones con checkboxes.
   protected openModuloPicker(index: number): void {
     const estudio = this.estudios()[index];
-    if (!estudio || !this.canEditFpEstudioModulos(estudio, index)) return;
+    if (!estudio || !this.canEditFpEstudioModulos(estudio)) return;
     const selected = this.splitModuloSelection(estudio.modulo);
     const initialSelected = this.isTodosModuloValue(estudio.modulo)
       ? this.getEstudioModuloOptions(index)
@@ -429,7 +423,7 @@ export class EstudiosAportadosComponent {
   }
 
   // Indica si una fila FP puede abrir el selector de módulos.
-  protected canEditFpEstudioModulos(entry: EstudioEntry, _index: number): boolean {
+  protected canEditFpEstudioModulos(entry: EstudioEntry): boolean {
     return this.isFormacionProfesionalTipo(entry.tipo);
   }
 

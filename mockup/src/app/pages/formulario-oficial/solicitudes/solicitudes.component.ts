@@ -105,8 +105,8 @@ export class SolicitudesComponent {
     this.resetAddModuleModalState();
   }
 
-  // Cierra el modal al pulsar Escape.
   @HostListener('document:keydown.escape')
+  // Cierra el modal al pulsar Escape.
   protected onEscapeKey(): void {
     if (!this.addModuleModalOpen()) return;
     this.closeAddModuleModal();

@@ -109,7 +109,6 @@ export class FormularioOficialComponent {
 
   protected readonly suggestedModules = computed(() => this.buildSuggestedModules());
   protected readonly requestedModules = computed(() => this.buildRequestedModules());
-  protected readonly canAddEstudio = computed(() => this.isEstudioEntryComplete(this.draftEstudio()));
   protected readonly fpEstudioOptions = computed(() => this.buildFpEstudioOptions());
   protected readonly formEstudiosModuloOptions = computed(() => {
     return this.formEstudios().map((entry) => {

@@ -1,4 +1,6 @@
+<!-- Sección de solicitudes de convalidación -->
 <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
+  <!-- Cabecera y acción para abrir modal de alta manual -->
   <div class="section-header flex flex-wrap items-center justify-between gap-3">
     <div>
       <h3 class="m-0 text-base font-semibold text-slate-900">
@@ -18,6 +20,7 @@
   </div>
 
   <div class="grid gap-4">
+    <!-- Bloque de sugerencias automáticas -->
     <div class="grid gap-3 rounded-2xl bg-white p-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Sugerencias</p>
@@ -80,6 +83,7 @@
 
   <div class="module-list grid gap-2">
     @if (requestedModules().length) {
+      <!-- Resumen de solicitudes añadidas -->
       <div class="flex flex-wrap items-center justify-between gap-2">
         <p class="m-0 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Solicitud a convalidar</p>
         <span class="rounded-full bg-slate-200 px-2.5 py-1 text-[0.72rem] font-semibold text-slate-600">
@@ -89,6 +93,7 @@
       </div>
       <div class="grid gap-3">
         @if (requestedSuggestedModules().length) {
+          <!-- Tabla de solicitudes sugeridas -->
           <div class="grid gap-2">
             <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
               <table class="min-w-245 w-full text-sm text-slate-700">
@@ -139,6 +144,7 @@
         }
 
         @if (requestedManualModules().length) {
+          <!-- Tabla de convalidaciones manuales -->
           <div class="grid gap-2">
             <div class="overflow-x-auto rounded-2xl border border-slate-300 bg-white">
               <table class="min-w-140 w-full text-sm text-slate-700">
@@ -190,6 +196,7 @@
 </div>
 
 @if (addModuleModalOpen()) {
+  <!-- Modal para agregar módulos manuales -->
   <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeAddModuleModal()">
     <div
       class="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"

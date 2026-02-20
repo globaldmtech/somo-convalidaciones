@@ -1,4 +1,6 @@
+<!-- Sección de estudios aportados -->
 <div class="grid gap-4 rounded-2xl bg-slate-100 p-5">
+  <!-- Cabecera de la sección y acción para abrir modal -->
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h3 class="m-0 text-base font-semibold text-slate-900">
@@ -17,6 +19,7 @@
     </button>
   </div>
 
+  <!-- Listado de estudios añadidos -->
   <div class="grid gap-2">
     @if (estudios().length) {
       <div class="grid gap-2.5">
@@ -29,6 +32,7 @@
           </span>
         </div>
         @if (estudiosFpRows().length) {
+          <!-- Tabla de estudios de FP (LOE/LOGSE) -->
           <div class="overflow-hidden rounded-2xl border border-slate-300 bg-white">
             <table class="w-full table-fixed text-[0.9rem] text-slate-700">
               <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -53,7 +57,7 @@
                         <span class="whitespace-nowrap text-[0.92rem] leading-snug text-slate-700">
                           {{ getEstudioModuloSummary(row.entry) }}
                         </span>
-                        @if (canEditFpEstudioModulos(row.entry, row.index)) {
+                        @if (canEditFpEstudioModulos(row.entry)) {
                           <button
                             type="button"
                             class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-dashed border-slate-300 bg-white text-[#1c1e39] transition cursor-pointer hover:border-[#72cfd5]"
@@ -86,6 +90,7 @@
         }
 
         @if (estudiosDescripcionRows().length) {
+          <!-- Tabla de estudios universitarios u otros -->
           <div class="overflow-hidden rounded-2xl border border-slate-300 bg-white">
             <table class="w-full table-fixed text-[0.9rem] text-slate-700">
               <thead class="bg-slate-50 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -126,6 +131,7 @@
 </div>
 
 @if (addModalOpen()) {
+  <!-- Modal para agregar uno o varios estudios -->
   <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeAddEstudioModal()">
     <div
       class="w-full max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
@@ -220,9 +226,11 @@
           }
 
           @if (modalQueuedEstudios().length) {
+            <!-- Previsualización de estudios acumulados en el modal -->
             <div class="grid gap-2.5">
               <p class="m-0 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-slate-400">Previsualización</p>
               @if (queuedFpEstudios().length) {
+              <!-- Previsualización de estudios FP -->
               <div class="max-h-88 overflow-y-auto overflow-x-hidden rounded-2xl border border-slate-200 bg-slate-50">
                 <table class="w-full table-fixed text-[0.9rem] text-slate-700">
                   <thead class="bg-slate-100 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -259,6 +267,7 @@
               }
 
               @if (queuedDescripcionEstudios().length) {
+              <!-- Previsualización de estudios con descripción -->
               <div class="max-h-88 overflow-y-auto overflow-x-hidden rounded-2xl border border-slate-200 bg-slate-50">
                 <table class="w-full table-fixed text-[0.9rem] text-slate-700">
                   <thead class="bg-slate-100 text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -316,6 +325,7 @@
 }
 
 @if (moduloPickerOpen() && moduloPickerIndex() !== null) {
+  <!-- Modal para seleccionar módulos de un estudio FP -->
   <div class="fixed inset-0 z-90 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeModuloPicker()">
     <div
       class="w-full max-w-245 max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"

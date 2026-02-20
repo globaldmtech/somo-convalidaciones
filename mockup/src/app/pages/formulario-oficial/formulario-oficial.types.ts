@@ -1,7 +1,10 @@
+// Claves de filtros utilizadas para cruzar estudios y módulos.
 export type FilterKey = 'grado' | 'familia' | 'ciclo' | 'modulo';
 
+// Tipos de estudios admitidos en el formulario.
 export type EstudiosTipo = 'LOGSE' | 'LOE' | 'Universitarios' | 'Otros' | '';
 
+// Estructura de un estudio aportado por el solicitante.
 export type EstudioEntry = {
   tipo: EstudiosTipo;
   grado: string;
@@ -11,6 +14,7 @@ export type EstudioEntry = {
   descripcion: string;
 };
 
+// Opción de estudio FP disponible para selección en el modal.
 export type FpEstudioOption = {
   id: string;
   grado: string;
@@ -18,15 +22,18 @@ export type FpEstudioOption = {
   ciclo: string;
 };
 
+// Entrada persistida de módulo añadido manualmente.
 export type ManualModuleEntry = {
   id: string;
   nombre: string;
 };
 
+// Entrada temporal de módulo manual antes de persistir.
 export type ManualModuleEntryDraft = {
   nombre: string;
 };
 
+// Opción sugerida de módulo construida desde estudios y catálogo.
 export type SuggestedModuleOption = {
   id: string;
   nombre: string;
@@ -37,6 +44,7 @@ export type SuggestedModuleOption = {
   origenes: string[];
 };
 
+// Solicitud final de convalidación (sugerida o manual).
 export type RequestedModule = {
   id: string;
   source: 'suggested' | 'manual';
@@ -48,6 +56,7 @@ export type RequestedModule = {
   origenes?: string[];
 };
 
+// Valores del bloque de datos personales.
 export type PersonalValues = {
   nif: string;
   nombre: string;
@@ -61,8 +70,10 @@ export type PersonalValues = {
   email: string;
 };
 
+// Clave de campo individual de datos personales.
 export type PersonalFieldKey = keyof PersonalValues;
 
+// Entrada de documentación adjunta.
 export type DocumentoEntry = {
   id: string;
   titulo: string;
@@ -70,6 +81,7 @@ export type DocumentoEntry = {
   file?: File | null;
 };
 
+// Snapshot completo del borrador del formulario.
 export type FormularioDraftSnapshot = {
   currentStep: number;
   personalValues: PersonalValues;

@@ -1,3 +1,4 @@
+<!-- Sección de documentación obligatoria y adicional -->
 <div class="form-section grid gap-4 rounded-2xl bg-slate-100 p-5">
   <h3 class="m-0 text-base font-semibold text-slate-900">4. Documentación que debe aportar</h3>
   <p class="m-0 text-[0.85rem] text-(--brand-gray-600)">
@@ -7,6 +8,7 @@
   </p>
 
   <div class="grid gap-4">
+    <!-- Bloque de carga del DNI -->
     <div class="flex h-full min-h-full flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -111,6 +113,7 @@
       }
     </div>
 
+    <!-- Bloque de documentación adicional -->
     <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -161,6 +164,7 @@
 </div>
 
 @if (additionalModalOpen()) {
+  <!-- Modal para agregar un documento adicional -->
   <div class="fixed inset-0 z-70 flex items-center justify-center bg-slate-900/40 p-4" (click)="closeAdditionalModal()">
     <div
       class="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.25)]"
