@@ -9,3 +9,13 @@ __pycache__/
 
 # Env
 .env
+
+# Local/sensitive
+docs/*.pdf
+mockup/public/docs/*.pdf
+mockup/.vscode/
+*.md
+
+# Generated/local data
+fp_grados.json
+12022026/
