@@ -60,74 +60,104 @@ def extraer_codigos(text):
             cycle_map[code] = name
     return cycle_map
 
-def extract_modules_grouped(pdf_stream):
-    #cycle_map = {} # { Code: FullName }
+def _is_module_row(row):
+    """Return True if the row looks like a valid module data row (first cell has a code)."""
+    if not row or row[0] is None:
+        return False
+    cell = str(row[0]).strip()
+    # Module rows start with a numeric code like "0702" or an E-code like "E200"
+    return bool(re.match(r'^[A-Z]?\d{3,4}[\s./]', cell))
 
+def extract_modules_grouped(pdf_stream):
     with pdfplumber.open(pdf_stream) as pdf:
         final_cycles = {}
-        # Track processing
-        started_extraction = False
-        current_col_code_map = {}
+        cycle_map = {}
+        # Flag: True once we have found a DENOMINACIÓN table on this PDF.
+        in_module_table = False
+        # Names of the cycles being filled — persists between pages for continuations.
+        last_cycle_names = []
+
+        dual_code_pattern = re.compile(
+            r'^([\w]+(?:\s*/\s*[\w]+)+)\.\s*(.+)$'
+        )
 
         for page in pdf.pages:
-            code_modules = []
-            # 1. SCAN FOR DEFINITIONS ON THIS PAGE
+            # 1. SCAN FOR CYCLE DEFINITIONS ON THIS PAGE
             text = page.extract_text()
             if text:
-                cycle_map =extraer_codigos(text)
-                
-            # 3. PROCESS TABLES
+                new_cycles = extraer_codigos(text)
+                if new_cycles:
+                    cycle_map = new_cycles
+
+            # 2. COLLECT MODULE ROWS FROM TABLES
             tables = page.find_tables()
-            if not tables: continue
-            
+            if not tables:
+                continue
+
+            # Separate modules into:
+            #   - normal_modules: from a table that starts with DENOMINACIÓN header
+            #   - continuation_modules: from a table that continues from a previous page
+            normal_modules = []
+            continuation_modules = []
+
             for table_obj in tables:
                 table = table_obj.extract()
-                if not table: continue
-                if len(table) < 2: continue
-                if 'DENOMINACIÓN' not in table[0]: continue
-#
-                start_row = 1
-                for row in table[start_row:]:
-                    if row[0] != '':
-                        code_modules.append(row[0])
+                if not table or len(table) < 2:
+                    continue
 
-            # 4. Associate modules to each cycle
-            # cycle_map is ordered (Python 3.7+): { code: full_name, ... }
-            cycle_codes = list(cycle_map.keys())       # e.g. ['ADFI3', 'ASDI3']
-            num_cycles = len(cycle_codes)
+                if 'DENOMINACIÓN' in table[0]:
+                    # New table with header → normal processing, update cycle context later
+                    in_module_table = True
+                    for row in table[1:]:
+                        if row[0] is not None and str(row[0]).strip():
+                            normal_modules.append(str(row[0]).strip())
 
-            # Build a dict: { cycle_full_name: [module_list] }
-            page_cycles = {cycle_map[c]: [] for c in cycle_codes}
-            cycle_names = list(page_cycles.keys())
+                elif in_module_table and _is_module_row(table[0]):
+                    # Continuation table (no header) → modules belong to last_cycle_names
+                    for row in table:
+                        if row[0] is not None and str(row[0]).strip():
+                            continuation_modules.append(str(row[0]).strip())
 
-            dual_code_pattern = re.compile(
-                r'^([\w]+(?:\s*/\s*[\w]+)+)\.\s*(.+)$'
-            )
+            # 3a. Handle CONTINUATION modules first (append to cycles from previous page)
+            if continuation_modules and last_cycle_names:
+                for mod in continuation_modules:
+                    m = dual_code_pattern.match(mod)
+                    if m:
+                        codes_part = m.group(1)
+                        name_part  = m.group(2)
+                        split_codes = [c.strip() for c in codes_part.split('/')]
+                        for i, sc in enumerate(split_codes):
+                            if i < len(last_cycle_names):
+                                final_cycles[last_cycle_names[i]].append(f"{sc}. {name_part}")
+                    else:
+                        for cn in last_cycle_names:
+                            final_cycles[cn].append(mod)
 
-            for mod in code_modules:
-                if mod is None:
-                    continue  # skip separators
+            # 3b. Handle NORMAL modules (from DENOMINACIÓN table on this page)
+            if normal_modules and cycle_map:
+                cycle_codes = list(cycle_map.keys())
+                num_cycles  = len(cycle_codes)
+                page_cycles = {cycle_map[c]: [] for c in cycle_codes}
+                last_cycle_names = list(page_cycles.keys())
 
-                m = dual_code_pattern.match(mod)
-                if m:
-                    # e.g. '0660 / 0667. Formación en Centros de Trabajo'
-                    codes_part = m.group(1)   # '0660 / 0667'
-                    name_part  = m.group(2)   # 'Formación en Centros de Trabajo'
-                    split_codes = [c.strip() for c in codes_part.split('/')]
-                    # Assign each split code to the corresponding cycle (by position)
-                    for i, sc in enumerate(split_codes):
-                        if i < num_cycles:
-                            page_cycles[cycle_names[i]].append(f"{sc}. {name_part}")
-                else:
-                    # Regular module → goes to every cycle
-                    for cn in cycle_names:
-                        page_cycles[cn].append(mod)
+                for mod in normal_modules:
+                    m = dual_code_pattern.match(mod)
+                    if m:
+                        codes_part = m.group(1)
+                        name_part  = m.group(2)
+                        split_codes = [c.strip() for c in codes_part.split('/')]
+                        for i, sc in enumerate(split_codes):
+                            if i < num_cycles:
+                                page_cycles[last_cycle_names[i]].append(f"{sc}. {name_part}")
+                    else:
+                        for cn in last_cycle_names:
+                            page_cycles[cn].append(mod)
 
-            # Merge page_cycles into final_cycles
-            for cycle_name, mods in page_cycles.items():
-                if cycle_name not in final_cycles:
-                    final_cycles[cycle_name] = []
-                final_cycles[cycle_name].extend(mods)
+                # Merge into final_cycles
+                for cycle_name, mods in page_cycles.items():
+                    if cycle_name not in final_cycles:
+                        final_cycles[cycle_name] = []
+                    final_cycles[cycle_name].extend(mods)
 
         # 5. Group by Level
         grouped_result = {

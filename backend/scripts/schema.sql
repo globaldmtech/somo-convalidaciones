@@ -10,8 +10,7 @@ CREATE TABLE IF NOT EXISTS grados (
 CREATE TABLE IF NOT EXISTS familias (
   id INTEGER PRIMARY KEY,
   nombre TEXT NOT NULL,
-  id_grado INTEGER NOT NULL,
-  FOREIGN KEY (id_grado) REFERENCES grados(id)
+  codigo TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ciclos (
@@ -20,7 +19,9 @@ CREATE TABLE IF NOT EXISTS ciclos (
   id_oficial TEXT,
   normativa TEXT,
   id_familia INTEGER NOT NULL,
-  FOREIGN KEY (id_familia) REFERENCES familias(id)
+  id_grado INTEGER NOT NULL,
+  FOREIGN KEY (id_familia) REFERENCES familias(id),
+  FOREIGN KEY (id_grado) REFERENCES grados(id)
 );
 
 CREATE TABLE IF NOT EXISTS modulos (

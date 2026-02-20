@@ -438,7 +438,9 @@
         "1324. Adiestramiento",
         "1325. Técnicas de equitación",
         "1326. Exhibiciones y concursos de ganado equino",
-        "1327. Guía ecuestre"
+        "1327. Guía ecuestre",
+        "1328. Atención a grupos",
+        "1329. Organización de itinerarios"
       ],
       "Técnico en Actividades Ecuestres": [
         "1332. Formación en Centros de Trabajo",
@@ -464,7 +466,9 @@
         "1324. Adiestramiento",
         "1325. Técnicas de equitación",
         "1326. Exhibiciones y concursos de ganado equino",
-        "1327. Guía ecuestre"
+        "1327. Guía ecuestre",
+        "1328. Atención a grupos",
+        "1329. Organización de itinerarios"
       ]
     },
     "GRADO SUPERIOR": {
@@ -494,7 +498,14 @@
         "0817. Proyecto de gestión forestal y conservación del medio",
         "1274. Organización y control de la reproducción y cría",
         "1275. Gestión de la producción animal",
-        "1276. Gestión de la recría de caballos"
+        "1276. Gestión de la recría de caballos",
+        "1277. Organización y supervisión de la doma y manejo de équidos",
+        "1278. Maquinaria e instalaciones ganaderas",
+        "1279. Saneamiento ganadero",
+        "1280. Asistencia a la atención veterinaria",
+        "1281. Bioseguridad",
+        "1282. Gestión de centros veterinarios",
+        "1283. Proyecto de ganadería y asistencia en sanidad animal"
       ],
       "Técnico Superior en Gestión Forestal y del Medio Natural": [
         "0820. Formación en Centros de Trabajo",
@@ -522,7 +533,14 @@
         "0817. Proyecto de gestión forestal y conservación del medio",
         "1274. Organización y control de la reproducción y cría",
         "1275. Gestión de la producción animal",
-        "1276. Gestión de la recría de caballos"
+        "1276. Gestión de la recría de caballos",
+        "1277. Organización y supervisión de la doma y manejo de équidos",
+        "1278. Maquinaria e instalaciones ganaderas",
+        "1279. Saneamiento ganadero",
+        "1280. Asistencia a la atención veterinaria",
+        "1281. Bioseguridad",
+        "1282. Gestión de centros veterinarios",
+        "1283. Proyecto de ganadería y asistencia en sanidad animal"
       ],
       "Técnico Superior en Ganadería y Asistencia en Sanidad Animal": [
         "1286. Formación en Centros de Trabajo",
@@ -550,7 +568,14 @@
         "0817. Proyecto de gestión forestal y conservación del medio",
         "1274. Organización y control de la reproducción y cría",
         "1275. Gestión de la producción animal",
-        "1276. Gestión de la recría de caballos"
+        "1276. Gestión de la recría de caballos",
+        "1277. Organización y supervisión de la doma y manejo de équidos",
+        "1278. Maquinaria e instalaciones ganaderas",
+        "1279. Saneamiento ganadero",
+        "1280. Asistencia a la atención veterinaria",
+        "1281. Bioseguridad",
+        "1282. Gestión de centros veterinarios",
+        "1283. Proyecto de ganadería y asistencia en sanidad animal"
       ]
     }
   },
@@ -3780,7 +3805,9 @@
         "1310. Programación y mantenimiento de automatismos hidráulicos y\nneumáticos en buques y embarcaciones",
         "1311. Organización del mantenimiento y montaje de instalaciones y\nsistemas eléctricos de buques y embarcaciones",
         "1312. Organización del mantenimiento y montaje de instalaciones\nfrigoríficas y sistemas de climatización de buques y embarcaciones",
-        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones"
+        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones",
+        "1314. Organización de la guardia de máquinas",
+        "1315. Proyecto de organización del mantenimiento de maquinaria de\nbuques y embarcaciones"
       ],
       "Técnico Superior en Acuicultura": [
         "1023. Formación en Centros de Trabajo",
@@ -3810,7 +3837,9 @@
         "1310. Programación y mantenimiento de automatismos hidráulicos y\nneumáticos en buques y embarcaciones",
         "1311. Organización del mantenimiento y montaje de instalaciones y\nsistemas eléctricos de buques y embarcaciones",
         "1312. Organización del mantenimiento y montaje de instalaciones\nfrigoríficas y sistemas de climatización de buques y embarcaciones",
-        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones"
+        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones",
+        "1314. Organización de la guardia de máquinas",
+        "1315. Proyecto de organización del mantenimiento de maquinaria de\nbuques y embarcaciones"
       ],
       "Técnico Superior en Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones": [
         "1318. Formación en Centros de Trabajo",
@@ -3840,7 +3869,9 @@
         "1310. Programación y mantenimiento de automatismos hidráulicos y\nneumáticos en buques y embarcaciones",
         "1311. Organización del mantenimiento y montaje de instalaciones y\nsistemas eléctricos de buques y embarcaciones",
         "1312. Organización del mantenimiento y montaje de instalaciones\nfrigoríficas y sistemas de climatización de buques y embarcaciones",
-        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones"
+        "1313. Planificación del mantenimiento de maquinaria de buques y\nembarcaciones",
+        "1314. Organización de la guardia de máquinas",
+        "1315. Proyecto de organización del mantenimiento de maquinaria de\nbuques y embarcaciones"
       ]
     }
   },
@@ -4457,7 +4488,9 @@
         "1550. Salud y riesgos del medio construido",
         "1551. Control y seguridad alimentaria",
         "1552. Contaminación ambiental y atmosférica",
-        "1553. Control de organismos nocivos"
+        "1553. Control de organismos nocivos",
+        "1554. Unidad de salud ambiental",
+        "1555. Proyecto de química y salud ambiental"
       ],
       "Técnico Superior en Coordinación de Emergencias y Protección Civil": [
         "1514. Formación en Centros de Trabajo",
@@ -4493,7 +4526,9 @@
         "1550. Salud y riesgos del medio construido",
         "1551. Control y seguridad alimentaria",
         "1552. Contaminación ambiental y atmosférica",
-        "1553. Control de organismos nocivos"
+        "1553. Control de organismos nocivos",
+        "1554. Unidad de salud ambiental",
+        "1555. Proyecto de química y salud ambiental"
       ],
       "Técnico Superior en Química y Salud Ambiental": [
         "1558. Formación en Centros de Trabajo",
@@ -4529,7 +4564,9 @@
         "1550. Salud y riesgos del medio construido",
         "1551. Control y seguridad alimentaria",
         "1552. Contaminación ambiental y atmosférica",
-        "1553. Control de organismos nocivos"
+        "1553. Control de organismos nocivos",
+        "1554. Unidad de salud ambiental",
+        "1555. Proyecto de química y salud ambiental"
       ]
     }
   },
@@ -5354,7 +5391,9 @@
         "1457. Hélices",
         "1462. Proyecto de mantenimiento aeromecánico de\naviones con motor de pistón",
         "1438. Aerodinámica, estructuras y sistemas eléctricos y de\naviónica de aviones con motor de turbina",
-        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina"
+        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina",
+        "1455. Motores de turbina de gas",
+        "1458. Proyecto de mantenimiento aeromecánico de\naviones con motor de turbina"
       ],
       "Técnico Superior en Mantenimiento Aeromecánico de Aviones con Motor de Pistón": [
         "1465. Formación en Centros de Trabajo",
@@ -5387,7 +5426,9 @@
         "1457. Hélices",
         "1462. Proyecto de mantenimiento aeromecánico de\naviones con motor de pistón",
         "1438. Aerodinámica, estructuras y sistemas eléctricos y de\naviónica de aviones con motor de turbina",
-        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina"
+        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina",
+        "1455. Motores de turbina de gas",
+        "1458. Proyecto de mantenimiento aeromecánico de\naviones con motor de turbina"
       ],
       "Técnico Superior en Mantenimiento Aeromecánico de Aviones con Motor de Turbina": [
         "1461. Formación en Centros de Trabajo",
@@ -5420,7 +5461,9 @@
         "1457. Hélices",
         "1462. Proyecto de mantenimiento aeromecánico de\naviones con motor de pistón",
         "1438. Aerodinámica, estructuras y sistemas eléctricos y de\naviónica de aviones con motor de turbina",
-        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina"
+        "1439. Aerodinámica, estructuras y sistemas de mandos de\nvuelo de aviones con motor de turbina",
+        "1455. Motores de turbina de gas",
+        "1458. Proyecto de mantenimiento aeromecánico de\naviones con motor de turbina"
       ],
       "Técnico Superior en Mantenimiento Aeromecánico de Helicópteros con Motor de Pistón": [
         "1473. Formación en centros de trabajo",
