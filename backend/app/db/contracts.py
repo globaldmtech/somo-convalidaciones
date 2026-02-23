@@ -300,20 +300,6 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
             "output": "sqlite3.Row | None",
         },
         "list_usuarios": {"input": {"conn": "sqlite3.Connection"}, "output": "Sequence[sqlite3.Row]"},
-        "update_usuario": {
-            "input": {
-                "conn": "sqlite3.Connection",
-                "usuario_id": "int",
-                "nombre": "str",
-                "email": "str",
-                "rol": "Literal['ALUMNO', 'ADMIN']",
-            },
-            "output": "bool",
-        },
-        "delete_usuario": {
-            "input": {"conn": "sqlite3.Connection", "usuario_id": "int"},
-            "output": "bool",
-        },
     },
     "formularios": {
         "create_formulario": {

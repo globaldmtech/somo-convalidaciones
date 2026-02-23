@@ -699,7 +699,7 @@ def replace_convalidacion_origenes(
 
 
 # ---------------------------------------------------------------------------
-# Usuarios CRUD
+# Usuarios (alta/consulta/listado)
 # ---------------------------------------------------------------------------
 # Crea un nuevo registro de usuario.
 def create_usuario(
@@ -733,32 +733,6 @@ def get_usuario_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqlit
 # Lista registros de usuarios con los filtros disponibles.
 def list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
     return conn.execute("SELECT * FROM usuarios ORDER BY nombre ASC").fetchall()
-
-
-# Actualiza un registro de usuario con los datos recibidos.
-def update_usuario(
-    conn: sqlite3.Connection,
-    usuario_id: int,
-    nombre: str,
-    email: str,
-    rol: Literal["ALUMNO", "ADMIN"],
-) -> bool:
-    nombre = _require_non_empty(nombre, "nombre")
-    email = _require_non_empty(email, "email").lower()
-    rol = _assert_usuario_rol(_require_non_empty(rol, "rol").upper())
-    cur = conn.execute(
-        "UPDATE usuarios SET nombre = ?, email = ?, rol = ? WHERE id = ?",
-        (nombre, email, rol, usuario_id),
-    )
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Elimina un registro de usuario por su identificador.
-def delete_usuario(conn: sqlite3.Connection, usuario_id: int) -> bool:
-    cur = conn.execute("DELETE FROM usuarios WHERE id = ?", (usuario_id,))
-    conn.commit()
-    return cur.rowcount > 0
 
 
 # ---------------------------------------------------------------------------

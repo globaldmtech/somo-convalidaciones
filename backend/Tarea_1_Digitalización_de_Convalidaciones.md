@@ -290,8 +290,6 @@ create_usuario(conn: sqlite3.Connection, nombre: str, email: str, rol: Literal["
 get_usuario(conn: sqlite3.Connection, usuario_id: int) -> Optional[sqlite3.Row]
 get_usuario_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqlite3.Row]
 list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]
-update_usuario(conn: sqlite3.Connection, usuario_id: int, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"]) -> bool
-delete_usuario(conn: sqlite3.Connection, usuario_id: int) -> bool
 ```
 
 ## 7) Scripts operativos implementados
@@ -347,17 +345,17 @@ Scripts de inicializacion/carga: cumplido.
 - `backend/scripts/load_convalidaciones.py:194`
 
 Modulo Python DB encapsulando logica principal: cumplido.
-- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:119`, `backend/app/db/database.py:147`
-- CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:171`, `backend/app/db/database.py:531`, `backend/app/db/database.py:760`
-- Motor de reglas: `backend/app/db/database.py:1247`, `backend/app/db/database.py:1311`, `backend/app/db/database.py:1345`
-- UC4 exportacion dedicada: `backend/app/db/database.py:1121`, `backend/app/db/database.py:1140`, `backend/scripts/export_formularios.py:55`
+- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:127`, `backend/app/db/database.py:155`
+- CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:176`, `backend/app/db/database.py:539`, `backend/app/db/database.py:742`
+- Motor de reglas: `backend/app/db/database.py:1163`, `backend/app/db/database.py:1229`, `backend/app/db/database.py:1327`
+- UC4 exportacion dedicada: `backend/app/db/database.py:1103`, `backend/app/db/database.py:1122`, `backend/scripts/export_formularios.py:55`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 77 funciones publicas en `database.py` y 77 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 75 funciones publicas en `database.py` y 75 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 77 funciones.
+Total: 75 funciones.
 
 ### Infraestructura
 ```python
@@ -422,8 +420,6 @@ def create_usuario( conn: sqlite3.Connection, nombre: str, email: str, rol: Lite
 def get_usuario(conn: sqlite3.Connection, usuario_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de usuario por su identificador o criterio.
 def get_usuario_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqlite3.Row]:  # Obtiene un usuario a partir de su correo electronico.
 def list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:  # Lista registros de usuarios con los filtros disponibles.
-def update_usuario( conn: sqlite3.Connection, usuario_id: int, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"], ) -> bool:  # Actualiza un registro de usuario con los datos recibidos.
-def delete_usuario(conn: sqlite3.Connection, usuario_id: int) -> bool:  # Elimina un registro de usuario por su identificador.
 ```
 
 ### Formularios
@@ -466,12 +462,12 @@ def resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: 
 
 Inconsistencia de tipos en evaluacion: corregida.
 - `SolicitudEvaluationOut` con campos opcionales para rama `PENDING_DESTINATION`: `backend/app/db/contracts.py:43`
-- Rama de retorno que incluye `message` cuando no hay modulo destino: `backend/app/db/database.py:1271`
+- Rama de retorno que incluye `message` cuando no hay modulo destino: `backend/app/db/database.py:1253`
 
 ## 10) Conclusiones
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 77/77 funciones publicas del modulo DB).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 75/75 funciones publicas del modulo DB).
 - La inconsistencia de tipos de salida en evaluacion de solicitudes fue corregida en contratos (`SolicitudEvaluationOut` con campos opcionales para la rama `PENDING_DESTINATION`).
 - Los casos de uso UC1..UC5 quedan cubiertos en backend (incluida exportacion JSON en UC4).
