@@ -393,10 +393,6 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
         },
     },
     "motor_reglas": {
-        "find_candidate_convalidaciones": {
-            "input": {"conn": "sqlite3.Connection", "id_modulo_destino": "int"},
-            "output": "list[dict[str, Any]]",
-        },
         "evaluate_solicitud": {
             "input": {
                 "conn": "sqlite3.Connection",
@@ -411,10 +407,6 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
                 "formulario_id": "int",
                 "auto_assign": "bool",
             },
-            "output": "FormularioEvaluationOut",
-        },
-        "resolve_formulario_convalidaciones": {
-            "input": {"conn": "sqlite3.Connection", "formulario_id": "int"},
             "output": "FormularioEvaluationOut",
         },
     },

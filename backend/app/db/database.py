@@ -1144,7 +1144,7 @@ def _get_aportados_ids(conn: sqlite3.Connection, formulario_id: int) -> set[int]
 
 
 # Busca reglas candidatas para un modulo destino.
-def find_candidate_convalidaciones(
+def _find_candidate_convalidaciones(
     conn: sqlite3.Connection,
     id_modulo_destino: int,
 ) -> list[dict[str, Any]]:
@@ -1243,7 +1243,7 @@ def evaluate_solicitud(
         return result
 
     aportados_ids = _get_aportados_ids(conn, formulario_id)
-    candidates = find_candidate_convalidaciones(conn, int(id_modulo_destino))
+    candidates = _find_candidate_convalidaciones(conn, int(id_modulo_destino))
     evaluations = [_evaluate_candidate(candidate, aportados_ids) for candidate in candidates]
     matches = [item for item in evaluations if item["is_match"]]
     matches.sort(key=lambda item: (-item["matched_count"], item["missing_count"], item["convalidacion_id"]))
@@ -1306,8 +1306,3 @@ def evaluate_formulario(
         "solicitudes": evaluation_results,
     }
 
-
-# Evalua y asigna automaticamente convalidaciones al formulario.
-def resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]:
-    """Evaluate and persist automatic convalidacion assignment for all solicitudes."""
-    return evaluate_formulario(conn, formulario_id, auto_assign=True)

@@ -218,7 +218,6 @@ review_formulario(
 ) -> bool
 evaluate_solicitud(conn: sqlite3.Connection, solicitud_id: int, *, auto_assign: bool = False) -> dict[str, Any]
 evaluate_formulario(conn: sqlite3.Connection, formulario_id: int, *, auto_assign: bool = False) -> dict[str, Any]
-resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]
 ```
 
 ### UC4 - Exportar formularios
@@ -344,15 +343,15 @@ Scripts de inicializacion/carga: cumplido.
 Modulo Python DB encapsulando logica principal: cumplido.
 - Infraestructura de conexion e inicializacion: `backend/app/db/database.py:206`, `backend/app/db/database.py:234`
 - CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:255`, `backend/app/db/database.py:525`, `backend/app/db/database.py:728`
-- Motor de reglas: `backend/app/db/database.py:1149`, `backend/app/db/database.py:1215`, `backend/app/db/database.py:1313`
+- Motor de reglas: `backend/app/db/database.py:1213`, `backend/app/db/database.py:1277`
 - UC4 exportacion dedicada: `backend/app/db/database.py:1108`, `backend/scripts/export_formularios.py:54`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 53 funciones publicas en `database.py` y 53 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 51 funciones publicas en `database.py` y 51 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 53 funciones.
+Total: 51 funciones.
 
 ### Infraestructura
 ```python
@@ -429,10 +428,8 @@ def get_formularios_export_data( conn: sqlite3.Connection, formulario_id: Option
 
 ### Motor de Reglas
 ```python
-def find_candidate_convalidaciones( conn: sqlite3.Connection, id_modulo_destino: int, ) -> list[dict[str, Any]]:  # Busca reglas candidatas para un modulo destino.
 def evaluate_solicitud( conn: sqlite3.Connection, solicitud_id: int, *, auto_assign: bool = False, ) -> dict[str, Any]:  # Evalua una solicitud concreta y determina si hay convalidacion aplicable.
 def evaluate_formulario( conn: sqlite3.Connection, formulario_id: int, *, auto_assign: bool = False, ) -> dict[str, Any]:  # Evalua todas las solicitudes de un formulario.
-def resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]:  # Evalua y asigna automaticamente convalidaciones al formulario.
 ```
 
 Inconsistencia de tipos en evaluacion: corregida.
@@ -443,6 +440,6 @@ Inconsistencia de tipos en evaluacion: corregida.
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 53/53 funciones publicas del modulo DB).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 51/51 funciones publicas del modulo DB).
 - La inconsistencia de tipos de salida en evaluacion de solicitudes fue corregida en contratos (`SolicitudEvaluationOut` con campos opcionales para la rama `PENDING_DESTINATION`).
 - Los casos de uso UC1..UC5 quedan cubiertos en backend (incluida exportacion JSON en UC4).
