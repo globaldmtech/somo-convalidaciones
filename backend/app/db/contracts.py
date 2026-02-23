@@ -88,137 +88,76 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
     },
     "catalogo": {
         "clear_catalog": {"input": {"conn": "sqlite3.Connection"}, "output": "None"},
-        "create_grado": {"input": {"conn": "sqlite3.Connection", "nombre": "str"}, "output": "int"},
-        "get_grado": {"input": {"conn": "sqlite3.Connection", "grado_id": "int"}, "output": "sqlite3.Row | None"},
-        "find_grado_by_nombre": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str"},
-            "output": "sqlite3.Row | None",
-        },
-        "list_grados": {"input": {"conn": "sqlite3.Connection"}, "output": "Sequence[sqlite3.Row]"},
-        "update_grado": {
-            "input": {"conn": "sqlite3.Connection", "grado_id": "int", "nombre": "str"},
-            "output": "bool",
-        },
-        "delete_grado": {"input": {"conn": "sqlite3.Connection", "grado_id": "int"}, "output": "bool"},
-        "get_or_create_grado": {"input": {"conn": "sqlite3.Connection", "nombre": "str"}, "output": "int"},
-        "create_familia": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str", "id_grado": "int"},
-            "output": "int",
-        },
-        "get_familia": {
-            "input": {"conn": "sqlite3.Connection", "familia_id": "int"},
-            "output": "sqlite3.Row | None",
-        },
-        "find_familia_by_nombre": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str", "id_grado": "int"},
-            "output": "sqlite3.Row | None",
-        },
-        "list_familias": {
-            "input": {"conn": "sqlite3.Connection", "id_grado": "int | None"},
-            "output": "Sequence[sqlite3.Row]",
-        },
-        "update_familia": {
+        "create_catalog_entity": {
             "input": {
                 "conn": "sqlite3.Connection",
-                "familia_id": "int",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
                 "nombre": "str",
-                "id_grado": "int",
-            },
-            "output": "bool",
-        },
-        "delete_familia": {
-            "input": {"conn": "sqlite3.Connection", "familia_id": "int"},
-            "output": "bool",
-        },
-        "get_or_create_familia": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str", "id_grado": "int"},
-            "output": "int",
-        },
-        "create_ciclo": {
-            "input": {
-                "conn": "sqlite3.Connection",
-                "nombre": "str",
-                "id_familia": "int",
+                "parent_id": "int | None",
                 "titulo": "str | None",
                 "id_oficial": "str | None",
                 "normativa": "str | None",
             },
             "output": "int",
         },
-        "get_ciclo": {"input": {"conn": "sqlite3.Connection", "ciclo_id": "int"}, "output": "sqlite3.Row | None"},
-        "find_ciclo_by_nombre": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str", "id_familia": "int"},
+        "get_catalog_entity": {
+            "input": {
+                "conn": "sqlite3.Connection",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
+                "entity_id": "int",
+            },
             "output": "sqlite3.Row | None",
         },
-        "list_ciclos": {
-            "input": {"conn": "sqlite3.Connection", "id_familia": "int | None"},
-            "output": "Sequence[sqlite3.Row]",
-        },
-        "update_ciclo": {
+        "find_catalog_entity_by_nombre": {
             "input": {
                 "conn": "sqlite3.Connection",
-                "ciclo_id": "int",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
                 "nombre": "str",
-                "id_familia": "int",
-                "titulo": "str | None",
-                "id_oficial": "str | None",
-                "normativa": "str | None",
+                "parent_id": "int | None",
             },
-            "output": "bool",
-        },
-        "delete_ciclo": {"input": {"conn": "sqlite3.Connection", "ciclo_id": "int"}, "output": "bool"},
-        "get_or_create_ciclo": {
-            "input": {
-                "conn": "sqlite3.Connection",
-                "nombre": "str",
-                "id_familia": "int",
-                "titulo": "str | None",
-                "id_oficial": "str | None",
-                "normativa": "str | None",
-            },
-            "output": "int",
-        },
-        "create_modulo": {
-            "input": {
-                "conn": "sqlite3.Connection",
-                "nombre": "str",
-                "id_ciclo": "int",
-                "id_oficial": "str | None",
-            },
-            "output": "int",
-        },
-        "get_modulo": {"input": {"conn": "sqlite3.Connection", "modulo_id": "int"}, "output": "sqlite3.Row | None"},
-        "find_modulo_by_nombre": {
-            "input": {"conn": "sqlite3.Connection", "nombre": "str", "id_ciclo": "int"},
             "output": "sqlite3.Row | None",
         },
-        "list_modulos": {
+        "list_catalog_entities": {
             "input": {
                 "conn": "sqlite3.Connection",
-                "id_ciclo": "int | None",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
+                "parent_id": "int | None",
                 "search": "str | None",
                 "limit": "int",
                 "offset": "int",
             },
             "output": "Sequence[sqlite3.Row]",
         },
-        "update_modulo": {
+        "update_catalog_entity": {
             "input": {
                 "conn": "sqlite3.Connection",
-                "modulo_id": "int",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
+                "entity_id": "int",
                 "nombre": "str",
-                "id_ciclo": "int",
+                "parent_id": "int | None",
+                "titulo": "str | None",
                 "id_oficial": "str | None",
+                "normativa": "str | None",
             },
             "output": "bool",
         },
-        "delete_modulo": {"input": {"conn": "sqlite3.Connection", "modulo_id": "int"}, "output": "bool"},
-        "get_or_create_modulo": {
+        "delete_catalog_entity": {
             "input": {
                 "conn": "sqlite3.Connection",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
+                "entity_id": "int",
+            },
+            "output": "bool",
+        },
+        "get_or_create_catalog_entity": {
+            "input": {
+                "conn": "sqlite3.Connection",
+                "entity": "Literal['grado', 'familia', 'ciclo', 'modulo']",
                 "nombre": "str",
-                "id_ciclo": "int",
+                "parent_id": "int | None",
+                "titulo": "str | None",
                 "id_oficial": "str | None",
+                "normativa": "str | None",
             },
             "output": "int",
         },

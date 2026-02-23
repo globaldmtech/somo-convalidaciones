@@ -22,6 +22,7 @@ DEFAULT_SCHEMA_PATH = Path(__file__).resolve().parents[2] / "scripts" / "schema.
 
 FormularioEstado = Literal["BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"]
 RuleMode = Literal["ALL", "ANY"]
+CatalogEntity = Literal["grado", "familia", "ciclo", "modulo"]
 
 FORMULARIO_ESTADOS: set[str] = {"BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"}
 FORMULARIO_STATUS_TRANSITIONS: dict[str, set[str]] = {
@@ -34,6 +35,25 @@ FORMULARIO_STATUS_TRANSITIONS: dict[str, set[str]] = {
 RULE_MODES: set[str] = {"ALL", "ANY"}
 USER_ROLES: set[str] = {"ALUMNO", "ADMIN"}
 _UNSET = object()
+
+_CATALOG_TABLES: dict[CatalogEntity, str] = {
+    "grado": "grados",
+    "familia": "familias",
+    "ciclo": "ciclos",
+    "modulo": "modulos",
+}
+_CATALOG_PARENT_COLUMNS: dict[CatalogEntity, str | None] = {
+    "grado": None,
+    "familia": "id_grado",
+    "ciclo": "id_familia",
+    "modulo": "id_ciclo",
+}
+_CATALOG_EXTRA_COLUMNS: dict[CatalogEntity, tuple[str, ...]] = {
+    "grado": tuple(),
+    "familia": tuple(),
+    "ciclo": ("titulo", "id_oficial", "normativa"),
+    "modulo": ("id_oficial",),
+}
 
 
 @dataclass(frozen=True)
@@ -103,6 +123,65 @@ def _assert_usuario_rol(rol: str) -> str:
     return rol
 
 
+# Valida que la entidad de catalogo sea una soportada.
+def _assert_catalog_entity(entity: str) -> CatalogEntity:
+    cleaned = _require_non_empty(entity, "entity").lower()
+    if cleaned not in _CATALOG_TABLES:
+        raise ValueError(f"Invalid catalog entity '{entity}'. Allowed: {sorted(_CATALOG_TABLES)}")
+    return cleaned  # type: ignore[return-value]
+
+
+# Obtiene metadatos de tabla, parent FK y columnas extra para una entidad de catalogo.
+def _get_catalog_meta(entity: CatalogEntity) -> tuple[str, str | None, tuple[str, ...]]:
+    return (
+        _CATALOG_TABLES[entity],
+        _CATALOG_PARENT_COLUMNS[entity],
+        _CATALOG_EXTRA_COLUMNS[entity],
+    )
+
+
+# Valida parent_id segun la entidad y si es obligatorio en la operacion.
+def _assert_catalog_parent(
+    entity: CatalogEntity,
+    parent_id: Optional[int],
+    *,
+    required: bool,
+) -> Optional[int]:
+    parent_column = _CATALOG_PARENT_COLUMNS[entity]
+    if parent_column is None:
+        if parent_id is not None:
+            raise ValueError(f"`parent_id` is not allowed for entity '{entity}'.")
+        return None
+    if required and parent_id is None:
+        raise ValueError(f"`parent_id` is required for entity '{entity}'.")
+    return int(parent_id) if parent_id is not None else None
+
+
+# Valida y normaliza columnas extra por tipo de entidad de catalogo.
+def _normalize_catalog_extra_fields(
+    entity: CatalogEntity,
+    *,
+    titulo: Optional[str] = None,
+    id_oficial: Optional[str] = None,
+    normativa: Optional[str] = None,
+) -> dict[str, Optional[str]]:
+    provided = {
+        "titulo": titulo,
+        "id_oficial": id_oficial,
+        "normativa": normativa,
+    }
+    allowed = set(_CATALOG_EXTRA_COLUMNS[entity])
+    invalid = sorted(
+        key for key, value in provided.items() if value is not None and key not in allowed
+    )
+    if invalid:
+        raise ValueError(
+            f"Invalid extra fields for entity '{entity}': {invalid}. "
+            f"Allowed: {sorted(allowed)}"
+        )
+    return {column: provided[column] for column in _CATALOG_EXTRA_COLUMNS[entity]}
+
+
 # Ejecuta un bloque de escritura dentro de una transaccion segura.
 @contextmanager
 def transaction(conn: sqlite3.Connection):
@@ -170,359 +249,266 @@ def clear_catalog(conn: sqlite3.Connection) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Catalog CRUD: grados, familias, ciclos, modulos
+# Catalogo Academico unificado por entidad (grado, familia, ciclo, modulo)
 # ---------------------------------------------------------------------------
-# Crea un nuevo registro de grado.
-def create_grado(conn: sqlite3.Connection, nombre: str) -> int:
-    """Insert grado and return id."""
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute("INSERT INTO grados (nombre) VALUES (?)", (nombre,))
-    conn.commit()
-    return int(cur.lastrowid)
-
-
-# Obtiene un registro de grado por su identificador o criterio.
-def get_grado(conn: sqlite3.Connection, grado_id: int) -> Optional[sqlite3.Row]:
-    return conn.execute("SELECT * FROM grados WHERE id = ?", (grado_id,)).fetchone()
-
-
-# Busca un grado por nombre exacto.
-def find_grado_by_nombre(conn: sqlite3.Connection, nombre: str) -> Optional[sqlite3.Row]:
-    nombre = _require_non_empty(nombre, "nombre")
-    return conn.execute("SELECT * FROM grados WHERE nombre = ?", (nombre,)).fetchone()
-
-
-# Lista registros de grados con los filtros disponibles.
-def list_grados(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
-    """List grados."""
-    return conn.execute("SELECT * FROM grados ORDER BY nombre ASC").fetchall()
-
-
-# Actualiza un registro de grado con los datos recibidos.
-def update_grado(conn: sqlite3.Connection, grado_id: int, nombre: str) -> bool:
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute("UPDATE grados SET nombre = ? WHERE id = ?", (nombre, grado_id))
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Elimina un registro de grado por su identificador.
-def delete_grado(conn: sqlite3.Connection, grado_id: int) -> bool:
-    cur = conn.execute("DELETE FROM grados WHERE id = ?", (grado_id,))
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Obtiene un grado existente o lo crea si no existe.
-def get_or_create_grado(conn: sqlite3.Connection, nombre: str) -> int:
-    nombre = _require_non_empty(nombre, "nombre")
-    row = conn.execute("SELECT id FROM grados WHERE nombre = ?", (nombre,)).fetchone()
-    if row:
-        return int(row["id"])
-    return create_grado(conn, nombre)
-
-
-# Crea un nuevo registro de familia.
-def create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int:
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        "INSERT INTO familias (nombre, id_grado) VALUES (?, ?)",
-        (nombre, id_grado),
-    )
-    conn.commit()
-    return int(cur.lastrowid)
-
-
-# Obtiene un registro de familia por su identificador o criterio.
-def get_familia(conn: sqlite3.Connection, familia_id: int) -> Optional[sqlite3.Row]:
-    return conn.execute("SELECT * FROM familias WHERE id = ?", (familia_id,)).fetchone()
-
-
-# Busca una familia por nombre y grado.
-def find_familia_by_nombre(
+# Crea un nuevo registro de catalogo segun la entidad indicada.
+def create_catalog_entity(
     conn: sqlite3.Connection,
+    entity: CatalogEntity,
     nombre: str,
-    id_grado: int,
-) -> Optional[sqlite3.Row]:
-    nombre = _require_non_empty(nombre, "nombre")
-    return conn.execute(
-        "SELECT * FROM familias WHERE nombre = ? AND id_grado = ?",
-        (nombre, id_grado),
-    ).fetchone()
-
-
-# Lista registros de familias con los filtros disponibles.
-def list_familias(conn: sqlite3.Connection, id_grado: Optional[int] = None) -> Sequence[sqlite3.Row]:
-    if id_grado is None:
-        return conn.execute("SELECT * FROM familias ORDER BY nombre ASC").fetchall()
-    return conn.execute(
-        "SELECT * FROM familias WHERE id_grado = ? ORDER BY nombre ASC",
-        (id_grado,),
-    ).fetchall()
-
-
-# Actualiza un registro de familia con los datos recibidos.
-def update_familia(
-    conn: sqlite3.Connection,
-    familia_id: int,
-    nombre: str,
-    id_grado: int,
-) -> bool:
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        "UPDATE familias SET nombre = ?, id_grado = ? WHERE id = ?",
-        (nombre, id_grado, familia_id),
-    )
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Elimina un registro de familia por su identificador.
-def delete_familia(conn: sqlite3.Connection, familia_id: int) -> bool:
-    cur = conn.execute("DELETE FROM familias WHERE id = ?", (familia_id,))
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Obtiene un familia existente o lo crea si no existe.
-def get_or_create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int:
-    nombre = _require_non_empty(nombre, "nombre")
-    row = conn.execute(
-        "SELECT id FROM familias WHERE nombre = ? AND id_grado = ?",
-        (nombre, id_grado),
-    ).fetchone()
-    if row:
-        return int(row["id"])
-    return create_familia(conn, nombre, id_grado)
-
-# Crea un nuevo registro de ciclo.
-def create_ciclo(
-    conn: sqlite3.Connection,
-    nombre: str,
-    id_familia: int,
+    *,
+    parent_id: Optional[int] = None,
     titulo: Optional[str] = None,
     id_oficial: Optional[str] = None,
     normativa: Optional[str] = None,
 ) -> int:
+    entity = _assert_catalog_entity(entity)
     nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        """
-        INSERT INTO ciclos (nombre, titulo, id_oficial, normativa, id_familia)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (nombre, titulo, id_oficial, normativa, id_familia),
+    table, parent_column, extra_columns = _get_catalog_meta(entity)
+    resolved_parent_id = _assert_catalog_parent(
+        entity,
+        parent_id,
+        required=parent_column is not None,
     )
+    extras = _normalize_catalog_extra_fields(
+        entity,
+        titulo=titulo,
+        id_oficial=id_oficial,
+        normativa=normativa,
+    )
+
+    columns = ["nombre"]
+    values: list[Any] = [nombre]
+
+    if parent_column is not None:
+        if resolved_parent_id is None:
+            raise ValueError(f"`parent_id` is required for entity '{entity}'.")
+        columns.append(parent_column)
+        values.append(resolved_parent_id)
+
+    for column in extra_columns:
+        columns.append(column)
+        values.append(extras[column])
+
+    placeholders = ", ".join(["?"] * len(columns))
+    query = f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders})"
+    cur = conn.execute(query, tuple(values))
     conn.commit()
     return int(cur.lastrowid)
 
 
-# Obtiene un registro de ciclo por su identificador o criterio.
-def get_ciclo(conn: sqlite3.Connection, ciclo_id: int) -> Optional[sqlite3.Row]:
-    return conn.execute("SELECT * FROM ciclos WHERE id = ?", (ciclo_id,)).fetchone()
-
-
-# Busca un ciclo por nombre y familia.
-def find_ciclo_by_nombre(
+# Obtiene un registro de catalogo por id.
+def get_catalog_entity(
     conn: sqlite3.Connection,
-    nombre: str,
-    id_familia: int,
+    entity: CatalogEntity,
+    entity_id: int,
 ) -> Optional[sqlite3.Row]:
-    nombre = _require_non_empty(nombre, "nombre")
-    return conn.execute(
-        "SELECT * FROM ciclos WHERE nombre = ? AND id_familia = ?",
-        (nombre, id_familia),
-    ).fetchone()
+    entity = _assert_catalog_entity(entity)
+    table = _CATALOG_TABLES[entity]
+    return conn.execute(f"SELECT * FROM {table} WHERE id = ?", (entity_id,)).fetchone()
 
 
-# Lista registros de ciclos con los filtros disponibles.
-def list_ciclos(conn: sqlite3.Connection, id_familia: Optional[int] = None) -> Sequence[sqlite3.Row]:
-    if id_familia is None:
-        return conn.execute("SELECT * FROM ciclos ORDER BY nombre ASC").fetchall()
-    return conn.execute(
-        "SELECT * FROM ciclos WHERE id_familia = ? ORDER BY nombre ASC",
-        (id_familia,),
-    ).fetchall()
-
-
-# Actualiza un registro de ciclo con los datos recibidos.
-def update_ciclo(
+# Busca un registro de catalogo por nombre (y parent cuando aplica).
+def find_catalog_entity_by_nombre(
     conn: sqlite3.Connection,
-    ciclo_id: int,
+    entity: CatalogEntity,
     nombre: str,
-    id_familia: int,
-    titulo: Optional[str] = None,
-    id_oficial: Optional[str] = None,
-    normativa: Optional[str] = None,
-) -> bool:
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        """
-        UPDATE ciclos
-        SET nombre = ?, titulo = ?, id_oficial = ?, normativa = ?, id_familia = ?
-        WHERE id = ?
-        """,
-        (nombre, titulo, id_oficial, normativa, id_familia, ciclo_id),
-    )
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Elimina un registro de ciclo por su identificador.
-def delete_ciclo(conn: sqlite3.Connection, ciclo_id: int) -> bool:
-    cur = conn.execute("DELETE FROM ciclos WHERE id = ?", (ciclo_id,))
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Obtiene un ciclo existente o lo crea si no existe.
-def get_or_create_ciclo(
-    conn: sqlite3.Connection,
-    nombre: str,
-    id_familia: int,
-    titulo: Optional[str] = None,
-    id_oficial: Optional[str] = None,
-    normativa: Optional[str] = None,
-) -> int:
-    nombre = _require_non_empty(nombre, "nombre")
-    row = conn.execute(
-        "SELECT id FROM ciclos WHERE nombre = ? AND id_familia = ?",
-        (nombre, id_familia),
-    ).fetchone()
-    if row:
-        ciclo_id = int(row["id"])
-        conn.execute(
-            """
-            UPDATE ciclos
-            SET titulo = COALESCE(?, titulo),
-                id_oficial = COALESCE(?, id_oficial),
-                normativa = COALESCE(?, normativa)
-            WHERE id = ?
-            """,
-            (titulo, id_oficial, normativa, ciclo_id),
-        )
-        conn.commit()
-        return ciclo_id
-    return create_ciclo(conn, nombre, id_familia, titulo, id_oficial, normativa)
-
-
-# Crea un nuevo registro de modulo.
-def create_modulo(
-    conn: sqlite3.Connection,
-    nombre: str,
-    id_ciclo: int,
-    id_oficial: Optional[str] = None,
-) -> int:
-    nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        "INSERT INTO modulos (nombre, id_oficial, id_ciclo) VALUES (?, ?, ?)",
-        (nombre, id_oficial, id_ciclo),
-    )
-    conn.commit()
-    return int(cur.lastrowid)
-
-
-# Obtiene un registro de modulo por su identificador o criterio.
-def get_modulo(conn: sqlite3.Connection, modulo_id: int) -> Optional[sqlite3.Row]:
-    return conn.execute("SELECT * FROM modulos WHERE id = ?", (modulo_id,)).fetchone()
-
-
-# Busca un modulo por nombre y ciclo.
-def find_modulo_by_nombre(
-    conn: sqlite3.Connection,
-    nombre: str,
-    id_ciclo: int,
+    *,
+    parent_id: Optional[int] = None,
 ) -> Optional[sqlite3.Row]:
+    entity = _assert_catalog_entity(entity)
     nombre = _require_non_empty(nombre, "nombre")
-    return conn.execute(
-        "SELECT * FROM modulos WHERE nombre = ? AND id_ciclo = ?",
-        (nombre, id_ciclo),
-    ).fetchone()
+    table, parent_column, _ = _get_catalog_meta(entity)
+    resolved_parent_id = _assert_catalog_parent(
+        entity,
+        parent_id,
+        required=parent_column is not None,
+    )
+
+    where_parts = ["nombre = ?"]
+    params: list[Any] = [nombre]
+    if parent_column is not None:
+        if resolved_parent_id is None:
+            raise ValueError(f"`parent_id` is required for entity '{entity}'.")
+        where_parts.append(f"{parent_column} = ?")
+        params.append(resolved_parent_id)
+
+    query = f"SELECT * FROM {table} WHERE {' AND '.join(where_parts)}"
+    return conn.execute(query, tuple(params)).fetchone()
 
 
-# Lista registros de modulos con los filtros disponibles.
-def list_modulos(
+# Lista registros del catalogo por entidad, con filtros opcionales.
+def list_catalog_entities(
     conn: sqlite3.Connection,
-    id_ciclo: Optional[int] = None,
+    entity: CatalogEntity,
+    *,
+    parent_id: Optional[int] = None,
     search: Optional[str] = None,
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[sqlite3.Row]:
+    entity = _assert_catalog_entity(entity)
+    table, parent_column, _ = _get_catalog_meta(entity)
+    resolved_parent_id = _assert_catalog_parent(entity, parent_id, required=False)
     limit, offset = _normalize_limit_offset(limit, offset)
-    params: list[Any] = []
-    where_parts: list[str] = []
 
-    if id_ciclo is not None:
-        where_parts.append("m.id_ciclo = ?")
-        params.append(id_ciclo)
-    if search:
-        where_parts.append("m.nombre LIKE ?")
+    if entity == "modulo":
+        params: list[Any] = []
+        where_parts: list[str] = []
+
+        if resolved_parent_id is not None:
+            where_parts.append("m.id_ciclo = ?")
+            params.append(resolved_parent_id)
+        if search and search.strip():
+            where_parts.append("m.nombre LIKE ?")
+            params.append(f"%{search.strip()}%")
+
+        where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
+        query = f"""
+            SELECT m.*, c.nombre AS ciclo_nombre, f.nombre AS familia_nombre, g.nombre AS grado_nombre
+            FROM modulos m
+            JOIN ciclos c ON c.id = m.id_ciclo
+            JOIN familias f ON f.id = c.id_familia
+            JOIN grados g ON g.id = f.id_grado
+            {where_clause}
+            ORDER BY m.nombre ASC
+            LIMIT ? OFFSET ?
+        """
+        params.extend([limit, offset])
+        return conn.execute(query, tuple(params)).fetchall()
+
+    params = []
+    where_parts = []
+    if parent_column is not None and resolved_parent_id is not None:
+        where_parts.append(f"{parent_column} = ?")
+        params.append(resolved_parent_id)
+    if search and search.strip():
+        where_parts.append("nombre LIKE ?")
         params.append(f"%{search.strip()}%")
 
     where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
     query = f"""
-        SELECT m.*, c.nombre AS ciclo_nombre, f.nombre AS familia_nombre, g.nombre AS grado_nombre
-        FROM modulos m
-        JOIN ciclos c ON c.id = m.id_ciclo
-        JOIN familias f ON f.id = c.id_familia
-        JOIN grados g ON g.id = f.id_grado
+        SELECT *
+        FROM {table}
         {where_clause}
-        ORDER BY m.nombre ASC
+        ORDER BY nombre ASC
         LIMIT ? OFFSET ?
     """
     params.extend([limit, offset])
     return conn.execute(query, tuple(params)).fetchall()
 
 
-# Actualiza un registro de modulo con los datos recibidos.
-def update_modulo(
+# Actualiza un registro de catalogo segun entidad.
+def update_catalog_entity(
     conn: sqlite3.Connection,
-    modulo_id: int,
+    entity: CatalogEntity,
+    entity_id: int,
     nombre: str,
-    id_ciclo: int,
+    *,
+    parent_id: Optional[int] = None,
+    titulo: Optional[str] = None,
     id_oficial: Optional[str] = None,
+    normativa: Optional[str] = None,
 ) -> bool:
+    entity = _assert_catalog_entity(entity)
     nombre = _require_non_empty(nombre, "nombre")
-    cur = conn.execute(
-        """
-        UPDATE modulos
-        SET nombre = ?, id_ciclo = ?, id_oficial = ?
-        WHERE id = ?
-        """,
-        (nombre, id_ciclo, id_oficial, modulo_id),
+    table, parent_column, extra_columns = _get_catalog_meta(entity)
+    resolved_parent_id = _assert_catalog_parent(
+        entity,
+        parent_id,
+        required=parent_column is not None,
     )
+    extras = _normalize_catalog_extra_fields(
+        entity,
+        titulo=titulo,
+        id_oficial=id_oficial,
+        normativa=normativa,
+    )
+
+    set_parts = ["nombre = ?"]
+    params: list[Any] = [nombre]
+    if parent_column is not None:
+        if resolved_parent_id is None:
+            raise ValueError(f"`parent_id` is required for entity '{entity}'.")
+        set_parts.append(f"{parent_column} = ?")
+        params.append(resolved_parent_id)
+
+    for column in extra_columns:
+        set_parts.append(f"{column} = ?")
+        params.append(extras[column])
+
+    params.append(entity_id)
+    query = f"UPDATE {table} SET {', '.join(set_parts)} WHERE id = ?"
+    cur = conn.execute(query, tuple(params))
     conn.commit()
     return cur.rowcount > 0
 
 
-# Elimina un registro de modulo por su identificador.
-def delete_modulo(conn: sqlite3.Connection, modulo_id: int) -> bool:
-    cur = conn.execute("DELETE FROM modulos WHERE id = ?", (modulo_id,))
-    conn.commit()
-    return cur.rowcount > 0
-
-
-# Obtiene un modulo existente o lo crea si no existe.
-def get_or_create_modulo(
+# Elimina un registro de catalogo por entidad e id.
+def delete_catalog_entity(
     conn: sqlite3.Connection,
+    entity: CatalogEntity,
+    entity_id: int,
+) -> bool:
+    entity = _assert_catalog_entity(entity)
+    table = _CATALOG_TABLES[entity]
+    cur = conn.execute(f"DELETE FROM {table} WHERE id = ?", (entity_id,))
+    conn.commit()
+    return cur.rowcount > 0
+
+
+# Obtiene o crea un registro de catalogo segun entidad.
+def get_or_create_catalog_entity(
+    conn: sqlite3.Connection,
+    entity: CatalogEntity,
     nombre: str,
-    id_ciclo: int,
+    *,
+    parent_id: Optional[int] = None,
+    titulo: Optional[str] = None,
     id_oficial: Optional[str] = None,
+    normativa: Optional[str] = None,
 ) -> int:
+    entity = _assert_catalog_entity(entity)
     nombre = _require_non_empty(nombre, "nombre")
-    row = conn.execute(
-        "SELECT id FROM modulos WHERE nombre = ? AND id_ciclo = ?",
-        (nombre, id_ciclo),
-    ).fetchone()
+    table, parent_column, extra_columns = _get_catalog_meta(entity)
+    resolved_parent_id = _assert_catalog_parent(
+        entity,
+        parent_id,
+        required=parent_column is not None,
+    )
+    extras = _normalize_catalog_extra_fields(
+        entity,
+        titulo=titulo,
+        id_oficial=id_oficial,
+        normativa=normativa,
+    )
+
+    row = find_catalog_entity_by_nombre(
+        conn,
+        entity,
+        nombre,
+        parent_id=resolved_parent_id,
+    )
     if row:
-        modulo_id = int(row["id"])
-        if id_oficial:
-            conn.execute(
-                "UPDATE modulos SET id_oficial = COALESCE(?, id_oficial) WHERE id = ?",
-                (id_oficial, modulo_id),
-            )
+        entity_id = int(row["id"])
+        updatable = [column for column in extra_columns if extras[column] is not None]
+        if updatable:
+            set_parts = ", ".join([f"{column} = COALESCE(?, {column})" for column in updatable])
+            params = [extras[column] for column in updatable]
+            params.append(entity_id)
+            conn.execute(f"UPDATE {table} SET {set_parts} WHERE id = ?", tuple(params))
             conn.commit()
-        return modulo_id
-    return create_modulo(conn, nombre, id_ciclo, id_oficial)
+        return entity_id
+
+    return create_catalog_entity(
+        conn,
+        entity,
+        nombre,
+        parent_id=resolved_parent_id,
+        titulo=titulo,
+        id_oficial=id_oficial,
+        normativa=normativa,
+    )
 
 
 # ---------------------------------------------------------------------------

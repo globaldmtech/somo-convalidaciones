@@ -87,7 +87,7 @@ Diseno aplicado:
 4. Paginacion controlada:
    `_normalize_limit_offset` limita rango (`limit` 1..500, `offset >= 0`).
 5. Carga idempotente de catalogo:
-   funciones `get_or_create_*` para evitar duplicidad en cargas repetidas.
+   funcion `get_or_create_catalog_entity` para evitar duplicidad en cargas repetidas.
 6. Motor de reglas deterministico:
    evaluacion por `ALL`/`ANY`, orden de mejor match por mayor coincidencia y menor faltante.
 7. Actualizaciones parciales seguras:
@@ -104,12 +104,13 @@ Abajo se resume por caso de uso con firmas exactas.
 
 ```python
 # Catalogo para selecciones del formulario
-list_grados(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]
-list_familias(conn: sqlite3.Connection, id_grado: Optional[int] = None) -> Sequence[sqlite3.Row]
-list_ciclos(conn: sqlite3.Connection, id_familia: Optional[int] = None) -> Sequence[sqlite3.Row]
-list_modulos(
+list_catalog_entities(conn: sqlite3.Connection, entity: Literal["grado"]) -> Sequence[sqlite3.Row]
+list_catalog_entities(conn: sqlite3.Connection, entity: Literal["familia"], parent_id: Optional[int] = None) -> Sequence[sqlite3.Row]
+list_catalog_entities(conn: sqlite3.Connection, entity: Literal["ciclo"], parent_id: Optional[int] = None) -> Sequence[sqlite3.Row]
+list_catalog_entities(
     conn: sqlite3.Connection,
-    id_ciclo: Optional[int] = None,
+    entity: Literal["modulo"],
+    parent_id: Optional[int] = None,
     search: Optional[str] = None,
     limit: int = 100,
     offset: int = 0,
@@ -345,17 +346,17 @@ Scripts de inicializacion/carga: cumplido.
 - `backend/scripts/load_convalidaciones.py:194`
 
 Modulo Python DB encapsulando logica principal: cumplido.
-- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:127`, `backend/app/db/database.py:155`
-- CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:176`, `backend/app/db/database.py:539`, `backend/app/db/database.py:742`
-- Motor de reglas: `backend/app/db/database.py:1163`, `backend/app/db/database.py:1229`, `backend/app/db/database.py:1327`
-- UC4 exportacion dedicada: `backend/app/db/database.py:1103`, `backend/app/db/database.py:1122`, `backend/scripts/export_formularios.py:55`
+- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:206`, `backend/app/db/database.py:234`
+- CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:255`, `backend/app/db/database.py:525`, `backend/app/db/database.py:728`
+- Motor de reglas: `backend/app/db/database.py:1149`, `backend/app/db/database.py:1215`, `backend/app/db/database.py:1313`
+- UC4 exportacion dedicada: `backend/app/db/database.py:1089`, `backend/app/db/database.py:1108`, `backend/scripts/export_formularios.py:55`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 75 funciones publicas en `database.py` y 75 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 54 funciones publicas en `database.py` y 54 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 75 funciones.
+Total: 54 funciones.
 
 ### Infraestructura
 ```python
@@ -369,34 +370,13 @@ def init_db(config: DBConfig) -> None:  # Inicializa la base de datos aplicando 
 ### Catalogo Academico
 ```python
 def clear_catalog(conn: sqlite3.Connection) -> None:  # Limpia el catalogo completo eliminando grados en cascada.
-def create_grado(conn: sqlite3.Connection, nombre: str) -> int:  # Crea un nuevo registro de grado.
-def get_grado(conn: sqlite3.Connection, grado_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de grado por su identificador o criterio.
-def find_grado_by_nombre(conn: sqlite3.Connection, nombre: str) -> Optional[sqlite3.Row]:  # Busca un grado por nombre exacto.
-def list_grados(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:  # Lista registros de grados con los filtros disponibles.
-def update_grado(conn: sqlite3.Connection, grado_id: int, nombre: str) -> bool:  # Actualiza un registro de grado con los datos recibidos.
-def delete_grado(conn: sqlite3.Connection, grado_id: int) -> bool:  # Elimina un registro de grado por su identificador.
-def get_or_create_grado(conn: sqlite3.Connection, nombre: str) -> int:  # Obtiene un grado existente o lo crea si no existe.
-def create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int:  # Crea un nuevo registro de familia.
-def get_familia(conn: sqlite3.Connection, familia_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de familia por su identificador o criterio.
-def find_familia_by_nombre( conn: sqlite3.Connection, nombre: str, id_grado: int, ) -> Optional[sqlite3.Row]:  # Busca una familia por nombre y grado.
-def list_familias(conn: sqlite3.Connection, id_grado: Optional[int] = None) -> Sequence[sqlite3.Row]:  # Lista registros de familias con los filtros disponibles.
-def update_familia( conn: sqlite3.Connection, familia_id: int, nombre: str, id_grado: int, ) -> bool:  # Actualiza un registro de familia con los datos recibidos.
-def delete_familia(conn: sqlite3.Connection, familia_id: int) -> bool:  # Elimina un registro de familia por su identificador.
-def get_or_create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int:  # Obtiene un familia existente o lo crea si no existe.
-def create_ciclo( conn: sqlite3.Connection, nombre: str, id_familia: int, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Crea un nuevo registro de ciclo.
-def get_ciclo(conn: sqlite3.Connection, ciclo_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de ciclo por su identificador o criterio.
-def find_ciclo_by_nombre( conn: sqlite3.Connection, nombre: str, id_familia: int, ) -> Optional[sqlite3.Row]:  # Busca un ciclo por nombre y familia.
-def list_ciclos(conn: sqlite3.Connection, id_familia: Optional[int] = None) -> Sequence[sqlite3.Row]:  # Lista registros de ciclos con los filtros disponibles.
-def update_ciclo( conn: sqlite3.Connection, ciclo_id: int, nombre: str, id_familia: int, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> bool:  # Actualiza un registro de ciclo con los datos recibidos.
-def delete_ciclo(conn: sqlite3.Connection, ciclo_id: int) -> bool:  # Elimina un registro de ciclo por su identificador.
-def get_or_create_ciclo( conn: sqlite3.Connection, nombre: str, id_familia: int, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Obtiene un ciclo existente o lo crea si no existe.
-def create_modulo( conn: sqlite3.Connection, nombre: str, id_ciclo: int, id_oficial: Optional[str] = None, ) -> int:  # Crea un nuevo registro de modulo.
-def get_modulo(conn: sqlite3.Connection, modulo_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de modulo por su identificador o criterio.
-def find_modulo_by_nombre( conn: sqlite3.Connection, nombre: str, id_ciclo: int, ) -> Optional[sqlite3.Row]:  # Busca un modulo por nombre y ciclo.
-def list_modulos( conn: sqlite3.Connection, id_ciclo: Optional[int] = None, search: Optional[str] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Lista registros de modulos con los filtros disponibles.
-def update_modulo( conn: sqlite3.Connection, modulo_id: int, nombre: str, id_ciclo: int, id_oficial: Optional[str] = None, ) -> bool:  # Actualiza un registro de modulo con los datos recibidos.
-def delete_modulo(conn: sqlite3.Connection, modulo_id: int) -> bool:  # Elimina un registro de modulo por su identificador.
-def get_or_create_modulo( conn: sqlite3.Connection, nombre: str, id_ciclo: int, id_oficial: Optional[str] = None, ) -> int:  # Obtiene un modulo existente o lo crea si no existe.
+def create_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Crea un nuevo registro de catalogo para la entidad indicada.
+def get_catalog_entity(conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de catalogo por entidad e identificador.
+def find_catalog_entity_by_nombre( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, ) -> Optional[sqlite3.Row]:  # Busca un registro de catalogo por nombre y parent cuando aplica.
+def list_catalog_entities( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], *, parent_id: Optional[int] = None, search: Optional[str] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Lista registros de catalogo por entidad con filtros disponibles.
+def update_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int, nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> bool:  # Actualiza un registro de catalogo para la entidad indicada.
+def delete_catalog_entity(conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int) -> bool:  # Elimina un registro de catalogo por entidad e identificador.
+def get_or_create_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Obtiene un registro existente o lo crea si no existe.
 ```
 
 ### Convalidaciones
@@ -462,12 +442,12 @@ def resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: 
 
 Inconsistencia de tipos en evaluacion: corregida.
 - `SolicitudEvaluationOut` con campos opcionales para rama `PENDING_DESTINATION`: `backend/app/db/contracts.py:43`
-- Rama de retorno que incluye `message` cuando no hay modulo destino: `backend/app/db/database.py:1253`
+- Rama de retorno que incluye `message` cuando no hay modulo destino: `backend/app/db/database.py:1239`
 
 ## 10) Conclusiones
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 75/75 funciones publicas del modulo DB).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 54/54 funciones publicas del modulo DB).
 - La inconsistencia de tipos de salida en evaluacion de solicitudes fue corregida en contratos (`SolicitudEvaluationOut` con campos opcionales para la rama `PENDING_DESTINATION`).
 - Los casos de uso UC1..UC5 quedan cubiertos en backend (incluida exportacion JSON en UC4).

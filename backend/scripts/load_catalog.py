@@ -16,14 +16,8 @@ from app.db.database import (  # noqa: E402
     DBConfig,
     clear_catalog,
     connect,
-    find_ciclo_by_nombre,
-    find_familia_by_nombre,
-    find_grado_by_nombre,
-    find_modulo_by_nombre,
-    get_or_create_ciclo,
-    get_or_create_familia,
-    get_or_create_grado,
-    get_or_create_modulo,
+    find_catalog_entity_by_nombre,
+    get_or_create_catalog_entity,
     init_db,
 )
 
@@ -78,8 +72,16 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
             grado_nombre = _extract_name(grado_data, "grado", "nombre")
             if not grado_nombre:
                 continue
-            grado_id_before = find_grado_by_nombre(conn, grado_nombre)
-            grado_id = get_or_create_grado(conn, grado_nombre)
+            grado_id_before = find_catalog_entity_by_nombre(
+                conn,
+                "grado",
+                grado_nombre,
+            )
+            grado_id = get_or_create_catalog_entity(
+                conn,
+                "grado",
+                grado_nombre,
+            )
             if grado_id_before is None:
                 counters["grados"] += 1
 
@@ -90,8 +92,18 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                 familia_nombre = _extract_name(familia_data, "familia", "nombre")
                 if not familia_nombre:
                     continue
-                familia_before = find_familia_by_nombre(conn, familia_nombre, grado_id)
-                familia_id = get_or_create_familia(conn, familia_nombre, grado_id)
+                familia_before = find_catalog_entity_by_nombre(
+                    conn,
+                    "familia",
+                    familia_nombre,
+                    parent_id=grado_id,
+                )
+                familia_id = get_or_create_catalog_entity(
+                    conn,
+                    "familia",
+                    familia_nombre,
+                    parent_id=grado_id,
+                )
                 if familia_before is None:
                     counters["familias"] += 1
 
@@ -106,11 +118,17 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                     id_oficial = ciclo_data.get("id_oficial") if isinstance(ciclo_data, dict) else None
                     normativa = ciclo_data.get("normativa") if isinstance(ciclo_data, dict) else None
 
-                    ciclo_before = find_ciclo_by_nombre(conn, ciclo_nombre, familia_id)
-                    ciclo_id = get_or_create_ciclo(
+                    ciclo_before = find_catalog_entity_by_nombre(
                         conn,
+                        "ciclo",
                         ciclo_nombre,
-                        familia_id,
+                        parent_id=familia_id,
+                    )
+                    ciclo_id = get_or_create_catalog_entity(
+                        conn,
+                        "ciclo",
+                        ciclo_nombre,
+                        parent_id=familia_id,
                         titulo=titulo,
                         id_oficial=id_oficial,
                         normativa=normativa,
@@ -128,11 +146,17 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                         modulo_id_oficial = (
                             modulo_data.get("id_oficial") if isinstance(modulo_data, dict) else None
                         )
-                        modulo_before = find_modulo_by_nombre(conn, modulo_nombre, ciclo_id)
-                        get_or_create_modulo(
+                        modulo_before = find_catalog_entity_by_nombre(
                             conn,
+                            "modulo",
                             modulo_nombre,
-                            ciclo_id,
+                            parent_id=ciclo_id,
+                        )
+                        get_or_create_catalog_entity(
+                            conn,
+                            "modulo",
+                            modulo_nombre,
+                            parent_id=ciclo_id,
                             id_oficial=modulo_id_oficial,
                         )
                         if modulo_before is None:
