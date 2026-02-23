@@ -84,7 +84,7 @@ INSERT OR IGNORE INTO ciclos (id, nombre, id_oficial, normativa, id_familia, id_
   (40, 'Profesional Básico en Instalaciones Electrotécnicas y Mecánica', NULL, NULL, 7, 1),
   (41, 'Técnico en Instalaciones Eléctricas y Automáticas', NULL, NULL, 7, 2),
   (42, 'Técnico en Instalaciones de Telecomunicaciones', NULL, NULL, 7, 2),
-  (43, 'Técnico Superior en Sistemas Eletrotécnicos y Automatizados', NULL, NULL, 7, 3),
+  (43, 'Técnico Superior en Sistemas Electrotécnicos y Automatizados', NULL, NULL, 7, 3),
   (44, 'Técnico Superior en Sistemas de Telecomunicaciones e informáticos', NULL, NULL, 7, 3),
   (45, 'Técnico Superior en Automatización y Robótica Industrial', NULL, NULL, 7, 3),
   (46, 'Técnico Superior en Mantenimiento Electrónico', NULL, NULL, 7, 3),
