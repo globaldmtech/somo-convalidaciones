@@ -1,0 +1,91 @@
+"""Export formularios from SQLite to JSON payloads."""
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import sys
+
+
+BACKEND_ROOT = Path(__file__).resolve().parents[1]
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
+
+from app.db.database import (  # noqa: E402
+    DBConfig,
+    connect,
+    get_formulario_export_data,
+    list_formularios_export_data,
+)
+
+
+# Define y procesa los argumentos de linea de comandos para exportar formularios.
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Export formularios to JSON.")
+    parser.add_argument("--db", default="data/somo.db", help="Path to SQLite DB")
+    parser.add_argument(
+        "--out",
+        default="data/formularios_export.json",
+        help="Destination JSON file path.",
+    )
+    parser.add_argument(
+        "--formulario-id",
+        type=int,
+        default=None,
+        help="Optional formulario id to export a single record.",
+    )
+    parser.add_argument(
+        "--id-alumno",
+        type=int,
+        default=None,
+        help="Optional alumno id filter for bulk export.",
+    )
+    parser.add_argument(
+        "--estado",
+        default=None,
+        choices=["BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"],
+        help="Optional estado filter for bulk export.",
+    )
+    parser.add_argument("--limit", type=int, default=100, help="Bulk export limit.")
+    parser.add_argument("--offset", type=int, default=0, help="Bulk export offset.")
+    return parser.parse_args()
+
+
+# Ejecuta la exportacion y escribe el resultado en un archivo JSON.
+def main() -> None:
+    args = parse_args()
+    db_path = Path(args.db)
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    conn = connect(DBConfig(path=db_path))
+    try:
+        if args.formulario_id is not None:
+            payload: dict[str, object] = {
+                "mode": "single",
+                "items": [get_formulario_export_data(conn, int(args.formulario_id))],
+            }
+        else:
+            payload = {
+                "mode": "bulk",
+                "items": list_formularios_export_data(
+                    conn,
+                    id_alumno=args.id_alumno,
+                    estado=args.estado,
+                    limit=int(args.limit),
+                    offset=int(args.offset),
+                ),
+            }
+    finally:
+        conn.close()
+
+    out_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    print(f"Formularios exportados en: {out_path}")
+    print(f"Total items: {len(payload['items'])}")
+
+
+if __name__ == "__main__":
+    main()
