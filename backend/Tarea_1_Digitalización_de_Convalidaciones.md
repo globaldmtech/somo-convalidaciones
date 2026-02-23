@@ -45,7 +45,7 @@ Estado de cobertura:
 | UC1 Rellenar formulario | Completo | CRUD de formularios y subentidades (`formulario_solicitudes`, `formulario_modulos_aportados`, `formulario_archivos`) + catalogo para seleccion de modulos |
 | UC2 Ver formularios rellenados | Completo | `list_formularios`, `get_formulario` y listados de subentidades |
 | UC3 Validar formularios | Completo | Transiciones de estado + motor de reglas (`ALL`/`ANY`) + asignacion automatica de convalidaciones |
-| UC4 Exportar formularios | Completo | Funciones dedicadas de exportacion en DB (`get_formulario_export_data`, `list_formularios_export_data`) y script `export_formularios.py` para salida JSON |
+| UC4 Exportar formularios | Completo | Funcion unificada de exportacion en DB (`get_formularios_export_data`) y script `export_formularios.py` para salida JSON |
 | UC5 Administrar tabla de convalidaciones | Completo | CRUD de convalidacion y de origenes + carga masiva desde JSON/SQLite fuente |
 
 ## 3) Esquema SQLite implementado
@@ -226,13 +226,9 @@ resolve_formulario_convalidaciones(conn: sqlite3.Connection, formulario_id: int)
 Cobertura actual en backend DB:
 
 ```python
-get_formulario_export_data(
+get_formularios_export_data(
     conn: sqlite3.Connection,
-    formulario_id: int,
-) -> dict[str, Any]
-
-list_formularios_export_data(
-    conn: sqlite3.Connection,
+    formulario_id: Optional[int] = None,
     id_alumno: Optional[int] = None,
     estado: Optional[FormularioEstado] = None,
     limit: int = 100,
@@ -349,14 +345,14 @@ Modulo Python DB encapsulando logica principal: cumplido.
 - Infraestructura de conexion e inicializacion: `backend/app/db/database.py:206`, `backend/app/db/database.py:234`
 - CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:255`, `backend/app/db/database.py:525`, `backend/app/db/database.py:728`
 - Motor de reglas: `backend/app/db/database.py:1149`, `backend/app/db/database.py:1215`, `backend/app/db/database.py:1313`
-- UC4 exportacion dedicada: `backend/app/db/database.py:1089`, `backend/app/db/database.py:1108`, `backend/scripts/export_formularios.py:55`
+- UC4 exportacion dedicada: `backend/app/db/database.py:1108`, `backend/scripts/export_formularios.py:54`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 54 funciones publicas en `database.py` y 54 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 53 funciones publicas en `database.py` y 53 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 54 funciones.
+Total: 53 funciones.
 
 ### Infraestructura
 ```python
@@ -428,8 +424,7 @@ def delete_formulario_archivo(conn: sqlite3.Connection, archivo_id: int) -> bool
 
 ### Exportacion
 ```python
-def get_formulario_export_data(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]:  # Construye una estructura completa de formulario para exportacion.
-def list_formularios_export_data( conn: sqlite3.Connection, id_alumno: Optional[int] = None, estado: Optional[FormularioEstado] = None, limit: int = 100, offset: int = 0, ) -> list[dict[str, Any]]:  # Lista formularios listos para exportacion con filtros y paginacion.
+def get_formularios_export_data( conn: sqlite3.Connection, formulario_id: Optional[int] = None, id_alumno: Optional[int] = None, estado: Optional[FormularioEstado] = None, limit: int = 100, offset: int = 0, ) -> list[dict[str, Any]]:  # Obtiene formularios listos para exportacion (uno o varios) con filtros y paginacion.
 ```
 
 ### Motor de Reglas
@@ -448,6 +443,6 @@ Inconsistencia de tipos en evaluacion: corregida.
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 54/54 funciones publicas del modulo DB).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 53/53 funciones publicas del modulo DB).
 - La inconsistencia de tipos de salida en evaluacion de solicitudes fue corregida en contratos (`SolicitudEvaluationOut` con campos opcionales para la rama `PENDING_DESTINATION`).
 - Los casos de uso UC1..UC5 quedan cubiertos en backend (incluida exportacion JSON en UC4).

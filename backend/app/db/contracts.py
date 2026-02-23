@@ -380,13 +380,10 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
             "input": {"conn": "sqlite3.Connection", "archivo_id": "int"},
             "output": "bool",
         },
-        "get_formulario_export_data": {
-            "input": {"conn": "sqlite3.Connection", "formulario_id": "int"},
-            "output": "FormularioExportOut",
-        },
-        "list_formularios_export_data": {
+        "get_formularios_export_data": {
             "input": {
                 "conn": "sqlite3.Connection",
+                "formulario_id": "int | None",
                 "id_alumno": "int | None",
                 "estado": "FormularioEstado | None",
                 "limit": "int",

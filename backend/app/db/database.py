@@ -1086,7 +1086,7 @@ def list_formulario_archivos(
 
 
 # Construye una estructura completa de formulario para exportacion.
-def get_formulario_export_data(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]:
+def _build_formulario_export_data(conn: sqlite3.Connection, formulario_id: int) -> dict[str, Any]:
     formulario = get_formulario(conn, formulario_id)
     if formulario is None:
         raise ValueError(f"Formulario {formulario_id} not found.")
@@ -1104,22 +1104,20 @@ def get_formulario_export_data(conn: sqlite3.Connection, formulario_id: int) -> 
     }
 
 
-# Lista formularios listos para exportacion con filtros y paginacion.
-def list_formularios_export_data(
+# Obtiene formularios listos para exportacion (uno o varios) con filtros y paginacion.
+def get_formularios_export_data(
     conn: sqlite3.Connection,
+    formulario_id: Optional[int] = None,
     id_alumno: Optional[int] = None,
     estado: Optional[FormularioEstado] = None,
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict[str, Any]]:
-    formularios = list_formularios(
-        conn,
-        id_alumno=id_alumno,
-        estado=estado,
-        limit=limit,
-        offset=offset,
-    )
-    return [get_formulario_export_data(conn, int(row["id"])) for row in formularios]
+    if formulario_id is not None:
+        return [_build_formulario_export_data(conn, int(formulario_id))]
+
+    formularios = list_formularios(conn, id_alumno=id_alumno, estado=estado, limit=limit, offset=offset)
+    return [_build_formulario_export_data(conn, int(row["id"])) for row in formularios]
 
 
 # Elimina un registro de formulario archivo por su identificador.

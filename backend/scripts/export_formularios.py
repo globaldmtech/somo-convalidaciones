@@ -14,8 +14,7 @@ if str(BACKEND_ROOT) not in sys.path:
 from app.db.database import (  # noqa: E402
     DBConfig,
     connect,
-    get_formulario_export_data,
-    list_formularios_export_data,
+    get_formularios_export_data,
 )
 
 
@@ -60,22 +59,22 @@ def main() -> None:
 
     conn = connect(DBConfig(path=db_path))
     try:
+        items = get_formularios_export_data(
+            conn,
+            formulario_id=args.formulario_id,
+            id_alumno=args.id_alumno,
+            estado=args.estado,
+            limit=int(args.limit),
+            offset=int(args.offset),
+        )
         if args.formulario_id is not None:
-            payload: dict[str, object] = {
-                "mode": "single",
-                "items": [get_formulario_export_data(conn, int(args.formulario_id))],
-            }
+            mode = "single"
         else:
-            payload = {
-                "mode": "bulk",
-                "items": list_formularios_export_data(
-                    conn,
-                    id_alumno=args.id_alumno,
-                    estado=args.estado,
-                    limit=int(args.limit),
-                    offset=int(args.offset),
-                ),
-            }
+            mode = "bulk"
+        payload: dict[str, object] = {
+            "mode": mode,
+            "items": items,
+        }
     finally:
         conn.close()
 
