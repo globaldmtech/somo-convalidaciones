@@ -224,7 +224,7 @@ def main():
         else:
             print(f"No PDF found for {fam_name}")
         
-    with open('modules.json', 'w', encoding='utf-8') as f:
+    with open('catalog.json', 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     print("Done. Saved to modules.json")
 

@@ -2,8 +2,8 @@ import json
 import re
 import os
 
-INPUT = os.path.join(os.path.dirname(__file__), "modules.json")
-OUTPUT = os.path.join(os.path.dirname(__file__), "..", "grados_familias_ciclos_modulos.sql")
+INPUT = os.path.join(os.path.dirname(__file__), "catalog.json")
+OUTPUT = os.path.join(os.path.dirname(__file__), "..", "2_load_catalog.sql")
 
 GRADO_NORM = {
     "BÁSICA": 1,

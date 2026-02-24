@@ -98,3 +98,21 @@ CREATE TABLE IF NOT EXISTS formulario_archivos (
   ruta_almacenamiento TEXT NOT NULL,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id)
 );
+
+-- Acreditaciones externas (certificados EOI, títulos universitarios, etc.)
+-- No son módulos de FP pero pueden convalidar módulos del ciclo destino
+CREATE TABLE IF NOT EXISTS acreditacion_externa (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre      TEXT NOT NULL,  -- ej: "Certificado Nivel Intermedio (B1) de Inglés (EOI)"
+  tipo        TEXT            -- ej: "certificado_idioma", "titulo_universitario"
+);
+
+-- Regla 1-to-1: acreditación externa → módulo destino
+-- Una fila por cada instancia de módulo destino (uno por ciclo que lo tenga)
+CREATE TABLE IF NOT EXISTS convalidacion_externa (
+  id_acreditacion   INTEGER NOT NULL,
+  id_modulo_destino INTEGER NOT NULL,
+  PRIMARY KEY (id_acreditacion, id_modulo_destino),
+  FOREIGN KEY (id_acreditacion)   REFERENCES acreditacion_externa(id),
+  FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id)
+);

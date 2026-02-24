@@ -41,8 +41,8 @@ from db_helper import (
     DEFAULT_DB,
 )
 
-OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "convalidaciones.sql")
-RULES_DIR  = os.path.dirname(__file__)
+OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "3_load_convalidations.sql")
+RULES_DIR  = os.path.join(os.path.dirname(__file__), "reglas_convalidacion")
 
 
 # ─────────────────────────────────────────────────────────────────────
