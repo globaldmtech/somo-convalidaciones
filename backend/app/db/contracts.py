@@ -154,6 +154,17 @@ FUNCTION_CONTRACTS: dict[str, dict[str, Any]] = {
             },
             "output": "Sequence[sqlite3.Row]",
         },
+        "get_formulario_detalle": {
+            "input": {
+                "conn": "sqlite3.Connection",
+                "formulario_id": "int",
+            },
+            "output": (
+                "dict[str, Any] | None  # {"
+                "formulario: dict, solicitudes: list[dict], "
+                "modulos_aportados: list[dict], archivos: list[dict]}"
+            ),
+        },
         "change_formulario_status": {
             "input": {
                 "conn": "sqlite3.Connection",

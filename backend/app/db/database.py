@@ -3,7 +3,7 @@
 This module encapsulates all DB interactions for:
 - Catalog management (grados/familias/ciclos/modulos)
 - Convalidaciones management
-- Formularios (create/list/change_status)
+- Formularios (create/list/get_detalle/change_status)
 - Convalidacion lookup by origin and destination modules
 """
 from __future__ import annotations
@@ -11,6 +11,7 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
+import json
 from pathlib import Path
 import hashlib
 import hmac
@@ -645,7 +646,7 @@ def login_admin(
 
 
 # ---------------------------------------------------------------------------
-# Formularios (create/list/change_status)
+# Formularios (create/list/get_detalle/change_status)
 # ---------------------------------------------------------------------------
 # Crea un nuevo formulario para un alumno.
 def create_formulario(
@@ -700,6 +701,159 @@ def list_formularios(
     """
     params.extend([limit, offset])
     return conn.execute(query, tuple(params)).fetchall()
+
+
+# Obtiene el detalle consolidado de un formulario en una sola consulta.
+def get_formulario_detalle(
+    conn: sqlite3.Connection,
+    formulario_id: int,
+) -> Optional[dict[str, Any]]:
+    try:
+        row = conn.execute(
+            """
+            SELECT
+                f.*,
+                u.nombre AS alumno_nombre,
+                u.email AS alumno_email,
+                uv.nombre AS validador_nombre,
+                uv.email AS validador_email,
+                COALESCE((
+                    SELECT json_group_array(
+                        json_object(
+                            'id', s.id,
+                            'id_formulario', s.id_formulario,
+                            'id_modulo', s.id_modulo,
+                            'id_convalidacion', s.id_convalidacion,
+                            'descripcion', s.descripcion,
+                            'estado_evaluacion', s.estado_evaluacion,
+                            'created_at', s.created_at,
+                            'updated_at', s.updated_at,
+                            'modulo_destino_nombre', s.modulo_destino_nombre
+                        )
+                    )
+                    FROM (
+                        SELECT
+                            fs.id,
+                            fs.id_formulario,
+                            fs.id_modulo,
+                            fs.id_convalidacion,
+                            fs.descripcion,
+                            fs.estado_evaluacion,
+                            fs.created_at,
+                            fs.updated_at,
+                            m.nombre AS modulo_destino_nombre
+                        FROM formulario_solicitudes fs
+                        LEFT JOIN modulos m ON m.id = fs.id_modulo
+                        WHERE fs.id_formulario = f.id
+                        ORDER BY fs.id ASC
+                    ) s
+                ), '[]') AS solicitudes_json,
+                COALESCE((
+                    SELECT json_group_array(
+                        json_object(
+                            'id', ma.id,
+                            'id_formulario', ma.id_formulario,
+                            'id_modulo', ma.id_modulo,
+                            'descripcion', ma.descripcion,
+                            'created_at', ma.created_at,
+                            'updated_at', ma.updated_at,
+                            'modulo_nombre', ma.modulo_nombre
+                        )
+                    )
+                    FROM (
+                        SELECT
+                            fma.id,
+                            fma.id_formulario,
+                            fma.id_modulo,
+                            fma.descripcion,
+                            fma.created_at,
+                            fma.updated_at,
+                            m.nombre AS modulo_nombre
+                        FROM formulario_modulos_aportados fma
+                        LEFT JOIN modulos m ON m.id = fma.id_modulo
+                        WHERE fma.id_formulario = f.id
+                        ORDER BY fma.id ASC
+                    ) ma
+                ), '[]') AS modulos_aportados_json,
+                COALESCE((
+                    SELECT json_group_array(
+                        json_object(
+                            'id', a.id,
+                            'id_formulario', a.id_formulario,
+                            'nombre_archivo', a.nombre_archivo,
+                            'descripcion', a.descripcion,
+                            'ruta_almacenamiento', a.ruta_almacenamiento,
+                            'mime_type', a.mime_type,
+                            'size_bytes', a.size_bytes,
+                            'created_at', a.created_at
+                        )
+                    )
+                    FROM (
+                        SELECT
+                            fa.id,
+                            fa.id_formulario,
+                            fa.nombre_archivo,
+                            fa.descripcion,
+                            fa.ruta_almacenamiento,
+                            fa.mime_type,
+                            fa.size_bytes,
+                            fa.created_at
+                        FROM formulario_archivos fa
+                        WHERE fa.id_formulario = f.id
+                        ORDER BY fa.id ASC
+                    ) a
+                ), '[]') AS archivos_json
+            FROM formularios f
+            JOIN usuarios u ON u.id = f.id_alumno
+            LEFT JOIN usuarios uv ON uv.id = f.validado_por
+            WHERE f.id = ?
+            """,
+            (int(formulario_id),),
+        ).fetchone()
+    except sqlite3.OperationalError as exc:
+        message = str(exc).lower()
+        if "json_group_array" not in message and "json_object" not in message:
+            raise
+
+        form_row = conn.execute(
+            """
+            SELECT
+                f.*,
+                u.nombre AS alumno_nombre,
+                u.email AS alumno_email,
+                uv.nombre AS validador_nombre,
+                uv.email AS validador_email
+            FROM formularios f
+            JOIN usuarios u ON u.id = f.id_alumno
+            LEFT JOIN usuarios uv ON uv.id = f.validado_por
+            WHERE f.id = ?
+            """,
+            (int(formulario_id),),
+        ).fetchone()
+        if form_row is None:
+            return None
+
+        return {
+            "formulario": dict(form_row),
+            "solicitudes": [dict(item) for item in list_formulario_solicitudes(conn, formulario_id)],
+            "modulos_aportados": [
+                dict(item) for item in list_formulario_modulos_aportados(conn, formulario_id)
+            ],
+            "archivos": [dict(item) for item in list_formulario_archivos(conn, formulario_id)],
+        }
+    if row is None:
+        return None
+
+    payload = dict(row)
+    solicitudes = json.loads(str(payload.pop("solicitudes_json", "[]")))
+    modulos_aportados = json.loads(str(payload.pop("modulos_aportados_json", "[]")))
+    archivos = json.loads(str(payload.pop("archivos_json", "[]")))
+    return {
+        "formulario": payload,
+        "solicitudes": solicitudes,
+        "modulos_aportados": modulos_aportados,
+        "archivos": archivos,
+    }
 
 
 # Cambia el estado del formulario validando la transicion permitida.

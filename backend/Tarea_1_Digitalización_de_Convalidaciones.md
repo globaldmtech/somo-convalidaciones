@@ -148,6 +148,10 @@ list_formularios(
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[sqlite3.Row]
+get_formulario_detalle(
+    conn: sqlite3.Connection,
+    formulario_id: int,
+) -> Optional[dict[str, Any]]
 change_formulario_status(
     conn: sqlite3.Connection,
     formulario_id: int,
@@ -200,9 +204,10 @@ list_formularios(
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[sqlite3.Row]
-list_formulario_solicitudes(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
-list_formulario_modulos_aportados(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
-list_formulario_archivos(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
+get_formulario_detalle(
+    conn: sqlite3.Connection,
+    formulario_id: int,
+) -> Optional[dict[str, Any]]
 ```
 
 ### UC3 - Validar formularios
@@ -336,17 +341,18 @@ Scripts de inicializacion/carga: cumplido.
 - `backend/scripts/load_convalidaciones.py:194`
 
 Modulo Python DB encapsulando logica principal: cumplido.
-- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:135`, `backend/app/db/database.py:163`
-- Dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:184`, `backend/app/db/database.py:373`, `backend/app/db/database.py:673`
-- Consultas de destinos/reglas por origen+destino: `backend/app/db/database.py:321`, `backend/app/db/database.py:584`
-- UC4 exportacion por listado: `backend/app/db/database.py:694`, `backend/scripts/export_formularios.py:54`
+- Infraestructura de conexion e inicializacion: `backend/app/db/database.py`
+- Dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py`
+- Consultas de destinos/reglas por origen+destino: `backend/app/db/database.py`
+- Detalle consolidado de formulario en una llamada: `backend/app/db/database.py`
+- UC4 exportacion por listado: `backend/app/db/database.py`, `backend/scripts/export_formularios.py`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 26 funciones publicas en `database.py` y 26 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 27 funciones publicas en `database.py` y 27 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 26 funciones.
+Total: 27 funciones.
 
 ### Infraestructura
 ```python
@@ -386,6 +392,7 @@ def login_admin(conn: sqlite3.Connection, email: str, password: str) -> Optional
 ```python
 def create_formulario( conn: sqlite3.Connection, id_alumno: int, estado: FormularioEstado = "BORRADOR", anotaciones: Optional[str] = None, ) -> int:  # Crea un nuevo formulario para un alumno.
 def list_formularios( conn: sqlite3.Connection, id_alumno: Optional[int] = None, estado: Optional[FormularioEstado] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Lista registros de formularios con los filtros disponibles.
+def get_formulario_detalle( conn: sqlite3.Connection, formulario_id: int, ) -> Optional[dict[str, Any]]:  # Obtiene el detalle consolidado de un formulario.
 def change_formulario_status( conn: sqlite3.Connection, formulario_id: int, new_estado: FormularioEstado, *, validado_por: Optional[int] = None, anotaciones: Optional[str] = None, ) -> bool:  # Cambia el estado del formulario validando la transicion permitida.
 def create_formulario_solicitud( conn: sqlite3.Connection, id_formulario: int, id_modulo: Optional[int], id_convalidacion: Optional[int] = None, descripcion: Optional[str] = None, ) -> int:  # Crea una solicitud dentro de un formulario.
 def list_formulario_solicitudes( conn: sqlite3.Connection, id_formulario: int, ) -> Sequence[sqlite3.Row]:  # Lista registros de formulario solicitudes con los filtros disponibles.
@@ -399,5 +406,5 @@ def list_formulario_archivos( conn: sqlite3.Connection, id_formulario: int, ) ->
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 26/26 funciones publicas del modulo DB).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 27/27 funciones publicas del modulo DB).
 - Los casos de uso UC1..UC5 quedan cubiertos en backend (UC4 se resuelve mediante listado de formularios).
