@@ -1,4 +1,4 @@
-"""Export formularios from SQLite to JSON payloads."""
+"""Generate a JSON list of formularios from SQLite."""
 from __future__ import annotations
 
 import argparse
@@ -14,13 +14,13 @@ if str(BACKEND_ROOT) not in sys.path:
 from app.db.database import (  # noqa: E402
     DBConfig,
     connect,
-    get_formularios_export_data,
+    list_formularios,
 )
 
 
-# Define y procesa los argumentos de linea de comandos para exportar formularios.
+# Define y procesa los argumentos de linea de comandos para listar formularios.
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Export formularios to JSON.")
+    parser = argparse.ArgumentParser(description="List formularios and dump them as JSON.")
     parser.add_argument("--db", default="data/somo.db", help="Path to SQLite DB")
     parser.add_argument(
         "--out",
@@ -28,29 +28,23 @@ def parse_args() -> argparse.Namespace:
         help="Destination JSON file path.",
     )
     parser.add_argument(
-        "--formulario-id",
-        type=int,
-        default=None,
-        help="Optional formulario id to export a single record.",
-    )
-    parser.add_argument(
         "--id-alumno",
         type=int,
         default=None,
-        help="Optional alumno id filter for bulk export.",
+        help="Optional alumno id filter.",
     )
     parser.add_argument(
         "--estado",
         default=None,
         choices=["BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"],
-        help="Optional estado filter for bulk export.",
+        help="Optional estado filter.",
     )
-    parser.add_argument("--limit", type=int, default=100, help="Bulk export limit.")
-    parser.add_argument("--offset", type=int, default=0, help="Bulk export offset.")
+    parser.add_argument("--limit", type=int, default=100, help="List limit.")
+    parser.add_argument("--offset", type=int, default=0, help="List offset.")
     return parser.parse_args()
 
 
-# Ejecuta la exportacion y escribe el resultado en un archivo JSON.
+# Ejecuta el listado y escribe el resultado en un archivo JSON.
 def main() -> None:
     args = parse_args()
     db_path = Path(args.db)
@@ -59,20 +53,16 @@ def main() -> None:
 
     conn = connect(DBConfig(path=db_path))
     try:
-        items = get_formularios_export_data(
+        rows = list_formularios(
             conn,
-            formulario_id=args.formulario_id,
             id_alumno=args.id_alumno,
             estado=args.estado,
             limit=int(args.limit),
             offset=int(args.offset),
         )
-        if args.formulario_id is not None:
-            mode = "single"
-        else:
-            mode = "bulk"
+        items = [dict(row) for row in rows]
         payload: dict[str, object] = {
-            "mode": mode,
+            "mode": "list",
             "items": items,
         }
     finally:

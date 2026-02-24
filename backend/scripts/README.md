@@ -4,7 +4,7 @@ Scripts disponibles:
 - `init_db.py`: crear BD y aplicar esquema (`schema.sql`).
 - `load_catalog.py`: cargar `GRADOS/FAMILIAS/CICLOS/MODULOS` desde JSON.
 - `load_convalidaciones.py`: cargar reglas de convalidación desde JSON o desde una SQLite fuente con tablas `Convalidacion` + `Convalidacion_links`.
-- `export_formularios.py`: exportar formularios a JSON (uno o varios) con sus subentidades.
+- `export_formularios.py`: listar formularios y guardarlos como JSON.
 
 ## Uso rapido
 
@@ -32,13 +32,7 @@ Cargar convalidaciones desde JSON:
 python backend/scripts/load_convalidaciones.py --db data/somo.db --json data/convalidaciones.json --reset
 ```
 
-Exportar un formulario por id:
-
-```bash
-python backend/scripts/export_formularios.py --db data/somo.db --formulario-id 1 --out data/formulario_1.json
-```
-
-Exportar lote de formularios:
+Listar formularios:
 
 ```bash
 python backend/scripts/export_formularios.py --db data/somo.db --estado ENVIADO --limit 200 --offset 0 --out data/formularios_enviados.json

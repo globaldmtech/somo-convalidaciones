@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sqlite3
 import sys
 from typing import Any
 
@@ -16,8 +17,10 @@ from app.db.database import (  # noqa: E402
     DBConfig,
     clear_catalog,
     connect,
-    find_catalog_entity_by_nombre,
-    get_or_create_catalog_entity,
+    create_ciclo,
+    create_familia,
+    create_grado,
+    create_modulo,
     init_db,
 )
 
@@ -72,18 +75,17 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
             grado_nombre = _extract_name(grado_data, "grado", "nombre")
             if not grado_nombre:
                 continue
-            grado_id_before = find_catalog_entity_by_nombre(
-                conn,
-                "grado",
-                grado_nombre,
-            )
-            grado_id = get_or_create_catalog_entity(
-                conn,
-                "grado",
-                grado_nombre,
-            )
-            if grado_id_before is None:
+            try:
+                grado_id = create_grado(conn, grado_nombre)
                 counters["grados"] += 1
+            except sqlite3.IntegrityError:
+                row = conn.execute(
+                    "SELECT id FROM grados WHERE nombre = ?",
+                    (grado_nombre,),
+                ).fetchone()
+                if row is None:
+                    raise
+                grado_id = int(row["id"])
 
             familias = grado_data.get("familias", []) if isinstance(grado_data, dict) else []
             if not isinstance(familias, list):
@@ -92,20 +94,17 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                 familia_nombre = _extract_name(familia_data, "familia", "nombre")
                 if not familia_nombre:
                     continue
-                familia_before = find_catalog_entity_by_nombre(
-                    conn,
-                    "familia",
-                    familia_nombre,
-                    parent_id=grado_id,
-                )
-                familia_id = get_or_create_catalog_entity(
-                    conn,
-                    "familia",
-                    familia_nombre,
-                    parent_id=grado_id,
-                )
-                if familia_before is None:
+                try:
+                    familia_id = create_familia(conn, familia_nombre, grado_id)
                     counters["familias"] += 1
+                except sqlite3.IntegrityError:
+                    row = conn.execute(
+                        "SELECT id FROM familias WHERE nombre = ? AND id_grado = ?",
+                        (familia_nombre, grado_id),
+                    ).fetchone()
+                    if row is None:
+                        raise
+                    familia_id = int(row["id"])
 
                 ciclos = familia_data.get("ciclos", []) if isinstance(familia_data, dict) else []
                 if not isinstance(ciclos, list):
@@ -118,23 +117,24 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                     id_oficial = ciclo_data.get("id_oficial") if isinstance(ciclo_data, dict) else None
                     normativa = ciclo_data.get("normativa") if isinstance(ciclo_data, dict) else None
 
-                    ciclo_before = find_catalog_entity_by_nombre(
-                        conn,
-                        "ciclo",
-                        ciclo_nombre,
-                        parent_id=familia_id,
-                    )
-                    ciclo_id = get_or_create_catalog_entity(
-                        conn,
-                        "ciclo",
-                        ciclo_nombre,
-                        parent_id=familia_id,
-                        titulo=titulo,
-                        id_oficial=id_oficial,
-                        normativa=normativa,
-                    )
-                    if ciclo_before is None:
+                    try:
+                        ciclo_id = create_ciclo(
+                            conn,
+                            ciclo_nombre,
+                            familia_id,
+                            titulo=titulo,
+                            id_oficial=id_oficial,
+                            normativa=normativa,
+                        )
                         counters["ciclos"] += 1
+                    except sqlite3.IntegrityError:
+                        row = conn.execute(
+                            "SELECT id FROM ciclos WHERE nombre = ? AND id_familia = ?",
+                            (ciclo_nombre, familia_id),
+                        ).fetchone()
+                        if row is None:
+                            raise
+                        ciclo_id = int(row["id"])
 
                     modulos = ciclo_data.get("modulos", []) if isinstance(ciclo_data, dict) else []
                     if not isinstance(modulos, list):
@@ -146,21 +146,21 @@ def load_catalog(db_path: Path, json_path: Path, truncate: bool = False) -> dict
                         modulo_id_oficial = (
                             modulo_data.get("id_oficial") if isinstance(modulo_data, dict) else None
                         )
-                        modulo_before = find_catalog_entity_by_nombre(
-                            conn,
-                            "modulo",
-                            modulo_nombre,
-                            parent_id=ciclo_id,
-                        )
-                        get_or_create_catalog_entity(
-                            conn,
-                            "modulo",
-                            modulo_nombre,
-                            parent_id=ciclo_id,
-                            id_oficial=modulo_id_oficial,
-                        )
-                        if modulo_before is None:
+                        try:
+                            create_modulo(
+                                conn,
+                                modulo_nombre,
+                                ciclo_id,
+                                id_oficial=modulo_id_oficial,
+                            )
                             counters["modulos"] += 1
+                        except sqlite3.IntegrityError:
+                            row = conn.execute(
+                                "SELECT id FROM modulos WHERE nombre = ? AND id_ciclo = ?",
+                                (modulo_nombre, ciclo_id),
+                            ).fetchone()
+                            if row is None:
+                                raise
     finally:
         conn.close()
     return counters

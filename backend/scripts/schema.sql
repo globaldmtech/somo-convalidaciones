@@ -79,8 +79,10 @@ CREATE TABLE IF NOT EXISTS usuarios (
   email TEXT NOT NULL UNIQUE,
   rol TEXT NOT NULL DEFAULT 'ALUMNO'
     CHECK (rol IN ('ALUMNO', 'ADMIN')),
+  password_hash TEXT,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
-  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+  CHECK (rol != 'ADMIN' OR password_hash IS NOT NULL)
 );
 
 CREATE TABLE IF NOT EXISTS formularios (

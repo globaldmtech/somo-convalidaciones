@@ -42,11 +42,11 @@ Estado de cobertura:
 
 | Caso de uso | Estado | Cobertura en codigo |
 |---|---|---|
-| UC1 Rellenar formulario | Completo | CRUD de formularios y subentidades (`formulario_solicitudes`, `formulario_modulos_aportados`, `formulario_archivos`) + catalogo para seleccion de modulos |
-| UC2 Ver formularios rellenados | Completo | `list_formularios`, `get_formulario` y listados de subentidades |
-| UC3 Validar formularios | Completo | Transiciones de estado + motor de reglas (`ALL`/`ANY`) + asignacion automatica de convalidaciones |
-| UC4 Exportar formularios | Completo | Funcion unificada de exportacion en DB (`get_formularios_export_data`) y script `export_formularios.py` para salida JSON |
-| UC5 Administrar tabla de convalidaciones | Completo | CRUD de convalidacion y de origenes + carga masiva desde JSON/SQLite fuente |
+| UC1 Rellenar formulario | Completo | Alta y listado de formularios/subentidades (`formulario_solicitudes`, `formulario_modulos_aportados`, `formulario_archivos`) + catalogo para seleccion |
+| UC2 Ver formularios rellenados | Completo | `list_formularios` y listados de subentidades |
+| UC3 Validar formularios | Completo | Transiciones de estado + consulta de destinos por origen + consulta de reglas por `origen+destino` |
+| UC4 Exportar formularios | Completo | Reutiliza `list_formularios` como base y script `export_formularios.py` para salida JSON |
+| UC5 Administrar tabla de convalidaciones | Completo | Alta/consulta de convalidaciones (origenes definidos en alta) + carga masiva desde JSON/SQLite fuente |
 
 ## 3) Esquema SQLite implementado
 
@@ -86,12 +86,13 @@ Diseno aplicado:
    `_require_non_empty`, `_assert_rule_mode`, `_assert_formulario_estado`, `_assert_formulario_transition`.
 4. Paginacion controlada:
    `_normalize_limit_offset` limita rango (`limit` 1..500, `offset >= 0`).
-5. Carga idempotente de catalogo:
-   funcion `get_or_create_catalog_entity` para evitar duplicidad en cargas repetidas.
-6. Motor de reglas deterministico:
-   evaluacion por `ALL`/`ANY`, orden de mejor match por mayor coincidencia y menor faltante.
-7. Actualizaciones parciales seguras:
-   uso de sentinela `_UNSET` en `update_formulario_solicitud`.
+5. Catalogo simplificado por casos de uso:
+   creacion explicita con `create_grado`, `create_familia`, `create_ciclo`, `create_modulo`
+   y busqueda unificada con `get_catalog_entity` para autocompletado.
+6. Flujo de convalidacion por consulta:
+   `get_catalog_entity(..., id_modulo_origen=...)` devuelve destinos posibles desde un origen.
+7. Reglas por par origen/destino:
+   `list_convalidaciones_by_origen_destino(...)` devuelve reglas concretas para ese par.
 8. Encapsulacion reforzada:
    operaciones de limpieza y busqueda de catalogo/convalidaciones usadas por scripts se centralizaron en `database.py`.
 
@@ -104,17 +105,34 @@ Abajo se resume por caso de uso con firmas exactas.
 
 ```python
 # Catalogo para selecciones del formulario
-list_catalog_entities(conn: sqlite3.Connection, entity: Literal["grado"]) -> Sequence[sqlite3.Row]
-list_catalog_entities(conn: sqlite3.Connection, entity: Literal["familia"], parent_id: Optional[int] = None) -> Sequence[sqlite3.Row]
-list_catalog_entities(conn: sqlite3.Connection, entity: Literal["ciclo"], parent_id: Optional[int] = None) -> Sequence[sqlite3.Row]
-list_catalog_entities(
+get_catalog_entity(
     conn: sqlite3.Connection,
-    entity: Literal["modulo"],
-    parent_id: Optional[int] = None,
     search: Optional[str] = None,
+    *,
+    id_modulo_origen: Optional[int] = None,
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[sqlite3.Row]
+
+# Carga y mantenimiento de catalogo academico
+create_grado(conn: sqlite3.Connection, nombre: str) -> int
+create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int
+create_ciclo(
+    conn: sqlite3.Connection,
+    nombre: str,
+    id_familia: int,
+    *,
+    titulo: Optional[str] = None,
+    id_oficial: Optional[str] = None,
+    normativa: Optional[str] = None,
+) -> int
+create_modulo(
+    conn: sqlite3.Connection,
+    nombre: str,
+    id_ciclo: int,
+    *,
+    id_oficial: Optional[str] = None,
+) -> int
 
 # Formulario base
 create_formulario(
@@ -123,14 +141,21 @@ create_formulario(
     estado: FormularioEstado = "BORRADOR",
     anotaciones: Optional[str] = None,
 ) -> int
-update_formulario(
+list_formularios(
+    conn: sqlite3.Connection,
+    id_alumno: Optional[int] = None,
+    estado: Optional[FormularioEstado] = None,
+    limit: int = 100,
+    offset: int = 0,
+) -> Sequence[sqlite3.Row]
+change_formulario_status(
     conn: sqlite3.Connection,
     formulario_id: int,
+    new_estado: FormularioEstado,
     *,
-    anotaciones: Optional[str] = None,
     validado_por: Optional[int] = None,
+    anotaciones: Optional[str] = None,
 ) -> bool
-submit_formulario(conn: sqlite3.Connection, formulario_id: int) -> bool
 
 # Solicitudes del formulario (modulos destino a convalidar)
 create_formulario_solicitud(
@@ -140,16 +165,7 @@ create_formulario_solicitud(
     id_convalidacion: Optional[int] = None,
     descripcion: Optional[str] = None,
 ) -> int
-update_formulario_solicitud(
-    conn: sqlite3.Connection,
-    solicitud_id: int,
-    *,
-    id_modulo: Optional[int] | object = _UNSET,
-    id_convalidacion: Optional[int] | object = _UNSET,
-    descripcion: Optional[str] | object = _UNSET,
-    estado_evaluacion: Optional[str] | object = _UNSET,
-) -> bool
-delete_formulario_solicitud(conn: sqlite3.Connection, solicitud_id: int) -> bool
+list_formulario_solicitudes(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
 
 # Modulos aportados por el alumno
 create_formulario_modulo_aportado(
@@ -158,14 +174,7 @@ create_formulario_modulo_aportado(
     id_modulo: Optional[int] = None,
     descripcion: Optional[str] = None,
 ) -> int
-update_formulario_modulo_aportado(
-    conn: sqlite3.Connection,
-    item_id: int,
-    *,
-    id_modulo: Optional[int] = None,
-    descripcion: Optional[str] = None,
-) -> bool
-delete_formulario_modulo_aportado(conn: sqlite3.Connection, item_id: int) -> bool
+list_formulario_modulos_aportados(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
 
 # Archivos adjuntos
 create_formulario_archivo(
@@ -178,7 +187,7 @@ create_formulario_archivo(
     mime_type: Optional[str] = None,
     size_bytes: Optional[int] = None,
 ) -> int
-delete_formulario_archivo(conn: sqlite3.Connection, archivo_id: int) -> bool
+list_formulario_archivos(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
 ```
 
 ### UC2 - Ver formularios rellenados
@@ -191,7 +200,6 @@ list_formularios(
     limit: int = 100,
     offset: int = 0,
 ) -> Sequence[sqlite3.Row]
-get_formulario(conn: sqlite3.Connection, formulario_id: int) -> Optional[sqlite3.Row]
 list_formulario_solicitudes(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
 list_formulario_modulos_aportados(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
 list_formulario_archivos(conn: sqlite3.Connection, id_formulario: int) -> Sequence[sqlite3.Row]
@@ -200,6 +208,19 @@ list_formulario_archivos(conn: sqlite3.Connection, id_formulario: int) -> Sequen
 ### UC3 - Validar formularios
 
 ```python
+get_catalog_entity(
+    conn: sqlite3.Connection,
+    search: Optional[str] = None,
+    *,
+    id_modulo_origen: Optional[int] = None,
+    limit: int = 100,
+    offset: int = 0,
+) -> Sequence[sqlite3.Row]
+list_convalidaciones_by_origen_destino(
+    conn: sqlite3.Connection,
+    id_modulo_origen: int,
+    id_modulo_destino: int,
+) -> Sequence[sqlite3.Row]
 change_formulario_status(
     conn: sqlite3.Connection,
     formulario_id: int,
@@ -208,16 +229,6 @@ change_formulario_status(
     validado_por: Optional[int] = None,
     anotaciones: Optional[str] = None,
 ) -> bool
-review_formulario(
-    conn: sqlite3.Connection,
-    formulario_id: int,
-    *,
-    estado: Literal["A_REVISAR", "APROBADO", "RECHAZADO"],
-    validado_por: int,
-    anotaciones: Optional[str] = None,
-) -> bool
-evaluate_solicitud(conn: sqlite3.Connection, solicitud_id: int, *, auto_assign: bool = False) -> dict[str, Any]
-evaluate_formulario(conn: sqlite3.Connection, formulario_id: int, *, auto_assign: bool = False) -> dict[str, Any]
 ```
 
 ### UC4 - Exportar formularios
@@ -225,18 +236,17 @@ evaluate_formulario(conn: sqlite3.Connection, formulario_id: int, *, auto_assign
 Cobertura actual en backend DB:
 
 ```python
-get_formularios_export_data(
+list_formularios(
     conn: sqlite3.Connection,
-    formulario_id: Optional[int] = None,
     id_alumno: Optional[int] = None,
     estado: Optional[FormularioEstado] = None,
     limit: int = 100,
     offset: int = 0,
-) -> list[dict[str, Any]]
+) -> Sequence[sqlite3.Row]
 ```
 
 Script operativo:
-- `backend/scripts/export_formularios.py` exporta uno o varios formularios a JSON, incluyendo solicitudes, modulos aportados y archivos.
+- `backend/scripts/export_formularios.py` genera JSON desde el listado de formularios.
 
 ### UC5 - Administrar tabla de convalidaciones
 
@@ -253,24 +263,12 @@ create_convalidacion(
     source_anexo: Optional[int] = None,
 ) -> int
 get_convalidacion(conn: sqlite3.Connection, conv_id: int) -> Optional[sqlite3.Row]
-list_convalidaciones(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]
-list_convalidaciones_for_destino(conn: sqlite3.Connection, id_modulo_destino: int) -> Sequence[sqlite3.Row]
-list_convalidacion_origenes(conn: sqlite3.Connection, conv_id: int) -> Sequence[sqlite3.Row]
-update_convalidacion(
+list_convalidaciones_by_origen_destino(
     conn: sqlite3.Connection,
-    conv_id: int,
+    id_modulo_origen: int,
     id_modulo_destino: int,
-    source_link: Optional[str],
-    source_page: Optional[int],
-    *,
-    rule_mode: RuleMode = "ALL",
-    source_doc: Optional[str] = None,
-    source_anexo: Optional[int] = None,
-) -> bool
-delete_convalidacion(conn: sqlite3.Connection, conv_id: int) -> bool
-add_convalidacion_origen(conn: sqlite3.Connection, conv_id: int, id_modulo: int) -> bool
-remove_convalidacion_origen(conn: sqlite3.Connection, conv_id: int, id_modulo: int) -> bool
-replace_convalidacion_origenes(conn: sqlite3.Connection, conv_id: int, origen_modulos: Iterable[int]) -> None
+) -> Sequence[sqlite3.Row]
+# update_convalidacion: pendiente de definicion funcional (aplazada)
 ```
 
 ## 6) Funciones de soporte transversales
@@ -282,10 +280,8 @@ init_db(config: DBConfig) -> None
 healthcheck(conn: sqlite3.Connection) -> dict[str, Any]
 transaction(conn: sqlite3.Connection) -> ContextManager
 
-create_usuario(conn: sqlite3.Connection, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"] = "ALUMNO") -> int
-get_usuario(conn: sqlite3.Connection, usuario_id: int) -> Optional[sqlite3.Row]
-get_usuario_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqlite3.Row]
-list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]
+create_usuario(conn: sqlite3.Connection, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"] = "ALUMNO", *, password: Optional[str] = None) -> int
+login_admin(conn: sqlite3.Connection, email: str, password: str) -> Optional[sqlite3.Row]
 ```
 
 ## 7) Scripts operativos implementados
@@ -302,7 +298,7 @@ list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]
 - Soporta `--reset` para limpiar reglas previas.
 
 `backend/scripts/export_formularios.py`
-- Exporta formularios en formato JSON (individual o lote), con filtros por alumno/estado y paginacion.
+- Exporta el listado de formularios en formato JSON, con filtros por alumno/estado y paginacion.
 
 `backend/scripts/README.md`
 - Documenta comandos de uso rapido de los scripts.
@@ -315,7 +311,6 @@ Validaciones registradas durante la implementacion:
   - `init_db` OK.
   - `load_catalog` OK (`4 grados`, `81 familias`, `218 ciclos`, `3272 modulos`).
   - `load_convalidaciones` OK desde SQLite fuente (`281 reglas`).
-  - Ejecucion del motor de reglas sobre formulario de ejemplo: OK.
 
 Validacion adicional en esta revision:
 - `python -m py_compile backend/app/db/contracts.py backend/app/db/database.py backend/scripts/init_db.py backend/scripts/load_catalog.py backend/scripts/load_convalidaciones.py backend/scripts/export_formularios.py` -> OK.
@@ -341,17 +336,17 @@ Scripts de inicializacion/carga: cumplido.
 - `backend/scripts/load_convalidaciones.py:194`
 
 Modulo Python DB encapsulando logica principal: cumplido.
-- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:206`, `backend/app/db/database.py:234`
-- CRUD y dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:255`, `backend/app/db/database.py:525`, `backend/app/db/database.py:728`
-- Motor de reglas: `backend/app/db/database.py:1213`, `backend/app/db/database.py:1277`
-- UC4 exportacion dedicada: `backend/app/db/database.py:1108`, `backend/scripts/export_formularios.py:54`
+- Infraestructura de conexion e inicializacion: `backend/app/db/database.py:135`, `backend/app/db/database.py:163`
+- Dominio principal (catalogo/convalidaciones/formularios): `backend/app/db/database.py:184`, `backend/app/db/database.py:373`, `backend/app/db/database.py:673`
+- Consultas de destinos/reglas por origen+destino: `backend/app/db/database.py:321`, `backend/app/db/database.py:584`
+- UC4 exportacion por listado: `backend/app/db/database.py:694`, `backend/scripts/export_formularios.py:54`
 
 Diseño con funciones identificadas + I/O exacto: cumplido.
 - Inventario formal: `backend/app/db/contracts.py:75`
-- Cobertura verificada: 51 funciones publicas en `database.py` y 51 funciones inventariadas en `FUNCTION_CONTRACTS`.
+- Cobertura verificada: 26 funciones publicas en `database.py` y 26 funciones inventariadas en `FUNCTION_CONTRACTS`.
 Listado completo de funciones publicas del modulo DB (agrupadas por categoria):
 
-Total: 51 funciones.
+Total: 26 funciones.
 
 ### Infraestructura
 ```python
@@ -365,13 +360,11 @@ def init_db(config: DBConfig) -> None:  # Inicializa la base de datos aplicando 
 ### Catalogo Academico
 ```python
 def clear_catalog(conn: sqlite3.Connection) -> None:  # Limpia el catalogo completo eliminando grados en cascada.
-def create_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Crea un nuevo registro de catalogo para la entidad indicada.
-def get_catalog_entity(conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de catalogo por entidad e identificador.
-def find_catalog_entity_by_nombre( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, ) -> Optional[sqlite3.Row]:  # Busca un registro de catalogo por nombre y parent cuando aplica.
-def list_catalog_entities( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], *, parent_id: Optional[int] = None, search: Optional[str] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Lista registros de catalogo por entidad con filtros disponibles.
-def update_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int, nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> bool:  # Actualiza un registro de catalogo para la entidad indicada.
-def delete_catalog_entity(conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], entity_id: int) -> bool:  # Elimina un registro de catalogo por entidad e identificador.
-def get_or_create_catalog_entity( conn: sqlite3.Connection, entity: Literal["grado", "familia", "ciclo", "modulo"], nombre: str, *, parent_id: Optional[int] = None, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Obtiene un registro existente o lo crea si no existe.
+def create_grado(conn: sqlite3.Connection, nombre: str) -> int:  # Crea un nuevo grado.
+def create_familia(conn: sqlite3.Connection, nombre: str, id_grado: int) -> int:  # Crea una nueva familia vinculada a un grado.
+def create_ciclo( conn: sqlite3.Connection, nombre: str, id_familia: int, *, titulo: Optional[str] = None, id_oficial: Optional[str] = None, normativa: Optional[str] = None, ) -> int:  # Crea un nuevo ciclo vinculado a una familia.
+def create_modulo( conn: sqlite3.Connection, nombre: str, id_ciclo: int, *, id_oficial: Optional[str] = None, ) -> int:  # Crea un nuevo modulo vinculado a un ciclo.
+def get_catalog_entity( conn: sqlite3.Connection, search: Optional[str] = None, *, id_modulo_origen: Optional[int] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Busca en catalogo academico o destinos convalidables por modulo origen.
 ```
 
 ### Convalidaciones
@@ -379,67 +372,32 @@ def get_or_create_catalog_entity( conn: sqlite3.Connection, entity: Literal["gra
 def clear_convalidaciones(conn: sqlite3.Connection) -> None:  # Limpia todas las convalidaciones y sus modulos origen.
 def create_convalidacion( conn: sqlite3.Connection, id_modulo_destino: int, source_link: Optional[str], source_page: Optional[int], origen_modulos: Iterable[int], *, rule_mode: RuleMode = "ALL", source_doc: Optional[str] = None, source_anexo: Optional[int] = None, ) -> int:  # Crea una regla de convalidacion y registra sus modulos de origen.
 def get_convalidacion(conn: sqlite3.Connection, conv_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de convalidacion por su identificador o criterio.
-def list_convalidacion_origenes(conn: sqlite3.Connection, conv_id: int) -> Sequence[sqlite3.Row]:  # Lista registros de convalidacion origenes con los filtros disponibles.
-def list_convalidaciones(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:  # Lista registros de convalidaciones con los filtros disponibles.
-def list_convalidaciones_for_destino( conn: sqlite3.Connection, id_modulo_destino: int, ) -> Sequence[sqlite3.Row]:  # Lista convalidaciones asociadas a un modulo destino.
-def update_convalidacion( conn: sqlite3.Connection, conv_id: int, id_modulo_destino: int, source_link: Optional[str], source_page: Optional[int], *, rule_mode: RuleMode = "ALL", source_doc: Optional[str] = None, source_anexo: Optional[int] = None, ) -> bool:  # Actualiza un registro de convalidacion con los datos recibidos.
-def delete_convalidacion(conn: sqlite3.Connection, conv_id: int) -> bool:  # Elimina un registro de convalidacion por su identificador.
-def add_convalidacion_origen(conn: sqlite3.Connection, conv_id: int, id_modulo: int) -> bool:  # Agrega un elemento a convalidacion origen.
-def remove_convalidacion_origen(conn: sqlite3.Connection, conv_id: int, id_modulo: int) -> bool:  # Quita un elemento de convalidacion origen.
-def replace_convalidacion_origenes( conn: sqlite3.Connection, conv_id: int, origen_modulos: Iterable[int], ) -> None:  # Reemplaza la coleccion de convalidacion origenes con nuevos valores.
+def list_convalidaciones_by_origen_destino( conn: sqlite3.Connection, id_modulo_origen: int, id_modulo_destino: int, ) -> Sequence[sqlite3.Row]:  # Lista convalidaciones para un par origen+destino.
+# def update_convalidacion(...): pendiente de definicion funcional (aplazada).
 ```
 
 ### Usuarios
 ```python
-def create_usuario( conn: sqlite3.Connection, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"] = "ALUMNO", ) -> int:  # Crea un nuevo registro de usuario.
-def get_usuario(conn: sqlite3.Connection, usuario_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de usuario por su identificador o criterio.
-def get_usuario_by_email(conn: sqlite3.Connection, email: str) -> Optional[sqlite3.Row]:  # Obtiene un usuario a partir de su correo electronico.
-def list_usuarios(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:  # Lista registros de usuarios con los filtros disponibles.
+def create_usuario( conn: sqlite3.Connection, nombre: str, email: str, rol: Literal["ALUMNO", "ADMIN"] = "ALUMNO", *, password: Optional[str] = None, ) -> int:  # Crea un usuario; si es ADMIN requiere password.
+def login_admin(conn: sqlite3.Connection, email: str, password: str) -> Optional[sqlite3.Row]:  # Inicia sesion admin validando contraseña.
 ```
 
 ### Formularios
 ```python
 def create_formulario( conn: sqlite3.Connection, id_alumno: int, estado: FormularioEstado = "BORRADOR", anotaciones: Optional[str] = None, ) -> int:  # Crea un nuevo formulario para un alumno.
-def get_formulario(conn: sqlite3.Connection, formulario_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de formulario por su identificador o criterio.
 def list_formularios( conn: sqlite3.Connection, id_alumno: Optional[int] = None, estado: Optional[FormularioEstado] = None, limit: int = 100, offset: int = 0, ) -> Sequence[sqlite3.Row]:  # Lista registros de formularios con los filtros disponibles.
-def update_formulario( conn: sqlite3.Connection, formulario_id: int, *, anotaciones: Optional[str] = None, validado_por: Optional[int] = None, ) -> bool:  # Actualiza un registro de formulario con los datos recibidos.
 def change_formulario_status( conn: sqlite3.Connection, formulario_id: int, new_estado: FormularioEstado, *, validado_por: Optional[int] = None, anotaciones: Optional[str] = None, ) -> bool:  # Cambia el estado del formulario validando la transicion permitida.
-def submit_formulario(conn: sqlite3.Connection, formulario_id: int) -> bool:  # Marca un formulario como enviado.
-def review_formulario( conn: sqlite3.Connection, formulario_id: int, *, estado: Literal["A_REVISAR", "APROBADO", "RECHAZADO"], validado_por: int, anotaciones: Optional[str] = None, ) -> bool:  # Aplica una revision y estado final al formulario.
-def delete_formulario(conn: sqlite3.Connection, formulario_id: int) -> bool:  # Elimina un registro de formulario por su identificador.
 def create_formulario_solicitud( conn: sqlite3.Connection, id_formulario: int, id_modulo: Optional[int], id_convalidacion: Optional[int] = None, descripcion: Optional[str] = None, ) -> int:  # Crea una solicitud dentro de un formulario.
 def list_formulario_solicitudes( conn: sqlite3.Connection, id_formulario: int, ) -> Sequence[sqlite3.Row]:  # Lista registros de formulario solicitudes con los filtros disponibles.
-def get_formulario_solicitud(conn: sqlite3.Connection, solicitud_id: int) -> Optional[sqlite3.Row]:  # Obtiene un registro de formulario solicitud por su identificador o criterio.
-def update_formulario_solicitud( conn: sqlite3.Connection, solicitud_id: int, *, id_modulo: Optional[int] | object = _UNSET, id_convalidacion: Optional[int] | object = _UNSET, descripcion: Optional[str] | object = _UNSET, estado_evaluacion: Optional[str] | object = _UNSET, ) -> bool:  # Actualiza un registro de formulario solicitud con los datos recibidos.
-def delete_formulario_solicitud(conn: sqlite3.Connection, solicitud_id: int) -> bool:  # Elimina un registro de formulario solicitud por su identificador.
 def create_formulario_modulo_aportado( conn: sqlite3.Connection, id_formulario: int, id_modulo: Optional[int] = None, descripcion: Optional[str] = None, ) -> int:  # Crea un registro de modulo aportado en un formulario.
 def list_formulario_modulos_aportados( conn: sqlite3.Connection, id_formulario: int, ) -> Sequence[sqlite3.Row]:  # Lista registros de formulario modulos aportados con los filtros disponibles.
-def update_formulario_modulo_aportado( conn: sqlite3.Connection, item_id: int, *, id_modulo: Optional[int] = None, descripcion: Optional[str] = None, ) -> bool:  # Actualiza un registro de formulario modulo aportado con los datos recibidos.
-def delete_formulario_modulo_aportado(conn: sqlite3.Connection, item_id: int) -> bool:  # Elimina un registro de formulario modulo aportado por su identificador.
 def create_formulario_archivo( conn: sqlite3.Connection, id_formulario: int, nombre_archivo: str, ruta_almacenamiento: str, *, descripcion: Optional[str] = None, mime_type: Optional[str] = None, size_bytes: Optional[int] = None, ) -> int:  # Crea un registro de archivo adjunto para un formulario.
 def list_formulario_archivos( conn: sqlite3.Connection, id_formulario: int, ) -> Sequence[sqlite3.Row]:  # Lista registros de formulario archivos con los filtros disponibles.
-def delete_formulario_archivo(conn: sqlite3.Connection, archivo_id: int) -> bool:  # Elimina un registro de formulario archivo por su identificador.
 ```
-
-### Exportacion
-```python
-def get_formularios_export_data( conn: sqlite3.Connection, formulario_id: Optional[int] = None, id_alumno: Optional[int] = None, estado: Optional[FormularioEstado] = None, limit: int = 100, offset: int = 0, ) -> list[dict[str, Any]]:  # Obtiene formularios listos para exportacion (uno o varios) con filtros y paginacion.
-```
-
-### Motor de Reglas
-```python
-def evaluate_solicitud( conn: sqlite3.Connection, solicitud_id: int, *, auto_assign: bool = False, ) -> dict[str, Any]:  # Evalua una solicitud concreta y determina si hay convalidacion aplicable.
-def evaluate_formulario( conn: sqlite3.Connection, formulario_id: int, *, auto_assign: bool = False, ) -> dict[str, Any]:  # Evalua todas las solicitudes de un formulario.
-```
-
-Inconsistencia de tipos en evaluacion: corregida.
-- `SolicitudEvaluationOut` con campos opcionales para rama `PENDING_DESTINATION`: `backend/app/db/contracts.py:43`
-- Rama de retorno que incluye `message` cuando no hay modulo destino: `backend/app/db/database.py:1239`
 
 ## 10) Conclusiones
 
 Resultado:
 - La tarea principal del modulo Python de interaccion con SQLite esta implementada y operativa.
-- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 51/51 funciones publicas del modulo DB).
-- La inconsistencia de tipos de salida en evaluacion de solicitudes fue corregida en contratos (`SolicitudEvaluationOut` con campos opcionales para la rama `PENDING_DESTINATION`).
-- Los casos de uso UC1..UC5 quedan cubiertos en backend (incluida exportacion JSON en UC4).
+- El diseno de funciones y contratos existe y esta documentado con inventario completo en `FUNCTION_CONTRACTS` (cobertura 26/26 funciones publicas del modulo DB).
+- Los casos de uso UC1..UC5 quedan cubiertos en backend (UC4 se resuelve mediante listado de formularios).
