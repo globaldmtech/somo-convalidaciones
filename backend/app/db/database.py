@@ -1,10 +1,10 @@
-"""SQLite access layer for Somorrostro Convalidaciones.
+"""Capa de acceso SQLite para Somorrostro Convalidaciones.
 
-This module encapsulates all DB interactions for:
-- Catalog management (grados/familias/ciclos/modulos)
-- Convalidaciones management
-- Formularios (create/list/get_detalle/change_status)
-- Convalidacion lookup by origin and destination modules
+Este módulo centraliza las operaciones de BD para:
+- Catálogo académico (grados, familias, ciclos, módulos)
+- Convalidaciones
+- Formularios (create, list, get_detalle, change_status)
+- Búsqueda de reglas por módulo origen y destino
 """
 from __future__ import annotations
 
@@ -18,7 +18,22 @@ import hmac
 import os
 import secrets
 import sqlite3
-from typing import Any, Iterable, Literal, Optional, Sequence
+from typing import Any, Iterable, Literal, Optional, Sequence, TypeVar
+
+from pydantic import BaseModel
+
+from app.model import (
+    CatalogEntity,
+    Convalidacion,
+    ConvalidacionRegla,
+    FormularioArchivoItem,
+    FormularioDetalle,
+    FormularioDetalleHeader,
+    FormularioListItem,
+    FormularioModuloAportadoItem,
+    FormularioSolicitudItem,
+    Usuario,
+)
 
 
 DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", "data/somo.db"))
@@ -37,6 +52,8 @@ FORMULARIO_STATUS_TRANSITIONS: dict[str, set[str]] = {
 }
 RULE_MODES: set[str] = {"ALL", "ANY"}
 USER_ROLES: set[str] = {"ALUMNO", "ADMIN"}
+
+TModel = TypeVar("TModel", bound=BaseModel)
 
 
 @dataclass(frozen=True)
@@ -80,6 +97,16 @@ def _normalize_module_ids(ids: Iterable[int]) -> list[int]:
     for module_id in ids:
         normalized.add(int(module_id))
     return sorted(normalized)
+
+
+# Convierte un sqlite3.Row en un modelo Pydantic.
+def _row_to_model(row: sqlite3.Row, model_cls: type[TModel]) -> TModel:
+    return model_cls.model_validate(dict(row))
+
+
+# Convierte una lista de sqlite3.Row en una lista de modelos Pydantic.
+def _rows_to_models(rows: Sequence[sqlite3.Row], model_cls: type[TModel]) -> list[TModel]:
+    return [_row_to_model(row, model_cls) for row in rows]
 
 
 # Valida que el modo de regla sea uno permitido.
@@ -181,9 +208,9 @@ def _ensure_usuarios_auth_schema(conn: sqlite3.Connection) -> None:
 # Ejecuta un bloque de escritura dentro de una transaccion segura.
 @contextmanager
 def transaction(conn: sqlite3.Connection):
-    """Wrap several writes in a single transaction.
+    """Ejecuta varias escrituras dentro de una única transacción.
 
-    This supports nested usage safely by only opening/closing when needed.
+    Soporta uso anidado abriendo/cerrando solo cuando corresponde.
     """
     started = not conn.in_transaction
     try:
@@ -200,7 +227,7 @@ def transaction(conn: sqlite3.Connection):
 
 # Abre una conexion SQLite configurada para el proyecto.
 def connect(config: DBConfig) -> sqlite3.Connection:
-    """Return a SQLite connection with sane defaults."""
+    """Devuelve una conexión SQLite con configuración recomendada."""
     config.path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(str(config.path), timeout=config.timeout)
     conn.row_factory = sqlite3.Row
@@ -229,7 +256,7 @@ def healthcheck(conn: sqlite3.Connection) -> dict[str, Any]:
 
 # Inicializa la base de datos aplicando el esquema SQL.
 def init_db(config: DBConfig) -> None:
-    """Create database file and apply schema.sql."""
+    """Crea la base de datos y aplica `schema.sql`."""
     if not config.schema_path.exists():
         raise FileNotFoundError(f"Schema file not found: {config.schema_path}")
 
@@ -326,7 +353,7 @@ def get_catalog_entity(
     id_modulo_origen: Optional[int] = None,
     limit: int = 100,
     offset: int = 0,
-) -> Sequence[sqlite3.Row]:
+) -> Sequence[CatalogEntity]:
     search = _normalize_search_term(search)
     limit, offset = _normalize_limit_offset(limit, offset)
 
@@ -366,7 +393,8 @@ def get_catalog_entity(
             LIMIT ? OFFSET ?
         """
         params.extend([limit, offset])
-        return conn.execute(query, tuple(params)).fetchall()
+        rows = conn.execute(query, tuple(params)).fetchall()
+        return _rows_to_models(rows, CatalogEntity)
 
     if search is None:
         query = """
@@ -422,7 +450,8 @@ def get_catalog_entity(
             ORDER BY nombre COLLATE NOCASE ASC, entity ASC
             LIMIT ? OFFSET ?
         """
-        return conn.execute(query, (limit, offset)).fetchall()
+        rows = conn.execute(query, (limit, offset)).fetchall()
+        return _rows_to_models(rows, CatalogEntity)
 
     like = f"%{search}%"
     query = """
@@ -481,7 +510,8 @@ def get_catalog_entity(
         ORDER BY nombre COLLATE NOCASE ASC, entity ASC
         LIMIT ? OFFSET ?
     """
-    return conn.execute(query, (like, like, like, like, limit, offset)).fetchall()
+    rows = conn.execute(query, (like, like, like, like, limit, offset)).fetchall()
+    return _rows_to_models(rows, CatalogEntity)
 
 
 # ---------------------------------------------------------------------------
@@ -506,7 +536,7 @@ def create_convalidacion(
     source_doc: Optional[str] = None,
     source_anexo: Optional[int] = None,
 ) -> int:
-    """Create convalidacion and its origin-module relations."""
+    """Crea una convalidación y sus relaciones con módulos origen."""
     rule_mode = _assert_rule_mode(rule_mode)
     origin_ids = _normalize_module_ids(origen_modulos)
     if not origin_ids:
@@ -532,8 +562,11 @@ def create_convalidacion(
 
 
 # Obtiene una convalidacion por su identificador.
-def get_convalidacion(conn: sqlite3.Connection, conv_id: int) -> Optional[sqlite3.Row]:
-    return conn.execute("SELECT * FROM convalidacion WHERE id = ?", (conv_id,)).fetchone()
+def get_convalidacion(conn: sqlite3.Connection, conv_id: int) -> Optional[Convalidacion]:
+    row = conn.execute("SELECT * FROM convalidacion WHERE id = ?", (conv_id,)).fetchone()
+    if row is None:
+        return None
+    return _row_to_model(row, Convalidacion)
 
 
 # Lista reglas de convalidacion filtradas por modulo origen y modulo destino.
@@ -541,8 +574,8 @@ def list_convalidaciones_by_origen_destino(
     conn: sqlite3.Connection,
     id_modulo_origen: int,
     id_modulo_destino: int,
-) -> Sequence[sqlite3.Row]:
-    return conn.execute(
+) -> Sequence[ConvalidacionRegla]:
+    rows = conn.execute(
         """
         SELECT
             c.*,
@@ -560,6 +593,7 @@ def list_convalidaciones_by_origen_destino(
         """,
         (int(id_modulo_origen), int(id_modulo_destino)),
     ).fetchall()
+    return _rows_to_models(rows, ConvalidacionRegla)
 
 
 # TODO: update_convalidacion pendiente de definicion funcional.
@@ -615,7 +649,7 @@ def login_admin(
     conn: sqlite3.Connection,
     email: str,
     password: str,
-) -> Optional[sqlite3.Row]:
+) -> Optional[Usuario]:
     email = _require_non_empty(email, "email").lower()
     password = _require_non_empty(password, "password")
     row = conn.execute(
@@ -635,7 +669,7 @@ def login_admin(
     if not _verify_password(password, str(stored_hash)):
         return None
 
-    return conn.execute(
+    admin_row = conn.execute(
         """
         SELECT id, nombre, email, rol, created_at, updated_at
         FROM usuarios
@@ -643,6 +677,9 @@ def login_admin(
         """,
         (int(row["id"]),),
     ).fetchone()
+    if admin_row is None:
+        return None
+    return _row_to_model(admin_row, Usuario)
 
 
 # ---------------------------------------------------------------------------
@@ -676,7 +713,7 @@ def list_formularios(
     estado: Optional[FormularioEstado] = None,
     limit: int = 100,
     offset: int = 0,
-) -> Sequence[sqlite3.Row]:
+) -> Sequence[FormularioListItem]:
     limit, offset = _normalize_limit_offset(limit, offset)
     params: list[Any] = []
     where_parts: list[str] = []
@@ -700,14 +737,15 @@ def list_formularios(
         LIMIT ? OFFSET ?
     """
     params.extend([limit, offset])
-    return conn.execute(query, tuple(params)).fetchall()
+    rows = conn.execute(query, tuple(params)).fetchall()
+    return _rows_to_models(rows, FormularioListItem)
 
 
 # Obtiene el detalle consolidado de un formulario en una sola consulta.
 def get_formulario_detalle(
     conn: sqlite3.Connection,
     formulario_id: int,
-) -> Optional[dict[str, Any]]:
+) -> Optional[FormularioDetalle]:
     try:
         row = conn.execute(
             """
@@ -833,14 +871,12 @@ def get_formulario_detalle(
         if form_row is None:
             return None
 
-        return {
-            "formulario": dict(form_row),
-            "solicitudes": [dict(item) for item in list_formulario_solicitudes(conn, formulario_id)],
-            "modulos_aportados": [
-                dict(item) for item in list_formulario_modulos_aportados(conn, formulario_id)
-            ],
-            "archivos": [dict(item) for item in list_formulario_archivos(conn, formulario_id)],
-        }
+        return FormularioDetalle(
+            formulario=_row_to_model(form_row, FormularioDetalleHeader),
+            solicitudes=list_formulario_solicitudes(conn, formulario_id),
+            modulos_aportados=list_formulario_modulos_aportados(conn, formulario_id),
+            archivos=list_formulario_archivos(conn, formulario_id),
+        )
     if row is None:
         return None
 
@@ -848,12 +884,18 @@ def get_formulario_detalle(
     solicitudes = json.loads(str(payload.pop("solicitudes_json", "[]")))
     modulos_aportados = json.loads(str(payload.pop("modulos_aportados_json", "[]")))
     archivos = json.loads(str(payload.pop("archivos_json", "[]")))
-    return {
-        "formulario": payload,
-        "solicitudes": solicitudes,
-        "modulos_aportados": modulos_aportados,
-        "archivos": archivos,
-    }
+    return FormularioDetalle(
+        formulario=FormularioDetalleHeader.model_validate(payload),
+        solicitudes=[
+            FormularioSolicitudItem.model_validate(item) for item in solicitudes
+        ],
+        modulos_aportados=[
+            FormularioModuloAportadoItem.model_validate(item) for item in modulos_aportados
+        ],
+        archivos=[
+            FormularioArchivoItem.model_validate(item) for item in archivos
+        ],
+    )
 
 
 # Cambia el estado del formulario validando la transicion permitida.
@@ -918,8 +960,8 @@ def create_formulario_solicitud(
 def list_formulario_solicitudes(
     conn: sqlite3.Connection,
     id_formulario: int,
-) -> Sequence[sqlite3.Row]:
-    return conn.execute(
+) -> Sequence[FormularioSolicitudItem]:
+    rows = conn.execute(
         """
         SELECT
             fs.*, m.nombre AS modulo_destino_nombre
@@ -930,6 +972,7 @@ def list_formulario_solicitudes(
         """,
         (id_formulario,),
     ).fetchall()
+    return _rows_to_models(rows, FormularioSolicitudItem)
 
 
 # ---------------------------------------------------------------------------
@@ -957,8 +1000,8 @@ def create_formulario_modulo_aportado(
 def list_formulario_modulos_aportados(
     conn: sqlite3.Connection,
     id_formulario: int,
-) -> Sequence[sqlite3.Row]:
-    return conn.execute(
+) -> Sequence[FormularioModuloAportadoItem]:
+    rows = conn.execute(
         """
         SELECT
             fma.*, m.nombre AS modulo_nombre
@@ -969,6 +1012,7 @@ def list_formulario_modulos_aportados(
         """,
         (id_formulario,),
     ).fetchall()
+    return _rows_to_models(rows, FormularioModuloAportadoItem)
 
 
 # ---------------------------------------------------------------------------
@@ -1005,8 +1049,8 @@ def create_formulario_archivo(
 def list_formulario_archivos(
     conn: sqlite3.Connection,
     id_formulario: int,
-) -> Sequence[sqlite3.Row]:
-    return conn.execute(
+) -> Sequence[FormularioArchivoItem]:
+    rows = conn.execute(
         """
         SELECT *
         FROM formulario_archivos
@@ -1015,4 +1059,5 @@ def list_formulario_archivos(
         """,
         (id_formulario,),
     ).fetchall()
+    return _rows_to_models(rows, FormularioArchivoItem)
 
