@@ -1,8 +1,8 @@
 PRAGMA foreign_keys = ON;
 
 -- SQLite schema for Somorrostro Convalidaciones.
--- NOTE: SQLite is case-insensitive for table names, so this schema fulfills
--- the required entities:
+-- Convencion SQLite del proyecto: identificadores en minuscula/snake_case.
+-- Las entidades del diseno (GRADOS, FAMILIAS, etc.) se implementan como:
 -- GRADOS, FAMILIAS, CICLOS, MODULOS, CONVALIDACION, CONVALIDACION_ORIGEN,
 -- USUARIOS, FORMULARIOS, FORMULARIO_SOLICITUDES,
 -- FORMULARIO_MODULOS_APORTADOS, FORMULARIO_ARCHIVOS.
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS formularios (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   id_alumno INTEGER NOT NULL,
   enviado_at TEXT,
-  estado TEXT NOT NULL DEFAULT 'BORRADOR'
-    CHECK (estado IN ('BORRADOR', 'ENVIADO', 'A_REVISAR', 'APROBADO', 'RECHAZADO')),
+  estado TEXT NOT NULL DEFAULT 'ENVIADO'
+    CHECK (estado IN ('ENVIADO', 'EN_REVISION', 'VALIDADO', 'RECHAZADO')),
   validado_por INTEGER,
   anotaciones TEXT,
   validado_at TEXT,

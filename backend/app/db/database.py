@@ -41,30 +41,25 @@ DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", "data/somo.db"))
 DEFAULT_SCHEMA_PATH = Path(__file__).resolve().parents[2] / "scripts" / "schema.sql"
 
 FormularioEstado = Literal[
-    "BORRADOR",
     "ENVIADO",
     "EN_REVISION",
     "VALIDADO",
     "RECHAZADO",
-    "A_REVISAR",
-    "APROBADO",
 ]
 RuleMode = Literal["ALL", "ANY"]
 
-FORMULARIO_ESTADOS: set[str] = {"BORRADOR", "ENVIADO", "EN_REVISION", "VALIDADO", "RECHAZADO"}
+FORMULARIO_ESTADOS: set[str] = {"ENVIADO", "EN_REVISION", "VALIDADO", "RECHAZADO"}
 FORMULARIO_ESTADO_ALIASES: dict[str, str] = {
     "A_REVISAR": "EN_REVISION",
     "APROBADO": "VALIDADO",
 }
 FORMULARIO_ESTADO_TO_DB: dict[str, str] = {
-    "BORRADOR": "BORRADOR",
     "ENVIADO": "ENVIADO",
-    "EN_REVISION": "A_REVISAR",
-    "VALIDADO": "APROBADO",
+    "EN_REVISION": "EN_REVISION",
+    "VALIDADO": "VALIDADO",
     "RECHAZADO": "RECHAZADO",
 }
 FORMULARIO_STATUS_TRANSITIONS: dict[str, set[str]] = {
-    "BORRADOR": {"ENVIADO", "EN_REVISION"},
     "ENVIADO": {"EN_REVISION", "VALIDADO", "RECHAZADO"},
     "EN_REVISION": {"VALIDADO", "RECHAZADO"},
     "VALIDADO": set(),
@@ -236,6 +231,104 @@ def _ensure_usuarios_auth_schema(conn: sqlite3.Connection) -> None:
         conn.commit()
 
 
+# Detecta si la tabla formularios usa el esquema legacy de estados.
+def _uses_legacy_formularios_estado_schema(conn: sqlite3.Connection) -> bool:
+    table = conn.execute(
+        "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'formularios'"
+    ).fetchone()
+    if table is None:
+        return False
+
+    ddl = str(table["sql"] or "").upper()
+    legacy_tokens = ("'A_REVISAR'", "'APROBADO'")
+    if any(token in ddl for token in legacy_tokens):
+        return True
+    required_tokens = ("'ENVIADO'", "'EN_REVISION'", "'VALIDADO'", "'RECHAZADO'")
+    return not all(token in ddl for token in required_tokens)
+
+
+# Migra formularios.estado al esquema canónico del diseño.
+def _ensure_formularios_estado_schema(conn: sqlite3.Connection) -> None:
+    if not _uses_legacy_formularios_estado_schema(conn):
+        return
+
+    fk_enabled = bool(conn.execute("PRAGMA foreign_keys").fetchone()[0])
+    conn.execute("PRAGMA foreign_keys = OFF")
+    try:
+        with transaction(conn):
+            conn.execute("DROP TABLE IF EXISTS formularios_new")
+            conn.execute(
+                """
+                CREATE TABLE formularios_new (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  id_alumno INTEGER NOT NULL,
+                  enviado_at TEXT,
+                  estado TEXT NOT NULL DEFAULT 'ENVIADO'
+                    CHECK (estado IN ('ENVIADO', 'EN_REVISION', 'VALIDADO', 'RECHAZADO')),
+                  validado_por INTEGER,
+                  anotaciones TEXT,
+                  validado_at TEXT,
+                  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+                  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+                  FOREIGN KEY (id_alumno) REFERENCES usuarios(id) ON DELETE CASCADE,
+                  FOREIGN KEY (validado_por) REFERENCES usuarios(id) ON DELETE SET NULL
+                )
+                """
+            )
+            conn.execute(
+                """
+                INSERT INTO formularios_new (
+                    id, id_alumno, enviado_at, estado, validado_por, anotaciones,
+                    validado_at, created_at, updated_at
+                )
+                SELECT
+                    id,
+                    id_alumno,
+                    COALESCE(enviado_at, created_at, updated_at, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) AS enviado_at,
+                    CASE UPPER(estado)
+                        WHEN 'A_REVISAR' THEN 'EN_REVISION'
+                        WHEN 'APROBADO' THEN 'VALIDADO'
+                        WHEN 'ENVIADO' THEN 'ENVIADO'
+                        WHEN 'EN_REVISION' THEN 'EN_REVISION'
+                        WHEN 'VALIDADO' THEN 'VALIDADO'
+                        WHEN 'RECHAZADO' THEN 'RECHAZADO'
+                        ELSE 'ENVIADO'
+                    END AS estado,
+                    validado_por,
+                    anotaciones,
+                    CASE
+                        WHEN validado_at IS NOT NULL THEN validado_at
+                        WHEN UPPER(estado) IN ('APROBADO', 'VALIDADO', 'RECHAZADO')
+                            THEN COALESCE(updated_at, created_at, enviado_at, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+                        ELSE NULL
+                    END AS validado_at,
+                    created_at,
+                    updated_at
+                FROM formularios
+                """
+            )
+            conn.execute("DROP TABLE formularios")
+            conn.execute("ALTER TABLE formularios_new RENAME TO formularios")
+
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_formularios_alumno ON formularios(id_alumno)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_formularios_estado ON formularios(estado)")
+            conn.execute(
+                """
+                CREATE TRIGGER IF NOT EXISTS trg_formularios_updated_at
+                AFTER UPDATE ON formularios
+                FOR EACH ROW
+                WHEN NEW.updated_at = OLD.updated_at
+                BEGIN
+                  UPDATE formularios
+                  SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+                  WHERE id = NEW.id;
+                END
+                """
+            )
+    finally:
+        conn.execute(f"PRAGMA foreign_keys = {1 if fk_enabled else 0}")
+
+
 # Ejecuta un bloque de escritura dentro de una transaccion segura.
 @contextmanager
 def transaction(conn: sqlite3.Connection):
@@ -266,6 +359,7 @@ def connect(config: DBConfig) -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = NORMAL")
     _ensure_usuarios_auth_schema(conn)
+    _ensure_formularios_estado_schema(conn)
     return conn
 
 
@@ -720,19 +814,20 @@ def login_admin(
 def create_formulario(
     conn: sqlite3.Connection,
     id_alumno: int,
-    estado: FormularioEstado = "BORRADOR",
+    estado: FormularioEstado = "ENVIADO",
     anotaciones: Optional[str] = None,
 ) -> int:
     estado_canonical = _assert_formulario_estado(estado)
     estado_db = _to_db_formulario_estado(estado_canonical)
-    enviado_at = _utc_now() if estado_canonical != "BORRADOR" else None
+    enviado_at = _utc_now()
+    validado_at = _utc_now() if estado_canonical in {"VALIDADO", "RECHAZADO"} else None
 
     cur = conn.execute(
         """
-        INSERT INTO formularios (id_alumno, estado, enviado_at, anotaciones)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO formularios (id_alumno, estado, enviado_at, validado_at, anotaciones)
+        VALUES (?, ?, ?, ?, ?)
         """,
-        (id_alumno, estado_db, enviado_at, anotaciones),
+        (id_alumno, estado_db, enviado_at, validado_at, anotaciones),
     )
     conn.commit()
     return int(cur.lastrowid)
@@ -948,7 +1043,7 @@ def change_formulario_status(
     current_estado = _assert_formulario_estado(str(current["estado"]))
     _assert_formulario_transition(current_estado, new_estado_canonical)
     now = _utc_now()
-    enviado_at = now if new_estado_canonical in {"ENVIADO", "EN_REVISION", "VALIDADO", "RECHAZADO"} else None
+    enviado_at = now
     validado_at = now if new_estado_canonical in {"VALIDADO", "RECHAZADO"} else None
 
     cur = conn.execute(

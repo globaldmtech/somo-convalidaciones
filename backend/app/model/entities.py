@@ -19,7 +19,6 @@ class Rol(str, Enum):
 
 # Estado funcional del formulario.
 class EstadoFormulario(str, Enum):
-    BORRADOR = "BORRADOR"
     ENVIADO = "ENVIADO"
     EN_REVISION = "EN_REVISION"
     VALIDADO = "VALIDADO"
