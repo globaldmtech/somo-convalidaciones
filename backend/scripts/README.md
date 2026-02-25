@@ -1,6 +1,7 @@
 # Scripts
 
 Scripts disponibles:
-- `init_db.py`: crear BD y aplicar esquema (`schema.sql`).
-- `load_catalog.py`: cargar `GRADOS/FAMILIAS/CICLOS/MODULOS` desde JSON.
-- `load_convalidaciones.py`: cargar reglas de convalidación desde JSON o desde una SQLite fuente con tablas `Convalidacion` + `Convalidacion_links`.
+- `init_db.py`: crea la base de datos y aplica `schema.sql`.
+- `schema.sql`: esquema SQL base de la aplicación (tablas, índices y triggers).
+- load_catalog.py: cargar grados/familias/ciclos/modulos
+- load_convalidaciones.py: cargar reglas de convalidacion desde datos extraidos
