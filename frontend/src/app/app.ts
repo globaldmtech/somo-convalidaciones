@@ -1,10 +1,107 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DatosPersonalesComponent } from './components/datos-personales/datos-personales.component';
 import { EstudiosCursadosComponent } from './components/estudios-cursados/estudios-cursados.component';
+import { ConvalidacionesSolicitadasComponent } from './components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [EstudiosCursadosComponent],
-  template: `<app-estudios-cursados />`
+  imports: [
+    CommonModule,
+    DatosPersonalesComponent,
+    EstudiosCursadosComponent,
+    ConvalidacionesSolicitadasComponent
+  ],
+  template: `
+    <div class="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
+      <!-- Navbar / Header -->
+      <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="font-black text-lg tracking-tight text-gray-900 uppercase">SOMO <span class="text-indigo-600">CONVALIDACIONES</span></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="flex-grow py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+          
+          <!-- Stepper Section (Now inside gray area) -->
+          <div class="mb-12 px-12 sm:px-24">
+            <div class="relative flex items-center justify-between">
+              <!-- Continuous Line Background -->
+              <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
+              
+              <!-- Step Indicators -->
+              <div *ngFor="let step of steps" class="relative z-10 flex flex-col items-center group cursor-pointer"
+                   (click)="goToStep(step.id)">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2"
+                     [ngClass]="activeStep === step.id ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-200 scale-110' : 
+                                (isCompleted(step.id) ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-gray-200 text-gray-400')">
+                  <svg *ngIf="isCompleted(step.id)" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span *ngIf="!isCompleted(step.id)" class="text-xs font-bold">{{ step.number }}</span>
+                </div>
+                <span class="absolute -bottom-6 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors duration-200"
+                      [ngClass]="activeStep === step.id ? 'text-indigo-600' : 'text-gray-400 text-gray-500/80'">{{ step.label }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Components -->
+          <app-datos-personales *ngIf="activeStep === 'personal'" (next)="nextStep()" />
+          <app-estudios-cursados *ngIf="activeStep === 'input'" (next)="nextStep()" (prev)="prevStep()" />
+          <app-convalidaciones-solicitadas *ngIf="activeStep === 'results'" (next)="nextStep()" (prev)="prevStep()" />
+        </div>
+      </main>
+
+      <!-- Minimal Footer -->
+      <footer class="bg-white border-t border-gray-100 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+          <p class="text-[10px] text-gray-400 font-medium uppercase tracking-widest">© 2024 Somorrostro · Gestión de Convalidaciones</p>
+        </div>
+      </footer>
+    </div>
+  `
 })
-export class App { }
+export class App {
+  activeStep: 'personal' | 'input' | 'results' = 'personal';
+
+  steps = [
+    { id: 'personal', number: 1, label: 'Datos personales' },
+    { id: 'input', number: 2, label: 'Estudios cursados' },
+    { id: 'results', number: 3, label: 'Resultados' }
+  ];
+
+  isCompleted(stepId: string): boolean {
+    if (this.activeStep === 'personal') return false;
+    if (this.activeStep === 'input') return stepId === 'personal';
+    if (this.activeStep === 'results') return stepId === 'personal' || stepId === 'input';
+    return false;
+  }
+
+  canGoToStep(stepId: string): boolean {
+    const targetIdx = this.steps.findIndex(s => s.id === stepId);
+    const currentIdx = this.steps.findIndex(s => s.id === this.activeStep);
+    return targetIdx <= currentIdx;
+  }
+
+  goToStep(stepId: any) {
+    if (this.canGoToStep(stepId)) {
+      this.activeStep = stepId;
+    }
+  }
+
+  nextStep() {
+    if (this.activeStep === 'personal') this.activeStep = 'input';
+    else if (this.activeStep === 'input') this.activeStep = 'results';
+  }
+
+  prevStep() {
+    if (this.activeStep === 'input') this.activeStep = 'personal';
+    else if (this.activeStep === 'results') this.activeStep = 'input';
+  }
+}

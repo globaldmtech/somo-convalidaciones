@@ -41,27 +41,87 @@ def get_db() -> Generator[sqlite3.Connection, None, None]:
 
 # === Catalog ===
 
-def list_grados(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
+def list_grados(conn: sqlite3.Connection) -> Sequence[dict]:
     """List grados."""
-    return conn.execute("SELECT * FROM grados").fetchall()
+    return [dict(row) for row in conn.execute("SELECT * FROM grados").fetchall()]
 
 
-def list_ciclos(conn: sqlite3.Connection, grado_id: Optional[int] = None) -> Sequence[sqlite3.Row]:
+def list_ciclos(conn: sqlite3.Connection, grado_id: Optional[int] = None) -> Sequence[dict]:
     """List ciclos, optionally filtered by grado_id."""
     if grado_id:
-        return conn.execute("SELECT * FROM ciclos WHERE id_grado = ?", (grado_id,)).fetchall()
-    return conn.execute("SELECT * FROM ciclos").fetchall()
+        rows = conn.execute("SELECT * FROM ciclos WHERE id_grado = ?", (grado_id,)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM ciclos").fetchall()
+    return [dict(row) for row in rows]
 
 
-def list_modulos(conn: sqlite3.Connection, ciclo_id: Optional[int] = None) -> Sequence[sqlite3.Row]:
+def list_modulos(conn: sqlite3.Connection, ciclo_id: Optional[int] = None) -> Sequence[dict]:
     """List modulos, optionally filtered by ciclo_id."""
     if ciclo_id:
-        return conn.execute("SELECT * FROM modulos WHERE id_ciclo = ?", (ciclo_id,)).fetchall()
-    return conn.execute("SELECT * FROM modulos").fetchall()
+        rows = conn.execute("SELECT * FROM modulos WHERE id_ciclo = ?", (ciclo_id,)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM modulos").fetchall()
+    return [dict(row) for row in rows]
 
 
-def list_acreditaciones_externas(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
+def list_acreditaciones_externas(conn: sqlite3.Connection) -> Sequence[dict]:
     """List all external certifications ordered by type and name."""
-    return conn.execute(
+    rows = conn.execute(
         "SELECT id, nombre, tipo FROM acreditacion_externa ORDER BY tipo, nombre"
     ).fetchall()
+    return [dict(row) for row in rows]
+
+
+# === Matching Logic ===
+
+def get_convalidaciones_posibles(
+    conn: sqlite3.Connection,
+    modulo_ids: Sequence[int],
+    acreditacion_ids: Sequence[int],
+    target_ciclo_id: int
+) -> Sequence[dict]:
+    """
+    Find modules that can be convalidated within a specific target cycle.
+    """
+    results = []
+
+    # 1. Matching by external certifications (1-to-1)
+    if acreditacion_ids:
+        placeholders = ",".join(["?"] * len(acreditacion_ids))
+        query_ext = f"""
+            SELECT m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
+                   ae.nombre as source_nombre
+            FROM convalidacion_externa ce
+            JOIN modulos m ON ce.id_modulo_destino = m.id
+            JOIN ciclos c ON m.id_ciclo = c.id
+            JOIN acreditacion_externa ae ON ce.id_acreditacion = ae.id
+            WHERE ce.id_acreditacion IN ({placeholders})
+            AND m.id_ciclo = ?
+        """
+        params = list(acreditacion_ids) + [target_ciclo_id]
+        results.extend([dict(row) for row in conn.execute(query_ext, params).fetchall()])
+    # 2. Matching by modules (N-to-1)
+    if modulo_ids:
+        placeholders = ",".join(["?"] * len(modulo_ids))
+        query_mod = f"""
+            SELECT m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
+                   c_source.nombre as source_nombre,
+                   GROUP_CONCAT(m_source.nombre, ', ') as modulos_origen
+            FROM convalidacion conv
+            JOIN modulos m ON conv.id_modulo_destino = m.id
+            JOIN ciclos c_target ON m.id_ciclo = c_target.id
+            JOIN convalidacion_origen co ON conv.id = co.conv_id
+            JOIN modulos m_source ON co.id_modulo = m_source.id
+            JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
+            WHERE NOT EXISTS (
+                SELECT 1 FROM convalidacion_origen co_check
+                WHERE co_check.conv_id = conv.id
+                AND co_check.id_modulo NOT IN ({placeholders})
+            )
+            AND m.id_ciclo = ?
+            GROUP BY conv.id
+        """
+        params = list(modulo_ids) + [target_ciclo_id]
+        results.extend([dict(row) for row in conn.execute(query_mod, params).fetchall()])
+
+    return results

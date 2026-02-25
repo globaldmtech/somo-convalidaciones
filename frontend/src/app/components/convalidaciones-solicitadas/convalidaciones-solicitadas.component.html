@@ -1,0 +1,239 @@
+<!-- Header -->
+<div class="mb-8">
+    <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Paso 3 de 3</span>
+    <h1 class="text-2xl font-bold text-gray-900 mt-1 mb-1">Convalidaciones solicitadas</h1>
+    <p class="text-gray-500 text-sm">Seleccion el ciclo que deseas cursar en Somorrostro para ver qué puedes
+        convalidar.</p>
+</div>
+
+<div class="space-y-6">
+
+    <!-- Selection Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Target Grado -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Grado a
+                    cursar</label>
+                <div class="relative">
+                    <select [(ngModel)]="selectedGradoId" (change)="onGradoChange()"
+                        class="block w-full pl-3 pr-10 py-2.5 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all appearance-none bg-gray-50"
+                        [disabled]="loadingGrados">
+                        <option [ngValue]="null">Selecciona un grado...</option>
+                        <option *ngFor="let g of grados" [value]="g.id">{{ g.nombre }}</option>
+                    </select>
+                    <div *ngIf="loadingGrados" class="absolute right-10 top-2.5">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Ciclo -->
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Ciclo a
+                    cursar</label>
+                <div class="relative">
+                    <select [(ngModel)]="selectedCicloId" (change)="onCicloChange()"
+                        class="block w-full pl-3 pr-10 py-2.5 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all appearance-none bg-gray-50"
+                        [disabled]="loadingCiclos || !selectedGradoId">
+                        <option [ngValue]="null">Selecciona un ciclo...</option>
+                        <option *ngFor="let c of ciclos" [value]="c.id">{{ c.nombre }}</option>
+                    </select>
+                    <div *ngIf="loadingCiclos" class="absolute right-10 top-2.5">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Columns Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+
+        <!-- Left Column: Convalidation Options -->
+        <div class="lg:col-span-2 flex flex-col h-full">
+            <!-- Header -->
+            <div
+                class="flex items-center gap-3 bg-indigo-50 border-l-4 border-indigo-500 py-2.5 px-4 rounded-r-xl shadow-sm mb-4 flex-shrink-0">
+                <h2 class="text-sm font-bold text-indigo-900 mb-0">
+                    Opciones de convalidación{{ selectedCicloName ? ' en ' + selectedCicloName : '' }}
+                </h2>
+            </div>
+
+            <!-- Main Card -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[400px]">
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="h-full flex flex-col items-center justify-center p-12">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+                    <p class="text-gray-500 text-sm font-medium">Calculando opciones...</p>
+                </div>
+
+                <!-- Initial State -->
+                <div *ngIf="!loading && !selectedCicloId"
+                    class="h-full flex flex-col items-center justify-center p-12 text-center">
+                    <div class="bg-gray-50 w-12 h-12 rounded-full flex items-center justify-center mb-3 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-1">Configura tu destino</h3>
+                    <p class="text-xs text-gray-400 max-w-xs mx-auto">
+                        Selecciona el grado y ciclo para ver los módulos que podrías convalidar.
+                    </p>
+                </div>
+
+                <!-- Empty Results State -->
+                <div *ngIf="!loading && selectedCicloId && results.length === 0"
+                    class="h-full flex flex-col items-center justify-center p-12 text-center">
+                    <div
+                        class="bg-amber-50 w-12 h-12 rounded-full flex items-center justify-center mb-3 text-amber-500">
+                        <span class="text-xl">🔍</span>
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-700 mb-1">Sin resultados</h3>
+                    <p class="text-xs text-gray-400 max-w-sm mx-auto">
+                        No se han encontrado convalidaciones automáticas para este ciclo con tu formación actual.
+                    </p>
+                </div>
+
+                <!-- Convalidation Groups -->
+                <div *ngIf="!loading && groupedResults.length > 0" class="flex flex-col">
+                    <div *ngFor="let group of groupedResults" class="mb-0 text-gray-100">
+                        <!-- Group heading -->
+                        <div class="bg-gray-50 border-y border-gray-100 px-4 py-2 flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                            <span class="text-[10px] font-bold text-indigo-900 uppercase tracking-widest">{{
+                                group.source }}</span>
+                        </div>
+
+                        <!-- List -->
+                        <div class="divide-y divide-gray-100 last:border-b-0">
+                            <div *ngFor="let result of group.items" (click)="toggleModulo(result.id, group.source)"
+                                class="flex items-center gap-4 px-4 py-3 hover:bg-indigo-50/30 transition-colors cursor-pointer group"
+                                [class.opacity-50]="isOtherSourceSelected(result.id, group.source)"
+                                [style.pointer-events]="isOtherSourceSelected(result.id, group.source) ? 'none' : 'auto'">
+
+                                <!-- Checkbox -->
+                                <div class="flex-shrink-0">
+                                    <div class="w-5 h-5 rounded border-2 flex items-center justify-center transition-all"
+                                        [class.bg-indigo-600]="isModuloSelected(result.id, group.source)"
+                                        [class.border-indigo-600]="isModuloSelected(result.id, group.source)"
+                                        [class.border-gray-200]="!isModuloSelected(result.id, group.source)">
+                                        <svg *ngIf="isModuloSelected(result.id, group.source)"
+                                            class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h4
+                                        class="text-sm font-semibold text-gray-800 truncate group-hover:text-indigo-600 transition-colors">
+                                        {{ result.nombre }}
+                                    </h4>
+                                    <p *ngIf="result.modulos_origen"
+                                        class="text-[10px] text-gray-500 mt-0.5 line-clamp-1 italic">
+                                        Basado en: {{ result.modulos_origen }}
+                                    </p>
+                                </div>
+
+                                <!-- Locked State Indicator -->
+                                <div class="flex-shrink-0 text-gray-300 transition-colors">
+                                    <svg *ngIf="isOtherSourceSelected(result.id, group.source)"
+                                        class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Selection Summary -->
+        <div class="flex flex-col h-full">
+            <!-- Header -->
+            <div
+                class="flex items-center gap-3 bg-indigo-50 border-l-4 border-indigo-500 py-2.5 px-4 rounded-r-xl shadow-sm mb-4 flex-shrink-0">
+                <h2 class="text-sm font-bold text-indigo-900 mb-0">Resumen de selección</h2>
+            </div>
+
+            <!-- Selection Card -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex-1 min-h-[400px]">
+                <div class="p-5">
+                    <div *ngIf="selectedCount === 0"
+                        class="flex flex-col items-center justify-center py-12 text-center h-full">
+                        <div class="text-gray-300 mb-3 text-gray-600">
+                            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-500 leading-relaxed px-4">
+                            Selecciona los módulos que deseas convalidar.
+                        </p>
+                    </div>
+
+                    <div *ngIf="selectedCount > 0" class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <span class="text-xs font-bold text-gray-400 uppercase">Módulos finales</span>
+                            <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                {{ selectedCount }}
+                            </span>
+                        </div>
+
+                        <ul class="space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                            <li *ngFor="let mod of selectedModules"
+                                class="flex items-start gap-2 p-3 bg-gray-50 rounded-lg border border-gray-100 group relative">
+                                <div class="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-gray-800 font-bold leading-tight block">{{ mod.nombre
+                                        }}</span>
+                                    <span class="text-[9px] text-gray-400 uppercase tracking-tighter block mt-0.5">Vía:
+                                        {{ mod.source_nombre }}</span>
+                                </div>
+                                <button (click)="toggleModulo(mod.id, mod.source_nombre)"
+                                    class="text-gray-300 hover:text-red-400 transition-all ml-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Navigation Footer ── -->
+    <div class="flex items-center justify-between pt-6 border-t border-gray-200 mt-8">
+        <button (click)="prev.emit()"
+            class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Anterior
+        </button>
+
+        <div class="flex items-center gap-4">
+            <button (click)="next.emit()"
+                class="py-2.5 px-8 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200 flex items-center gap-2 shadow-lg shadow-indigo-100">
+                Siguiente
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

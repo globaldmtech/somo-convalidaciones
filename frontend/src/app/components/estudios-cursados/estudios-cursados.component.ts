@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CatalogService } from '../../services/catalog.service';
+import { ConvalidacionesService } from '../../services/convalidaciones.service';
 import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Grado, Ciclo, Modulo } from '../../models/catalog.models';
@@ -20,8 +21,6 @@ export interface AcreditacionExterna {
     nombre: string;
     tipo: string;
 }
-
-
 
 @Component({
     selector: 'app-estudios-cursados',
@@ -65,11 +64,31 @@ export class EstudiosCursadosComponent implements OnInit {
         return this.selectedAcreditacionId === 'otros';
     }
 
-    constructor(private catalogService: CatalogService, private cdr: ChangeDetectorRef) { }
+    @Output() next = new EventEmitter<void>();
+    @Output() prev = new EventEmitter<void>();
+
+    constructor(
+        private catalogService: CatalogService,
+        private convalidacionesService: ConvalidacionesService,
+        private cdr: ChangeDetectorRef
+    ) { }
 
     ngOnInit(): void {
         this.loadGrados();
         this.loadAcreditacionesExternas();
+
+        // Sync with service
+        this.estudios = this.convalidacionesService.getEstudios();
+        this.acreditacionesAdded = this.convalidacionesService.getAcreditaciones();
+
+        if (this.estudios.length > 0) {
+            this.showForm = false;
+        }
+    }
+
+    private syncWithService(): void {
+        this.convalidacionesService.setEstudios(this.estudios);
+        this.convalidacionesService.setAcreditaciones(this.acreditacionesAdded);
     }
 
     loadAcreditacionesExternas(): void {
@@ -165,6 +184,8 @@ export class EstudiosCursadosComponent implements OnInit {
 
         this.estudios.push({ grado, ciclo, modulos: selectedModulos, allModulos: [...this.modulos] });
 
+        this.syncWithService();
+
         this.selectedGradoId = null;
         this.selectedCicloId = null;
         this.selectedModuloIds.clear();
@@ -178,6 +199,7 @@ export class EstudiosCursadosComponent implements OnInit {
     removeEstudio(index: number): void {
         this.estudios.splice(index, 1);
         this.expandedStudios.delete(index);
+        this.syncWithService();
         if (this.estudios.length === 0) {
             this.showForm = true;
         }
@@ -204,6 +226,7 @@ export class EstudiosCursadosComponent implements OnInit {
         this.estudios[index].modulos = this.estudios[index].allModulos.filter(m => draft.has(m.id));
         this.editDraft.delete(index);
         this.editingStudios.delete(index);
+        this.syncWithService();
         this.cdr.detectChanges();
     }
 
@@ -278,6 +301,7 @@ export class EstudiosCursadosComponent implements OnInit {
             if (!found) return;
             this.acreditacionesAdded.push(found);
         }
+        this.syncWithService();
         this.selectedAcreditacionId = null;
         this.showAcreditacionForm = false;
         this.cdr.detectChanges();
@@ -285,6 +309,7 @@ export class EstudiosCursadosComponent implements OnInit {
 
     removeAcreditacion(index: number): void {
         this.acreditacionesAdded.splice(index, 1);
+        this.syncWithService();
         this.cdr.detectChanges();
     }
 }
