@@ -1,17 +1,18 @@
-"""SQLite access layer.
-
-First milestone: implement this module so other layers can use it.
-"""
+"""SQLite access layer."""
 from __future__ import annotations
 
+import os
+import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
-import sqlite3
-from typing import Iterable, Optional, Sequence
-import os
+from typing import Generator, Optional, Sequence
 
+# Robust database path: always looks for backend/scripts/db.sqlite
+_BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_DB_PATH = _BASE_DIR / "scripts" / "db.sqlite"
 
-DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", "data/somo.db"))
+if os.getenv("DB_PATH"):
+    DEFAULT_DB_PATH = Path(os.getenv("DB_PATH"))
 
 
 @dataclass
@@ -19,53 +20,48 @@ class DBConfig:
     path: Path = DEFAULT_DB_PATH
 
 
-def connect(config: DBConfig) -> sqlite3.Connection:
-    """Return a SQLite connection with sane defaults.
-
-    TODO:
-    - enable foreign keys
-    - set row factory
-    """
-    conn = sqlite3.connect(config.path)
+def connect(config: Optional[DBConfig] = None) -> sqlite3.Connection:
+    if config is None:
+        config = DBConfig()
+    config.path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(config.path, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
 
-def init_db(config: DBConfig) -> None:
-    """Create database file and apply schema.
+def get_db() -> Generator[sqlite3.Connection, None, None]:
+    """FastAPI dependency to provide a database connection."""
+    conn = connect()
+    try:
+        yield conn
+    finally:
+        conn.close()
 
-    TODO: open schema.sql and execute it.
-    """
-    raise NotImplementedError
 
-
-# === Catalog CRUD (first implementation targets) ===
-
-def create_grado(conn: sqlite3.Connection, nombre: str) -> int:
-    """Insert grado and return id."""
-    raise NotImplementedError
-
+# === Catalog ===
 
 def list_grados(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
     """List grados."""
-    raise NotImplementedError
+    return conn.execute("SELECT * FROM grados").fetchall()
 
 
-# === Convalidaciones CRUD (first implementation targets) ===
-
-def create_convalidacion(
-    conn: sqlite3.Connection,
-    id_modulo_destino: int,
-    source_link: Optional[str],
-    source_page: Optional[int],
-    origen_modulos: Iterable[int],
-) -> int:
-    """Create convalidacion and its origen relations.
-
-    `origen_modulos` are module ids that map to the destination module.
-    """
-    raise NotImplementedError
+def list_ciclos(conn: sqlite3.Connection, grado_id: Optional[int] = None) -> Sequence[sqlite3.Row]:
+    """List ciclos, optionally filtered by grado_id."""
+    if grado_id:
+        return conn.execute("SELECT * FROM ciclos WHERE id_grado = ?", (grado_id,)).fetchall()
+    return conn.execute("SELECT * FROM ciclos").fetchall()
 
 
-def list_convalidaciones(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
-    """List convalidaciones with origen modules."""
-    raise NotImplementedError
+def list_modulos(conn: sqlite3.Connection, ciclo_id: Optional[int] = None) -> Sequence[sqlite3.Row]:
+    """List modulos, optionally filtered by ciclo_id."""
+    if ciclo_id:
+        return conn.execute("SELECT * FROM modulos WHERE id_ciclo = ?", (ciclo_id,)).fetchall()
+    return conn.execute("SELECT * FROM modulos").fetchall()
+
+
+def list_acreditaciones_externas(conn: sqlite3.Connection) -> Sequence[sqlite3.Row]:
+    """List all external certifications ordered by type and name."""
+    return conn.execute(
+        "SELECT id, nombre, tipo FROM acreditacion_externa ORDER BY tipo, nombre"
+    ).fetchall()
