@@ -26,11 +26,12 @@ from app.model import (
     CatalogEntity,
     Convalidacion,
     ConvalidacionRegla,
-    FormularioArchivoItem,
+    EstadoFormulario,
+    FormularioArchivo,
     FormularioDetalle,
     FormularioDetalleHeader,
     FormularioListItem,
-    FormularioModuloAportadoItem,
+    FormularioModuloAportado,
     FormularioSolicitudItem,
     Usuario,
 )
@@ -39,16 +40,35 @@ from app.model import (
 DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", "data/somo.db"))
 DEFAULT_SCHEMA_PATH = Path(__file__).resolve().parents[2] / "scripts" / "schema.sql"
 
-FormularioEstado = Literal["BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"]
+FormularioEstado = Literal[
+    "BORRADOR",
+    "ENVIADO",
+    "EN_REVISION",
+    "VALIDADO",
+    "RECHAZADO",
+    "A_REVISAR",
+    "APROBADO",
+]
 RuleMode = Literal["ALL", "ANY"]
 
-FORMULARIO_ESTADOS: set[str] = {"BORRADOR", "ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"}
+FORMULARIO_ESTADOS: set[str] = {"BORRADOR", "ENVIADO", "EN_REVISION", "VALIDADO", "RECHAZADO"}
+FORMULARIO_ESTADO_ALIASES: dict[str, str] = {
+    "A_REVISAR": "EN_REVISION",
+    "APROBADO": "VALIDADO",
+}
+FORMULARIO_ESTADO_TO_DB: dict[str, str] = {
+    "BORRADOR": "BORRADOR",
+    "ENVIADO": "ENVIADO",
+    "EN_REVISION": "A_REVISAR",
+    "VALIDADO": "APROBADO",
+    "RECHAZADO": "RECHAZADO",
+}
 FORMULARIO_STATUS_TRANSITIONS: dict[str, set[str]] = {
-    "BORRADOR": {"ENVIADO", "A_REVISAR"},
-    "ENVIADO": {"A_REVISAR", "APROBADO", "RECHAZADO"},
-    "A_REVISAR": {"APROBADO", "RECHAZADO"},
-    "APROBADO": set(),
-    "RECHAZADO": {"A_REVISAR"},
+    "BORRADOR": {"ENVIADO", "EN_REVISION"},
+    "ENVIADO": {"EN_REVISION", "VALIDADO", "RECHAZADO"},
+    "EN_REVISION": {"VALIDADO", "RECHAZADO"},
+    "VALIDADO": set(),
+    "RECHAZADO": {"EN_REVISION"},
 }
 RULE_MODES: set[str] = {"ALL", "ANY"}
 USER_ROLES: set[str] = {"ALUMNO", "ADMIN"}
@@ -117,21 +137,32 @@ def _assert_rule_mode(rule_mode: str) -> str:
 
 
 # Valida que el estado del formulario sea valido.
-def _assert_formulario_estado(estado: str) -> str:
-    if estado not in FORMULARIO_ESTADOS:
+def _assert_formulario_estado(estado: str | EstadoFormulario) -> str:
+    raw = estado.value if isinstance(estado, EstadoFormulario) else str(estado)
+    normalized = raw.strip().upper()
+    normalized = FORMULARIO_ESTADO_ALIASES.get(normalized, normalized)
+    if normalized not in FORMULARIO_ESTADOS:
         raise ValueError(
-            f"Invalid formulario estado '{estado}'. Allowed: {sorted(FORMULARIO_ESTADOS)}"
+            f"Invalid formulario estado '{raw}'. Allowed: {sorted(FORMULARIO_ESTADOS)}"
         )
-    return estado
+    return normalized
+
+
+# Convierte estado de formulario canónico al valor persistido en BD.
+def _to_db_formulario_estado(estado: str | EstadoFormulario) -> str:
+    canonical = _assert_formulario_estado(estado)
+    return FORMULARIO_ESTADO_TO_DB[canonical]
 
 
 # Valida que el cambio de estado del formulario sea permitido.
 def _assert_formulario_transition(from_estado: str, to_estado: str) -> None:
-    if from_estado == to_estado:
+    from_canonical = _assert_formulario_estado(from_estado)
+    to_canonical = _assert_formulario_estado(to_estado)
+    if from_canonical == to_canonical:
         return
-    allowed = FORMULARIO_STATUS_TRANSITIONS.get(from_estado, set())
-    if to_estado not in allowed:
-        raise ValueError(f"Invalid transition '{from_estado}' -> '{to_estado}'.")
+    allowed = FORMULARIO_STATUS_TRANSITIONS.get(from_canonical, set())
+    if to_canonical not in allowed:
+        raise ValueError(f"Invalid transition '{from_canonical}' -> '{to_canonical}'.")
 
 
 # Valida que el rol de usuario sea uno permitido.
@@ -692,15 +723,16 @@ def create_formulario(
     estado: FormularioEstado = "BORRADOR",
     anotaciones: Optional[str] = None,
 ) -> int:
-    estado = _assert_formulario_estado(estado)
-    enviado_at = _utc_now() if estado != "BORRADOR" else None
+    estado_canonical = _assert_formulario_estado(estado)
+    estado_db = _to_db_formulario_estado(estado_canonical)
+    enviado_at = _utc_now() if estado_canonical != "BORRADOR" else None
 
     cur = conn.execute(
         """
         INSERT INTO formularios (id_alumno, estado, enviado_at, anotaciones)
         VALUES (?, ?, ?, ?)
         """,
-        (id_alumno, estado, enviado_at, anotaciones),
+        (id_alumno, estado_db, enviado_at, anotaciones),
     )
     conn.commit()
     return int(cur.lastrowid)
@@ -722,9 +754,9 @@ def list_formularios(
         where_parts.append("f.id_alumno = ?")
         params.append(id_alumno)
     if estado is not None:
-        _assert_formulario_estado(estado)
+        estado_db = _to_db_formulario_estado(estado)
         where_parts.append("f.estado = ?")
-        params.append(estado)
+        params.append(estado_db)
 
     where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
     query = f"""
@@ -763,7 +795,7 @@ def get_formulario_detalle(
                             'id_modulo', s.id_modulo,
                             'id_convalidacion', s.id_convalidacion,
                             'descripcion', s.descripcion,
-                            'estado_evaluacion', s.estado_evaluacion,
+                            'estado_linea', s.estado_linea,
                             'created_at', s.created_at,
                             'updated_at', s.updated_at,
                             'modulo_destino_nombre', s.modulo_destino_nombre
@@ -776,7 +808,7 @@ def get_formulario_detalle(
                             fs.id_modulo,
                             fs.id_convalidacion,
                             fs.descripcion,
-                            fs.estado_evaluacion,
+                            fs.estado_evaluacion AS estado_linea,
                             fs.created_at,
                             fs.updated_at,
                             m.nombre AS modulo_destino_nombre
@@ -890,10 +922,10 @@ def get_formulario_detalle(
             FormularioSolicitudItem.model_validate(item) for item in solicitudes
         ],
         modulos_aportados=[
-            FormularioModuloAportadoItem.model_validate(item) for item in modulos_aportados
+            FormularioModuloAportado.model_validate(item) for item in modulos_aportados
         ],
         archivos=[
-            FormularioArchivoItem.model_validate(item) for item in archivos
+            FormularioArchivo.model_validate(item) for item in archivos
         ],
     )
 
@@ -907,16 +939,17 @@ def change_formulario_status(
     validado_por: Optional[int] = None,
     anotaciones: Optional[str] = None,
 ) -> bool:
-    new_estado = _assert_formulario_estado(new_estado)
+    new_estado_canonical = _assert_formulario_estado(new_estado)
+    new_estado_db = _to_db_formulario_estado(new_estado_canonical)
     current = conn.execute("SELECT estado FROM formularios WHERE id = ?", (formulario_id,)).fetchone()
     if current is None:
         raise ValueError(f"Formulario {formulario_id} not found.")
 
-    current_estado = str(current["estado"])
-    _assert_formulario_transition(current_estado, new_estado)
+    current_estado = _assert_formulario_estado(str(current["estado"]))
+    _assert_formulario_transition(current_estado, new_estado_canonical)
     now = _utc_now()
-    enviado_at = now if new_estado in {"ENVIADO", "A_REVISAR", "APROBADO", "RECHAZADO"} else None
-    validado_at = now if new_estado in {"APROBADO", "RECHAZADO"} else None
+    enviado_at = now if new_estado_canonical in {"ENVIADO", "EN_REVISION", "VALIDADO", "RECHAZADO"} else None
+    validado_at = now if new_estado_canonical in {"VALIDADO", "RECHAZADO"} else None
 
     cur = conn.execute(
         """
@@ -928,7 +961,7 @@ def change_formulario_status(
             anotaciones = COALESCE(?, anotaciones)
         WHERE id = ?
         """,
-        (new_estado, enviado_at, validado_por, validado_at, anotaciones, formulario_id),
+        (new_estado_db, enviado_at, validado_por, validado_at, anotaciones, formulario_id),
     )
     conn.commit()
     return cur.rowcount > 0
@@ -964,7 +997,15 @@ def list_formulario_solicitudes(
     rows = conn.execute(
         """
         SELECT
-            fs.*, m.nombre AS modulo_destino_nombre
+            fs.id,
+            fs.id_formulario,
+            fs.id_modulo,
+            fs.id_convalidacion,
+            fs.descripcion,
+            fs.estado_evaluacion AS estado_linea,
+            fs.created_at,
+            fs.updated_at,
+            m.nombre AS modulo_destino_nombre
         FROM formulario_solicitudes fs
         LEFT JOIN modulos m ON m.id = fs.id_modulo
         WHERE fs.id_formulario = ?
@@ -1000,7 +1041,7 @@ def create_formulario_modulo_aportado(
 def list_formulario_modulos_aportados(
     conn: sqlite3.Connection,
     id_formulario: int,
-) -> Sequence[FormularioModuloAportadoItem]:
+) -> Sequence[FormularioModuloAportado]:
     rows = conn.execute(
         """
         SELECT
@@ -1012,7 +1053,7 @@ def list_formulario_modulos_aportados(
         """,
         (id_formulario,),
     ).fetchall()
-    return _rows_to_models(rows, FormularioModuloAportadoItem)
+    return _rows_to_models(rows, FormularioModuloAportado)
 
 
 # ---------------------------------------------------------------------------
@@ -1049,7 +1090,7 @@ def create_formulario_archivo(
 def list_formulario_archivos(
     conn: sqlite3.Connection,
     id_formulario: int,
-) -> Sequence[FormularioArchivoItem]:
+) -> Sequence[FormularioArchivo]:
     rows = conn.execute(
         """
         SELECT *
@@ -1059,5 +1100,5 @@ def list_formulario_archivos(
         """,
         (id_formulario,),
     ).fetchall()
-    return _rows_to_models(rows, FormularioArchivoItem)
+    return _rows_to_models(rows, FormularioArchivo)
 
