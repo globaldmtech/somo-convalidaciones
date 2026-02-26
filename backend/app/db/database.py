@@ -6,13 +6,11 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Optional, Sequence
+from dotenv import load_dotenv
 
-# Robust database path: always looks for backend/scripts/db.sqlite
 _BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEFAULT_DB_PATH = _BASE_DIR / "scripts" / "db.sqlite"
-
-if os.getenv("DB_PATH"):
-    DEFAULT_DB_PATH = Path(os.getenv("DB_PATH"))
+load_dotenv(_BASE_DIR / ".env")
+DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", _BASE_DIR / "scripts" / "db.sqlite"))
 
 
 @dataclass
@@ -125,3 +123,97 @@ def get_convalidaciones_posibles(
         results.extend([dict(row) for row in conn.execute(query_mod, params).fetchall()])
 
     return results
+
+
+def insert_formulario(
+    conn: sqlite3.Connection,
+    id_alumno: int,
+    estado: str,
+    enviado_at: Optional[str] = None,
+    validado_por: Optional[int] = None,
+    anotaciones: Optional[str] = None,
+    validado_at: Optional[str] = None,
+) -> dict:
+    """Insert a new form and return the created row."""
+
+    cursor = conn.execute(
+        f"""
+        INSERT INTO formularios (
+            id_alumno,
+            enviado_at,
+            estado,
+            validado_por,
+            anotaciones,
+            validado_at
+        ) VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (id_alumno, enviado_at, estado, validado_por, anotaciones, validado_at),
+    )
+
+    created = conn.execute(
+        f"""
+        SELECT id, id_alumno, enviado_at, estado, validado_por, anotaciones, validado_at
+        FROM formularios
+        WHERE id = ?
+        """,
+        (cursor.lastrowid,),
+    ).fetchone()
+
+    if not created:
+        return {"id": cursor.lastrowid}
+
+    return dict(created)
+
+
+def insert_modulo_aportado(
+    conn: sqlite3.Connection,
+    id_formulario: int,
+    id_modulos: Sequence[int],
+    descripcion: Optional[str] = None,
+) -> list:
+    """Execute INSERTs into formulario_modulos_aportados without committing.
+
+    The caller is responsible for commit/rollback.
+    """
+    rows = []
+    for id_modulo in id_modulos:
+        cursor = conn.execute(
+            """
+            INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo, descripcion)
+            VALUES (?, ?, ?)
+            """,
+            (id_formulario, id_modulo, descripcion),
+        )
+        rows.append({
+            "id": cursor.lastrowid,
+            "id_formulario": id_formulario,
+            "id_modulo": id_modulo,
+            "descripcion": descripcion,
+        })
+    return rows
+
+
+def insert_formulario_solicitud(
+    conn: sqlite3.Connection,
+    id_formulario: int,
+    id_modulo_destino: Optional[int] = None,
+    id_convalidacion: Optional[int] = None,
+    descripcion: Optional[str] = None,
+) -> dict:
+    """INSERT into formulario_solicitudes without committing.
+
+    The caller is responsible for commit/rollback.
+    """
+    cursor = conn.execute(
+        """
+        INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion, descripcion)
+        VALUES (?, ?, ?, ?)
+        """,
+        (id_formulario, id_modulo_destino, id_convalidacion, descripcion),
+    )
+    return {
+        "id_formulario": id_formulario,
+        "id_modulo_destino": id_modulo_destino,
+        "id_convalidacion": id_convalidacion,
+        "descripcion": descripcion,
+    }

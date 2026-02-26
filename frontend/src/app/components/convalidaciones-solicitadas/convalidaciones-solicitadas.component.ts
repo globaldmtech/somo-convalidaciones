@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConvalidacionesService } from '../../services/convalidaciones.service';
 import { CatalogService } from '../../services/catalog.service';
-import { Grado, Ciclo } from '../../models/catalog.models';
+import { Grado, Ciclo, Modulo } from '../../models/catalog.models';
 import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -20,11 +20,19 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     grados: Grado[] = [];
     ciclos: Ciclo[] = [];
     selectedGradoId: number | null = null;
+    selectedGradoName = '';
     selectedCicloId: number | null = null;
     selectedCicloName = '';
+    selectedOtroModuloCicloId: number | null = null;
+    otrosModulosCiclo: string[] = [];
+    showOtrosModulosCiclo = false;
+    otroInput = '';
+    otrosSolicitudes: string[] = [];
 
     loadingGrados = false;
     loadingCiclos = false;
+    loadingModulosCiclo = false;
+    modulosCicloDisponibles: Modulo[] = [];
 
     // Results
     results: any[] = [];
@@ -49,6 +57,10 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
         // Restore from service
         this.selectedGradoId = this.convalidacionesService.targetGradoId;
         this.selectedCicloId = this.convalidacionesService.targetCicloId;
+        this.selectedGradoName = this.convalidacionesService.targetGradoNombre;
+        this.selectedCicloName = this.convalidacionesService.targetCicloNombre;
+        this.otrosModulosCiclo = [...this.convalidacionesService.otrosModulosCiclo];
+        this.otrosSolicitudes = [...this.convalidacionesService.otrosSolicitudes];
         // Use a new Map to avoid reference sharing issues if needed, or just copy
         this.selectedModuleSources = new Map(this.convalidacionesService.sharedSelectedModuleSources);
 
@@ -56,6 +68,7 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             this.loadCiclosForGrado(this.selectedGradoId);
         }
         if (this.selectedCicloId) {
+            this.loadModulosCiclo(Number(this.selectedCicloId));
             this.loadResults();
         }
     }
@@ -63,7 +76,54 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     private syncTargetToService(): void {
         this.convalidacionesService.targetGradoId = this.selectedGradoId;
         this.convalidacionesService.targetCicloId = this.selectedCicloId;
+        this.convalidacionesService.targetGradoNombre = this.selectedGradoName;
+        this.convalidacionesService.targetCicloNombre = this.selectedCicloName;
+        this.convalidacionesService.otrosModulosCiclo = [...this.otrosModulosCiclo];
+        this.convalidacionesService.otrosSolicitudes = [...this.otrosSolicitudes];
         this.convalidacionesService.sharedSelectedModuleSources = new Map(this.selectedModuleSources);
+        this.convalidacionesService.sharedSelectedConvalidations = this.selectedModules.map(mod => ({
+            id: Number(mod.id),
+            nombre: mod.nombre,
+            source: mod.source_nombre,
+        }));
+    }
+
+    addOtro(): void {
+        const value = this.otroInput.trim();
+        if (!value) return;
+        this.otrosSolicitudes.push(value);
+        this.otroInput = '';
+        this.syncTargetToService();
+    }
+
+    toggleOtrosModulosCiclo(): void {
+        this.showOtrosModulosCiclo = !this.showOtrosModulosCiclo;
+    }
+
+    addOtroModuloCiclo(): void {
+        if (!this.selectedOtroModuloCicloId) return;
+        const found = this.modulosCicloDisponibles.find(m => Number(m.id) === Number(this.selectedOtroModuloCicloId));
+        if (!found) return;
+        if (!this.otrosModulosCiclo.includes(found.nombre)) {
+            this.otrosModulosCiclo.push(found.nombre);
+        }
+        this.selectedOtroModuloCicloId = null;
+        this.syncTargetToService();
+    }
+
+    removeOtroModuloCiclo(index: number): void {
+        this.otrosModulosCiclo.splice(index, 1);
+        this.syncTargetToService();
+    }
+
+    removeOtro(index: number): void {
+        this.otrosSolicitudes.splice(index, 1);
+        this.syncTargetToService();
+    }
+
+    onOtroEnter(event: Event): void {
+        event.preventDefault();
+        this.addOtro();
     }
 
     loadGrados(): void {
@@ -78,6 +138,8 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     }
 
     onGradoChange(): void {
+        const gradoFound = this.grados.find(g => Number(g.id) === Number(this.selectedGradoId));
+        this.selectedGradoName = gradoFound ? gradoFound.nombre : '';
         this.ciclos = [];
         this.selectedCicloId = null;
         this.selectedCicloName = '';
@@ -98,12 +160,16 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
                 this.ciclos = data;
                 this.loadingCiclos = false;
 
+                const gradoFound = this.grados.find(g => Number(g.id) === Number(this.selectedGradoId));
+                this.selectedGradoName = gradoFound ? gradoFound.nombre : '';
+
                 // If we restored a cicloId, ensure its name is also restored
                 if (this.selectedCicloId) {
                     const found = this.ciclos.find(c => Number(c.id) === Number(this.selectedCicloId));
                     if (found) this.selectedCicloName = found.nombre;
                 }
 
+                this.syncTargetToService();
                 this.cdr.detectChanges();
             });
     }
@@ -112,14 +178,29 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
         const found = this.ciclos.find(c => Number(c.id) === Number(this.selectedCicloId));
         this.selectedCicloName = found ? found.nombre : '';
         this.selectedModuleSources.clear();
+        this.otrosModulosCiclo = [];
+        this.selectedOtroModuloCicloId = null;
         this.syncTargetToService();
 
         if (this.selectedCicloId) {
+            this.loadModulosCiclo(Number(this.selectedCicloId));
             this.loadResults();
         } else {
+            this.modulosCicloDisponibles = [];
             this.results = [];
             this.groupedResults = [];
         }
+    }
+
+    private loadModulosCiclo(cicloId: number): void {
+        this.loadingModulosCiclo = true;
+        this.catalogService.getModulos(cicloId)
+            .pipe(timeout(10000), catchError(() => of([])))
+            .subscribe(data => {
+                this.modulosCicloDisponibles = data;
+                this.loadingModulosCiclo = false;
+                this.cdr.detectChanges();
+            });
     }
 
     loadResults(): void {
@@ -130,34 +211,59 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
 
         this.convalidacionesService.calcularConvalidaciones(Number(this.selectedCicloId)).subscribe({
             next: (data) => {
-                this.results = data;
-
-                // Normalize and group by source_nombre
-                this.results = data.map(item => ({
+                // Normalize source name
+                const normalized = data.map(item => ({
                     ...item,
                     source_nombre: item.source_nombre || 'Otros'
                 }));
 
                 const groups: { [key: string]: any[] } = {};
-                this.results.forEach(item => {
+                normalized.forEach(item => {
                     const source = item.source_nombre;
                     if (!groups[source]) groups[source] = [];
                     groups[source].push(item);
                 });
 
-                this.groupedResults = Object.keys(groups).map(source => ({
-                    source,
-                    items: groups[source]
-                })).sort((a, b) => a.source.localeCompare(b.source));
+                // Keep only one source (ciclo origen). Prefer the one already selected by user if still valid;
+                // otherwise pick the source with most matches.
+                const sources = Object.keys(groups);
+                let preferredSource = '';
+                const existingSource = this.selectedModuleSources.size > 0
+                    ? Array.from(this.selectedModuleSources.values())[0]
+                    : '';
+                if (existingSource && groups[existingSource]) {
+                    preferredSource = existingSource;
+                } else if (sources.length > 0) {
+                    preferredSource = sources.sort((a, b) => {
+                        const diff = groups[b].length - groups[a].length;
+                        return diff !== 0 ? diff : a.localeCompare(b);
+                    })[0];
+                }
 
-                // Cleanup: Remove selected modules that are no longer in the results 
-                // e.g. if the user removed a study in the other tab.
-                const validIds = new Set(this.results.map(r => Number(r.id)));
+                this.results = preferredSource ? groups[preferredSource] : [];
+                this.groupedResults = preferredSource
+                    ? [{ source: preferredSource, items: this.results }]
+                    : [];
+
+                // Cleanup: remove selections that are no longer valid in current results.
+                // We must validate by (moduleId + source), not only by moduleId,
+                // otherwise modules can remain blocked with stale sources.
+                const validSelections = new Set(
+                    this.results.map(r => `${Number(r.id)}::${String(r.source_nombre || 'Otros')}`)
+                );
                 this.selectedModuleSources.forEach((source, id) => {
-                    if (!validIds.has(Number(id))) {
+                    const key = `${Number(id)}::${String(source)}`;
+                    if (!validSelections.has(key)) {
                         this.selectedModuleSources.delete(Number(id));
                     }
                 });
+
+                // Default behavior: preselect all shown modules for the selected origin source.
+                if (preferredSource && this.selectedModuleSources.size === 0) {
+                    this.results.forEach(result => {
+                        this.selectedModuleSources.set(Number(result.id), preferredSource);
+                    });
+                }
                 this.syncTargetToService();
 
                 this.loading = false;
@@ -197,7 +303,15 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     }
 
     get selectedCount(): number {
-        return this.selectedModules.length;
+        return this.selectedModules.length + this.otrosModulosCiclo.length;
+    }
+
+    get availableOtrosModulosCiclo(): Modulo[] {
+        const selectedIds = new Set(this.selectedModules.map(m => Number(m.id)));
+        const selectedNombres = new Set(this.otrosModulosCiclo.map(n => n.toLowerCase().trim()));
+        return this.modulosCicloDisponibles.filter(m =>
+            !selectedIds.has(Number(m.id)) && !selectedNombres.has(m.nombre.toLowerCase().trim())
+        );
     }
 
     get selectedModules(): any[] {

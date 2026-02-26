@@ -6,6 +6,19 @@ import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursad
 
 const API_BASE = 'http://localhost:8000/convalidaciones';
 
+export interface PersonalData {
+    nombre: string;
+    apellidos: string;
+    dni: string;
+    email: string;
+}
+
+export interface SelectedConvalidation {
+    id: number;
+    nombre: string;
+    source: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ConvalidacionesService {
 
@@ -15,10 +28,23 @@ export class ConvalidacionesService {
     private acreditacionesSubject = new BehaviorSubject<AcreditacionExterna[]>([]);
     acreditaciones$ = this.acreditacionesSubject.asObservable();
 
+    private personalDataSubject = new BehaviorSubject<PersonalData>({
+        nombre: '',
+        apellidos: '',
+        dni: '',
+        email: '',
+    });
+    personalData$ = this.personalDataSubject.asObservable();
+
     // Persist Results-tab filter and user selections
     targetGradoId: number | null = null;
     targetCicloId: number | null = null;
+    targetGradoNombre = '';
+    targetCicloNombre = '';
+    otrosModulosCiclo: string[] = [];
+    otrosSolicitudes: string[] = [];
     sharedSelectedModuleSources: Map<number, string> = new Map();
+    sharedSelectedConvalidations: SelectedConvalidation[] = [];
 
     constructor(private http: HttpClient) { }
 
@@ -36,6 +62,14 @@ export class ConvalidacionesService {
 
     getAcreditaciones(): AcreditacionExterna[] {
         return this.acreditacionesSubject.value;
+    }
+
+    setPersonalData(personalData: PersonalData): void {
+        this.personalDataSubject.next(personalData);
+    }
+
+    getPersonalData(): PersonalData {
+        return this.personalDataSubject.value;
     }
 
     calcularConvalidaciones(targetCicloId?: number): Observable<any[]> {

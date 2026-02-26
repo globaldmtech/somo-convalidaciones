@@ -1,6 +1,6 @@
 <!-- Header -->
 <div class="mb-8">
-    <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Paso 2 de 3</span>
+    <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Paso 2 de 4</span>
     <h1 class="text-2xl font-bold text-gray-900 mt-1 mb-1">Formación aportada</h1>
     <p class="text-gray-500 text-sm">Registra tus estudios oficiales y otras titulaciones para gestionar tu
         solicitud.</p>
@@ -9,7 +9,7 @@
 <div class="space-y-6">
 
     <!-- ── 1. ESTUDIOS CURSADOS (sección siempre visible) ── -->
-    <div class="space-y-4">
+    <section class="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
         <div
             class="flex items-center gap-3 bg-indigo-50 border-l-4 border-indigo-500 py-2.5 px-4 rounded-r-xl shadow-sm">
             <h2 class="text-sm font-bold text-indigo-900">
@@ -110,7 +110,6 @@
                 </div>
             </div>
         </ng-container>
-    </div>
 
     <!-- ── 2. FORM (appears below existing studies) ── -->
     <div *ngIf="showForm" class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -240,16 +239,16 @@
         </svg>
         Añadir otro estudio
     </button>
+    </section>
 
-    <!-- ════════════════════════════════════════════════════════════════════ -->
     <!-- ── SECCIÓN: ACREDITACIONES / TITULACIONES EXTERNAS ── -->
-    <div class="pt-4 border-t border-gray-200 space-y-4">
+    <section class="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
 
         <div class="space-y-4">
             <div
                 class="flex items-center gap-3 bg-indigo-50 border-l-4 border-indigo-500 py-2.5 px-4 rounded-r-xl shadow-sm">
                 <h2 class="text-sm font-bold text-indigo-900 mb-0">
-                    Acreditaciones / Titulaciones externas
+                    Acreditaciones / Titulaciones externas / Otros
                 </h2>
             </div>
             <p class="text-gray-500 text-xs pl-1 font-medium">Certificados de idioma, títulos
@@ -330,7 +329,7 @@
             </svg>
             Añadir acreditación externa
         </button>
-    </div>
+    </section>
 
     <!-- ── 4. FOOTER / NAV FLOW ── -->
     <div class="flex items-center justify-between pt-6 border-t border-gray-200 mt-4">

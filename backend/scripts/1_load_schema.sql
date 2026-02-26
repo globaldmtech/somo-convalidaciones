@@ -52,32 +52,39 @@ CREATE TABLE IF NOT EXISTS convalidacion_origen (
 -- Usuarios y formularios (placeholders for later phases)
 CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY,
+  DNI TEXT NOT NULL UNIQUE,
   nombre TEXT NOT NULL,
   email TEXT NOT NULL,
   rol TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS estados_formularios (
+  id INTEGER PRIMARY KEY,
+  nombre TEXT NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS formularios (
   id INTEGER PRIMARY KEY,
   id_alumno INTEGER NOT NULL,
   enviado_at TEXT,
-  estado TEXT NOT NULL,
+  estado INTEGER NOT NULL,
   validado_por INTEGER,
   anotaciones TEXT,
   validado_at TEXT,
   FOREIGN KEY (id_alumno) REFERENCES usuarios(id),
-  FOREIGN KEY (validado_por) REFERENCES usuarios(id)
+  FOREIGN KEY (validado_por) REFERENCES usuarios(id),
+  FOREIGN KEY (estado) REFERENCES estados_formularios(id)
 );
 
 CREATE TABLE IF NOT EXISTS formulario_solicitudes (
   id INTEGER PRIMARY KEY,
   id_formulario INTEGER NOT NULL,
-  id_modulo INTEGER,
+  id_modulo_destino INTEGER,
   id_convalidacion INTEGER,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id),
-  FOREIGN KEY (id_modulo) REFERENCES modulos(id),
+  FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id),
   FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id)
 );
 

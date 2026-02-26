@@ -1,8 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 import sqlite3
+from datetime import datetime, timezone
 from typing import Optional, List
 from db import database
-from model.validaciones import ConvalidationRequest, ConvalidationResult
+from model.convalidaciones import (
+    ConvalidationRequest,
+    ConvalidationResult,
+    FormularioCompletoRequest,
+)
 
 router = APIRouter(
     prefix="/convalidaciones",
@@ -57,4 +62,68 @@ async def calcular_convalidaciones(
             request.target_ciclo_id
         )
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/insertar_formulario_completo")
+async def insertar_formulario_completo(
+    request: FormularioCompletoRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Inserta formulario + módulos aportados + solicitudes en una única transacción.
+
+    Orden de ejecución:
+      1. INSERT en formularios  → obtiene id_formulario
+      2. INSERT en formulario_modulos_aportados  (uno por cada id en id_modulos_aportados)
+      3. INSERT en formulario_solicitudes  (uno por cada item en solicitudes)
+
+    Si cualquier paso falla se hace rollback de toda la operación.
+    """
+    estado = request.estado if request.estado is not None else 1
+    enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
+
+    try:
+        # 1. Insertar formulario
+        formulario = database.insert_formulario(db,
+            id_alumno=request.id_alumno,
+            estado=estado,
+            enviado_at=enviado_at,
+            validado_por=None,
+            anotaciones=request.anotaciones,
+            validado_at=None,
+        )
+        id_formulario = formulario["id"]
+
+        # 2. Insertar módulos aportados
+        modulos_aportados = database.insert_modulo_aportado(
+            db,
+            id_formulario=id_formulario,
+            id_modulos=request.id_modulos_aportados,
+            descripcion=request.descripcion_modulos,
+        )
+
+        # 3. Insertar solicitudes
+        solicitudes = []
+        for item in request.solicitudes:
+            solicitud = database.insert_formulario_solicitud(
+                db,
+                id_formulario=id_formulario,
+                id_modulo_destino=item.id_modulo_destino,
+                id_convalidacion=item.id_convalidacion,
+                descripcion=item.descripcion,
+            )
+            solicitudes.append(solicitud)
+
+        db.commit()
+        return {
+            "formulario": formulario,
+            "modulos_aportados": modulos_aportados,
+            "solicitudes": solicitudes,
+        }
+
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))

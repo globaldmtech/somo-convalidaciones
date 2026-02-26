@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DatosPersonalesComponent } from './components/datos-personales/datos-personales.component';
 import { EstudiosCursadosComponent } from './components/estudios-cursados/estudios-cursados.component';
 import { ConvalidacionesSolicitadasComponent } from './components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
+import { ResumenFormularioComponent } from './components/resumen-formulario/resumen-formulario.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,8 @@ import { ConvalidacionesSolicitadasComponent } from './components/convalidacione
     CommonModule,
     DatosPersonalesComponent,
     EstudiosCursadosComponent,
-    ConvalidacionesSolicitadasComponent
+    ConvalidacionesSolicitadasComponent,
+    ResumenFormularioComponent
   ],
   template: `
     <div class="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
@@ -55,6 +57,7 @@ import { ConvalidacionesSolicitadasComponent } from './components/convalidacione
           <app-datos-personales *ngIf="activeStep === 'personal'" (next)="nextStep()" />
           <app-estudios-cursados *ngIf="activeStep === 'input'" (next)="nextStep()" (prev)="prevStep()" />
           <app-convalidaciones-solicitadas *ngIf="activeStep === 'results'" (next)="nextStep()" (prev)="prevStep()" />
+          <app-resumen-formulario *ngIf="activeStep === 'resumen'" (prev)="prevStep()" />
         </div>
       </main>
 
@@ -68,25 +71,23 @@ import { ConvalidacionesSolicitadasComponent } from './components/convalidacione
   `
 })
 export class App {
-  activeStep: 'personal' | 'input' | 'results' = 'personal';
+  activeStep: 'personal' | 'input' | 'results' | 'resumen' = 'personal';
 
   steps = [
     { id: 'personal', number: 1, label: 'Datos personales' },
     { id: 'input', number: 2, label: 'Estudios cursados' },
-    { id: 'results', number: 3, label: 'Resultados' }
+    { id: 'results', number: 3, label: 'Solicitudes' },
+    { id: 'resumen', number: 4, label: 'Resumen' }
   ];
 
   isCompleted(stepId: string): boolean {
-    if (this.activeStep === 'personal') return false;
-    if (this.activeStep === 'input') return stepId === 'personal';
-    if (this.activeStep === 'results') return stepId === 'personal' || stepId === 'input';
-    return false;
+    const order = ['personal', 'input', 'results', 'resumen'];
+    return order.indexOf(stepId) < order.indexOf(this.activeStep);
   }
 
   canGoToStep(stepId: string): boolean {
-    const targetIdx = this.steps.findIndex(s => s.id === stepId);
-    const currentIdx = this.steps.findIndex(s => s.id === this.activeStep);
-    return targetIdx <= currentIdx;
+    const order = ['personal', 'input', 'results', 'resumen'];
+    return order.indexOf(stepId) <= order.indexOf(this.activeStep);
   }
 
   goToStep(stepId: any) {
@@ -95,13 +96,20 @@ export class App {
     }
   }
 
+  private scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   nextStep() {
     if (this.activeStep === 'personal') this.activeStep = 'input';
     else if (this.activeStep === 'input') this.activeStep = 'results';
+    else if (this.activeStep === 'results') this.activeStep = 'resumen';
+    this.scrollToTop();
   }
 
   prevStep() {
     if (this.activeStep === 'input') this.activeStep = 'personal';
     else if (this.activeStep === 'results') this.activeStep = 'input';
+    else if (this.activeStep === 'resumen') this.activeStep = 'results';
   }
 }
