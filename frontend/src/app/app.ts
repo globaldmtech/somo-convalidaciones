@@ -4,6 +4,7 @@ import { DatosPersonalesComponent } from './components/datos-personales/datos-pe
 import { EstudiosCursadosComponent } from './components/estudios-cursados/estudios-cursados.component';
 import { ConvalidacionesSolicitadasComponent } from './components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
 import { ResumenFormularioComponent } from './components/resumen-formulario/resumen-formulario.component';
+import { ConvalidacionesService } from './services/convalidaciones.service';
 
 @Component({
   selector: 'app-root',
@@ -37,7 +38,9 @@ import { ResumenFormularioComponent } from './components/resumen-formulario/resu
               <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
               
               <!-- Step Indicators -->
-              <div *ngFor="let step of steps" class="relative z-10 flex flex-col items-center group cursor-pointer"
+              <div *ngFor="let step of steps"
+                   class="relative z-10 flex flex-col items-center group"
+                   [ngClass]="canGoToStep(step.id) ? 'cursor-pointer' : 'cursor-not-allowed opacity-70'"
                    (click)="goToStep(step.id)">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2"
                      [ngClass]="activeStep === step.id ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-200 scale-110' : 
@@ -73,6 +76,8 @@ import { ResumenFormularioComponent } from './components/resumen-formulario/resu
 export class App {
   activeStep: 'personal' | 'input' | 'results' | 'resumen' = 'personal';
 
+  constructor(private convalidacionesService: ConvalidacionesService) {}
+
   steps = [
     { id: 'personal', number: 1, label: 'Datos personales' },
     { id: 'input', number: 2, label: 'Estudios cursados' },
@@ -87,13 +92,41 @@ export class App {
 
   canGoToStep(stepId: string): boolean {
     const order = ['personal', 'input', 'results', 'resumen'];
-    return order.indexOf(stepId) <= order.indexOf(this.activeStep);
+    const targetIndex = order.indexOf(stepId);
+    const currentIndex = order.indexOf(this.activeStep);
+
+    // Always allow going backwards or staying on current step.
+    if (targetIndex <= currentIndex) return true;
+
+    // Allow forward jump only if all previous sections have some data.
+    if (targetIndex >= 1 && !this.hasPersonalData()) return false;
+    if (targetIndex >= 2 && !this.hasInputData()) return false;
+    if (targetIndex >= 3 && !this.hasResultsData()) return false;
+    return true;
   }
 
   goToStep(stepId: any) {
     if (this.canGoToStep(stepId)) {
       this.activeStep = stepId;
+      this.scrollToTop();
     }
+  }
+
+  private hasPersonalData(): boolean {
+    const data = this.convalidacionesService.getPersonalData();
+    return !!(data.nombre?.trim() || data.apellidos?.trim() || data.dni?.trim() || data.email?.trim());
+  }
+
+  private hasInputData(): boolean {
+    return this.convalidacionesService.getEstudios().length > 0
+      || this.convalidacionesService.getAcreditaciones().length > 0
+      || this.convalidacionesService.getOtrosCiclosModulos().length > 0;
+  }
+
+  private hasResultsData(): boolean {
+    return this.convalidacionesService.sharedSelectedConvalidations.length > 0
+      || this.convalidacionesService.otrosModulosCiclo.length > 0
+      || this.convalidacionesService.otrosSolicitudes.length > 0;
   }
 
   private scrollToTop(): void {

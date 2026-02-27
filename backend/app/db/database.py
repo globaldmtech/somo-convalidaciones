@@ -7,10 +7,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Optional, Sequence
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 _BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(_BASE_DIR / ".env")
-DEFAULT_DB_PATH = Path(os.getenv("DB_PATH", _BASE_DIR / "scripts" / "db.sqlite"))
+_db_path_env = os.getenv("DB_PATH", "scripts/db.sqlite")
+DEFAULT_DB_PATH = Path(_db_path_env)
+if not DEFAULT_DB_PATH.is_absolute():
+    DEFAULT_DB_PATH = _BASE_DIR / DEFAULT_DB_PATH
 
 
 @dataclass
@@ -217,3 +221,38 @@ def insert_formulario_solicitud(
         "id_convalidacion": id_convalidacion,
         "descripcion": descripcion,
     }
+
+
+def get_or_create_usuario_by_dni(
+    conn: sqlite3.Connection,
+    dni: str,
+    nombre: str,
+    apellidos: Optional[str],
+    email: str,
+) -> dict:
+    """Busca usuario por DNI y, si no existe, lo crea. No hace commit."""
+
+    existing = conn.execute(
+        """
+        SELECT id
+        FROM usuarios
+        WHERE UPPER(DNI) = ?
+        """,
+        (dni,),
+    ).fetchone()
+    if existing:
+        return existing['id']
+
+    nombre_full = " ".join(
+        part.strip() for part in [(nombre or ""), (apellidos or "")] if part and part.strip()
+    ).strip()
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    cursor = conn.execute(
+        """
+        INSERT INTO usuarios (DNI, nombre, email, rol, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (dni, nombre_full, (email or "").strip(), "alumno", created_at),
+    )
+    return cursor.lastrowid

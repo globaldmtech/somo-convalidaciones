@@ -59,6 +59,9 @@ export class EstudiosCursadosComponent implements OnInit {
     selectedAcreditacionId: number | string | null = null;
     otrosTexto = '';
     showAcreditacionForm = false;
+    otrosCiclosModulosInput = '';
+    otrosCiclosModulosAdded: string[] = [];
+    showOtrosCiclosModulosForm = false;
 
     get isOtrosSelected(): boolean {
         return this.selectedAcreditacionId === 'otros';
@@ -80,6 +83,7 @@ export class EstudiosCursadosComponent implements OnInit {
         // Sync with service
         this.estudios = this.convalidacionesService.getEstudios();
         this.acreditacionesAdded = this.convalidacionesService.getAcreditaciones();
+        this.otrosCiclosModulosAdded = this.convalidacionesService.getOtrosCiclosModulos();
 
         if (this.estudios.length > 0) {
             this.showForm = false;
@@ -89,6 +93,7 @@ export class EstudiosCursadosComponent implements OnInit {
     private syncWithService(): void {
         this.convalidacionesService.setEstudios(this.estudios);
         this.convalidacionesService.setAcreditaciones(this.acreditacionesAdded);
+        this.convalidacionesService.setOtrosCiclosModulos(this.otrosCiclosModulosAdded);
     }
 
     loadAcreditacionesExternas(): void {
@@ -263,11 +268,25 @@ export class EstudiosCursadosComponent implements OnInit {
     }
 
     canProceed(): boolean {
-        return this.estudios.length > 0 || this.acreditacionesAdded.length > 0;
+        return this.estudios.length > 0 || this.acreditacionesAdded.length > 0 || this.otrosCiclosModulosAdded.length > 0;
     }
 
     get totalModulos(): number {
         return this.estudios.reduce((acc, e) => acc + e.modulos.length, 0);
+    }
+
+    get progresoPaso2Texto(): string {
+        const partes: string[] = [];
+        if (this.estudios.length > 0) {
+            partes.push(`${this.estudios.length} estudio${this.estudios.length !== 1 ? 's' : ''}`);
+        }
+        if (this.acreditacionesAdded.length > 0) {
+            partes.push(`${this.acreditacionesAdded.length} acreditación${this.acreditacionesAdded.length !== 1 ? 'es' : ''} externa${this.acreditacionesAdded.length !== 1 ? 's' : ''}`);
+        }
+        if (this.otrosCiclosModulosAdded.length > 0) {
+            partes.push(`${this.otrosCiclosModulosAdded.length} otro${this.otrosCiclosModulosAdded.length !== 1 ? 's' : ''}`);
+        }
+        return partes.length > 0 ? partes.join(' · ') : 'Añade formación para continuar';
     }
 
     // ── Acreditaciones externas methods ───────────────────────────────────────
@@ -309,6 +328,22 @@ export class EstudiosCursadosComponent implements OnInit {
 
     removeAcreditacion(index: number): void {
         this.acreditacionesAdded.splice(index, 1);
+        this.syncWithService();
+        this.cdr.detectChanges();
+    }
+
+    addOtroCicloOModulo(): void {
+        const value = this.otrosCiclosModulosInput.trim();
+        if (!value) return;
+        this.otrosCiclosModulosAdded.push(value);
+        this.otrosCiclosModulosInput = '';
+        this.showOtrosCiclosModulosForm = false;
+        this.syncWithService();
+        this.cdr.detectChanges();
+    }
+
+    removeOtroCicloOModulo(index: number): void {
+        this.otrosCiclosModulosAdded.splice(index, 1);
         this.syncWithService();
         this.cdr.detectChanges();
     }

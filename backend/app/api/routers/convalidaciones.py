@@ -83,9 +83,17 @@ async def insertar_formulario_completo(
     enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
 
     try:
+        id_alumno = database.get_or_create_usuario_by_dni(
+            conn=db,
+            dni=request.dni,
+            nombre=request.nombre,
+            apellidos=request.apellidos,
+            email=request.email,
+        )
+        id_alumno = int(id_alumno)
         # 1. Insertar formulario
         formulario = database.insert_formulario(db,
-            id_alumno=request.id_alumno,
+            id_alumno=id_alumno,
             estado=estado,
             enviado_at=enviado_at,
             validado_por=None,
@@ -116,6 +124,7 @@ async def insertar_formulario_completo(
 
         db.commit()
         return {
+            "alumno": id_alumno,
             "formulario": formulario,
             "modulos_aportados": modulos_aportados,
             "solicitudes": solicitudes,

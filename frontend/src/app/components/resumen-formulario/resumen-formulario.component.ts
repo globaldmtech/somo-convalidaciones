@@ -17,6 +17,7 @@ export class ResumenFormularioComponent implements OnInit {
 
     estudios: EstudioEntry[] = [];
     acreditaciones: AcreditacionExterna[] = [];
+    otrosCiclosModulosCursados: string[] = [];
     convalidacionesSolicitadas: SelectedConvalidation[] = [];
     personalData: PersonalData = {
         nombre: '',
@@ -41,6 +42,7 @@ export class ResumenFormularioComponent implements OnInit {
     ngOnInit(): void {
         this.estudios = this.convalidacionesService.getEstudios();
         this.acreditaciones = this.convalidacionesService.getAcreditaciones();
+        this.otrosCiclosModulosCursados = this.convalidacionesService.getOtrosCiclosModulos();
         this.personalData = this.convalidacionesService.getPersonalData();
         this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
     }
@@ -113,7 +115,10 @@ export class ResumenFormularioComponent implements OnInit {
         }
 
         const payload = {
-            id_alumno: 1,
+            nombre: this.personalData.nombre,
+            apellidos: this.personalData.apellidos,
+            dni: this.personalData.dni,
+            email: this.personalData.email,
             estado: null,
             enviado_at: null,
             anotaciones: null,

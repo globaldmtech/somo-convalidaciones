@@ -27,6 +27,8 @@ export class ConvalidacionesService {
 
     private acreditacionesSubject = new BehaviorSubject<AcreditacionExterna[]>([]);
     acreditaciones$ = this.acreditacionesSubject.asObservable();
+    private otrosCiclosModulosSubject = new BehaviorSubject<string[]>([]);
+    otrosCiclosModulos$ = this.otrosCiclosModulosSubject.asObservable();
 
     private personalDataSubject = new BehaviorSubject<PersonalData>({
         nombre: '',
@@ -50,10 +52,20 @@ export class ConvalidacionesService {
 
     setEstudios(estudios: EstudioEntry[]): void {
         this.estudiosSubject.next(estudios);
+
+        // Las convalidaciones automáticas dependen de los estudios aportados.
+        // Si cambian los estudios, invalidamos selecciones derivadas del paso 3.
+        this.sharedSelectedModuleSources = new Map();
+        this.sharedSelectedConvalidations = [];
+        this.otrosModulosCiclo = [];
     }
 
     setAcreditaciones(acreditaciones: AcreditacionExterna[]): void {
         this.acreditacionesSubject.next(acreditaciones);
+    }
+
+    setOtrosCiclosModulos(items: string[]): void {
+        this.otrosCiclosModulosSubject.next(items);
     }
 
     getEstudios(): EstudioEntry[] {
@@ -62,6 +74,10 @@ export class ConvalidacionesService {
 
     getAcreditaciones(): AcreditacionExterna[] {
         return this.acreditacionesSubject.value;
+    }
+
+    getOtrosCiclosModulos(): string[] {
+        return this.otrosCiclosModulosSubject.value;
     }
 
     setPersonalData(personalData: PersonalData): void {

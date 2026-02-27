@@ -26,8 +26,12 @@ class SolicitudItem(BaseModel):
 
 class FormularioCompletoRequest(BaseModel):
     """Datos para crear formulario + módulos aportados + solicitudes en un solo paso."""
+    # Datos personales del alumno
+    nombre: str
+    apellidos: Optional[str] = None
+    dni: str
+    email: str
     # Datos del formulario
-    id_alumno: int
     estado: Optional[int] = None
     enviado_at: Optional[str] = None
     anotaciones: Optional[str] = None

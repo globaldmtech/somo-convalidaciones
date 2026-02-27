@@ -74,6 +74,19 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     }
 
     private syncTargetToService(): void {
+        if ((!this.selectedGradoName || !this.selectedGradoName.trim()) && this.selectedGradoId) {
+            const gradoFound = this.grados.find(g => Number(g.id) === Number(this.selectedGradoId));
+            if (gradoFound) {
+                this.selectedGradoName = gradoFound.nombre;
+            }
+        }
+        if ((!this.selectedCicloName || !this.selectedCicloName.trim()) && this.selectedCicloId) {
+            const cicloFound = this.ciclos.find(c => Number(c.id) === Number(this.selectedCicloId));
+            if (cicloFound) {
+                this.selectedCicloName = cicloFound.nombre;
+            }
+        }
+
         this.convalidacionesService.targetGradoId = this.selectedGradoId;
         this.convalidacionesService.targetCicloId = this.selectedCicloId;
         this.convalidacionesService.targetGradoNombre = this.selectedGradoName;
@@ -133,6 +146,13 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             .subscribe(data => {
                 this.grados = data;
                 this.loadingGrados = false;
+                if (this.selectedGradoId) {
+                    const found = this.grados.find(g => Number(g.id) === Number(this.selectedGradoId));
+                    if (found) {
+                        this.selectedGradoName = found.nombre;
+                        this.syncTargetToService();
+                    }
+                }
                 this.cdr.detectChanges();
             });
     }
