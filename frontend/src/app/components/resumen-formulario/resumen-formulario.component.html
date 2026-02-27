@@ -244,7 +244,7 @@
 
         <!-- Acciones -->
         <div class="flex items-center justify-between pt-2 border-t border-gray-100">
-            <button (click)="prev.emit()"
+            <button type="button" (click)="prev.emit()"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-200 text-sm font-bold text-gray-500 hover:bg-white hover:border-indigo-200 hover:text-indigo-600 transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -252,7 +252,7 @@
                 Anterior
             </button>
 
-            <button (click)="enviar()" [disabled]="enviando || !documentosCompletos" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold
+            <button type="button" (click)="enviar()" [disabled]="enviando || !documentosCompletos" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold
                      shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all duration-150
                      disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none">
                 <!-- Spinner -->

@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { finalize, timeout } from 'rxjs/operators';
 import { ConvalidacionesService, PersonalData, SelectedConvalidation } from '../../services/convalidaciones.service';
 import { EstudioEntry, AcreditacionExterna } from '../estudios-cursados/estudios-cursados.component';
 
@@ -36,7 +37,8 @@ export class ResumenFormularioComponent implements OnInit {
 
     constructor(
         private convalidacionesService: ConvalidacionesService,
-        private http: HttpClient
+        private http: HttpClient,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -92,6 +94,8 @@ export class ResumenFormularioComponent implements OnInit {
     }
 
     enviar(): void {
+        if (this.enviando) return;
+
         if (!this.documentosCompletos) {
             this.error = 'Debes subir DNI y certificado académico antes de enviar.';
             return;
@@ -99,43 +103,77 @@ export class ResumenFormularioComponent implements OnInit {
 
         this.enviando = true;
         this.error = null;
+        let payload: any;
+        try {
+            const idModulosAportados = this.estudios.flatMap(e => e.modulos.map(m => m.id));
+            const acreditacionesRegistradas = this.acreditaciones
+                .filter(a => a.tipo !== 'otros')
+                .map(a => a.id);
+            const acreditacionesNoRegistradas = this.acreditaciones
+                .filter(a => a.tipo === 'otros')
+                .map(a => a.nombre.trim())
+                .filter(Boolean);
 
-        const idModulosAportados = this.estudios.flatMap(e => e.modulos.map(m => m.id));
+            const solicitudesRegistradas = this.convalidacionesSolicitadas.map(item => ({
+                id_modulo_destino: Number(item.id),
+                id_convalidacion: item.id_convalidacion ?? null,
+                id_convalidacion_externa: item.id_convalidacion_externa ?? null,
+                descripcion: null,
+            }));
+            const solicitudesRegistradasManuales = this.convalidacionesService.otrosModulosCicloRegistrados.map(item => ({
+                id_modulo_destino: Number(item.id),
+                id_convalidacion: null,
+                id_convalidacion_externa: null,
+                descripcion: null,
+            }));
 
-        const solicitudes = Array.from(this.convalidacionesService.sharedSelectedModuleSources.entries()).map(
-            ([idModulo]) => ({ id_modulo_destino: idModulo, id_convalidacion: null, descripcion: null })
-        );
+            const descripcionNoRegistrados = [
+                ...this.otrosCiclosModulosCursados,
+                ...acreditacionesNoRegistradas,
+            ];
 
-        const descripciones: string[] = [];
-        if (this.otrosModulosCiclo.length > 0) {
-            descripciones.push(...this.otrosModulosCiclo.map(item => `[ciclo] ${item}`));
+            payload = {
+                nombre: this.personalData.nombre,
+                apellidos: this.personalData.apellidos,
+                dni: this.personalData.dni,
+                email: this.personalData.email,
+                estado: 1,
+                enviado_at: null,
+                anotaciones: null,
+                id_modulos_registrados_aportados: [...new Set(idModulosAportados)],
+                id_acreditaciones_registradas_aportadas: [...new Set(acreditacionesRegistradas)],
+                descripcion_no_registrados: descripcionNoRegistrados.length > 0 ? descripcionNoRegistrados : null,
+                solicitudes_registradas: [...solicitudesRegistradas, ...solicitudesRegistradasManuales],
+                solicitudes_no_registradas: [...this.otrosSolicitudes],
+            };
+        } catch {
+            this.enviando = false;
+            this.error = 'Error preparando el envío del formulario.';
+            this.cdr.detectChanges();
+            return;
         }
-        if (this.otrosSolicitudes.length > 0) {
-            descripciones.push(...this.otrosSolicitudes.map(item => `[manual] ${item}`));
-        }
 
-        const payload = {
-            nombre: this.personalData.nombre,
-            apellidos: this.personalData.apellidos,
-            dni: this.personalData.dni,
-            email: this.personalData.email,
-            estado: null,
-            enviado_at: null,
-            anotaciones: null,
-            id_modulos_aportados: idModulosAportados,
-            descripcion_modulos: descripciones.length > 0 ? descripciones.join('\n') : null,
-            solicitudes,
-        };
-
-        this.http.post(`${API_BASE}/insertar_formulario_completo`, payload).subscribe({
-            next: () => {
+        this.http.post(`${API_BASE}/insertar_formulario_completo`, payload)
+            .pipe(timeout(20000), finalize(() => {
                 this.enviando = false;
-                this.enviado = true;
-            },
-            error: (err) => {
-                this.enviando = false;
-                this.error = err?.error?.detail ?? 'Error al enviar el formulario. Inténtalo de nuevo.';
-            }
-        });
+                this.cdr.detectChanges();
+            }))
+            .subscribe({
+                next: () => {
+                    this.error = null;
+                    this.enviado = true;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    if (err?.status === 200) {
+                        this.error = null;
+                        this.enviado = true;
+                        this.cdr.detectChanges();
+                        return;
+                    }
+                    this.error = err?.error?.detail ?? 'Error al enviar el formulario. Inténtalo de nuevo.';
+                    this.cdr.detectChanges();
+                }
+            });
     }
 }

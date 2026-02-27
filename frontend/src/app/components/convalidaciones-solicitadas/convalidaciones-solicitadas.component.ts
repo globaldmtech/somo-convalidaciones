@@ -93,11 +93,17 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
         this.convalidacionesService.targetCicloNombre = this.selectedCicloName;
         this.convalidacionesService.otrosModulosCiclo = [...this.otrosModulosCiclo];
         this.convalidacionesService.otrosSolicitudes = [...this.otrosSolicitudes];
+        this.convalidacionesService.otrosModulosCicloRegistrados = this.otrosModulosCiclo
+            .map(nombre => this.modulosCicloDisponibles.find(m => m.nombre === nombre))
+            .filter((m): m is Modulo => !!m)
+            .map(m => ({ id: Number(m.id), nombre: m.nombre }));
         this.convalidacionesService.sharedSelectedModuleSources = new Map(this.selectedModuleSources);
         this.convalidacionesService.sharedSelectedConvalidations = this.selectedModules.map(mod => ({
             id: Number(mod.id),
             nombre: mod.nombre,
             source: mod.source_nombre,
+            id_convalidacion: mod.id_convalidacion ?? null,
+            id_convalidacion_externa: mod.id_convalidacion_externa ?? null,
         }));
     }
 

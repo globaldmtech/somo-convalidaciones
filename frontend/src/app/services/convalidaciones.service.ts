@@ -17,6 +17,13 @@ export interface SelectedConvalidation {
     id: number;
     nombre: string;
     source: string;
+    id_convalidacion?: number | null;
+    id_convalidacion_externa?: number | null;
+}
+
+export interface RegisteredManualModule {
+    id: number;
+    nombre: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,6 +52,7 @@ export class ConvalidacionesService {
     targetCicloNombre = '';
     otrosModulosCiclo: string[] = [];
     otrosSolicitudes: string[] = [];
+    otrosModulosCicloRegistrados: RegisteredManualModule[] = [];
     sharedSelectedModuleSources: Map<number, string> = new Map();
     sharedSelectedConvalidations: SelectedConvalidation[] = [];
 

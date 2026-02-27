@@ -82,19 +82,23 @@ CREATE TABLE IF NOT EXISTS formulario_solicitudes (
   id_formulario INTEGER NOT NULL,
   id_modulo_destino INTEGER,
   id_convalidacion INTEGER,
+  id_convalidacion_acreditacion INTEGER,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id),
   FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id),
-  FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id)
+  FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id),
+  FOREIGN KEY (id_convalidacion_acreditacion) REFERENCES convalidacion_externa(id)
 );
 
 CREATE TABLE IF NOT EXISTS formulario_modulos_aportados (
   id INTEGER PRIMARY KEY,
   id_formulario INTEGER NOT NULL,
   id_modulo INTEGER,
+  id_acreditacion INTEGER,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id),
-  FOREIGN KEY (id_modulo) REFERENCES modulos(id)
+  FOREIGN KEY (id_modulo) REFERENCES modulos(id),
+  FOREIGN KEY (id_acreditacion) REFERENCES acreditacion_externa(id)
 );
 
 CREATE TABLE IF NOT EXISTS formulario_archivos (
@@ -117,9 +121,9 @@ CREATE TABLE IF NOT EXISTS acreditacion_externa (
 -- Regla 1-to-1: acreditación externa → módulo destino
 -- Una fila por cada instancia de módulo destino (uno por ciclo que lo tenga)
 CREATE TABLE IF NOT EXISTS convalidacion_externa (
-  id_acreditacion   INTEGER NOT NULL,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id_acreditacion INTEGER NOT NULL,
   id_modulo_destino INTEGER NOT NULL,
-  PRIMARY KEY (id_acreditacion, id_modulo_destino),
   FOREIGN KEY (id_acreditacion)   REFERENCES acreditacion_externa(id),
   FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id)
 );
