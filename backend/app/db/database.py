@@ -22,12 +22,14 @@ class DBConfig:
     path: Path = DEFAULT_DB_PATH
 
 
+
 def connect(config: Optional[DBConfig] = None) -> sqlite3.Connection:
     if config is None:
         config = DBConfig()
     config.path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(config.path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = OFF;")
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
@@ -91,7 +93,7 @@ def get_convalidaciones_posibles(
     if acreditacion_ids:
         placeholders = ",".join(["?"] * len(acreditacion_ids))
         query_ext = f"""
-            SELECT m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
+            SELECT NULL as id_convalidacion, m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
                    ae.nombre as source_nombre
             FROM convalidacion_externa ce
             JOIN modulos m ON ce.id_modulo_destino = m.id
@@ -106,7 +108,7 @@ def get_convalidaciones_posibles(
     if modulo_ids:
         placeholders = ",".join(["?"] * len(modulo_ids))
         query_mod = f"""
-            SELECT m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
+            SELECT conv.id as id_convalidacion, m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
                    c_source.nombre as source_nombre,
                    GROUP_CONCAT(m_source.nombre, ', ') as modulos_origen
             FROM convalidacion conv
@@ -173,55 +175,74 @@ def insert_modulo_aportado(
     conn: sqlite3.Connection,
     id_formulario: int,
     id_modulos: Sequence[int],
-    descripcion: Optional[str] = None,
+    id_acreditaciones: Sequence[int],
+    descripciones: Optional[str] = None,
 ) -> list:
     """Execute INSERTs into formulario_modulos_aportados without committing.
 
     The caller is responsible for commit/rollback.
     """
-    rows = []
-    for id_modulo in id_modulos:
-        cursor = conn.execute(
-            """
-            INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo, descripcion)
-            VALUES (?, ?, ?)
-            """,
-            (id_formulario, id_modulo, descripcion),
-        )
-        rows.append({
-            "id": cursor.lastrowid,
-            "id_formulario": id_formulario,
-            "id_modulo": id_modulo,
-            "descripcion": descripcion,
-        })
-    return rows
+    if id_modulos:
+        for id_modulo in id_modulos:
+            print(id_modulo)
+            cursor = conn.execute(
+                """
+                INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo)
+                VALUES (?, ?)
+                """,
+                (id_formulario, id_modulo),
+            )
+            print('sale de aqui')
+    elif id_acreditaciones:
+        for id_acreditacion in id_acreditaciones:
+            print(id_acreditacion)
+            cursor = conn.execute(
+                """
+                INSERT INTO formulario_modulos_aportados (id_formulario, id_acreditacion)
+                VALUES (?, ?)
+                """,
+                (id_formulario, id_acreditacion),
+            )
+    elif descripciones:
+        for descripcion in descripciones:
+            print(descripcion)
+            cursor = conn.execute(
+                """
+                INSERT INTO formulario_modulos_aportados (id_formulario, descripcion)
+                VALUES (?, ?)
+                """,
+                (id_formulario, descripcion),
+            )
+    return "Modulos aportados insertados correctamente"
 
 
 def insert_formulario_solicitud(
     conn: sqlite3.Connection,
     id_formulario: int,
-    id_modulo_destino: Optional[int] = None,
-    id_convalidacion: Optional[int] = None,
-    descripcion: Optional[str] = None,
+    solicitudes_registradas: List[dict],
+    solicitudes_no_registradas: List[str]
 ) -> dict:
     """INSERT into formulario_solicitudes without committing.
 
     The caller is responsible for commit/rollback.
     """
-    cursor = conn.execute(
-        """
-        INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion, descripcion)
-        VALUES (?, ?, ?, ?)
-        """,
-        (id_formulario, id_modulo_destino, id_convalidacion, descripcion),
-    )
-    return {
-        "id_formulario": id_formulario,
-        "id_modulo_destino": id_modulo_destino,
-        "id_convalidacion": id_convalidacion,
-        "descripcion": descripcion,
-    }
-
+    for s_regis in solicitudes_registradas:
+        cursor = conn.execute(
+            """
+            INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion)
+            VALUES (?, ?, ?)
+            """,
+            (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion),
+        )
+    for s_no_regis in solicitudes_no_registradas:
+        cursor = conn.execute(
+            """
+            INSERT INTO formulario_solicitudes (id_formulario, descripcion)
+            VALUES (?, ?)
+            """,
+            (id_formulario, s_no_regis),
+        )
+    return "Solicitudes insertadas correctamente"
 
 def get_or_create_usuario_by_dni(
     conn: sqlite3.Connection,

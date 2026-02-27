@@ -79,10 +79,10 @@ async def insertar_formulario_completo(
 
     Si cualquier paso falla se hace rollback de toda la operación.
     """
-    estado = request.estado if request.estado is not None else 1
-    enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
-
     try:
+        estado = request.estado if request.estado is not None else 1
+        enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
+
         id_alumno = database.get_or_create_usuario_by_dni(
             conn=db,
             dni=request.dni,
@@ -91,6 +91,7 @@ async def insertar_formulario_completo(
             email=request.email,
         )
         id_alumno = int(id_alumno)
+        print(id_alumno)
         # 1. Insertar formulario
         formulario = database.insert_formulario(db,
             id_alumno=id_alumno,
@@ -100,35 +101,28 @@ async def insertar_formulario_completo(
             anotaciones=request.anotaciones,
             validado_at=None,
         )
+        print(formulario)
         id_formulario = formulario["id"]
 
         # 2. Insertar módulos aportados
         modulos_aportados = database.insert_modulo_aportado(
             db,
             id_formulario=id_formulario,
-            id_modulos=request.id_modulos_aportados,
-            descripcion=request.descripcion_modulos,
+            id_modulos=request.id_modulos_registrados_aportados,
+            id_acreditaciones = request.id_acreditaciones_registradas_aportadas,
+            descripciones=request.descripcion_no_registrados
         )
-
+        print(modulos_aportados)
         # 3. Insertar solicitudes
-        solicitudes = []
-        for item in request.solicitudes:
-            solicitud = database.insert_formulario_solicitud(
-                db,
-                id_formulario=id_formulario,
-                id_modulo_destino=item.id_modulo_destino,
-                id_convalidacion=item.id_convalidacion,
-                descripcion=item.descripcion,
-            )
-            solicitudes.append(solicitud)
-
+        solicitud = database.insert_formulario_solicitud(
+            db,
+            id_formulario=id_formulario,
+            solicitudes_no_registradas=request.solicitudes_no_registradas,
+            solicitudes_registradas=request.solicitudes_registradas,
+        )
+        print(solicitud)
         db.commit()
-        return {
-            "alumno": id_alumno,
-            "formulario": formulario,
-            "modulos_aportados": modulos_aportados,
-            "solicitudes": solicitudes,
-        }
+        return "Formulario correctamente enviado"
 
     except sqlite3.IntegrityError as e:
         db.rollback()

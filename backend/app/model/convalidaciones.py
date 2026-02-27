@@ -7,6 +7,7 @@ class ConvalidationRequest(BaseModel):
     target_ciclo_id: int
 
 class ConvalidationResult(BaseModel):
+    id_convalidacion: Optional[int] = None
     id: int
     nombre: str
     ciclo_nombre: str
@@ -31,12 +32,17 @@ class FormularioCompletoRequest(BaseModel):
     apellidos: Optional[str] = None
     dni: str
     email: str
+
     # Datos del formulario
-    estado: Optional[int] = None
+    estado: Optional[int] = 1
     enviado_at: Optional[str] = None
     anotaciones: Optional[str] = None
+
     # Módulos aportados (lista de ids)
-    id_modulos_aportados: List[int]
-    descripcion_modulos: Optional[str] = None
+    id_modulos_registrados_aportados: List[int] #modulos de grado ciclo
+    id_acreditaciones_registradas_aportadas: List[int] #certificaciones o titulaciones aportadas
+    descripcion_no_registrados: Optional[List[str]] = None #todo lo que sea texto input
+
     # Solicitudes
-    solicitudes: List[SolicitudItem]
+    solicitudes_registradas: List[SolicitudItem]
+    solicitudes_no_registradas: List[str]
