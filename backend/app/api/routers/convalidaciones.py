@@ -91,7 +91,6 @@ async def insertar_formulario_completo(
             email=request.email,
         )
         id_alumno = int(id_alumno)
-        print(id_alumno)
         # 1. Insertar formulario
         formulario = database.insert_formulario(db,
             id_alumno=id_alumno,
@@ -101,7 +100,6 @@ async def insertar_formulario_completo(
             anotaciones=request.anotaciones,
             validado_at=None,
         )
-        print(formulario)
         id_formulario = formulario["id"]
 
         # 2. Insertar módulos aportados
@@ -112,7 +110,6 @@ async def insertar_formulario_completo(
             id_acreditaciones = request.id_acreditaciones_registradas_aportadas,
             descripciones=request.descripcion_no_registrados
         )
-        print(modulos_aportados)
         # 3. Insertar solicitudes
         solicitud = database.insert_formulario_solicitud(
             db,
@@ -120,9 +117,8 @@ async def insertar_formulario_completo(
             solicitudes_no_registradas=request.solicitudes_no_registradas,
             solicitudes_registradas=request.solicitudes_registradas,
         )
-        print(solicitud)
         db.commit()
-        return "Formulario correctamente enviado"
+        return {"message": "Formulario correctamente enviado"}
 
     except sqlite3.IntegrityError as e:
         db.rollback()

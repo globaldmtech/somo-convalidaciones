@@ -8,6 +8,7 @@ class ConvalidationRequest(BaseModel):
 
 class ConvalidationResult(BaseModel):
     id_convalidacion: Optional[int] = None
+    id_convalidacion_externa: Optional[int] = None
     id: int
     nombre: str
     ciclo_nombre: str
@@ -22,6 +23,7 @@ class SolicitudItem(BaseModel):
     """Una solicitud dentro del formulario completo."""
     id_modulo_destino: Optional[int] = None
     id_convalidacion: Optional[int] = None
+    id_convalidacion_externa: Optional[int] = None
     descripcion: Optional[str] = None
 
 

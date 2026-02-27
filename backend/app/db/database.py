@@ -93,7 +93,7 @@ def get_convalidaciones_posibles(
     if acreditacion_ids:
         placeholders = ",".join(["?"] * len(acreditacion_ids))
         query_ext = f"""
-            SELECT NULL as id_convalidacion, m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
+            SELECT NULL as id_convalidacion, ce.id as id_convalidacion_externa, m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
                    ae.nombre as source_nombre
             FROM convalidacion_externa ce
             JOIN modulos m ON ce.id_modulo_destino = m.id
@@ -108,7 +108,7 @@ def get_convalidaciones_posibles(
     if modulo_ids:
         placeholders = ",".join(["?"] * len(modulo_ids))
         query_mod = f"""
-            SELECT conv.id as id_convalidacion, m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
+            SELECT conv.id as id_convalidacion, NULL as id_convalidacion_externa, m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
                    c_source.nombre as source_nombre,
                    GROUP_CONCAT(m_source.nombre, ', ') as modulos_origen
             FROM convalidacion conv
@@ -226,13 +226,14 @@ def insert_formulario_solicitud(
 
     The caller is responsible for commit/rollback.
     """
+    
     for s_regis in solicitudes_registradas:
         cursor = conn.execute(
             """
-            INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion)
-            VALUES (?, ?, ?)
+            INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion, id_convalidacion_acreditacion)
+            VALUES (?, ?, ?, ?)
             """,
-            (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion),
+            (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion, s_regis.id_convalidacion_externa),
         )
     for s_no_regis in solicitudes_no_registradas:
         cursor = conn.execute(
