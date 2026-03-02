@@ -34,7 +34,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124844,
     },
 
@@ -56,7 +56,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124844,
     },
 
@@ -81,7 +81,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124844,
     },
 
@@ -103,7 +103,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124844,
     },
 
@@ -131,7 +131,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -152,7 +152,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -176,7 +176,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Certificación energética de edificios",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 

@@ -33,7 +33,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Instalaciones eléctricas en redes de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -61,7 +61,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Automatismos y telecontrol en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -83,7 +83,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -105,7 +105,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -136,7 +136,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Electrotecnia",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -171,7 +171,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Máquinas eléctricas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124845,
     },
 
@@ -193,7 +193,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -215,7 +215,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -237,7 +237,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -259,7 +259,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -288,7 +288,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -309,7 +309,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Documentación técnica en instalaciones eléctricas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -331,7 +331,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -355,7 +355,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas eléctricos, neumáticos e hidráulicos",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -383,7 +383,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Equipos microprogramables",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -411,7 +411,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión del montaje y del mantenimiento de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -440,7 +440,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Planificación del montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -469,7 +469,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Proceso de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124846,
     },
 
@@ -493,7 +493,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Documentación técnica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -515,7 +515,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -543,7 +543,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas y procesos en infraestructuras de telecomunicaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -568,7 +568,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -592,7 +592,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas Hidráulicos y Neumáticos",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 

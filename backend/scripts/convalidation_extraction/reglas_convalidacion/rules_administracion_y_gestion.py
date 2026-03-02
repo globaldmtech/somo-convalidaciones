@@ -29,7 +29,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Logística de aprovisionamiento",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124841,
     },
 
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Logística de aprovisionamiento",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124841,
     },
 
@@ -73,7 +73,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo y relaciones públicas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124841,
     },
 
@@ -93,7 +93,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo y relaciones públicas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124841,
     },
 
@@ -113,7 +113,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo y relaciones públicas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124841,
     },
 

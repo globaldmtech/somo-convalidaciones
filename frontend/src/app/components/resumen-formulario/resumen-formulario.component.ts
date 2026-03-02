@@ -2,7 +2,12 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { finalize, timeout } from 'rxjs/operators';
-import { ConvalidacionesService, PersonalData, SelectedConvalidation } from '../../services/convalidaciones.service';
+import {
+    ConvalidacionesService,
+    PersonalData,
+    SelectedConvalidation,
+    UploadedDocument,
+} from '../../services/convalidaciones.service';
 import { EstudioEntry, AcreditacionExterna } from '../estudios-cursados/estudios-cursados.component';
 
 const API_BASE = 'http://localhost:8000/convalidaciones';
@@ -31,9 +36,6 @@ export class ResumenFormularioComponent implements OnInit {
     enviado = false;
     error: string | null = null;
     expandedEstudios = new Set<number>();
-    documentoDni: File | null = null;
-    documentoCertificado: File | null = null;
-    documentoOtros: File | null = null;
 
     constructor(
         private convalidacionesService: ConvalidacionesService,
@@ -81,16 +83,20 @@ export class ResumenFormularioComponent implements OnInit {
         return this.expandedEstudios.has(index);
     }
 
-    onDocumentoChange(event: Event, tipo: 'dni' | 'certificado' | 'otros'): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files && input.files.length > 0 ? input.files[0] : null;
-        if (tipo === 'dni') this.documentoDni = file;
-        if (tipo === 'certificado') this.documentoCertificado = file;
-        if (tipo === 'otros') this.documentoOtros = file;
+    get documentoDni(): UploadedDocument | null {
+        return this.convalidacionesService.documentoDni;
+    }
+
+    get documentosCertificado(): UploadedDocument[] {
+        return this.convalidacionesService.documentosCertificado;
+    }
+
+    get documentosOtros(): UploadedDocument[] {
+        return this.convalidacionesService.documentosOtros;
     }
 
     get documentosCompletos(): boolean {
-        return !!this.documentoDni && !!this.documentoCertificado;
+        return !!this.documentoDni && this.documentosCertificado.length > 0;
     }
 
     enviar(): void {
@@ -117,13 +123,11 @@ export class ResumenFormularioComponent implements OnInit {
             const solicitudesRegistradas = this.convalidacionesSolicitadas.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: item.id_convalidacion ?? null,
-                id_convalidacion_externa: item.id_convalidacion_externa ?? null,
                 descripcion: null,
             }));
             const solicitudesRegistradasManuales = this.convalidacionesService.otrosModulosCicloRegistrados.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: null,
-                id_convalidacion_externa: null,
                 descripcion: null,
             }));
 

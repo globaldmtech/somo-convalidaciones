@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Presentación y venta de productos de panadería y pastelería",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124855,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124855,
     },
 
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -91,7 +91,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -112,7 +112,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones de Almacenaje",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -133,7 +133,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -155,7 +155,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -177,7 +177,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -201,7 +201,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Presentación y venta de productos de panadería y pastelería",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -222,7 +222,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -244,7 +244,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -265,7 +265,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124856,
     },
 
@@ -286,7 +286,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones de Almacenaje",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -307,7 +307,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -329,7 +329,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -351,7 +351,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -375,7 +375,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Venta y comercialización de productos alimentarios",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -396,7 +396,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Venta y comercialización de productos alimentarios",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -417,7 +417,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -439,7 +439,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -460,7 +460,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -481,7 +481,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones de Almacenaje",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -502,7 +502,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Control de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124857,
     },
 
@@ -530,7 +530,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión medioambiental de los procesos acuícolas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -551,7 +551,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -572,7 +572,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -593,7 +593,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -615,7 +615,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -637,7 +637,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -659,7 +659,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -680,7 +680,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -701,7 +701,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124858,
     },
 
@@ -722,7 +722,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -744,7 +744,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -768,7 +768,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión medioambiental de los procesos acuícolas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -789,7 +789,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -810,7 +810,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -831,7 +831,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -853,7 +853,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -875,7 +875,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -896,7 +896,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124859,
     },
 
@@ -917,7 +917,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124860,
     },
 
@@ -938,7 +938,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de la calidad, prevención de riesgos laborales y protección ambiental",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124860,
     },
 
@@ -960,7 +960,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124860,
     },
 

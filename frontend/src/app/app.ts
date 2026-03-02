@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DatosPersonalesComponent } from './components/datos-personales/datos-personales.component';
 import { EstudiosCursadosComponent } from './components/estudios-cursados/estudios-cursados.component';
 import { ConvalidacionesSolicitadasComponent } from './components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
+import { DocumentacionAportarComponent } from './components/documentacion-aportar/documentacion-aportar.component';
 import { ResumenFormularioComponent } from './components/resumen-formulario/resumen-formulario.component';
 import { ConvalidacionesService } from './services/convalidaciones.service';
 
@@ -14,6 +15,7 @@ import { ConvalidacionesService } from './services/convalidaciones.service';
     DatosPersonalesComponent,
     EstudiosCursadosComponent,
     ConvalidacionesSolicitadasComponent,
+    DocumentacionAportarComponent,
     ResumenFormularioComponent
   ],
   template: `
@@ -60,6 +62,7 @@ import { ConvalidacionesService } from './services/convalidaciones.service';
           <app-datos-personales *ngIf="activeStep === 'personal'" (next)="nextStep()" />
           <app-estudios-cursados *ngIf="activeStep === 'input'" (next)="nextStep()" (prev)="prevStep()" />
           <app-convalidaciones-solicitadas *ngIf="activeStep === 'results'" (next)="nextStep()" (prev)="prevStep()" />
+          <app-documentacion-aportar *ngIf="activeStep === 'docs'" (next)="nextStep()" (prev)="prevStep()" />
           <app-resumen-formulario *ngIf="activeStep === 'resumen'" (prev)="prevStep()" />
         </div>
       </main>
@@ -74,7 +77,7 @@ import { ConvalidacionesService } from './services/convalidaciones.service';
   `
 })
 export class App {
-  activeStep: 'personal' | 'input' | 'results' | 'resumen' = 'personal';
+  activeStep: 'personal' | 'input' | 'results' | 'docs' | 'resumen' = 'personal';
 
   constructor(private convalidacionesService: ConvalidacionesService) {}
 
@@ -82,16 +85,17 @@ export class App {
     { id: 'personal', number: 1, label: 'Datos personales' },
     { id: 'input', number: 2, label: 'Estudios cursados' },
     { id: 'results', number: 3, label: 'Solicitudes' },
-    { id: 'resumen', number: 4, label: 'Resumen' }
+    { id: 'docs', number: 4, label: 'Documentación' },
+    { id: 'resumen', number: 5, label: 'Resumen' }
   ];
 
   isCompleted(stepId: string): boolean {
-    const order = ['personal', 'input', 'results', 'resumen'];
+    const order = ['personal', 'input', 'results', 'docs', 'resumen'];
     return order.indexOf(stepId) < order.indexOf(this.activeStep);
   }
 
   canGoToStep(stepId: string): boolean {
-    const order = ['personal', 'input', 'results', 'resumen'];
+    const order = ['personal', 'input', 'results', 'docs', 'resumen'];
     const targetIndex = order.indexOf(stepId);
     const currentIndex = order.indexOf(this.activeStep);
 
@@ -102,6 +106,7 @@ export class App {
     if (targetIndex >= 1 && !this.hasPersonalData()) return false;
     if (targetIndex >= 2 && !this.hasInputData()) return false;
     if (targetIndex >= 3 && !this.hasResultsData()) return false;
+    if (targetIndex >= 4 && !this.hasDocsData()) return false;
     return true;
   }
 
@@ -129,6 +134,11 @@ export class App {
       || this.convalidacionesService.otrosSolicitudes.length > 0;
   }
 
+  private hasDocsData(): boolean {
+    return !!this.convalidacionesService.documentoDni
+      && this.convalidacionesService.documentosCertificado.length > 0;
+  }
+
   private scrollToTop(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -136,13 +146,15 @@ export class App {
   nextStep() {
     if (this.activeStep === 'personal') this.activeStep = 'input';
     else if (this.activeStep === 'input') this.activeStep = 'results';
-    else if (this.activeStep === 'results') this.activeStep = 'resumen';
+    else if (this.activeStep === 'results') this.activeStep = 'docs';
+    else if (this.activeStep === 'docs') this.activeStep = 'resumen';
     this.scrollToTop();
   }
 
   prevStep() {
     if (this.activeStep === 'input') this.activeStep = 'personal';
     else if (this.activeStep === 'results') this.activeStep = 'input';
-    else if (this.activeStep === 'resumen') this.activeStep = 'results';
+    else if (this.activeStep === 'docs') this.activeStep = 'results';
+    else if (this.activeStep === 'resumen') this.activeStep = 'docs';
   }
 }

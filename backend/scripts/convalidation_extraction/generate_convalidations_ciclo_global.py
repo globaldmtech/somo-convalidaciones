@@ -37,6 +37,8 @@ from db_helper import (
 from reglas_convalidacion.rules_otros import REGLAS_CICLO_A_MODULO_UNIVERSAL
 
 OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "5_load_convalidations_ciclo_global.sql")
+SOURCE_LINK = "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf"
+SOURCE_PAGE = 124840
 
 
 def get_next_conv_id() -> int:
@@ -120,8 +122,8 @@ def generate(dry_run: bool = False) -> list[str]:
 
             sql_lines.append(f"-- {label}: ciclo '{ciclo_nombre}' (completo) -> modulo destino id={id_dest}")
             sql_lines.append(
-                f"INSERT INTO convalidacion (id, id_modulo_destino) "
-                f"VALUES ({conv_id}, {id_dest});"
+                f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
+                f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
             )
             for id_orig in origen_ids_filtrados:
                 sql_lines.append(

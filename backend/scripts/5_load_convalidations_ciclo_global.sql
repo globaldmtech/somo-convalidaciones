@@ -6,7 +6,7 @@
 PRAGMA foreign_keys = OFF;
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=115
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62037, 115);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62037, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 115);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62037, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62037, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62037, 51);
@@ -21,7 +21,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62037, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62037, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=138
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62038, 138);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62038, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 138);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62038, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62038, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62038, 51);
@@ -36,7 +36,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62038, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62038, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=161
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62039, 161);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62039, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 161);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62039, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62039, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62039, 51);
@@ -51,7 +51,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62039, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62039, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=184
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62040, 184);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62040, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 184);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62040, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62040, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62040, 51);
@@ -66,7 +66,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62040, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62040, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=291
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62041, 291);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62041, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 291);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62041, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62041, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62041, 51);
@@ -81,7 +81,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62041, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62041, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=316
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62042, 316);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62042, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 316);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62042, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62042, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62042, 51);
@@ -96,7 +96,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62042, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62042, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=341
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62043, 341);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62043, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 341);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62043, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62043, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62043, 51);
@@ -111,7 +111,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62043, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62043, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=366
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62044, 366);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62044, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 366);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62044, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62044, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62044, 51);
@@ -126,7 +126,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62044, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62044, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=392
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62045, 392);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62045, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 392);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62045, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62045, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62045, 51);
@@ -141,7 +141,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62045, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62045, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=418
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62046, 418);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62046, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 418);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62046, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62046, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62046, 51);
@@ -156,7 +156,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62046, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62046, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=451
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62047, 451);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62047, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 451);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62047, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62047, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62047, 51);
@@ -171,7 +171,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62047, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62047, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=484
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62048, 484);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62048, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 484);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62048, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62048, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62048, 51);
@@ -186,7 +186,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62048, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62048, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=534
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62049, 534);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62049, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 534);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62049, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62049, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62049, 51);
@@ -201,7 +201,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62049, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62049, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=560
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62050, 560);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62050, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 560);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62050, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62050, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62050, 51);
@@ -216,7 +216,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62050, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62050, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=586
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62051, 586);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62051, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 586);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62051, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62051, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62051, 51);
@@ -231,7 +231,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62051, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62051, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=612
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62052, 612);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62052, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 612);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62052, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62052, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62052, 51);
@@ -246,7 +246,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62052, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62052, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=631
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62053, 631);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62053, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 631);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62053, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62053, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62053, 51);
@@ -261,7 +261,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62053, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62053, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=650
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62054, 650);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62054, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 650);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62054, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62054, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62054, 51);
@@ -276,7 +276,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62054, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62054, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=920
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62055, 920);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62055, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 920);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62055, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62055, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62055, 51);
@@ -291,7 +291,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62055, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62055, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=940
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62056, 940);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62056, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 940);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62056, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62056, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62056, 51);
@@ -306,7 +306,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62056, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62056, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=960
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62057, 960);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62057, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 960);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62057, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62057, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62057, 51);
@@ -321,7 +321,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62057, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62057, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=996
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62058, 996);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62058, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 996);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62058, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62058, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62058, 51);
@@ -336,7 +336,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62058, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62058, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1032
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62059, 1032);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62059, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1032);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62059, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62059, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62059, 51);
@@ -351,7 +351,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62059, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62059, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1068
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62060, 1068);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62060, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1068);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62060, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62060, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62060, 51);
@@ -366,7 +366,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62060, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62060, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1093
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62061, 1093);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62061, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1093);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62061, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62061, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62061, 51);
@@ -381,7 +381,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62061, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62061, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1170
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62062, 1170);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62062, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1170);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62062, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62062, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62062, 51);
@@ -396,7 +396,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62062, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62062, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1185
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62063, 1185);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62063, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1185);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62063, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62063, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62063, 51);
@@ -411,7 +411,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62063, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62063, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1214
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62064, 1214);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62064, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1214);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62064, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62064, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62064, 51);
@@ -426,7 +426,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62064, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62064, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1243
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62065, 1243);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62065, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1243);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62065, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62065, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62065, 51);
@@ -441,7 +441,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62065, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62065, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1272
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62066, 1272);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62066, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1272);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62066, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62066, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62066, 51);
@@ -456,7 +456,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62066, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62066, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1308
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62067, 1308);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62067, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1308);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62067, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62067, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62067, 51);
@@ -471,7 +471,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62067, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62067, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1330
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62068, 1330);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62068, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1330);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62068, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62068, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62068, 51);
@@ -486,7 +486,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62068, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62068, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1352
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62069, 1352);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62069, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1352);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62069, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62069, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62069, 51);
@@ -501,7 +501,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62069, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62069, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1394
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62070, 1394);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62070, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1394);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62070, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62070, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62070, 51);
@@ -516,7 +516,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62070, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62070, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1436
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62071, 1436);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62071, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1436);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62071, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62071, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62071, 51);
@@ -531,7 +531,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62071, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62071, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1543
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62072, 1543);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62072, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1543);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62072, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62072, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62072, 51);
@@ -546,7 +546,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62072, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62072, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1564
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62073, 1564);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62073, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1564);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62073, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62073, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62073, 51);
@@ -561,7 +561,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62073, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62073, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1585
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62074, 1585);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62074, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1585);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62074, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62074, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62074, 51);
@@ -576,7 +576,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62074, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62074, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1606
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62075, 1606);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62075, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1606);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62075, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62075, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62075, 51);
@@ -591,7 +591,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62075, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62075, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1617
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62076, 1617);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62076, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1617);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62076, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62076, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62076, 51);
@@ -606,7 +606,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62076, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62076, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1644
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62077, 1644);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62077, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1644);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62077, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62077, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62077, 51);
@@ -621,7 +621,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62077, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62077, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1671
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62078, 1671);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62078, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1671);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62078, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62078, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62078, 51);
@@ -636,7 +636,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62078, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62078, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1698
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62079, 1698);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62079, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1698);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62079, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62079, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62079, 51);
@@ -651,7 +651,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62079, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62079, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1832
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62080, 1832);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62080, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1832);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62080, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62080, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62080, 51);
@@ -666,7 +666,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62080, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62080, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1860
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62081, 1860);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62081, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1860);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62081, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62081, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62081, 51);
@@ -681,7 +681,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62081, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62081, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1915
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62082, 1915);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62082, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1915);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62082, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62082, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62082, 51);
@@ -696,7 +696,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62082, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62082, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1936
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62083, 1936);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62083, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1936);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62083, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62083, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62083, 51);
@@ -711,7 +711,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62083, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62083, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1957
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62084, 1957);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62084, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1957);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62084, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62084, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62084, 51);
@@ -726,7 +726,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62084, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62084, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=1981
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62085, 1981);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62085, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1981);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62085, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62085, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62085, 51);
@@ -741,7 +741,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62085, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62085, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2005
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62086, 2005);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62086, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2005);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62086, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62086, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62086, 51);
@@ -756,7 +756,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62086, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62086, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2036
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62087, 2036);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62087, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2036);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62087, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62087, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62087, 51);
@@ -771,7 +771,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62087, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62087, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2058
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62088, 2058);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62088, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2058);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62088, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62088, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62088, 51);
@@ -786,7 +786,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62088, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62088, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2120
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62089, 2120);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62089, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2120);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62089, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62089, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62089, 51);
@@ -801,7 +801,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62089, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62089, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2132
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62090, 2132);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62090, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2132);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62090, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62090, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62090, 51);
@@ -816,7 +816,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62090, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62090, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2162
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62091, 2162);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62091, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2162);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62091, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62091, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62091, 51);
@@ -831,7 +831,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62091, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62091, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2192
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62092, 2192);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62092, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2192);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62092, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62092, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62092, 51);
@@ -846,7 +846,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62092, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62092, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2327
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62093, 2327);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62093, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2327);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62093, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62093, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62093, 51);
@@ -861,7 +861,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62093, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62093, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2350
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62094, 2350);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62094, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2350);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62094, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62094, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62094, 51);
@@ -876,7 +876,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62094, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62094, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2373
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62095, 2373);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62095, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2373);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62095, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62095, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62095, 51);
@@ -891,7 +891,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62095, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62095, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2396
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62096, 2396);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62096, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2396);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62096, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62096, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62096, 51);
@@ -906,7 +906,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62096, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62096, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2426
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62097, 2426);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62097, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2426);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62097, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62097, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62097, 51);
@@ -921,7 +921,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62097, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62097, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2456
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62098, 2456);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62098, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2456);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62098, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62098, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62098, 51);
@@ -936,7 +936,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62098, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62098, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2553
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62099, 2553);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62099, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2553);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62099, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62099, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62099, 51);
@@ -951,7 +951,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62099, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62099, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2575
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62100, 2575);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62100, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2575);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62100, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62100, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62100, 51);
@@ -966,7 +966,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62100, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62100, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2597
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62101, 2597);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62101, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2597);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62101, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62101, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62101, 51);
@@ -981,7 +981,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62101, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62101, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2632
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62102, 2632);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62102, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2632);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62102, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62102, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62102, 51);
@@ -996,7 +996,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62102, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62102, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2667
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62103, 2667);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62103, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2667);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62103, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62103, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62103, 51);
@@ -1011,7 +1011,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62103, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62103, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2702
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62104, 2702);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62104, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2702);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62104, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62104, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62104, 51);
@@ -1026,7 +1026,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62104, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62104, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2727
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62105, 2727);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62105, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2727);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62105, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62105, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62105, 51);
@@ -1041,7 +1041,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62105, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62105, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2752
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62106, 2752);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62106, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2752);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62106, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62106, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62106, 51);
@@ -1056,7 +1056,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62106, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62106, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2763
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62107, 2763);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62107, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2763);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62107, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62107, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62107, 51);
@@ -1071,7 +1071,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62107, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62107, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2793
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62108, 2793);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62108, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2793);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62108, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62108, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62108, 51);
@@ -1086,7 +1086,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62108, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62108, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2823
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62109, 2823);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62109, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2823);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62109, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62109, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62109, 51);
@@ -1101,7 +1101,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62109, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62109, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2853
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62110, 2853);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62110, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2853);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62110, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62110, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62110, 51);
@@ -1116,7 +1116,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62110, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62110, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2878
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62111, 2878);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62111, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2878);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62111, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62111, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62111, 51);
@@ -1131,7 +1131,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62111, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62111, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2960
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62112, 2960);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62112, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2960);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62112, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62112, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62112, 51);
@@ -1146,7 +1146,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62112, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62112, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=2986
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62113, 2986);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62113, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2986);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62113, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62113, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62113, 51);
@@ -1161,7 +1161,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62113, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62113, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3012
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62114, 3012);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62114, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3012);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62114, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62114, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62114, 51);
@@ -1176,7 +1176,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62114, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62114, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3038
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62115, 3038);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62115, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3038);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62115, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62115, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62115, 51);
@@ -1191,7 +1191,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62115, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62115, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3064
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62116, 3064);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62116, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3064);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62116, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62116, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62116, 51);
@@ -1206,7 +1206,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62116, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62116, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3107
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62117, 3107);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62117, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3107);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62117, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62117, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62117, 51);
@@ -1221,7 +1221,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62117, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62117, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3131
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62118, 3131);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62118, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3131);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62118, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62118, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62118, 51);
@@ -1236,7 +1236,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62118, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62118, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3155
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62119, 3155);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62119, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3155);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62119, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62119, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62119, 51);
@@ -1251,7 +1251,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62119, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62119, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3179
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62120, 3179);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62120, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3179);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62120, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62120, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62120, 51);
@@ -1266,7 +1266,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62120, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62120, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3245
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62121, 3245);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62121, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3245);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62121, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62121, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62121, 51);
@@ -1281,7 +1281,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62121, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62121, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3272
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62122, 3272);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62122, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3272);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62122, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62122, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62122, 51);
@@ -1296,7 +1296,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62122, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62122, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3299
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62123, 3299);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62123, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3299);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62123, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62123, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62123, 51);
@@ -1311,7 +1311,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62123, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62123, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3326
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62124, 3326);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62124, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3326);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62124, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62124, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62124, 51);
@@ -1326,7 +1326,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62124, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62124, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3339
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62125, 3339);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62125, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3339);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62125, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62125, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62125, 51);
@@ -1341,7 +1341,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62125, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62125, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3369
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62126, 3369);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62126, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3369);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62126, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62126, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62126, 51);
@@ -1356,7 +1356,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62126, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62126, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3399
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62127, 3399);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62127, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3399);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62127, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62127, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62127, 51);
@@ -1371,7 +1371,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62127, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62127, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3429
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62128, 3429);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62128, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3429);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62128, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62128, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62128, 51);
@@ -1386,7 +1386,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62128, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62128, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3450
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62129, 3450);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62129, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3450);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62129, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62129, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62129, 51);
@@ -1401,7 +1401,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62129, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62129, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3471
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62130, 3471);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62130, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3471);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62130, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62130, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62130, 51);
@@ -1416,7 +1416,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62130, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62130, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3506
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62131, 3506);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62131, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3506);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62131, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62131, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62131, 51);
@@ -1431,7 +1431,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62131, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62131, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3541
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62132, 3541);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62132, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3541);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62132, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62132, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62132, 51);
@@ -1446,7 +1446,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62132, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62132, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3582
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62133, 3582);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62133, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3582);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62133, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62133, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62133, 51);
@@ -1461,7 +1461,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62133, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62133, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3604
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62134, 3604);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62134, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3604);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62134, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62134, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62134, 51);
@@ -1476,7 +1476,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62134, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62134, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3626
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62135, 3626);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62135, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3626);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62135, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62135, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62135, 51);
@@ -1491,7 +1491,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62135, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62135, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3657
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62136, 3657);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62136, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3657);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62136, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62136, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62136, 51);
@@ -1506,7 +1506,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62136, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62136, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3688
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62137, 3688);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62137, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3688);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62137, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62137, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62137, 51);
@@ -1521,7 +1521,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62137, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62137, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3719
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62138, 3719);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62138, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3719);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62138, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62138, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62138, 51);
@@ -1536,7 +1536,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62138, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62138, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3753
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62139, 3753);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62139, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3753);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62139, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62139, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62139, 51);
@@ -1551,7 +1551,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62139, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62139, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3787
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62140, 3787);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62140, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3787);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62140, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62140, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62140, 51);
@@ -1566,7 +1566,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62140, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62140, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3821
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62141, 3821);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62141, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3821);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62141, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62141, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62141, 51);
@@ -1581,7 +1581,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62141, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62141, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3850
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62142, 3850);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62142, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3850);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62142, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62142, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62142, 51);
@@ -1596,7 +1596,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62142, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62142, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3879
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62143, 3879);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62143, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3879);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62143, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62143, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62143, 51);
@@ -1611,7 +1611,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62143, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62143, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3908
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62144, 3908);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62144, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3908);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62144, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62144, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62144, 51);
@@ -1626,7 +1626,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62144, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62144, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3930
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62145, 3930);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62145, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3930);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62145, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62145, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62145, 51);
@@ -1641,7 +1641,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62145, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62145, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3952
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62146, 3952);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62146, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3952);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62146, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62146, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62146, 51);
@@ -1656,7 +1656,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62146, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62146, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=3988
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62147, 3988);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62147, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3988);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62147, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62147, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62147, 51);
@@ -1671,7 +1671,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62147, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62147, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4024
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62148, 4024);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62148, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4024);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62148, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62148, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62148, 51);
@@ -1686,7 +1686,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62148, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62148, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4076
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62149, 4076);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62149, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4076);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62149, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62149, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62149, 51);
@@ -1701,7 +1701,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62149, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62149, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4090
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62150, 4090);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62150, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4090);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62150, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62150, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62150, 51);
@@ -1716,7 +1716,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62150, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62150, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4123
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62151, 4123);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62151, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4123);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62151, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62151, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62151, 51);
@@ -1731,7 +1731,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62151, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62151, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4156
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62152, 4156);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62152, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4156);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62152, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62152, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62152, 51);
@@ -1746,7 +1746,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62152, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62152, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4189
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62153, 4189);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62153, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4189);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62153, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62153, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62153, 51);
@@ -1761,7 +1761,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62153, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62153, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4224
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62154, 4224);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62154, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4224);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62154, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62154, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62154, 51);
@@ -1776,7 +1776,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62154, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62154, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4259
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62155, 4259);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62155, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4259);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62155, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62155, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62155, 51);
@@ -1791,7 +1791,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62155, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62155, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4334
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62156, 4334);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62156, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4334);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62156, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62156, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62156, 51);
@@ -1806,7 +1806,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62156, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62156, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4361
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62157, 4361);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62157, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4361);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62157, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62157, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62157, 51);
@@ -1821,7 +1821,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62157, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62157, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4388
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62158, 4388);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62158, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4388);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62158, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62158, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62158, 51);
@@ -1836,7 +1836,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62158, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62158, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4415
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62159, 4415);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62159, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4415);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62159, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62159, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62159, 51);
@@ -1851,7 +1851,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62159, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62159, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4444
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62160, 4444);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62160, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4444);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62160, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62160, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62160, 51);
@@ -1866,7 +1866,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62160, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62160, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4473
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62161, 4473);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62161, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4473);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62161, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62161, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62161, 51);
@@ -1881,7 +1881,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62161, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62161, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4502
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62162, 4502);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62162, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4502);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62162, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62162, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62162, 51);
@@ -1896,7 +1896,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62162, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62162, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4569
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62163, 4569);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62163, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4569);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62163, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62163, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62163, 51);
@@ -1911,7 +1911,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62163, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62163, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4593
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62164, 4593);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62164, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4593);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62164, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62164, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62164, 51);
@@ -1926,7 +1926,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62164, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62164, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4617
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62165, 4617);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62165, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4617);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62165, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62165, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62165, 51);
@@ -1941,7 +1941,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62165, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62165, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4641
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62166, 4641);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62166, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4641);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62166, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62166, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62166, 51);
@@ -1956,7 +1956,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62166, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62166, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4670
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62167, 4670);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62167, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4670);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62167, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62167, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62167, 51);
@@ -1971,7 +1971,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62167, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62167, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4699
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62168, 4699);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62168, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4699);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62168, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62168, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62168, 51);
@@ -1986,7 +1986,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62168, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62168, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4728
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62169, 4728);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62169, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4728);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62169, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62169, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62169, 51);
@@ -2001,7 +2001,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62169, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62169, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4751
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62170, 4751);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62170, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4751);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62170, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62170, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62170, 51);
@@ -2016,7 +2016,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62170, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62170, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4774
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62171, 4774);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62171, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4774);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62171, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62171, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62171, 51);
@@ -2031,7 +2031,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62171, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62171, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4807
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62172, 4807);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62172, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4807);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62172, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62172, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62172, 51);
@@ -2046,7 +2046,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62172, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62172, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=4840
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62173, 4840);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62173, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4840);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62173, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62173, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62173, 51);
@@ -2061,7 +2061,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62173, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62173, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=5038
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62174, 5038);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62174, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 5038);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62174, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62174, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62174, 51);
@@ -2076,7 +2076,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62174, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62174, 60);
 
 -- Regla #1: ciclo 'Gestión Administrativa' (completo) -> modulo destino id=5050
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62175, 5050);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62175, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 5050);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62175, 49);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62175, 50);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62175, 51);
@@ -2091,7 +2091,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62175, 59);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62175, 60);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=115
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62176, 115);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62176, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 115);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62176, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62176, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62176, 63);
@@ -2113,7 +2113,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62176, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62176, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=138
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62177, 138);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62177, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 138);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62177, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62177, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62177, 63);
@@ -2135,7 +2135,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62177, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62177, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=161
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62178, 161);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62178, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 161);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62178, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62178, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62178, 63);
@@ -2157,7 +2157,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62178, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62178, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=184
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62179, 184);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62179, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 184);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62179, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62179, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62179, 63);
@@ -2179,7 +2179,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62179, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62179, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=291
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62180, 291);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62180, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 291);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62180, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62180, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62180, 63);
@@ -2201,7 +2201,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62180, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62180, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=316
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62181, 316);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62181, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 316);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62181, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62181, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62181, 63);
@@ -2223,7 +2223,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62181, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62181, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=341
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62182, 341);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62182, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 341);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62182, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62182, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62182, 63);
@@ -2245,7 +2245,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62182, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62182, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=366
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62183, 366);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62183, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 366);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62183, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62183, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62183, 63);
@@ -2267,7 +2267,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62183, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62183, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=392
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62184, 392);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62184, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 392);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62184, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62184, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62184, 63);
@@ -2289,7 +2289,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62184, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62184, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=418
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62185, 418);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62185, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 418);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62185, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62185, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62185, 63);
@@ -2311,7 +2311,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62185, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62185, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=451
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62186, 451);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62186, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 451);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62186, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62186, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62186, 63);
@@ -2333,7 +2333,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62186, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62186, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=484
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62187, 484);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62187, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 484);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62187, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62187, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62187, 63);
@@ -2355,7 +2355,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62187, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62187, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=534
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62188, 534);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62188, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 534);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62188, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62188, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62188, 63);
@@ -2377,7 +2377,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62188, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62188, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=560
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62189, 560);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62189, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 560);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62189, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62189, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62189, 63);
@@ -2399,7 +2399,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62189, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62189, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=586
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62190, 586);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62190, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 586);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62190, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62190, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62190, 63);
@@ -2421,7 +2421,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62190, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62190, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=612
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62191, 612);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62191, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 612);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62191, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62191, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62191, 63);
@@ -2443,7 +2443,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62191, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62191, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=631
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62192, 631);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62192, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 631);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62192, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62192, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62192, 63);
@@ -2465,7 +2465,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62192, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62192, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=650
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62193, 650);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62193, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 650);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62193, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62193, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62193, 63);
@@ -2487,7 +2487,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62193, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62193, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=920
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62194, 920);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62194, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 920);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62194, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62194, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62194, 63);
@@ -2509,7 +2509,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62194, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62194, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=940
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62195, 940);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62195, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 940);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62195, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62195, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62195, 63);
@@ -2531,7 +2531,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62195, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62195, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=960
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62196, 960);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62196, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 960);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62196, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62196, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62196, 63);
@@ -2553,7 +2553,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62196, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62196, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=996
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62197, 996);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62197, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 996);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62197, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62197, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62197, 63);
@@ -2575,7 +2575,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62197, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62197, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1032
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62198, 1032);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62198, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1032);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62198, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62198, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62198, 63);
@@ -2597,7 +2597,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62198, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62198, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1068
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62199, 1068);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62199, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1068);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62199, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62199, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62199, 63);
@@ -2619,7 +2619,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62199, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62199, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1093
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62200, 1093);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62200, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1093);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62200, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62200, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62200, 63);
@@ -2641,7 +2641,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62200, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62200, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1170
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62201, 1170);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62201, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1170);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62201, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62201, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62201, 63);
@@ -2663,7 +2663,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62201, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62201, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1185
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62202, 1185);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62202, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1185);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62202, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62202, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62202, 63);
@@ -2685,7 +2685,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62202, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62202, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1214
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62203, 1214);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62203, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1214);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62203, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62203, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62203, 63);
@@ -2707,7 +2707,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62203, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62203, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1243
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62204, 1243);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62204, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1243);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62204, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62204, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62204, 63);
@@ -2729,7 +2729,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62204, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62204, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1272
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62205, 1272);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62205, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1272);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62205, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62205, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62205, 63);
@@ -2751,7 +2751,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62205, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62205, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1308
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62206, 1308);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62206, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1308);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62206, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62206, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62206, 63);
@@ -2773,7 +2773,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62206, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62206, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1330
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62207, 1330);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62207, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1330);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62207, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62207, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62207, 63);
@@ -2795,7 +2795,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62207, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62207, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1352
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62208, 1352);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62208, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1352);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62208, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62208, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62208, 63);
@@ -2817,7 +2817,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62208, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62208, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1394
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62209, 1394);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62209, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1394);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62209, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62209, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62209, 63);
@@ -2839,7 +2839,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62209, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62209, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1436
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62210, 1436);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62210, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1436);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62210, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62210, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62210, 63);
@@ -2861,7 +2861,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62210, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62210, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1543
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62211, 1543);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62211, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1543);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62211, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62211, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62211, 63);
@@ -2883,7 +2883,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62211, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62211, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1564
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62212, 1564);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62212, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1564);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62212, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62212, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62212, 63);
@@ -2905,7 +2905,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62212, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62212, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1585
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62213, 1585);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62213, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1585);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62213, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62213, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62213, 63);
@@ -2927,7 +2927,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62213, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62213, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1606
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62214, 1606);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62214, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1606);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62214, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62214, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62214, 63);
@@ -2949,7 +2949,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62214, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62214, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1617
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62215, 1617);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62215, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1617);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62215, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62215, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62215, 63);
@@ -2971,7 +2971,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62215, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62215, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1644
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62216, 1644);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62216, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1644);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62216, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62216, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62216, 63);
@@ -2993,7 +2993,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62216, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62216, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1671
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62217, 1671);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62217, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1671);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62217, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62217, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62217, 63);
@@ -3015,7 +3015,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62217, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62217, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1698
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62218, 1698);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62218, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1698);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62218, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62218, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62218, 63);
@@ -3037,7 +3037,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62218, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62218, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1832
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62219, 1832);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62219, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1832);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62219, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62219, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62219, 63);
@@ -3059,7 +3059,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62219, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62219, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1860
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62220, 1860);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62220, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1860);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62220, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62220, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62220, 63);
@@ -3081,7 +3081,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62220, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62220, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1915
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62221, 1915);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62221, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1915);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62221, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62221, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62221, 63);
@@ -3103,7 +3103,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62221, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62221, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1936
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62222, 1936);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62222, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1936);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62222, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62222, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62222, 63);
@@ -3125,7 +3125,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62222, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62222, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1957
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62223, 1957);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62223, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1957);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62223, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62223, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62223, 63);
@@ -3147,7 +3147,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62223, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62223, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=1981
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62224, 1981);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62224, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 1981);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62224, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62224, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62224, 63);
@@ -3169,7 +3169,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62224, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62224, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2005
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62225, 2005);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62225, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2005);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62225, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62225, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62225, 63);
@@ -3191,7 +3191,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62225, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62225, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2036
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62226, 2036);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62226, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2036);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62226, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62226, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62226, 63);
@@ -3213,7 +3213,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62226, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62226, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2058
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62227, 2058);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62227, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2058);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62227, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62227, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62227, 63);
@@ -3235,7 +3235,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62227, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62227, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2120
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62228, 2120);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62228, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2120);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62228, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62228, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62228, 63);
@@ -3257,7 +3257,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62228, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62228, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2132
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62229, 2132);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62229, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2132);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62229, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62229, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62229, 63);
@@ -3279,7 +3279,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62229, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62229, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2162
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62230, 2162);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62230, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2162);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62230, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62230, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62230, 63);
@@ -3301,7 +3301,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62230, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62230, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2192
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62231, 2192);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62231, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2192);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62231, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62231, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62231, 63);
@@ -3323,7 +3323,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62231, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62231, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2327
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62232, 2327);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62232, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2327);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62232, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62232, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62232, 63);
@@ -3345,7 +3345,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62232, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62232, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2350
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62233, 2350);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62233, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2350);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62233, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62233, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62233, 63);
@@ -3367,7 +3367,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62233, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62233, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2373
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62234, 2373);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62234, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2373);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62234, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62234, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62234, 63);
@@ -3389,7 +3389,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62234, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62234, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2396
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62235, 2396);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62235, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2396);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62235, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62235, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62235, 63);
@@ -3411,7 +3411,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62235, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62235, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2426
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62236, 2426);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62236, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2426);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62236, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62236, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62236, 63);
@@ -3433,7 +3433,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62236, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62236, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2456
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62237, 2456);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62237, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2456);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62237, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62237, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62237, 63);
@@ -3455,7 +3455,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62237, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62237, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2553
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62238, 2553);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62238, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2553);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62238, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62238, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62238, 63);
@@ -3477,7 +3477,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62238, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62238, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2575
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62239, 2575);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62239, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2575);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62239, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62239, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62239, 63);
@@ -3499,7 +3499,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62239, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62239, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2597
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62240, 2597);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62240, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2597);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62240, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62240, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62240, 63);
@@ -3521,7 +3521,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62240, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62240, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2632
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62241, 2632);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62241, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2632);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62241, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62241, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62241, 63);
@@ -3543,7 +3543,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62241, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62241, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2667
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62242, 2667);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62242, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2667);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62242, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62242, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62242, 63);
@@ -3565,7 +3565,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62242, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62242, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2702
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62243, 2702);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62243, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2702);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62243, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62243, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62243, 63);
@@ -3587,7 +3587,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62243, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62243, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2727
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62244, 2727);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62244, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2727);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62244, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62244, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62244, 63);
@@ -3609,7 +3609,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62244, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62244, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2752
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62245, 2752);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62245, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2752);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62245, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62245, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62245, 63);
@@ -3631,7 +3631,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62245, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62245, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2763
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62246, 2763);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62246, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2763);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62246, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62246, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62246, 63);
@@ -3653,7 +3653,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62246, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62246, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2793
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62247, 2793);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62247, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2793);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62247, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62247, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62247, 63);
@@ -3675,7 +3675,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62247, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62247, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2823
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62248, 2823);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62248, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2823);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62248, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62248, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62248, 63);
@@ -3697,7 +3697,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62248, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62248, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2853
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62249, 2853);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62249, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2853);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62249, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62249, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62249, 63);
@@ -3719,7 +3719,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62249, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62249, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2878
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62250, 2878);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62250, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2878);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62250, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62250, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62250, 63);
@@ -3741,7 +3741,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62250, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62250, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2960
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62251, 2960);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62251, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2960);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62251, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62251, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62251, 63);
@@ -3763,7 +3763,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62251, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62251, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=2986
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62252, 2986);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62252, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 2986);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62252, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62252, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62252, 63);
@@ -3785,7 +3785,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62252, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62252, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3012
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62253, 3012);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62253, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3012);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62253, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62253, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62253, 63);
@@ -3807,7 +3807,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62253, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62253, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3038
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62254, 3038);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62254, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3038);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62254, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62254, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62254, 63);
@@ -3829,7 +3829,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62254, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62254, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3064
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62255, 3064);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62255, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3064);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62255, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62255, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62255, 63);
@@ -3851,7 +3851,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62255, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62255, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3107
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62256, 3107);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62256, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3107);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62256, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62256, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62256, 63);
@@ -3873,7 +3873,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62256, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62256, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3131
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62257, 3131);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62257, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3131);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62257, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62257, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62257, 63);
@@ -3895,7 +3895,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62257, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62257, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3155
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62258, 3155);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62258, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3155);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62258, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62258, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62258, 63);
@@ -3917,7 +3917,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62258, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62258, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3179
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62259, 3179);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62259, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3179);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62259, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62259, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62259, 63);
@@ -3939,7 +3939,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62259, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62259, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3245
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62260, 3245);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62260, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3245);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62260, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62260, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62260, 63);
@@ -3961,7 +3961,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62260, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62260, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3272
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62261, 3272);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62261, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3272);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62261, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62261, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62261, 63);
@@ -3983,7 +3983,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62261, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62261, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3299
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62262, 3299);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62262, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3299);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62262, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62262, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62262, 63);
@@ -4005,7 +4005,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62262, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62262, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3326
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62263, 3326);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62263, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3326);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62263, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62263, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62263, 63);
@@ -4027,7 +4027,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62263, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62263, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3339
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62264, 3339);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62264, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3339);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62264, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62264, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62264, 63);
@@ -4049,7 +4049,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62264, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62264, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3369
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62265, 3369);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62265, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3369);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62265, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62265, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62265, 63);
@@ -4071,7 +4071,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62265, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62265, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3399
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62266, 3399);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62266, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3399);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62266, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62266, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62266, 63);
@@ -4093,7 +4093,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62266, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62266, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3429
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62267, 3429);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62267, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3429);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62267, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62267, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62267, 63);
@@ -4115,7 +4115,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62267, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62267, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3450
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62268, 3450);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62268, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3450);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62268, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62268, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62268, 63);
@@ -4137,7 +4137,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62268, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62268, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3471
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62269, 3471);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62269, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3471);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62269, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62269, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62269, 63);
@@ -4159,7 +4159,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62269, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62269, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3506
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62270, 3506);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62270, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3506);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62270, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62270, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62270, 63);
@@ -4181,7 +4181,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62270, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62270, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3541
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62271, 3541);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62271, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3541);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62271, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62271, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62271, 63);
@@ -4203,7 +4203,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62271, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62271, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3582
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62272, 3582);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62272, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3582);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62272, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62272, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62272, 63);
@@ -4225,7 +4225,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62272, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62272, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3604
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62273, 3604);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62273, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3604);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62273, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62273, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62273, 63);
@@ -4247,7 +4247,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62273, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62273, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3626
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62274, 3626);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62274, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3626);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62274, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62274, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62274, 63);
@@ -4269,7 +4269,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62274, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62274, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3657
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62275, 3657);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62275, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3657);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62275, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62275, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62275, 63);
@@ -4291,7 +4291,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62275, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62275, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3688
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62276, 3688);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62276, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3688);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62276, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62276, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62276, 63);
@@ -4313,7 +4313,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62276, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62276, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3719
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62277, 3719);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62277, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3719);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62277, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62277, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62277, 63);
@@ -4335,7 +4335,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62277, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62277, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3753
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62278, 3753);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62278, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3753);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62278, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62278, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62278, 63);
@@ -4357,7 +4357,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62278, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62278, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3787
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62279, 3787);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62279, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3787);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62279, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62279, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62279, 63);
@@ -4379,7 +4379,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62279, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62279, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3821
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62280, 3821);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62280, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3821);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62280, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62280, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62280, 63);
@@ -4401,7 +4401,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62280, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62280, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3850
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62281, 3850);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62281, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3850);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62281, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62281, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62281, 63);
@@ -4423,7 +4423,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62281, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62281, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3879
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62282, 3879);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62282, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3879);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62282, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62282, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62282, 63);
@@ -4445,7 +4445,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62282, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62282, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3908
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62283, 3908);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62283, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3908);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62283, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62283, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62283, 63);
@@ -4467,7 +4467,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62283, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62283, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3930
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62284, 3930);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62284, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3930);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62284, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62284, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62284, 63);
@@ -4489,7 +4489,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62284, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62284, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3952
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62285, 3952);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62285, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3952);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62285, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62285, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62285, 63);
@@ -4511,7 +4511,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62285, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62285, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=3988
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62286, 3988);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62286, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3988);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62286, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62286, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62286, 63);
@@ -4533,7 +4533,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62286, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62286, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4024
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62287, 4024);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62287, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4024);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62287, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62287, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62287, 63);
@@ -4555,7 +4555,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62287, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62287, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4076
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62288, 4076);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62288, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4076);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62288, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62288, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62288, 63);
@@ -4577,7 +4577,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62288, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62288, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4090
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62289, 4090);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62289, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4090);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62289, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62289, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62289, 63);
@@ -4599,7 +4599,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62289, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62289, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4123
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62290, 4123);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62290, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4123);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62290, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62290, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62290, 63);
@@ -4621,7 +4621,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62290, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62290, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4156
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62291, 4156);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62291, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4156);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62291, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62291, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62291, 63);
@@ -4643,7 +4643,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62291, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62291, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4189
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62292, 4189);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62292, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4189);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62292, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62292, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62292, 63);
@@ -4665,7 +4665,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62292, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62292, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4224
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62293, 4224);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62293, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4224);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62293, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62293, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62293, 63);
@@ -4687,7 +4687,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62293, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62293, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4259
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62294, 4259);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62294, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4259);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62294, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62294, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62294, 63);
@@ -4709,7 +4709,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62294, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62294, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4334
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62295, 4334);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62295, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4334);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62295, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62295, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62295, 63);
@@ -4731,7 +4731,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62295, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62295, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4361
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62296, 4361);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62296, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4361);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62296, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62296, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62296, 63);
@@ -4753,7 +4753,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62296, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62296, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4388
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62297, 4388);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62297, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4388);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62297, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62297, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62297, 63);
@@ -4775,7 +4775,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62297, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62297, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4415
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62298, 4415);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62298, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4415);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62298, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62298, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62298, 63);
@@ -4797,7 +4797,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62298, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62298, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4444
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62299, 4444);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62299, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4444);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62299, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62299, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62299, 63);
@@ -4819,7 +4819,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62299, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62299, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4473
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62300, 4473);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62300, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4473);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62300, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62300, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62300, 63);
@@ -4841,7 +4841,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62300, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62300, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4502
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62301, 4502);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62301, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4502);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62301, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62301, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62301, 63);
@@ -4863,7 +4863,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62301, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62301, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4569
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62302, 4569);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62302, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4569);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62302, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62302, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62302, 63);
@@ -4885,7 +4885,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62302, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62302, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4593
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62303, 4593);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62303, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4593);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62303, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62303, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62303, 63);
@@ -4907,7 +4907,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62303, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62303, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4617
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62304, 4617);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62304, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4617);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62304, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62304, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62304, 63);
@@ -4929,7 +4929,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62304, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62304, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4641
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62305, 4641);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62305, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4641);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62305, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62305, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62305, 63);
@@ -4951,7 +4951,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62305, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62305, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4670
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62306, 4670);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62306, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4670);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62306, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62306, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62306, 63);
@@ -4973,7 +4973,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62306, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62306, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4699
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62307, 4699);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62307, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4699);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62307, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62307, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62307, 63);
@@ -4995,7 +4995,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62307, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62307, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4728
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62308, 4728);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62308, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4728);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62308, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62308, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62308, 63);
@@ -5017,7 +5017,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62308, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62308, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4751
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62309, 4751);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62309, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4751);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62309, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62309, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62309, 63);
@@ -5039,7 +5039,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62309, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62309, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4774
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62310, 4774);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62310, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4774);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62310, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62310, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62310, 63);
@@ -5061,7 +5061,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62310, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62310, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4807
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62311, 4807);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62311, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4807);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62311, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62311, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62311, 63);
@@ -5083,7 +5083,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62311, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62311, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=4840
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62312, 4840);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62312, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4840);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62312, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62312, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62312, 63);
@@ -5105,7 +5105,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62312, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62312, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=5038
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62313, 5038);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62313, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 5038);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62313, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62313, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62313, 63);
@@ -5127,7 +5127,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62313, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62313, 79);
 
 -- Regla #2: ciclo 'Administración y Finanzas' (completo) -> modulo destino id=5050
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62314, 5050);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62314, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 5050);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62314, 61);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62314, 62);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62314, 63);
@@ -5149,7 +5149,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62314, 78);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62314, 79);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=116
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62315, 116);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62315, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 116);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62315, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62315, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62315, 3582);
@@ -5174,7 +5174,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62315, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62315, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=139
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62316, 139);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62316, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 139);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62316, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62316, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62316, 3582);
@@ -5199,7 +5199,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62316, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62316, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=378
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62317, 378);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62317, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 378);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62317, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62317, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62317, 3582);
@@ -5224,7 +5224,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62317, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62317, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=404
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62318, 404);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62318, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 404);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62318, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62318, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62318, 3582);
@@ -5249,7 +5249,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62318, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62318, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3601
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62319, 3601);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62319, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3601);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62319, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62319, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62319, 3582);
@@ -5273,7 +5273,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62319, 3599);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62319, 3600);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3749
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62320, 3749);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62320, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3749);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62320, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62320, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62320, 3582);
@@ -5298,7 +5298,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62320, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62320, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3783
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62321, 3783);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62321, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3783);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62321, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62321, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62321, 3582);
@@ -5323,7 +5323,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62321, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62321, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3817
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62322, 3817);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62322, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3817);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62322, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62322, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62322, 3582);
@@ -5348,7 +5348,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62322, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62322, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3919
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62323, 3919);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62323, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3919);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62323, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62323, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62323, 3582);
@@ -5373,7 +5373,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62323, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62323, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=3941
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62324, 3941);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62324, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 3941);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62324, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62324, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62324, 3582);
@@ -5398,7 +5398,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62324, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62324, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4087
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62325, 4087);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62325, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4087);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62325, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62325, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62325, 3582);
@@ -5423,7 +5423,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62325, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62325, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4101
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62326, 4101);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62326, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4101);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62326, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62326, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62326, 3582);
@@ -5448,7 +5448,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62326, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62326, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4134
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62327, 4134);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62327, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4134);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62327, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62327, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62327, 3582);
@@ -5473,7 +5473,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62327, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62327, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4167
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62328, 4167);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62328, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4167);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62328, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62328, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62328, 3582);
@@ -5498,7 +5498,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62328, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62328, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4192
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62329, 4192);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62329, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4192);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62329, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62329, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62329, 3582);
@@ -5523,7 +5523,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62329, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62329, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4227
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62330, 4227);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62330, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4227);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62330, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62330, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62330, 3582);
@@ -5548,7 +5548,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62330, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62330, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4262
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62331, 4262);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62331, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4262);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62331, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62331, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62331, 3582);
@@ -5573,7 +5573,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62331, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62331, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4650
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62332, 4650);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62332, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4650);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62332, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62332, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62332, 3582);
@@ -5598,7 +5598,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62332, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62332, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4679
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62333, 4679);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62333, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4679);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62333, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62333, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62333, 3582);
@@ -5623,7 +5623,7 @@ INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62333, 3600);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62333, 3601);
 
 -- Regla #3: ciclo 'Emergencias Sanitarias' (completo) -> modulo destino id=4708
-INSERT INTO convalidacion (id, id_modulo_destino) VALUES (62334, 4708);
+INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62334, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124840, 4708);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62334, 3580);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62334, 3581);
 INSERT INTO convalidacion_origen (conv_id, id_modulo) VALUES (62334, 3582);

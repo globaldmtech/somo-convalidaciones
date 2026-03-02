@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Regulación y mantenimiento de automatismos en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -94,7 +94,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Preparación de máquinas e instalaciones de procesos automatizados",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -115,7 +115,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación de sistemas automáticos de fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -136,7 +136,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -157,7 +157,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -178,7 +178,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación de sistemas automáticos de fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -199,7 +199,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación de sistemas automáticos de fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -223,7 +223,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -245,7 +245,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -266,7 +266,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -295,7 +295,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación y mantenimiento de automatismos hidráulicos y neumáticos en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -316,7 +316,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización de la producción en confección textil",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -340,7 +340,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -362,7 +362,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación y mantenimiento de automatismos hidráulicos y neumáticos en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124851,
     },
 
@@ -383,7 +383,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización de la producción en confección textil",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -404,7 +404,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -428,7 +428,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -449,7 +449,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representación gráfica en fabricación mecánica",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -471,7 +471,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Programación y mantenimiento de automatismos hidráulicos y neumáticos en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -492,7 +492,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización de la producción en confección textil",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 

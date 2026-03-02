@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Dinamización grupal",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -69,7 +69,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -90,7 +90,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -111,7 +111,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas aumentativos y alternativos de comunicación",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -132,7 +132,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas aumentativos y alternativos de comunicación",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -153,7 +153,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -174,7 +174,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -202,7 +202,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -223,7 +223,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 
@@ -244,7 +244,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Habilidades sociales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124869,
     },
 

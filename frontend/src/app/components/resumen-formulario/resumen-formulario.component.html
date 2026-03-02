@@ -20,7 +20,7 @@
 
         <!-- Header -->
         <div class="mb-8">
-            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Paso 4 de 4</span>
+            <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Paso 5 de 5</span>
             <h1 class="text-2xl font-bold text-gray-900 mt-1 mb-1">Resumen de la solicitud</h1>
             <p class="text-gray-500 text-sm">Revisa la información antes de enviar tu solicitud de convalidación.</p>
         </div>
@@ -204,41 +204,37 @@
             </div>
         </section>
 
-        <!-- Documentación a aportar -->
+        <!-- Documentación aportada -->
         <section class="mb-8 rounded-2xl border border-gray-200 bg-white p-5">
             <div class="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
                 <div class="w-1.5 h-5 rounded-full bg-indigo-500"></div>
-                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500">Documentación a aportar</h3>
+                <h3 class="text-xs font-bold uppercase tracking-widest text-gray-500">Documentación aportada</h3>
             </div>
             <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-3">
-                <p class="text-xs text-gray-500">
-                    Adjunta los documentos obligatorios para poder enviar la solicitud.
-                </p>
+                <div>
+                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">DNI</p>
+                    <p class="text-sm font-medium text-gray-800">{{ documentoDni?.displayName || 'No adjuntado' }}</p>
+                </div>
 
-                <label class="block">
-                    <span class="block text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-1">DNI
-                        <span class="text-red-500">*</span></span>
-                    <input type="file" (change)="onDocumentoChange($event, 'dni')"
-                        class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    <p *ngIf="documentoDni" class="text-xs text-green-700 mt-1">{{ documentoDni.name }}</p>
-                </label>
+                <div>
+                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Certificados académicos</p>
+                    <ul class="space-y-1" *ngIf="documentosCertificado.length > 0; else sinCertificados">
+                        <li *ngFor="let doc of documentosCertificado" class="text-sm text-gray-800">{{ doc.displayName }}</li>
+                    </ul>
+                    <ng-template #sinCertificados>
+                        <p class="text-sm text-gray-500">No adjuntados</p>
+                    </ng-template>
+                </div>
 
-                <label class="block">
-                    <span class="block text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-1">Certificado
-                        académico <span class="text-red-500">*</span></span>
-                    <input type="file" (change)="onDocumentoChange($event, 'certificado')"
-                        class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    <p *ngIf="documentoCertificado" class="text-xs text-green-700 mt-1">{{ documentoCertificado.name }}
-                    </p>
-                </label>
-
-                <label class="block">
-                    <span class="block text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-1">Otros
-                        (opcional)</span>
-                    <input type="file" (change)="onDocumentoChange($event, 'otros')"
-                        class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    <p *ngIf="documentoOtros" class="text-xs text-green-700 mt-1">{{ documentoOtros.name }}</p>
-                </label>
+                <div>
+                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold mb-1">Otros documentos</p>
+                    <ul class="space-y-1" *ngIf="documentosOtros.length > 0; else sinOtros">
+                        <li *ngFor="let doc of documentosOtros" class="text-sm text-gray-800">{{ doc.displayName }}</li>
+                    </ul>
+                    <ng-template #sinOtros>
+                        <p class="text-sm text-gray-500">No adjuntados</p>
+                    </ng-template>
+                </div>
             </div>
         </section>
 

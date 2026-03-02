@@ -18,12 +18,19 @@ export interface SelectedConvalidation {
     nombre: string;
     source: string;
     id_convalidacion?: number | null;
-    id_convalidacion_externa?: number | null;
 }
 
 export interface RegisteredManualModule {
     id: number;
     nombre: string;
+}
+
+export type DocumentoCategoria = 'dni' | 'certificado' | 'otros';
+
+export interface UploadedDocument {
+    file: File;
+    displayName: string;
+    categoria: DocumentoCategoria;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -55,6 +62,9 @@ export class ConvalidacionesService {
     otrosModulosCicloRegistrados: RegisteredManualModule[] = [];
     sharedSelectedModuleSources: Map<number, string> = new Map();
     sharedSelectedConvalidations: SelectedConvalidation[] = [];
+    documentoDni: UploadedDocument | null = null;
+    documentosCertificado: UploadedDocument[] = [];
+    documentosOtros: UploadedDocument[] = [];
 
     constructor(private http: HttpClient) { }
 
@@ -116,5 +126,45 @@ export class ConvalidacionesService {
                 return of([]);
             })
         );
+    }
+
+    setDocumentoDni(file: File | null): void {
+        this.documentoDni = file
+            ? { file, categoria: 'dni', displayName: file.name }
+            : null;
+    }
+
+    setDocumentosCertificado(files: File[]): void {
+        this.documentosCertificado = files.map((file) => ({
+            file,
+            categoria: 'certificado',
+            displayName: file.name,
+        }));
+    }
+
+    addDocumentosCertificado(files: File[]): void {
+        const nuevos = files.map((file) => ({
+            file,
+            categoria: 'certificado' as const,
+            displayName: file.name,
+        }));
+        this.documentosCertificado = [...this.documentosCertificado, ...nuevos];
+    }
+
+    setDocumentosOtros(files: File[]): void {
+        this.documentosOtros = files.map((file) => ({
+            file,
+            categoria: 'otros',
+            displayName: file.name,
+        }));
+    }
+
+    addDocumentosOtros(files: File[]): void {
+        const nuevos = files.map((file) => ({
+            file,
+            categoria: 'otros' as const,
+            displayName: file.name,
+        }));
+        this.documentosOtros = [...this.documentosOtros, ...nuevos];
     }
 }

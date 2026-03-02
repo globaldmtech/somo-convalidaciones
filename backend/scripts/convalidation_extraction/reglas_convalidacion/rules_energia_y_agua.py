@@ -33,7 +33,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Calidad y tratamiento de aguas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -54,7 +54,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -75,7 +75,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de Montaje de Instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -96,7 +96,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Automatismos industriales",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -118,7 +118,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124847,
     },
 
@@ -139,7 +139,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Instalaciones eléctricas y automatismos",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -160,7 +160,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -181,7 +181,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Instalaciones eléctricas y automatismos",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -202,7 +202,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -223,7 +223,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de Montaje de Instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -244,7 +244,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de Montaje de Instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -265,7 +265,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Instalaciones en edificación",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -288,7 +288,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -309,7 +309,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Tratamientos de aguas",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -337,7 +337,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de Montaje de Instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -372,7 +372,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Representaciones de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124848,
     },
 
@@ -393,7 +393,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Eficiencia energética en edificación",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -417,7 +417,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -439,7 +439,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -461,7 +461,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -482,7 +482,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -504,7 +504,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -525,7 +525,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procesos de montaje de instalaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -547,7 +547,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización del mantenimiento en seco de buques y embarcaciones y montaje de motores térmicos",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -569,7 +569,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización del mantenimiento y montaje de instalaciones y sistemas eléctricos de buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -597,7 +597,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Planificación de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -625,7 +625,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Planificación de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124849,
     },
 
@@ -653,7 +653,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Planificación de construcción",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -675,7 +675,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 
@@ -697,7 +697,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124850,
     },
 

@@ -5,27 +5,27 @@
 PRAGMA foreign_keys = OFF;
 
 -- Regla #1: módulo destino id=72, orígenes=[822]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (1, NULL, 124841, 72);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (1, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 72);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (1, 822);
 
 -- Regla #2: módulo destino id=72, orígenes=[729]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (2, NULL, 124841, 72);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (2, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 72);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (2, 729);
 
 -- Regla #3: módulo destino id=95, orígenes=[1959]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (3, NULL, 124841, 95);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (3, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 95);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (3, 1959);
 
 -- Regla #4: módulo destino id=95, orígenes=[1983]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (4, NULL, 124841, 95);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (4, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 95);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (4, 1983);
 
 -- Regla #5: módulo destino id=95, orígenes=[2007]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (5, NULL, 124841, 95);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (5, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 95);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (5, 2007);
 
 -- Regla #6: módulo destino id=363, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (6, NULL, 124841, 363);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (6, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 363);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (6, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (6, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (6, 678);
@@ -51,7 +51,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (6, 697);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (6, 698);
 
 -- Regla #7: módulo destino id=345, orígenes=[4615, 4616, 4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 4626, 4627, 4628, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4638]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (7, NULL, 124841, 345);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (7, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 345);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (7, 4615);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (7, 4616);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (7, 4617);
@@ -78,7 +78,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (7, 4637)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (7, 4638);
 
 -- Regla #8: módulo destino id=332, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (8, NULL, 124841, 332);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (8, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124841, 332);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (8, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (8, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (8, 678);
@@ -104,7 +104,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (8, 697);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (8, 698);
 
 -- Regla #9: módulo destino id=320, orígenes=[4615, 4616, 4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 4626, 4627, 4628, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4638]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (9, NULL, 124842, 320);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (9, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 320);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (9, 4615);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (9, 4616);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (9, 4617);
@@ -131,11 +131,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (9, 4637)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (9, 4638);
 
 -- Regla #10: módulo destino id=465, orígenes=[421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (10, NULL, 124842, 465);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (10, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 465);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (10, 421);
 
 -- Regla #11: módulo destino id=456, orígenes=[3950, 3951, 3952, 3953, 3954, 3955, 3956, 3957, 3958, 3959, 3960, 3961, 3962, 3963, 3964, 3965, 3966, 3967, 3968, 3969, 3970, 3971, 3972, 3973, 3974, 3975, 3976, 3977, 3978, 3979, 3980, 3981, 3982, 3983, 3984, 3985]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (11, NULL, 124842, 456);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (11, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 456);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (11, 3950);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (11, 3951);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (11, 3952);
@@ -174,7 +174,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (11, 3984
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (11, 3985);
 
 -- Regla #12: módulo destino id=469, orígenes=[3950, 3951, 3952, 3953, 3954, 3955, 3956, 3957, 3958, 3959, 3960, 3961, 3962, 3963, 3964, 3965, 3966, 3967, 3968, 3969, 3970, 3971, 3972, 3973, 3974, 3975, 3976, 3977, 3978, 3979, 3980, 3981, 3982, 3983, 3984, 3985]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (12, NULL, 124842, 469);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (12, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 469);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (12, 3950);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (12, 3951);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (12, 3952);
@@ -213,7 +213,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (12, 3984
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (12, 3985);
 
 -- Regla #13: módulo destino id=575, orígenes=[2876, 2877, 2878, 2879, 2880, 2881, 2882, 2883, 2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891, 2892, 2893, 2894, 2895, 2896, 2897, 2898, 2899, 2900]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (13, NULL, 124842, 575);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (13, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 575);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (13, 2876);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (13, 2877);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (13, 2878);
@@ -241,7 +241,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (13, 2899
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (13, 2900);
 
 -- Regla #14: módulo destino id=570, orígenes=[2876, 2877, 2878, 2879, 2880, 2881, 2882, 2883, 2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891, 2892, 2893, 2894, 2895, 2896, 2897, 2898, 2899, 2900]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (14, NULL, 124842, 570);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (14, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 570);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (14, 2876);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (14, 2877);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (14, 2878);
@@ -269,7 +269,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (14, 2899
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (14, 2900);
 
 -- Regla #15: módulo destino id=617, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (15, NULL, 124842, 617);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (15, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 617);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (15, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (15, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (15, 814);
@@ -286,7 +286,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (15, 824)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (15, 825);
 
 -- Regla #16: módulo destino id=622, orígenes=[2821, 2822, 2823, 2824, 2825, 2826, 2827, 2828, 2829, 2830, 2831, 2832, 2833, 2834, 2835, 2836, 2837, 2838, 2839, 2840, 2841, 2842, 2843, 2844, 2845, 2846, 2847, 2848, 2849, 2850]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (16, NULL, 124842, 622);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (16, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 622);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (16, 2821);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (16, 2822);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (16, 2823);
@@ -319,7 +319,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (16, 2849
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (16, 2850);
 
 -- Regla #17: módulo destino id=636, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (17, NULL, 124842, 636);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (17, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 636);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (17, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (17, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (17, 814);
@@ -336,7 +336,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (17, 824)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (17, 825);
 
 -- Regla #18: módulo destino id=644, orígenes=[2876, 2877, 2878, 2879, 2880, 2881, 2882, 2883, 2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891, 2892, 2893, 2894, 2895, 2896, 2897, 2898, 2899, 2900]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (18, NULL, 124842, 644);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (18, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124842, 644);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (18, 2876);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (18, 2877);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (18, 2878);
@@ -364,11 +364,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (18, 2899
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (18, 2900);
 
 -- Regla #19: módulo destino id=683, orígenes=[815]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (19, NULL, 124843, 683);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (19, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 683);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (19, 815);
 
 -- Regla #20: módulo destino id=686, orígenes=[49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (20, NULL, 124843, 686);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (20, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 686);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (20, 49);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (20, 50);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (20, 51);
@@ -383,15 +383,15 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (20, 59);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (20, 60);
 
 -- Regla #21: módulo destino id=686, orígenes=[636]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (21, NULL, 124843, 686);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (21, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 686);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (21, 636);
 
 -- Regla #22: módulo destino id=686, orígenes=[617]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (22, NULL, 124843, 686);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (22, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 686);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (22, 617);
 
 -- Regla #23: módulo destino id=786, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (23, NULL, 124843, 786);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (23, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 786);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (23, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (23, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (23, 63);
@@ -413,7 +413,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (23, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (23, 79);
 
 -- Regla #24: módulo destino id=786, orígenes=[80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (24, NULL, 124843, 786);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (24, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 786);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (24, 80);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (24, 81);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (24, 82);
@@ -435,7 +435,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (24, 97);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (24, 98);
 
 -- Regla #25: módulo destino id=820, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (25, NULL, 124843, 820);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (25, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 820);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (25, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (25, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (25, 63);
@@ -457,7 +457,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (25, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (25, 79);
 
 -- Regla #26: módulo destino id=822, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (26, NULL, 124843, 822);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (26, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 822);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (26, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (26, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (26, 63);
@@ -479,7 +479,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (26, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (26, 79);
 
 -- Regla #27: módulo destino id=820, orígenes=[80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (27, NULL, 124843, 820);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (27, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 820);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (27, 80);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (27, 81);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (27, 82);
@@ -501,7 +501,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (27, 97);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (27, 98);
 
 -- Regla #28: módulo destino id=773, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (28, NULL, 124843, 773);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (28, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 773);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (28, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (28, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (28, 63);
@@ -523,7 +523,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (28, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (28, 79);
 
 -- Regla #29: módulo destino id=756, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (29, NULL, 124843, 756);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (29, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124843, 756);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (29, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (29, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (29, 63);
@@ -545,7 +545,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (29, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (29, 79);
 
 -- Regla #30: módulo destino id=756, orígenes=[80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (30, NULL, 124844, 756);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (30, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 756);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (30, 80);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (30, 81);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (30, 82);
@@ -567,7 +567,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (30, 97);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (30, 98);
 
 -- Regla #31: módulo destino id=768, orígenes=[2761, 2762, 2763, 2764, 2765, 2766, 2767, 2768, 2769, 2770, 2771, 2772, 2773, 2774, 2775, 2776, 2777, 2778, 2779, 2780, 2781, 2782, 2783, 2784, 2785, 2786, 2787, 2788, 2789, 2790]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (31, NULL, 124844, 768);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (31, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 768);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (31, 2761);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (31, 2762);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (31, 2763);
@@ -600,7 +600,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (31, 2789
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (31, 2790);
 
 -- Regla #32: módulo destino id=772, orígenes=[2761, 2762, 2763, 2764, 2765, 2766, 2767, 2768, 2769, 2770, 2771, 2772, 2773, 2774, 2775, 2776, 2777, 2778, 2779, 2780, 2781, 2782, 2783, 2784, 2785, 2786, 2787, 2788, 2789, 2790]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (32, NULL, 124844, 772);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (32, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 772);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (32, 2761);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (32, 2762);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (32, 2763);
@@ -633,7 +633,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (32, 2789
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (32, 2790);
 
 -- Regla #33: módulo destino id=726, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (33, NULL, 124844, 726);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (33, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 726);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (33, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (33, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (33, 63);
@@ -655,7 +655,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (33, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (33, 79);
 
 -- Regla #34: módulo destino id=729, orígenes=[61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (34, NULL, 124844, 729);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (34, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 729);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (34, 61);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (34, 62);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (34, 63);
@@ -677,7 +677,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (34, 78);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (34, 79);
 
 -- Regla #35: módulo destino id=726, orígenes=[80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (35, NULL, 124844, 726);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (35, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 726);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (35, 80);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (35, 81);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (35, 82);
@@ -699,7 +699,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (35, 97);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (35, 98);
 
 -- Regla #36: módulo destino id=1311, orígenes=[1350, 1351, 1352, 1353, 1354, 1355, 1356, 1357, 1358, 1359, 1360, 1361, 1362, 1363, 1364, 1365, 1366, 1367, 1368, 1369, 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1380, 1381, 1382, 1383, 1384, 1385, 1386, 1387, 1388, 1389, 1390, 1391]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (36, NULL, 124844, 1311);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (36, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 1311);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (36, 1350);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (36, 1351);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (36, 1352);
@@ -744,7 +744,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (36, 1390
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (36, 1391);
 
 -- Regla #37: módulo destino id=1311, orígenes=[1392, 1393, 1394, 1395, 1396, 1397, 1398, 1399, 1400, 1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408, 1409, 1410, 1411, 1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419, 1420, 1421, 1422, 1423, 1424, 1425, 1426, 1427, 1428, 1429, 1430, 1431, 1432, 1433]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (37, NULL, 124844, 1311);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (37, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 1311);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (37, 1392);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (37, 1393);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (37, 1394);
@@ -789,7 +789,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (37, 1432
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (37, 1433);
 
 -- Regla #38: módulo destino id=1333, orígenes=[1350, 1351, 1352, 1353, 1354, 1355, 1356, 1357, 1358, 1359, 1360, 1361, 1362, 1363, 1364, 1365, 1366, 1367, 1368, 1369, 1370, 1371, 1372, 1373, 1374, 1375, 1376, 1377, 1378, 1379, 1380, 1381, 1382, 1383, 1384, 1385, 1386, 1387, 1388, 1389, 1390, 1391]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (38, NULL, 124844, 1333);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (38, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 1333);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (38, 1350);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (38, 1351);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (38, 1352);
@@ -834,7 +834,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (38, 1390
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (38, 1391);
 
 -- Regla #39: módulo destino id=1333, orígenes=[1392, 1393, 1394, 1395, 1396, 1397, 1398, 1399, 1400, 1401, 1402, 1403, 1404, 1405, 1406, 1407, 1408, 1409, 1410, 1411, 1412, 1413, 1414, 1415, 1416, 1417, 1418, 1419, 1420, 1421, 1422, 1423, 1424, 1425, 1426, 1427, 1428, 1429, 1430, 1431, 1432, 1433]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (39, NULL, 124844, 1333);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (39, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124844, 1333);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (39, 1392);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (39, 1393);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (39, 1394);
@@ -879,28 +879,28 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (39, 1432
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (39, 1433);
 
 -- Regla #40: módulo destino id=1455, orígenes=[1355]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (40, NULL, 124845, 1455);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (40, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 1455);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (40, 1355);
 
 -- Regla #41: módulo destino id=1455, orígenes=[1397]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (41, NULL, 124845, 1455);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (41, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 1455);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (41, 1397);
 
 -- Regla #42: módulo destino id=1361, orígenes=[1230]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (42, NULL, 124845, 1361);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (42, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 1361);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (42, 1230);
 
 -- Regla #43: módulo destino id=922, orígenes=[1174]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (43, NULL, 124845, 922);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (43, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 922);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (43, 1174);
 
 -- Regla #44: módulo destino id=922, orígenes=[1278, 1279]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (44, NULL, 124845, 922);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (44, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 922);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (44, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (44, 1279);
 
 -- Regla #45: módulo destino id=923, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (45, NULL, 124845, 923);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (45, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 923);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (45, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (45, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (45, 1068);
@@ -928,7 +928,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (45, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (45, 1090);
 
 -- Regla #46: módulo destino id=924, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (46, NULL, 124845, 924);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (46, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 924);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (46, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (46, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (46, 1068);
@@ -956,18 +956,18 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (46, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (46, 1090);
 
 -- Regla #47: módulo destino id=951, orígenes=[923, 924]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (47, NULL, 124845, 951);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (47, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 951);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (47, 923);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (47, 924);
 
 -- Regla #48: módulo destino id=954, orígenes=[922, 925, 930]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (48, NULL, 124845, 954);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (48, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124845, 954);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (48, 922);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (48, 925);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (48, 930);
 
 -- Regla #49: módulo destino id=951, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (49, NULL, 124846, 951);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (49, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 951);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (49, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (49, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (49, 1068);
@@ -995,7 +995,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (49, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (49, 1090);
 
 -- Regla #50: módulo destino id=952, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (50, NULL, 124846, 952);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (50, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 952);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (50, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (50, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (50, 1068);
@@ -1023,7 +1023,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (50, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (50, 1090);
 
 -- Regla #51: módulo destino id=952, orígenes=[2118, 2119, 2120, 2121, 2122, 2123, 2124, 2125, 2126, 2127, 2128, 2129]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (51, NULL, 124846, 952);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (51, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 952);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (51, 2118);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (51, 2119);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (51, 2120);
@@ -1038,7 +1038,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (51, 2128
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (51, 2129);
 
 -- Regla #52: módulo destino id=953, orígenes=[2118, 2119, 2120, 2121, 2122, 2123, 2124, 2125, 2126, 2127, 2128, 2129]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (52, NULL, 124846, 953);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (52, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 953);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (52, 2118);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (52, 2119);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (52, 2120);
@@ -1053,7 +1053,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (52, 2128
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (52, 2129);
 
 -- Regla #53: módulo destino id=1059, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (53, NULL, 124846, 1059);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (53, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1059);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (53, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (53, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (53, 1068);
@@ -1081,11 +1081,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (53, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (53, 1090);
 
 -- Regla #54: módulo destino id=1059, orígenes=[964]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (54, NULL, 124846, 1059);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (54, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1059);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (54, 964);
 
 -- Regla #55: módulo destino id=1060, orígenes=[2160, 2161, 2162, 2163, 2164, 2165, 2166, 2167, 2168, 2169, 2170, 2171, 2172, 2173, 2174, 2175, 2176, 2177, 2178, 2179, 2180, 2181, 2182, 2183, 2184, 2185, 2186, 2187, 2188, 2189]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (55, NULL, 124846, 1060);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (55, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1060);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (55, 2160);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (55, 2161);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (55, 2162);
@@ -1118,35 +1118,35 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (55, 2188
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (55, 2189);
 
 -- Regla #56: módulo destino id=1106, orígenes=[1055]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (56, NULL, 124846, 1106);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (56, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1106);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (56, 1055);
 
 -- Regla #57: módulo destino id=1107, orígenes=[1070, 1071]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (57, NULL, 124846, 1107);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (57, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1107);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (57, 1070);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (57, 1071);
 
 -- Regla #58: módulo destino id=1105, orígenes=[969, 970]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (58, NULL, 124846, 1105);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (58, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1105);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (58, 969);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (58, 970);
 
 -- Regla #59: módulo destino id=1105, orígenes=[2400, 2406]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (59, NULL, 124846, 1105);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (59, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1105);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (59, 2400);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (59, 2406);
 
 -- Regla #60: módulo destino id=1105, orígenes=[2428, 2430]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (60, NULL, 124846, 1105);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (60, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124846, 1105);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (60, 2428);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (60, 2430);
 
 -- Regla #61: módulo destino id=964, orígenes=[1059]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (61, NULL, 124847, 964);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (61, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 964);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (61, 1059);
 
 -- Regla #62: módulo destino id=964, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62, NULL, 124847, 964);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (62, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 964);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (62, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (62, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (62, 1068);
@@ -1174,12 +1174,12 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (62, 1089
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (62, 1090);
 
 -- Regla #63: módulo destino id=962, orígenes=[1008, 1011]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (63, NULL, 124847, 962);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (63, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 962);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (63, 1008);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (63, 1011);
 
 -- Regla #64: módulo destino id=1010, orígenes=[2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 2139, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2159]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (64, NULL, 124847, 1010);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (64, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1010);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (64, 2130);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (64, 2131);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (64, 2132);
@@ -1212,27 +1212,27 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (64, 2158
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (64, 2159);
 
 -- Regla #65: módulo destino id=1106, orígenes=[2474]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (65, NULL, 124847, 1106);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (65, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1106);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (65, 2474);
 
 -- Regla #66: módulo destino id=1177, orígenes=[1275]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (66, NULL, 124847, 1177);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (66, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (66, 1275);
 
 -- Regla #67: módulo destino id=1175, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (67, NULL, 124847, 1175);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (67, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1175);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (67, 1282);
 
 -- Regla #68: módulo destino id=1182, orígenes=[1227]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (68, NULL, 124847, 1182);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (68, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1182);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (68, 1227);
 
 -- Regla #69: módulo destino id=1174, orígenes=[922]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (69, NULL, 124847, 1174);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (69, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1174);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (69, 922);
 
 -- Regla #70: módulo destino id=1174, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (70, NULL, 124847, 1174);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (70, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124847, 1174);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (70, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (70, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (70, 920);
@@ -1255,35 +1255,35 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (70, 936)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (70, 937);
 
 -- Regla #71: módulo destino id=1174, orígenes=[2331]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (71, NULL, 124848, 1174);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (71, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1174);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (71, 2331);
 
 -- Regla #72: módulo destino id=1175, orígenes=[2330]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (72, NULL, 124848, 1175);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (72, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1175);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (72, 2330);
 
 -- Regla #73: módulo destino id=1174, orígenes=[2354]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (73, NULL, 124848, 1174);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (73, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1174);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (73, 2354);
 
 -- Regla #74: módulo destino id=1175, orígenes=[2353]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (74, NULL, 124848, 1175);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (74, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1175);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (74, 2353);
 
 -- Regla #75: módulo destino id=1182, orígenes=[2430]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (75, NULL, 124848, 1182);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (75, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1182);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (75, 2430);
 
 -- Regla #76: módulo destino id=1182, orígenes=[2400]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (76, NULL, 124848, 1182);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (76, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1182);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (76, 2400);
 
 -- Regla #77: módulo destino id=1172, orígenes=[1360]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (77, NULL, 124848, 1172);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (77, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1172);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (77, 1360);
 
 -- Regla #78: módulo destino id=1182, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (78, NULL, 124848, 1182);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (78, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1182);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (78, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (78, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (78, 3272);
@@ -1313,29 +1313,29 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (78, 3295
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (78, 3296);
 
 -- Regla #79: módulo destino id=1177, orígenes=[3437]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (79, NULL, 124848, 1177);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (79, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (79, 3437);
 
 -- Regla #80: módulo destino id=1179, orígenes=[2438, 2430]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (80, NULL, 124848, 1179);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (80, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1179);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (80, 2438);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (80, 2430);
 
 -- Regla #81: módulo destino id=1228, orígenes=[1360, 1355]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (81, NULL, 124848, 1228);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (81, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124848, 1228);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (81, 1360);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (81, 1355);
 
 -- Regla #82: módulo destino id=1230, orígenes=[1361]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (82, NULL, 124849, 1230);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (82, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1230);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (82, 1361);
 
 -- Regla #83: módulo destino id=1282, orígenes=[1227]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (83, NULL, 124849, 1282);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (83, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1282);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (83, 1227);
 
 -- Regla #84: módulo destino id=1279, orígenes=[1030, 1031, 1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, 1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056, 1057, 1058, 1059, 1060, 1061, 1062, 1063, 1064, 1065]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (84, NULL, 124849, 1279);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (84, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1279);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (84, 1030);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (84, 1031);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (84, 1032);
@@ -1374,7 +1374,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (84, 1064
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (84, 1065);
 
 -- Regla #85: módulo destino id=1278, orígenes=[1030, 1031, 1032, 1033, 1034, 1035, 1036, 1037, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1045, 1046, 1047, 1048, 1049, 1050, 1051, 1052, 1053, 1054, 1055, 1056, 1057, 1058, 1059, 1060, 1061, 1062, 1063, 1064, 1065]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (85, NULL, 124849, 1278);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (85, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (85, 1030);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (85, 1031);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (85, 1032);
@@ -1413,11 +1413,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (85, 1064
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (85, 1065);
 
 -- Regla #86: módulo destino id=1282, orígenes=[2400]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (86, NULL, 124849, 1282);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (86, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1282);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (86, 2400);
 
 -- Regla #87: módulo destino id=1278, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (87, NULL, 124849, 1278);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (87, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (87, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (87, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (87, 920);
@@ -1440,34 +1440,34 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (87, 936)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (87, 937);
 
 -- Regla #88: módulo destino id=1282, orígenes=[2430]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (88, NULL, 124849, 1282);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (88, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1282);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (88, 2430);
 
 -- Regla #89: módulo destino id=1282, orígenes=[3420]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (89, NULL, 124849, 1282);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (89, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1282);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (89, 3420);
 
 -- Regla #90: módulo destino id=1278, orígenes=[3422]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (90, NULL, 124849, 1278);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (90, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (90, 3422);
 
 -- Regla #91: módulo destino id=1274, orígenes=[1441, 1442]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (91, NULL, 124849, 1274);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (91, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1274);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (91, 1441);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (91, 1442);
 
 -- Regla #92: módulo destino id=1274, orígenes=[1357, 1358]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (92, NULL, 124849, 1274);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (92, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124849, 1274);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (92, 1357);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (92, 1358);
 
 -- Regla #93: módulo destino id=1274, orígenes=[1399, 1400]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (93, NULL, 124850, 1274);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (93, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1274);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (93, 1399);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (93, 1400);
 
 -- Regla #94: módulo destino id=1278, orígenes=[958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (94, NULL, 124850, 1278);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (94, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (94, 958);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (94, 959);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (94, 960);
@@ -1506,7 +1506,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (94, 992)
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (94, 993);
 
 -- Regla #95: módulo destino id=1278, orígenes=[2454, 2455, 2456, 2457, 2458, 2459, 2460, 2461, 2462, 2463, 2464, 2465, 2466, 2467, 2468, 2469, 2470, 2471, 2472, 2473, 2474, 2475, 2476, 2477, 2478, 2479, 2480, 2481, 2482, 2483]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (95, NULL, 124850, 1278);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (95, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1278);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (95, 2454);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (95, 2455);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (95, 2456);
@@ -1539,47 +1539,47 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (95, 2482
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (95, 2483);
 
 -- Regla #96: módulo destino id=1593, orígenes=[1683]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (96, NULL, 124850, 1593);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (96, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1593);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (96, 1683);
 
 -- Regla #97: módulo destino id=1593, orígenes=[1656]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (97, NULL, 124850, 1593);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (97, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1593);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (97, 1656);
 
 -- Regla #98: módulo destino id=1599, orígenes=[3283]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (98, NULL, 124850, 1599);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (98, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1599);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (98, 3283);
 
 -- Regla #99: módulo destino id=1549, orígenes=[1599]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (99, NULL, 124850, 1549);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (99, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1549);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (99, 1599);
 
 -- Regla #100: módulo destino id=1549, orígenes=[1677]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (100, NULL, 124850, 1549);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (100, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1549);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (100, 1677);
 
 -- Regla #101: módulo destino id=1551, orígenes=[1683]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (101, NULL, 124850, 1551);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (101, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124850, 1551);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (101, 1683);
 
 -- Regla #102: módulo destino id=1551, orígenes=[1656]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (102, NULL, 124851, 1551);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (102, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1551);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (102, 1656);
 
 -- Regla #103: módulo destino id=1549, orígenes=[1623]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (103, NULL, 124851, 1549);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (103, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1549);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (103, 1623);
 
 -- Regla #104: módulo destino id=1549, orígenes=[1701]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (104, NULL, 124851, 1549);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (104, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1549);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (104, 1701);
 
 -- Regla #105: módulo destino id=1572, orígenes=[1683]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (105, NULL, 124851, 1572);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (105, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1572);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (105, 1683);
 
 -- Regla #106: módulo destino id=1574, orígenes=[1541, 1542, 1543, 1544, 1545, 1546, 1547, 1548, 1549, 1550, 1551, 1552, 1553, 1554, 1555, 1556, 1557, 1558, 1559, 1560, 1561]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (106, NULL, 124851, 1574);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (106, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1574);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (106, 1541);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (106, 1542);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (106, 1543);
@@ -1603,97 +1603,97 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (106, 156
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (106, 1561);
 
 -- Regla #107: módulo destino id=1572, orígenes=[1656]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (107, NULL, 124851, 1572);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (107, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1572);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (107, 1656);
 
 -- Regla #108: módulo destino id=1677, orígenes=[3421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (108, NULL, 124851, 1677);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (108, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (108, 3421);
 
 -- Regla #109: módulo destino id=1678, orígenes=[4421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (109, NULL, 124851, 1678);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (109, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1678);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (109, 4421);
 
 -- Regla #110: módulo destino id=1620, orígenes=[1683]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (110, NULL, 124851, 1620);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (110, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1620);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (110, 1683);
 
 -- Regla #111: módulo destino id=1623, orígenes=[3421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (111, NULL, 124851, 1623);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (111, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124851, 1623);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (111, 3421);
 
 -- Regla #112: módulo destino id=1624, orígenes=[4421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (112, NULL, 124852, 1624);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (112, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1624);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (112, 4421);
 
 -- Regla #113: módulo destino id=1620, orígenes=[1656]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (113, NULL, 124852, 1620);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (113, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1620);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (113, 1656);
 
 -- Regla #114: módulo destino id=1700, orígenes=[1683]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (114, NULL, 124852, 1700);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (114, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1700);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (114, 1683);
 
 -- Regla #115: módulo destino id=1700, orígenes=[1656]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (115, NULL, 124852, 1700);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (115, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1700);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (115, 1656);
 
 -- Regla #116: módulo destino id=1701, orígenes=[3421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (116, NULL, 124852, 1701);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (116, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1701);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (116, 3421);
 
 -- Regla #117: módulo destino id=1702, orígenes=[4421]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (117, NULL, 124852, 1702);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (117, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1702);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (117, 4421);
 
 -- Regla #118: módulo destino id=1959, orígenes=[95]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (118, NULL, 124852, 1959);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (118, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1959);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (118, 95);
 
 -- Regla #119: módulo destino id=1960, orígenes=[818]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (119, NULL, 124852, 1960);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (119, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124852, 1960);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (119, 818);
 
 -- Regla #120: módulo destino id=1960, orígenes=[765]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (120, NULL, 124853, 1960);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (120, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1960);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (120, 765);
 
 -- Regla #121: módulo destino id=1922, orígenes=[3075, 3084]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (121, NULL, 124853, 1922);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (121, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1922);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (121, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (121, 3084);
 
 -- Regla #122: módulo destino id=1922, orígenes=[3048, 3049]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (122, NULL, 124853, 1922);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (122, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1922);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (122, 3048);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (122, 3049);
 
 -- Regla #123: módulo destino id=1983, orígenes=[95]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (123, NULL, 124853, 1983);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (123, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1983);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (123, 95);
 
 -- Regla #124: módulo destino id=1984, orígenes=[818]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (124, NULL, 124853, 1984);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (124, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1984);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (124, 818);
 
 -- Regla #125: módulo destino id=1984, orígenes=[765]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (125, NULL, 124853, 1984);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (125, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 1984);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (125, 765);
 
 -- Regla #126: módulo destino id=2008, orígenes=[765]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (126, NULL, 124853, 2008);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (126, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 2008);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (126, 765);
 
 -- Regla #127: módulo destino id=2007, orígenes=[95]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (127, NULL, 124853, 2007);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (127, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 2007);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (127, 95);
 
 -- Regla #128: módulo destino id=2008, orígenes=[818]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (128, NULL, 124853, 2008);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (128, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124853, 2008);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (128, 818);
 
 -- Regla #129: módulo destino id=2565, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (129, NULL, 124854, 2565);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (129, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2565);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (129, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (129, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (129, 814);
@@ -1710,7 +1710,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (129, 824
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (129, 825);
 
 -- Regla #130: módulo destino id=2565, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (130, NULL, 124854, 2565);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (130, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2565);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (130, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (130, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (130, 678);
@@ -1736,7 +1736,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (130, 697
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (130, 698);
 
 -- Regla #131: módulo destino id=2565, orígenes=[752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (131, NULL, 124854, 2565);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (131, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2565);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (131, 752);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (131, 753);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (131, 754);
@@ -1769,7 +1769,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (131, 780
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (131, 781);
 
 -- Regla #132: módulo destino id=2587, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (132, NULL, 124854, 2587);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (132, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2587);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (132, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (132, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (132, 678);
@@ -1795,7 +1795,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (132, 697
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (132, 698);
 
 -- Regla #133: módulo destino id=2587, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (133, NULL, 124854, 2587);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (133, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2587);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (133, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (133, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (133, 814);
@@ -1812,7 +1812,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (133, 824
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (133, 825);
 
 -- Regla #134: módulo destino id=2587, orígenes=[752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (134, NULL, 124854, 2587);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (134, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2587);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (134, 752);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (134, 753);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (134, 754);
@@ -1845,7 +1845,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (134, 780
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (134, 781);
 
 -- Regla #135: módulo destino id=2711, orígenes=[2821, 2822, 2823, 2824, 2825, 2826, 2827, 2828, 2829, 2830, 2831, 2832, 2833, 2834, 2835, 2836, 2837, 2838, 2839, 2840, 2841, 2842, 2843, 2844, 2845, 2846, 2847, 2848, 2849, 2850]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (135, NULL, 124854, 2711);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (135, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2711);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (135, 2821);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (135, 2822);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (135, 2823);
@@ -1878,7 +1878,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (135, 284
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (135, 2850);
 
 -- Regla #136: módulo destino id=2760, orígenes=[2876, 2877, 2878, 2879, 2880, 2881, 2882, 2883, 2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891, 2892, 2893, 2894, 2895, 2896, 2897, 2898, 2899, 2900]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (136, NULL, 124854, 2760);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (136, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124854, 2760);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (136, 2876);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (136, 2877);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (136, 2878);
@@ -1906,7 +1906,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (136, 289
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (136, 2900);
 
 -- Regla #137: módulo destino id=2754, orígenes=[2851, 2852, 2853, 2854, 2855, 2856, 2857, 2858, 2859, 2860, 2861, 2862, 2863, 2864, 2865, 2866, 2867, 2868, 2869, 2870, 2871, 2872, 2873, 2874, 2875]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (137, NULL, 124855, 2754);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (137, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2754);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (137, 2851);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (137, 2852);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (137, 2853);
@@ -1934,7 +1934,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (137, 287
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (137, 2875);
 
 -- Regla #138: módulo destino id=2755, orígenes=[2851, 2852, 2853, 2854, 2855, 2856, 2857, 2858, 2859, 2860, 2861, 2862, 2863, 2864, 2865, 2866, 2867, 2868, 2869, 2870, 2871, 2872, 2873, 2874, 2875]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (138, NULL, 124855, 2755);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (138, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2755);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (138, 2851);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (138, 2852);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (138, 2853);
@@ -1962,7 +1962,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (138, 287
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (138, 2875);
 
 -- Regla #139: módulo destino id=2756, orígenes=[2851, 2852, 2853, 2854, 2855, 2856, 2857, 2858, 2859, 2860, 2861, 2862, 2863, 2864, 2865, 2866, 2867, 2868, 2869, 2870, 2871, 2872, 2873, 2874, 2875]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (139, NULL, 124855, 2756);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (139, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2756);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (139, 2851);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (139, 2852);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (139, 2853);
@@ -1990,7 +1990,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (139, 287
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (139, 2875);
 
 -- Regla #140: módulo destino id=2890, orígenes=[2791, 2792, 2793, 2794, 2795, 2796, 2797, 2798, 2799, 2800, 2801, 2802, 2803, 2804, 2805, 2806, 2807, 2808, 2809, 2810, 2811, 2812, 2813, 2814, 2815, 2816, 2817, 2818, 2819, 2820]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (140, NULL, 124855, 2890);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (140, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2890);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (140, 2791);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (140, 2792);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (140, 2793);
@@ -2023,7 +2023,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (140, 281
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (140, 2820);
 
 -- Regla #141: módulo destino id=2771, orígenes=[2876, 2877, 2878, 2879, 2880, 2881, 2882, 2883, 2884, 2885, 2886, 2887, 2888, 2889, 2890, 2891, 2892, 2893, 2894, 2895, 2896, 2897, 2898, 2899, 2900]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (141, NULL, 124855, 2771);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (141, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2771);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (141, 2876);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (141, 2877);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (141, 2878);
@@ -2051,7 +2051,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (141, 289
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (141, 2900);
 
 -- Regla #142: módulo destino id=2770, orígenes=[2791, 2792, 2793, 2794, 2795, 2796, 2797, 2798, 2799, 2800, 2801, 2802, 2803, 2804, 2805, 2806, 2807, 2808, 2809, 2810, 2811, 2812, 2813, 2814, 2815, 2816, 2817, 2818, 2819, 2820]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (142, NULL, 124855, 2770);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (142, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2770);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (142, 2791);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (142, 2792);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (142, 2793);
@@ -2084,7 +2084,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (142, 281
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (142, 2820);
 
 -- Regla #143: módulo destino id=2771, orígenes=[2791, 2792, 2793, 2794, 2795, 2796, 2797, 2798, 2799, 2800, 2801, 2802, 2803, 2804, 2805, 2806, 2807, 2808, 2809, 2810, 2811, 2812, 2813, 2814, 2815, 2816, 2817, 2818, 2819, 2820]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (143, NULL, 124855, 2771);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (143, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 2771);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (143, 2791);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (143, 2792);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (143, 2793);
@@ -2117,15 +2117,15 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (143, 281
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (143, 2820);
 
 -- Regla #144: módulo destino id=3020, orígenes=[3003]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (144, NULL, 124855, 3020);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (144, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 3020);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (144, 3003);
 
 -- Regla #145: módulo destino id=3021, orígenes=[680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (145, NULL, 124855, 3021);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (145, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124855, 3021);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (145, 680);
 
 -- Regla #146: módulo destino id=3020, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (146, NULL, 124856, 3020);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (146, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3020);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (146, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (146, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (146, 678);
@@ -2151,19 +2151,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (146, 697
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (146, 698);
 
 -- Regla #147: módulo destino id=3021, orígenes=[3113]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (147, NULL, 124856, 3021);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (147, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3021);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (147, 3113);
 
 -- Regla #148: módulo destino id=3021, orígenes=[4648]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (148, NULL, 124856, 3021);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (148, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3021);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (148, 4648);
 
 -- Regla #149: módulo destino id=3021, orígenes=[3137]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (149, NULL, 124856, 3021);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (149, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3021);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (149, 3137);
 
 -- Regla #150: módulo destino id=3018, orígenes=[2371, 2372, 2373, 2374, 2375, 2376, 2377, 2378, 2379, 2380, 2381, 2382, 2383, 2384, 2385, 2386, 2387, 2388, 2389, 2390, 2391, 2392, 2393]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (150, NULL, 124856, 3018);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (150, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3018);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (150, 2371);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (150, 2372);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (150, 2373);
@@ -2189,7 +2189,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (150, 239
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (150, 2393);
 
 -- Regla #151: módulo destino id=3018, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (151, NULL, 124856, 3018);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (151, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 3018);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (151, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (151, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (151, 4670);
@@ -2221,15 +2221,15 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (151, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (151, 4696);
 
 -- Regla #152: módulo destino id=2968, orígenes=[3003]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (152, NULL, 124856, 2968);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (152, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 2968);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (152, 3003);
 
 -- Regla #153: módulo destino id=2969, orígenes=[680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (153, NULL, 124856, 2969);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (153, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 2969);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (153, 680);
 
 -- Regla #154: módulo destino id=2968, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (154, NULL, 124856, 2968);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (154, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 2968);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (154, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (154, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (154, 678);
@@ -2255,19 +2255,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (154, 697
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (154, 698);
 
 -- Regla #155: módulo destino id=2969, orígenes=[3113]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (155, NULL, 124856, 2969);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (155, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124856, 2969);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (155, 3113);
 
 -- Regla #156: módulo destino id=2969, orígenes=[4648]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (156, NULL, 124857, 2969);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (156, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2969);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (156, 4648);
 
 -- Regla #157: módulo destino id=2969, orígenes=[3137]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (157, NULL, 124857, 2969);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (157, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2969);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (157, 3137);
 
 -- Regla #158: módulo destino id=2966, orígenes=[2371, 2372, 2373, 2374, 2375, 2376, 2377, 2378, 2379, 2380, 2381, 2382, 2383, 2384, 2385, 2386, 2387, 2388, 2389, 2390, 2391, 2392, 2393]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (158, NULL, 124857, 2966);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (158, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2966);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (158, 2371);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (158, 2372);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (158, 2373);
@@ -2293,7 +2293,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (158, 239
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (158, 2393);
 
 -- Regla #159: módulo destino id=2966, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (159, NULL, 124857, 2966);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (159, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2966);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (159, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (159, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (159, 4670);
@@ -2325,19 +2325,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (159, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (159, 4696);
 
 -- Regla #160: módulo destino id=3003, orígenes=[3020]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (160, NULL, 124857, 3003);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (160, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 3003);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (160, 3020);
 
 -- Regla #161: módulo destino id=3003, orígenes=[2968]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (161, NULL, 124857, 3003);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (161, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 3003);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (161, 2968);
 
 -- Regla #162: módulo destino id=2995, orígenes=[680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (162, NULL, 124857, 2995);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (162, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2995);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (162, 680);
 
 -- Regla #163: módulo destino id=3003, orígenes=[676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 686, 687, 688, 689, 690, 691, 692, 693, 694, 695, 696, 697, 698]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (163, NULL, 124857, 3003);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (163, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 3003);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (163, 676);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (163, 677);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (163, 678);
@@ -2363,35 +2363,35 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (163, 697
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (163, 698);
 
 -- Regla #164: módulo destino id=2995, orígenes=[3113]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (164, NULL, 124857, 2995);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (164, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2995);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (164, 3113);
 
 -- Regla #165: módulo destino id=2995, orígenes=[4648]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (165, NULL, 124857, 2995);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (165, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2995);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (165, 4648);
 
 -- Regla #166: módulo destino id=2995, orígenes=[3137]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (166, NULL, 124857, 2995);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (166, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124857, 2995);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (166, 3137);
 
 -- Regla #167: módulo destino id=3075, orígenes=[3386]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (167, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (167, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (167, 3386);
 
 -- Regla #168: módulo destino id=3075, orígenes=[1680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (168, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (168, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (168, 1680);
 
 -- Regla #169: módulo destino id=3075, orígenes=[5059]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (169, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (169, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (169, 5059);
 
 -- Regla #170: módulo destino id=3075, orígenes=[4449]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (170, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (170, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (170, 4449);
 
 -- Regla #171: módulo destino id=3073, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (171, NULL, 124858, 3073);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (171, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3073);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (171, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (171, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (171, 814);
@@ -2408,7 +2408,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (171, 824
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (171, 825);
 
 -- Regla #172: módulo destino id=3079, orígenes=[3504, 3505, 3506, 3507, 3508, 3509, 3510, 3511, 3512, 3513, 3514, 3515, 3516, 3517, 3518, 3519, 3520, 3521, 3522, 3523, 3524, 3525, 3526, 3527, 3528, 3529, 3530, 3531, 3532, 3533, 3534, 3535, 3536, 3537, 3538]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (172, NULL, 124858, 3079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (172, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (172, 3504);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (172, 3505);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (172, 3506);
@@ -2446,7 +2446,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (172, 353
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (172, 3538);
 
 -- Regla #173: módulo destino id=3082, orígenes=[2424, 2425, 2426, 2427, 2428, 2429, 2430, 2431, 2432, 2433, 2434, 2435, 2436, 2437, 2438, 2439, 2440, 2441, 2442, 2443, 2444, 2445, 2446, 2447, 2448, 2449, 2450, 2451, 2452, 2453]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (173, NULL, 124858, 3082);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (173, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3082);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (173, 2424);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (173, 2425);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (173, 2426);
@@ -2479,19 +2479,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (173, 245
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (173, 2453);
 
 -- Regla #174: módulo destino id=3075, orígenes=[4420]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (174, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (174, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (174, 4420);
 
 -- Regla #175: módulo destino id=3075, orígenes=[1626]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (175, NULL, 124858, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (175, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124858, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (175, 1626);
 
 -- Regla #176: módulo destino id=3075, orígenes=[1703]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (176, NULL, 124859, 3075);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (176, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3075);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (176, 1703);
 
 -- Regla #177: módulo destino id=3073, orígenes=[722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (177, NULL, 124859, 3073);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (177, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3073);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (177, 722);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (177, 723);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (177, 724);
@@ -2524,23 +2524,23 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (177, 750
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (177, 751);
 
 -- Regla #178: módulo destino id=3049, orígenes=[3386]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (178, NULL, 124859, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (178, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (178, 3386);
 
 -- Regla #179: módulo destino id=3049, orígenes=[1680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (179, NULL, 124859, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (179, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (179, 1680);
 
 -- Regla #180: módulo destino id=3049, orígenes=[5059]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (180, NULL, 124859, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (180, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (180, 5059);
 
 -- Regla #181: módulo destino id=3049, orígenes=[4449]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (181, NULL, 124859, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (181, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (181, 4449);
 
 -- Regla #182: módulo destino id=3047, orígenes=[812, 813, 814, 815, 816, 817, 818, 819, 820, 821, 822, 823, 824, 825]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (182, NULL, 124859, 3047);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (182, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3047);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (182, 812);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (182, 813);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (182, 814);
@@ -2557,7 +2557,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (182, 824
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (182, 825);
 
 -- Regla #183: módulo destino id=3044, orígenes=[3504, 3505, 3506, 3507, 3508, 3509, 3510, 3511, 3512, 3513, 3514, 3515, 3516, 3517, 3518, 3519, 3520, 3521, 3522, 3523, 3524, 3525, 3526, 3527, 3528, 3529, 3530, 3531, 3532, 3533, 3534, 3535, 3536, 3537, 3538]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (183, NULL, 124859, 3044);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (183, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3044);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (183, 3504);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (183, 3505);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (183, 3506);
@@ -2595,19 +2595,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (183, 353
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (183, 3538);
 
 -- Regla #184: módulo destino id=3049, orígenes=[4420]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (184, NULL, 124859, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (184, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124859, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (184, 4420);
 
 -- Regla #185: módulo destino id=3049, orígenes=[1626]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (185, NULL, 124860, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (185, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (185, 1626);
 
 -- Regla #186: módulo destino id=3049, orígenes=[1703]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (186, NULL, 124860, 3049);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (186, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 3049);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (186, 1703);
 
 -- Regla #187: módulo destino id=3047, orígenes=[722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (187, NULL, 124860, 3047);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (187, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 3047);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (187, 722);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (187, 723);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (187, 724);
@@ -2640,11 +2640,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (187, 750
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (187, 751);
 
 -- Regla #188: módulo destino id=2124, orígenes=[54]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (188, NULL, 124860, 2124);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (188, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2124);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (188, 54);
 
 -- Regla #189: módulo destino id=2122, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (189, NULL, 124861, 2122);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (189, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2122);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (189, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (189, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (189, 1068);
@@ -2672,7 +2672,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (189, 108
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (189, 1090);
 
 -- Regla #190: módulo destino id=2123, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (190, NULL, 124861, 2123);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (190, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2123);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (190, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (190, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (190, 1068);
@@ -2700,7 +2700,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (190, 108
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (190, 1090);
 
 -- Regla #191: módulo destino id=2136, orígenes=[1066, 1067, 1068, 1069, 1070, 1071, 1072, 1073, 1074, 1075, 1076, 1077, 1078, 1079, 1080, 1081, 1082, 1083, 1084, 1085, 1086, 1087, 1088, 1089, 1090]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (191, NULL, 124860, 2136);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (191, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2136);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (191, 1066);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (191, 1067);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (191, 1068);
@@ -2728,7 +2728,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (191, 108
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (191, 1090);
 
 -- Regla #192: módulo destino id=2175, orígenes=[2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 2139, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2159]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (192, NULL, 124860, 2175);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (192, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2175);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (192, 2130);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (192, 2131);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (192, 2132);
@@ -2761,7 +2761,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (192, 215
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (192, 2159);
 
 -- Regla #193: módulo destino id=2176, orígenes=[2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 2139, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2159]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (193, NULL, 124860, 2176);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (193, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2176);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (193, 2130);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (193, 2131);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (193, 2132);
@@ -2794,7 +2794,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (193, 215
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (193, 2159);
 
 -- Regla #194: módulo destino id=2181, orígenes=[2821, 2822, 2823, 2824, 2825, 2826, 2827, 2828, 2829, 2830, 2831, 2832, 2833, 2834, 2835, 2836, 2837, 2838, 2839, 2840, 2841, 2842, 2843, 2844, 2845, 2846, 2847, 2848, 2849, 2850]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (194, NULL, 124860, 2181);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (194, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2181);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (194, 2821);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (194, 2822);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (194, 2823);
@@ -2827,7 +2827,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (194, 284
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (194, 2850);
 
 -- Regla #195: módulo destino id=2205, orígenes=[2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 2139, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2159]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (195, NULL, 124860, 2205);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (195, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2205);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (195, 2130);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (195, 2131);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (195, 2132);
@@ -2860,7 +2860,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (195, 215
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (195, 2159);
 
 -- Regla #196: módulo destino id=2206, orígenes=[2130, 2131, 2132, 2133, 2134, 2135, 2136, 2137, 2138, 2139, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2150, 2151, 2152, 2153, 2154, 2155, 2156, 2157, 2158, 2159]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (196, NULL, 124860, 2206);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (196, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124860, 2206);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (196, 2130);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (196, 2131);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (196, 2132);
@@ -2893,15 +2893,15 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (196, 215
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (196, 2159);
 
 -- Regla #197: módulo destino id=2363, orígenes=[3285]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (197, NULL, 124861, 2363);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (197, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2363);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (197, 3285);
 
 -- Regla #198: módulo destino id=2353, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (198, NULL, 124861, 2353);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (198, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2353);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (198, 1175);
 
 -- Regla #199: módulo destino id=2354, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (199, NULL, 124861, 2354);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (199, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2354);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (199, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (199, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (199, 920);
@@ -2924,7 +2924,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (199, 936
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (199, 937);
 
 -- Regla #200: módulo destino id=2354, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (200, NULL, 124861, 2354);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (200, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2354);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (200, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (200, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (200, 3272);
@@ -2954,11 +2954,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (200, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (200, 3296);
 
 -- Regla #201: módulo destino id=2353, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (201, NULL, 124861, 2353);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (201, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2353);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (201, 1282);
 
 -- Regla #202: módulo destino id=2354, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (202, NULL, 124861, 2354);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (202, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2354);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (202, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (202, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (202, 3399);
@@ -2991,7 +2991,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (202, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (202, 3426);
 
 -- Regla #203: módulo destino id=2331, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (203, NULL, 124861, 2331);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (203, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124861, 2331);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (203, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (203, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (203, 920);
@@ -3014,7 +3014,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (203, 936
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (203, 937);
 
 -- Regla #204: módulo destino id=2331, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (204, NULL, 124862, 2331);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (204, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2331);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (204, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (204, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (204, 3272);
@@ -3044,7 +3044,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (204, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (204, 3296);
 
 -- Regla #205: módulo destino id=2333, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (205, NULL, 124862, 2333);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (205, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2333);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (205, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (205, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (205, 3272);
@@ -3074,7 +3074,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (205, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (205, 3296);
 
 -- Regla #206: módulo destino id=2334, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (206, NULL, 124862, 2334);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (206, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2334);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (206, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (206, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (206, 3272);
@@ -3104,7 +3104,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (206, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (206, 3296);
 
 -- Regla #207: módulo destino id=2336, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (207, NULL, 124862, 2336);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (207, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2336);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (207, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (207, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (207, 3272);
@@ -3134,15 +3134,15 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (207, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (207, 3296);
 
 -- Regla #208: módulo destino id=2330, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (208, NULL, 124862, 2330);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (208, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2330);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (208, 1175);
 
 -- Regla #209: módulo destino id=2330, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (209, NULL, 124862, 2330);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (209, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2330);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (209, 1282);
 
 -- Regla #210: módulo destino id=2331, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (210, NULL, 124862, 2331);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (210, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2331);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (210, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (210, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (210, 3399);
@@ -3175,7 +3175,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (210, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (210, 3426);
 
 -- Regla #211: módulo destino id=2333, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (211, NULL, 124862, 2333);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (211, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2333);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (211, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (211, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (211, 3399);
@@ -3208,7 +3208,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (211, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (211, 3426);
 
 -- Regla #212: módulo destino id=2334, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (212, NULL, 124862, 2334);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (212, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2334);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (212, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (212, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (212, 3399);
@@ -3241,7 +3241,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (212, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (212, 3426);
 
 -- Regla #213: módulo destino id=2336, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (213, NULL, 124862, 2336);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (213, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2336);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (213, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (213, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (213, 3399);
@@ -3274,20 +3274,20 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (213, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (213, 3426);
 
 -- Regla #214: módulo destino id=2387, orígenes=[1548, 1551]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (214, NULL, 124862, 2387);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (214, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2387);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (214, 1548);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (214, 1551);
 
 -- Regla #215: módulo destino id=2388, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (215, NULL, 124862, 2388);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (215, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124862, 2388);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (215, 1175);
 
 -- Regla #216: módulo destino id=2388, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (216, NULL, 124863, 2388);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (216, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2388);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (216, 1282);
 
 -- Regla #217: módulo destino id=2389, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (217, NULL, 124863, 2389);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (217, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2389);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (217, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (217, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (217, 920);
@@ -3310,7 +3310,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (217, 936
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (217, 937);
 
 -- Regla #218: módulo destino id=2392, orígenes=[918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (218, NULL, 124863, 2392);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (218, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2392);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (218, 918);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (218, 919);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (218, 920);
@@ -3333,7 +3333,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (218, 936
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (218, 937);
 
 -- Regla #219: módulo destino id=2387, orígenes=[1562, 1563, 1564, 1565, 1566, 1567, 1568, 1569, 1570, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1580, 1581, 1582]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (219, NULL, 124863, 2387);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (219, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2387);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (219, 1562);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (219, 1563);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (219, 1564);
@@ -3357,7 +3357,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (219, 158
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (219, 1582);
 
 -- Regla #220: módulo destino id=2388, orígenes=[1562, 1563, 1564, 1565, 1566, 1567, 1568, 1569, 1570, 1571, 1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1580, 1581, 1582]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (220, NULL, 124863, 2388);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (220, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2388);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (220, 1562);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (220, 1563);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (220, 1564);
@@ -3381,7 +3381,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (220, 158
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (220, 1582);
 
 -- Regla #221: módulo destino id=2398, orígenes=[2454, 2455, 2456, 2457, 2458, 2459, 2460, 2461, 2462, 2463, 2464, 2465, 2466, 2467, 2468, 2469, 2470, 2471, 2472, 2473, 2474, 2475, 2476, 2477, 2478, 2479, 2480, 2481, 2482, 2483]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (221, NULL, 124863, 2398);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (221, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (221, 2454);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (221, 2455);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (221, 2456);
@@ -3414,7 +3414,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (221, 248
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (221, 2483);
 
 -- Regla #222: módulo destino id=2398, orígenes=[958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (222, NULL, 124863, 2398);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (222, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (222, 958);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (222, 959);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (222, 960);
@@ -3453,18 +3453,18 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (222, 992
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (222, 993);
 
 -- Regla #223: módulo destino id=2432, orígenes=[1229, 1232]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (223, NULL, 124863, 2432);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (223, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2432);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (223, 1229);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (223, 1232);
 
 -- Regla #224: módulo destino id=2439, orígenes=[2403, 2404, 2405]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (224, NULL, 124863, 2439);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (224, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2439);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (224, 2403);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (224, 2404);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (224, 2405);
 
 -- Regla #225: módulo destino id=2428, orígenes=[2454, 2455, 2456, 2457, 2458, 2459, 2460, 2461, 2462, 2463, 2464, 2465, 2466, 2467, 2468, 2469, 2470, 2471, 2472, 2473, 2474, 2475, 2476, 2477, 2478, 2479, 2480, 2481, 2482, 2483]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (225, NULL, 124863, 2428);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (225, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2428);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (225, 2454);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (225, 2455);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (225, 2456);
@@ -3497,7 +3497,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (225, 248
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (225, 2483);
 
 -- Regla #226: módulo destino id=2428, orígenes=[958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (226, NULL, 124863, 2428);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (226, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124863, 2428);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (226, 958);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (226, 959);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (226, 960);
@@ -3536,13 +3536,13 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (226, 992
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (226, 993);
 
 -- Regla #227: módulo destino id=2473, orígenes=[4777, 4778, 4779]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (227, NULL, 124864, 2473);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (227, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 2473);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (227, 4777);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (227, 4778);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (227, 4779);
 
 -- Regla #228: módulo destino id=2475, orígenes=[958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981, 982, 983, 984, 985, 986, 987, 988, 989, 990, 991, 992, 993]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (228, NULL, 124864, 2475);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (228, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 2475);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (228, 958);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (228, 959);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (228, 960);
@@ -3581,39 +3581,39 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (228, 992
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (228, 993);
 
 -- Regla #229: módulo destino id=3116, orígenes=[1619]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (229, NULL, 124864, 3116);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (229, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3116);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (229, 1619);
 
 -- Regla #230: módulo destino id=3113, orígenes=[680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (230, NULL, 124864, 3113);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (230, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3113);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (230, 680);
 
 -- Regla #231: módulo destino id=3113, orígenes=[3021]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (231, NULL, 124864, 3113);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (231, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3113);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (231, 3021);
 
 -- Regla #232: módulo destino id=3113, orígenes=[4648]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (232, NULL, 124864, 3113);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (232, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3113);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (232, 4648);
 
 -- Regla #233: módulo destino id=3113, orígenes=[2969]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (233, NULL, 124864, 3113);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (233, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3113);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (233, 2969);
 
 -- Regla #234: módulo destino id=3116, orígenes=[1546]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (234, NULL, 124864, 3116);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (234, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124864, 3116);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (234, 1546);
 
 -- Regla #235: módulo destino id=3116, orígenes=[2045]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (235, NULL, 124865, 3116);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (235, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3116);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (235, 2045);
 
 -- Regla #236: módulo destino id=3113, orígenes=[2995]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (236, NULL, 124865, 3113);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (236, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3113);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (236, 2995);
 
 -- Regla #237: módulo destino id=3109, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (237, NULL, 124865, 3109);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (237, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3109);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (237, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (237, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (237, 3179);
@@ -3630,7 +3630,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (237, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (237, 3190);
 
 -- Regla #238: módulo destino id=3110, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (238, NULL, 124865, 3110);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (238, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3110);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (238, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (238, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (238, 3179);
@@ -3647,7 +3647,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (238, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (238, 3190);
 
 -- Regla #239: módulo destino id=3114, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (239, NULL, 124865, 3114);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (239, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3114);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (239, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (239, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (239, 3179);
@@ -3664,27 +3664,27 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (239, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (239, 3190);
 
 -- Regla #240: módulo destino id=3137, orígenes=[680]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (240, NULL, 124865, 3137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (240, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (240, 680);
 
 -- Regla #241: módulo destino id=3137, orígenes=[3021]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (241, NULL, 124865, 3137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (241, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (241, 3021);
 
 -- Regla #242: módulo destino id=3137, orígenes=[4648]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (242, NULL, 124865, 3137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (242, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (242, 4648);
 
 -- Regla #243: módulo destino id=3137, orígenes=[2969]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (243, NULL, 124865, 3137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (243, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (243, 2969);
 
 -- Regla #244: módulo destino id=3137, orígenes=[2995]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (244, NULL, 124865, 3137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (244, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (244, 2995);
 
 -- Regla #245: módulo destino id=3133, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (245, NULL, 124865, 3133);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (245, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3133);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (245, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (245, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (245, 3179);
@@ -3701,7 +3701,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (245, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (245, 3190);
 
 -- Regla #246: módulo destino id=3134, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (246, NULL, 124865, 3134);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (246, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3134);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (246, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (246, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (246, 3179);
@@ -3718,7 +3718,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (246, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (246, 3190);
 
 -- Regla #247: módulo destino id=3143, orígenes=[3177, 3178, 3179, 3180, 3181, 3182, 3183, 3184, 3185, 3186, 3187, 3188, 3189, 3190]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (247, NULL, 124865, 3143);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (247, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124865, 3143);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (247, 3177);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (247, 3178);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (247, 3179);
@@ -3735,7 +3735,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (247, 318
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (247, 3190);
 
 -- Regla #248: módulo destino id=3250, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (248, NULL, 124866, 3250);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (248, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3250);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (248, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (248, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (248, 3272);
@@ -3765,7 +3765,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (248, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (248, 3296);
 
 -- Regla #249: módulo destino id=3250, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (249, NULL, 124866, 3250);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (249, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3250);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (249, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (249, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (249, 3399);
@@ -3798,7 +3798,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (249, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (249, 3426);
 
 -- Regla #250: módulo destino id=3321, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (250, NULL, 124866, 3321);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (250, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3321);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (250, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (250, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (250, 3272);
@@ -3828,7 +3828,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (250, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (250, 3296);
 
 -- Regla #251: módulo destino id=3321, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (251, NULL, 124866, 3321);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (251, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3321);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (251, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (251, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (251, 3399);
@@ -3861,7 +3861,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (251, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (251, 3426);
 
 -- Regla #252: módulo destino id=3335, orígenes=[3297, 3298, 3299, 3300, 3301, 3302, 3303, 3304, 3305, 3306, 3307, 3308, 3309, 3310, 3311, 3312, 3313, 3314, 3315, 3316, 3317, 3318, 3319, 3320, 3321, 3322, 3323]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (252, NULL, 124866, 3335);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (252, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3335);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (252, 3297);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (252, 3298);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (252, 3299);
@@ -3891,7 +3891,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (252, 332
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (252, 3323);
 
 -- Regla #253: módulo destino id=3336, orígenes=[3297, 3298, 3299, 3300, 3301, 3302, 3303, 3304, 3305, 3306, 3307, 3308, 3309, 3310, 3311, 3312, 3313, 3314, 3315, 3316, 3317, 3318, 3319, 3320, 3321, 3322, 3323]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (253, NULL, 124866, 3336);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (253, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3336);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (253, 3297);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (253, 3298);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (253, 3299);
@@ -3921,7 +3921,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (253, 332
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (253, 3323);
 
 -- Regla #254: módulo destino id=3335, orígenes=[3337, 3338, 3339, 3340, 3341, 3342, 3343, 3344, 3345, 3346, 3347, 3348, 3349, 3350, 3351, 3352, 3353, 3354, 3355, 3356, 3357, 3358, 3359, 3360, 3361, 3362, 3363, 3364, 3365, 3366]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (254, NULL, 124866, 3335);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (254, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3335);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (254, 3337);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (254, 3338);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (254, 3339);
@@ -3954,7 +3954,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (254, 336
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (254, 3366);
 
 -- Regla #255: módulo destino id=3336, orígenes=[3337, 3338, 3339, 3340, 3341, 3342, 3343, 3344, 3345, 3346, 3347, 3348, 3349, 3350, 3351, 3352, 3353, 3354, 3355, 3356, 3357, 3358, 3359, 3360, 3361, 3362, 3363, 3364, 3365, 3366]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (255, NULL, 124866, 3336);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (255, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3336);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (255, 3337);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (255, 3338);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (255, 3339);
@@ -3987,11 +3987,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (255, 336
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (255, 3366);
 
 -- Regla #256: módulo destino id=3386, orígenes=[4449]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (256, NULL, 124866, 3386);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (256, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3386);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (256, 4449);
 
 -- Regla #257: módulo destino id=3384, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (257, NULL, 124866, 3384);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (257, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3384);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (257, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (257, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (257, 3399);
@@ -4024,16 +4024,16 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (257, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (257, 3426);
 
 -- Regla #258: módulo destino id=3386, orígenes=[4420]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (258, NULL, 124866, 3386);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (258, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124866, 3386);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (258, 4420);
 
 -- Regla #259: módulo destino id=3431, orígenes=[3460, 3461]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (259, NULL, 124867, 3431);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (259, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3431);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (259, 3460);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (259, 3461);
 
 -- Regla #260: módulo destino id=3438, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (260, NULL, 124867, 3438);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (260, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3438);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (260, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (260, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (260, 4670);
@@ -4065,23 +4065,23 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (260, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (260, 4696);
 
 -- Regla #261: módulo destino id=3437, orígenes=[1177]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (261, NULL, 124867, 3437);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (261, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3437);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (261, 1177);
 
 -- Regla #262: módulo destino id=3437, orígenes=[1275]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (262, NULL, 124867, 3437);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (262, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3437);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (262, 1275);
 
 -- Regla #263: módulo destino id=3460, orígenes=[3431]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (263, NULL, 124867, 3460);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (263, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3460);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (263, 3431);
 
 -- Regla #264: módulo destino id=3461, orígenes=[3431]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (264, NULL, 124867, 3461);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (264, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3461);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (264, 3431);
 
 -- Regla #265: módulo destino id=3459, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (265, NULL, 124867, 3459);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (265, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3459);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (265, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (265, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (265, 4670);
@@ -4113,11 +4113,11 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (265, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (265, 4696);
 
 -- Regla #266: módulo destino id=3461, orígenes=[3519]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (266, NULL, 124867, 3461);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (266, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3461);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (266, 3519);
 
 -- Regla #267: módulo destino id=3479, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (267, NULL, 124867, 3479);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (267, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124867, 3479);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (267, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (267, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (267, 3399);
@@ -4150,7 +4150,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (267, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (267, 3426);
 
 -- Regla #268: módulo destino id=3584, orígenes=[4615, 4616, 4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 4626, 4627, 4628, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4638]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (268, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (268, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (268, 4615);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (268, 4616);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (268, 4617);
@@ -4177,7 +4177,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (268, 463
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (268, 4638);
 
 -- Regla #269: módulo destino id=3584, orígenes=[4567, 4568, 4569, 4570, 4571, 4572, 4573, 4574, 4575, 4576, 4577, 4578, 4579, 4580, 4581, 4582, 4583, 4584, 4585, 4586, 4587, 4588, 4589, 4590]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (269, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (269, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (269, 4567);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (269, 4568);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (269, 4569);
@@ -4204,7 +4204,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (269, 458
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (269, 4590);
 
 -- Regla #270: módulo destino id=3584, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (270, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (270, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (270, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (270, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (270, 3272);
@@ -4234,7 +4234,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (270, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (270, 3296);
 
 -- Regla #271: módulo destino id=3584, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (271, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (271, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (271, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (271, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (271, 4670);
@@ -4266,7 +4266,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (271, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (271, 4696);
 
 -- Regla #272: módulo destino id=3584, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (272, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (272, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (272, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (272, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (272, 3399);
@@ -4299,7 +4299,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (272, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (272, 3426);
 
 -- Regla #273: módulo destino id=3584, orígenes=[4772, 4773, 4774, 4775, 4776, 4777, 4778, 4779, 4780, 4781, 4782, 4783, 4784, 4785, 4786, 4787, 4788, 4789, 4790, 4791, 4792, 4793, 4794, 4795, 4796, 4797, 4798, 4799, 4800, 4801, 4802, 4803, 4804]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (273, NULL, 124868, 3584);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (273, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3584);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (273, 4772);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (273, 4773);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (273, 4774);
@@ -4335,7 +4335,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (273, 480
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (273, 4804);
 
 -- Regla #274: módulo destino id=3623, orígenes=[3580, 3581, 3582, 3583, 3584, 3585, 3586, 3587, 3588, 3589, 3590, 3591, 3592, 3593, 3594, 3595, 3596, 3597, 3598, 3599, 3600, 3601]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (274, NULL, 124868, 3623);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (274, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3623);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (274, 3580);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (274, 3581);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (274, 3582);
@@ -4360,7 +4360,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (274, 360
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (274, 3601);
 
 -- Regla #275: módulo destino id=3620, orígenes=[3504, 3505, 3506, 3507, 3508, 3509, 3510, 3511, 3512, 3513, 3514, 3515, 3516, 3517, 3518, 3519, 3520, 3521, 3522, 3523, 3524, 3525, 3526, 3527, 3528, 3529, 3530, 3531, 3532, 3533, 3534, 3535, 3536, 3537, 3538]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (275, NULL, 124868, 3620);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (275, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124868, 3620);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (275, 3504);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (275, 3505);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (275, 3506);
@@ -4398,55 +4398,55 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (275, 353
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (275, 3538);
 
 -- Regla #276: módulo destino id=4079, orígenes=[4137]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (276, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (276, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (276, 4137);
 
 -- Regla #277: módulo destino id=4079, orígenes=[4226]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (277, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (277, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (277, 4226);
 
 -- Regla #278: módulo destino id=4079, orígenes=[4098]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (278, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (278, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (278, 4098);
 
 -- Regla #279: módulo destino id=4079, orígenes=[4164]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (279, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (279, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (279, 4164);
 
 -- Regla #280: módulo destino id=4082, orígenes=[4185]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (280, NULL, 124869, 4082);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (280, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4082);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (280, 4185);
 
 -- Regla #281: módulo destino id=4082, orígenes=[4245]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (281, NULL, 124869, 4082);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (281, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4082);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (281, 4245);
 
 -- Regla #282: módulo destino id=4079, orígenes=[4191]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (282, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (282, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (282, 4191);
 
 -- Regla #283: módulo destino id=4079, orígenes=[3963]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (283, NULL, 124869, 4079);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (283, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4079);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (283, 3963);
 
 -- Regla #284: módulo destino id=4137, orígenes=[4098]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (284, NULL, 124869, 4137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (284, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (284, 4098);
 
 -- Regla #285: módulo destino id=4137, orígenes=[4164]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (285, NULL, 124869, 4137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (285, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (285, 4164);
 
 -- Regla #286: módulo destino id=4137, orígenes=[4191]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (286, NULL, 124869, 4137);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (286, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124869, 4137);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (286, 4191);
 
 -- Regla #287: módulo destino id=4344, orígenes=[773]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (287, NULL, 124870, 4344);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (287, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4344);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (287, 773);
 
 -- Regla #288: módulo destino id=4338, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (288, NULL, 124870, 4338);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (288, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4338);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (288, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (288, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (288, 4670);
@@ -4478,7 +4478,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (288, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (288, 4696);
 
 -- Regla #289: módulo destino id=4365, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (289, NULL, 124870, 4365);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (289, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4365);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (289, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (289, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (289, 4670);
@@ -4510,7 +4510,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (289, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (289, 4696);
 
 -- Regla #290: módulo destino id=4392, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (290, NULL, 124870, 4392);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (290, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4392);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (290, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (290, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (290, 4670);
@@ -4542,19 +4542,19 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (290, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (290, 4696);
 
 -- Regla #291: módulo destino id=4602, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (291, NULL, 124870, 4602);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (291, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4602);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (291, 1175);
 
 -- Regla #292: módulo destino id=4602, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (292, NULL, 124870, 4602);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (292, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4602);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (292, 1282);
 
 -- Regla #293: módulo destino id=4602, orígenes=[3282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (293, NULL, 124870, 4602);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (293, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4602);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (293, 3282);
 
 -- Regla #294: módulo destino id=4649, orígenes=[4615, 4616, 4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 4626, 4627, 4628, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4638]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (294, NULL, 124870, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (294, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (294, 4615);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (294, 4616);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (294, 4617);
@@ -4581,7 +4581,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (294, 463
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (294, 4638);
 
 -- Regla #295: módulo destino id=4649, orígenes=[4567, 4568, 4569, 4570, 4571, 4572, 4573, 4574, 4575, 4576, 4577, 4578, 4579, 4580, 4581, 4582, 4583, 4584, 4585, 4586, 4587, 4588, 4589, 4590]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (295, NULL, 124870, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (295, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124870, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (295, 4567);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (295, 4568);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (295, 4569);
@@ -4608,7 +4608,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (295, 458
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (295, 4590);
 
 -- Regla #296: módulo destino id=4649, orígenes=[3270, 3271, 3272, 3273, 3274, 3275, 3276, 3277, 3278, 3279, 3280, 3281, 3282, 3283, 3284, 3285, 3286, 3287, 3288, 3289, 3290, 3291, 3292, 3293, 3294, 3295, 3296]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (296, NULL, 124871, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (296, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (296, 3270);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (296, 3271);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (296, 3272);
@@ -4638,7 +4638,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (296, 329
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (296, 3296);
 
 -- Regla #297: módulo destino id=4649, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (297, NULL, 124871, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (297, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (297, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (297, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (297, 4670);
@@ -4670,7 +4670,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (297, 469
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (297, 4696);
 
 -- Regla #298: módulo destino id=4649, orígenes=[4772, 4773, 4774, 4775, 4776, 4777, 4778, 4779, 4780, 4781, 4782, 4783, 4784, 4785, 4786, 4787, 4788, 4789, 4790, 4791, 4792, 4793, 4794, 4795, 4796, 4797, 4798, 4799, 4800, 4801, 4802, 4803, 4804]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (298, NULL, 124871, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (298, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (298, 4772);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (298, 4773);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (298, 4774);
@@ -4706,7 +4706,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (298, 480
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (298, 4804);
 
 -- Regla #299: módulo destino id=4649, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (299, NULL, 124871, 4649);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (299, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4649);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (299, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (299, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (299, 3399);
@@ -4739,83 +4739,83 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (299, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (299, 3426);
 
 -- Regla #300: módulo destino id=4633, orígenes=[4572]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (300, NULL, 124871, 4633);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (300, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4633);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (300, 4572);
 
 -- Regla #301: módulo destino id=4626, orígenes=[3282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (301, NULL, 124871, 4626);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (301, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4626);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (301, 3282);
 
 -- Regla #302: módulo destino id=4619, orígenes=[3281]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (302, NULL, 124871, 4619);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (302, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4619);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (302, 3281);
 
 -- Regla #303: módulo destino id=4626, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (303, NULL, 124871, 4626);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (303, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4626);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (303, 1175);
 
 -- Regla #304: módulo destino id=4626, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (304, NULL, 124871, 4626);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (304, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4626);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (304, 1282);
 
 -- Regla #305: módulo destino id=4619, orígenes=[3419]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (305, NULL, 124871, 4619);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (305, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124871, 4619);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (305, 3419);
 
 -- Regla #306: módulo destino id=4578, orígenes=[3282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (306, NULL, 124872, 4578);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (306, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4578);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (306, 3282);
 
 -- Regla #307: módulo destino id=4576, orígenes=[4685]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (307, NULL, 124872, 4576);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (307, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4576);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (307, 4685);
 
 -- Regla #308: módulo destino id=4578, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (308, NULL, 124872, 4578);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (308, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4578);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (308, 1175);
 
 -- Regla #309: módulo destino id=4578, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (309, NULL, 124872, 4578);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (309, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4578);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (309, 1282);
 
 -- Regla #310: módulo destino id=4571, orígenes=[3281]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (310, NULL, 124872, 4571);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (310, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4571);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (310, 3281);
 
 -- Regla #311: módulo destino id=4571, orígenes=[3419]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (311, NULL, 124872, 4571);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (311, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4571);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (311, 3419);
 
 -- Regla #312: módulo destino id=4682, orígenes=[4572]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (312, NULL, 124872, 4682);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (312, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4682);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (312, 4572);
 
 -- Regla #313: módulo destino id=4685, orígenes=[4576]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (313, NULL, 124872, 4685);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (313, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4685);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (313, 4576);
 
 -- Regla #314: módulo destino id=4689, orígenes=[1175]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (314, NULL, 124872, 4689);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (314, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4689);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (314, 1175);
 
 -- Regla #315: módulo destino id=4689, orígenes=[1282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (315, NULL, 124872, 4689);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (315, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124872, 4689);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (315, 1282);
 
 -- Regla #316: módulo destino id=4681, orígenes=[3419]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (316, NULL, 124873, 4681);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (316, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124873, 4681);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (316, 3419);
 
 -- Regla #317: módulo destino id=4689, orígenes=[3282]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (317, NULL, 124873, 4689);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (317, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124873, 4689);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (317, 3282);
 
 -- Regla #318: módulo destino id=4681, orígenes=[3281]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (318, NULL, 124873, 4681);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (318, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124873, 4681);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (318, 3281);
 
 -- Regla #319: módulo destino id=4778, orígenes=[3397, 3398, 3399, 3400, 3401, 3402, 3403, 3404, 3405, 3406, 3407, 3408, 3409, 3410, 3411, 3412, 3413, 3414, 3415, 3416, 3417, 3418, 3419, 3420, 3421, 3422, 3423, 3424, 3425, 3426]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (319, NULL, 124873, 4778);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (319, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124873, 4778);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (319, 3397);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (319, 3398);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (319, 3399);
@@ -4848,7 +4848,7 @@ INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (319, 342
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (319, 3426);
 
 -- Regla #320: módulo destino id=5047, orígenes=[4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678, 4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691, 4692, 4693, 4694, 4695, 4696]
-INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (320, NULL, 124873, 5047);
+INSERT OR IGNORE INTO convalidacion (id, source_link, source_page, id_modulo_destino) VALUES (320, 'https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf', 124873, 5047);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (320, 4668);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (320, 4669);
 INSERT OR IGNORE INTO convalidacion_origen (conv_id, id_modulo) VALUES (320, 4670);

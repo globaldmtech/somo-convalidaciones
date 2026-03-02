@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS ciclos (
   nombre TEXT NOT NULL,
   id_oficial TEXT,
   normativa TEXT,
-  id_familia INTEGER NOT NULL,
-  id_grado INTEGER NOT NULL,
+  id_familia INTEGER,
+  id_grado INTEGER,
   FOREIGN KEY (id_familia) REFERENCES familias(id),
   FOREIGN KEY (id_grado) REFERENCES grados(id)
 );
@@ -82,23 +82,19 @@ CREATE TABLE IF NOT EXISTS formulario_solicitudes (
   id_formulario INTEGER NOT NULL,
   id_modulo_destino INTEGER,
   id_convalidacion INTEGER,
-  id_convalidacion_acreditacion INTEGER,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id),
   FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id),
-  FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id),
-  FOREIGN KEY (id_convalidacion_acreditacion) REFERENCES convalidacion_externa(id)
+  FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id)
 );
 
 CREATE TABLE IF NOT EXISTS formulario_modulos_aportados (
   id INTEGER PRIMARY KEY,
   id_formulario INTEGER NOT NULL,
   id_modulo INTEGER,
-  id_acreditacion INTEGER,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id),
-  FOREIGN KEY (id_modulo) REFERENCES modulos(id),
-  FOREIGN KEY (id_acreditacion) REFERENCES acreditacion_externa(id)
+  FOREIGN KEY (id_modulo) REFERENCES modulos(id)
 );
 
 CREATE TABLE IF NOT EXISTS formulario_archivos (
@@ -108,22 +104,4 @@ CREATE TABLE IF NOT EXISTS formulario_archivos (
   descripcion TEXT,
   ruta_almacenamiento TEXT NOT NULL,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id)
-);
-
--- Acreditaciones externas (certificados EOI, títulos universitarios, etc.)
--- No son módulos de FP pero pueden convalidar módulos del ciclo destino
-CREATE TABLE IF NOT EXISTS acreditacion_externa (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombre      TEXT NOT NULL,  -- ej: "Certificado Nivel Intermedio (B1) de Inglés (EOI)"
-  tipo        TEXT            -- ej: "certificado_idioma", "titulo_universitario"
-);
-
--- Regla 1-to-1: acreditación externa → módulo destino
--- Una fila por cada instancia de módulo destino (uno por ciclo que lo tenga)
-CREATE TABLE IF NOT EXISTS convalidacion_externa (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  id_acreditacion INTEGER NOT NULL,
-  id_modulo_destino INTEGER NOT NULL,
-  FOREIGN KEY (id_acreditacion)   REFERENCES acreditacion_externa(id),
-  FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id)
 );

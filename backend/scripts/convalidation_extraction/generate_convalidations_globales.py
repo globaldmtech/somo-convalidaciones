@@ -26,6 +26,8 @@ from db_helper import (
 from reglas_convalidacion.rules_otros import MODULOS_GLOBALES, REGLAS_MODULO_A_MODULO
 
 OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "4_load_convalidations_global.sql")
+SOURCE_LINK = "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf"
+SOURCE_PAGE = 124839
 
 def get_next_conv_id() -> int:
     with sqlite3.connect(DEFAULT_DB) as conn:
@@ -75,8 +77,8 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
 
                 sql_lines.append(f"-- Regla global '{nombre_mod}': destino={id_dest}, origen={id_orig}")
                 sql_lines.append(
-                    f"INSERT INTO convalidacion (id, id_modulo_destino) "
-                    f"VALUES ({conv_id}, {id_dest});"
+                    f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
+                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "
@@ -115,8 +117,8 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
 
                 sql_lines.append(f"-- TIPO3: {id_of_orig} -> {id_of_dest}: orig={id_orig}, dest={id_dest}")
                 sql_lines.append(
-                    f"INSERT INTO convalidacion (id, id_modulo_destino) "
-                    f"VALUES ({conv_id}, {id_dest});"
+                    f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
+                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "

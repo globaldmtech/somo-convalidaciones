@@ -16,6 +16,8 @@ DEFAULT_DB_PATH = Path(_db_path_env)
 if not DEFAULT_DB_PATH.is_absolute():
     DEFAULT_DB_PATH = _BASE_DIR / DEFAULT_DB_PATH
 
+CICLO_ACREDITACIONES_EXTERNAS = "Acreditaciones externas"
+
 
 @dataclass
 class DBConfig:
@@ -69,9 +71,19 @@ def list_modulos(conn: sqlite3.Connection, ciclo_id: Optional[int] = None) -> Se
 
 
 def list_acreditaciones_externas(conn: sqlite3.Connection) -> Sequence[dict]:
-    """List all external certifications ordered by type and name."""
+    """List external certifications represented as modules in dedicated cycle."""
     rows = conn.execute(
-        "SELECT id, nombre, tipo FROM acreditacion_externa ORDER BY tipo, nombre"
+        """
+        SELECT
+            m.id,
+            m.nombre,
+            COALESCE(m.id_oficial, 'otros') AS tipo
+        FROM modulos m
+        JOIN ciclos c ON c.id = m.id_ciclo
+        WHERE c.nombre = ?
+        ORDER BY tipo, m.nombre
+        """,
+        (CICLO_ACREDITACIONES_EXTERNAS,),
     ).fetchall()
     return [dict(row) for row in rows]
 
@@ -87,48 +99,49 @@ def get_convalidaciones_posibles(
     """
     Find modules that can be convalidated within a specific target cycle.
     """
-    results = []
+    origen_ids = list(dict.fromkeys([*modulo_ids, *acreditacion_ids]))
+    if not origen_ids:
+        return []
 
-    # 1. Matching by external certifications (1-to-1)
-    if acreditacion_ids:
-        placeholders = ",".join(["?"] * len(acreditacion_ids))
-        query_ext = f"""
-            SELECT NULL as id_convalidacion, ce.id as id_convalidacion_externa, m.id, m.nombre, c.nombre as ciclo_nombre, 'acreditacion_externa' as origen_tipo,
-                   ae.nombre as source_nombre
-            FROM convalidacion_externa ce
-            JOIN modulos m ON ce.id_modulo_destino = m.id
-            JOIN ciclos c ON m.id_ciclo = c.id
-            JOIN acreditacion_externa ae ON ce.id_acreditacion = ae.id
-            WHERE ce.id_acreditacion IN ({placeholders})
-            AND m.id_ciclo = ?
-        """
-        params = list(acreditacion_ids) + [target_ciclo_id]
-        results.extend([dict(row) for row in conn.execute(query_ext, params).fetchall()])
-    # 2. Matching by modules (N-to-1)
-    if modulo_ids:
-        placeholders = ",".join(["?"] * len(modulo_ids))
-        query_mod = f"""
-            SELECT conv.id as id_convalidacion, NULL as id_convalidacion_externa, m.id, m.nombre, c_target.nombre as ciclo_nombre, 'modulos_fp' as origen_tipo,
-                   c_source.nombre as source_nombre,
-                   GROUP_CONCAT(m_source.nombre, ', ') as modulos_origen
-            FROM convalidacion conv
-            JOIN modulos m ON conv.id_modulo_destino = m.id
-            JOIN ciclos c_target ON m.id_ciclo = c_target.id
-            JOIN convalidacion_origen co ON conv.id = co.conv_id
-            JOIN modulos m_source ON co.id_modulo = m_source.id
-            JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
-            WHERE NOT EXISTS (
-                SELECT 1 FROM convalidacion_origen co_check
-                WHERE co_check.conv_id = conv.id
-                AND co_check.id_modulo NOT IN ({placeholders})
-            )
-            AND m.id_ciclo = ?
-            GROUP BY conv.id
-        """
-        params = list(modulo_ids) + [target_ciclo_id]
-        results.extend([dict(row) for row in conn.execute(query_mod, params).fetchall()])
-
-    return results
+    placeholders = ",".join(["?"] * len(origen_ids))
+    query = f"""
+        SELECT
+            conv.id AS id_convalidacion,
+            m.id,
+            m.nombre,
+            c_target.nombre AS ciclo_nombre,
+            CASE
+                WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN 'acreditacion_externa'
+                ELSE 'modulos_fp'
+            END AS origen_tipo,
+            CASE
+                WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ')
+                WHEN COUNT(DISTINCT c_source.id) = 1 THEN MIN(c_source.nombre)
+                ELSE 'Origen mixto'
+            END AS source_nombre,
+            REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen
+        FROM convalidacion conv
+        JOIN modulos m ON conv.id_modulo_destino = m.id
+        JOIN ciclos c_target ON m.id_ciclo = c_target.id
+        JOIN convalidacion_origen co ON conv.id = co.conv_id
+        JOIN modulos m_source ON co.id_modulo = m_source.id
+        JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
+        WHERE co.id_modulo IN ({placeholders})
+          AND m.id_ciclo = ?
+        GROUP BY conv.id, m.id, m.nombre, c_target.nombre
+        HAVING COUNT(DISTINCT co.id_modulo) = (
+            SELECT COUNT(*)
+            FROM convalidacion_origen co_all
+            WHERE co_all.conv_id = conv.id
+        )
+    """
+    params = [
+        CICLO_ACREDITACIONES_EXTERNAS,
+        CICLO_ACREDITACIONES_EXTERNAS,
+        *origen_ids,
+        target_ciclo_id,
+    ]
+    return [dict(row) for row in conn.execute(query, params).fetchall()]
 
 
 def insert_formulario(
@@ -176,37 +189,24 @@ def insert_modulo_aportado(
     id_formulario: int,
     id_modulos: Sequence[int],
     id_acreditaciones: Sequence[int],
-    descripciones: Optional[str] = None,
+    descripciones: Optional[Sequence[str]] = None,
 ) -> list:
     """Execute INSERTs into formulario_modulos_aportados without committing.
 
     The caller is responsible for commit/rollback.
     """
-    if id_modulos:
-        for id_modulo in id_modulos:
-            print(id_modulo)
-            cursor = conn.execute(
-                """
-                INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo)
-                VALUES (?, ?)
-                """,
-                (id_formulario, id_modulo),
-            )
-            print('sale de aqui')
-    elif id_acreditaciones:
-        for id_acreditacion in id_acreditaciones:
-            print(id_acreditacion)
-            cursor = conn.execute(
-                """
-                INSERT INTO formulario_modulos_aportados (id_formulario, id_acreditacion)
-                VALUES (?, ?)
-                """,
-                (id_formulario, id_acreditacion),
-            )
-    elif descripciones:
+    for id_modulo in list(id_modulos) + list(id_acreditaciones):
+        conn.execute(
+            """
+            INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo)
+            VALUES (?, ?)
+            """,
+            (id_formulario, id_modulo),
+        )
+
+    if descripciones:
         for descripcion in descripciones:
-            print(descripcion)
-            cursor = conn.execute(
+            conn.execute(
                 """
                 INSERT INTO formulario_modulos_aportados (id_formulario, descripcion)
                 VALUES (?, ?)
@@ -219,8 +219,8 @@ def insert_modulo_aportado(
 def insert_formulario_solicitud(
     conn: sqlite3.Connection,
     id_formulario: int,
-    solicitudes_registradas: List[dict],
-    solicitudes_no_registradas: List[str]
+    solicitudes_registradas: Sequence[object],
+    solicitudes_no_registradas: Sequence[str]
 ) -> dict:
     """INSERT into formulario_solicitudes without committing.
 
@@ -230,10 +230,10 @@ def insert_formulario_solicitud(
     for s_regis in solicitudes_registradas:
         cursor = conn.execute(
             """
-            INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion, id_convalidacion_acreditacion)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion)
+            VALUES (?, ?, ?)
             """,
-            (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion, s_regis.id_convalidacion_externa),
+            (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion),
         )
     for s_no_regis in solicitudes_no_registradas:
         cursor = conn.execute(

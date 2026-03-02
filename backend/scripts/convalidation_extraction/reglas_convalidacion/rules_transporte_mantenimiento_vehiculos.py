@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de mecanizado y unión",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124870,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124870,
     },
 
@@ -69,7 +69,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procedimientos de mecanizado y soldadura en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124870,
     },
 
@@ -94,7 +94,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124870,
     },
 
@@ -116,7 +116,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124870,
     },
 
@@ -145,7 +145,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -167,7 +167,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -189,7 +189,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -211,7 +211,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -235,7 +235,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas auxiliares del motor",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -256,7 +256,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procedimientos de mecanizado y soldadura en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -277,7 +277,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Mantenimiento de la planta propulsora y maquinaria auxiliar",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -298,7 +298,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de mecanizado y unión",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -319,7 +319,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -340,7 +340,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización del mantenimiento de planta propulsora y maquinaria auxiliar de buques",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124871,
     },
 
@@ -368,7 +368,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procedimientos de mecanizado y soldadura en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -389,7 +389,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Circuitos auxiliares",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -410,7 +410,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de mecanizado y unión",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -431,7 +431,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -452,7 +452,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Mantenimiento de la planta propulsora y maquinaria auxiliar",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -473,7 +473,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización del mantenimiento de planta propulsora y maquinaria auxiliar de buques",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -497,7 +497,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Sistemas auxiliares del motor",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -518,7 +518,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Circuitos eléctricos auxiliares del vehículo",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -539,7 +539,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de mecanizado y unión",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -560,7 +560,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de montaje en instalaciones de agua",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124872,
     },
 
@@ -588,7 +588,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Organización del mantenimiento de planta propulsora y maquinaria auxiliar de buques",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124873,
     },
 
@@ -609,7 +609,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Procedimientos de mecanizado y soldadura en buques y embarcaciones",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124873,
     },
 
@@ -630,7 +630,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Mantenimiento de la planta propulsora y maquinaria auxiliar",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124873,
     },
 
@@ -659,7 +659,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124873,
     },
 

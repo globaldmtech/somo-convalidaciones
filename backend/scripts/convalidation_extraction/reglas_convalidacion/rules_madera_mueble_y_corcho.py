@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Mecanizado por control numérico",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -69,7 +69,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -90,7 +90,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones de Almacenaje",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -111,7 +111,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -132,7 +132,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Mecanizado por control numérico",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124864,
     },
 
@@ -153,7 +153,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Tecnología de mecanizado en piedra natural",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -174,7 +174,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -198,7 +198,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
     {
@@ -217,7 +217,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
     {
@@ -236,7 +236,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -262,7 +262,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Técnicas de almacén",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -283,7 +283,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -304,7 +304,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones de Almacenaje",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -325,7 +325,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -346,7 +346,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Operaciones y control de almacén en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 
@@ -370,7 +370,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
     {
@@ -389,7 +389,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
     {
@@ -408,7 +408,7 @@ CONVALIDACIONES: list[dict] = [
                 "ciclo_completo_origen": True,
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124865,
     },
 

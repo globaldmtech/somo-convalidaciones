@@ -103,7 +103,6 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             nombre: mod.nombre,
             source: mod.source_nombre,
             id_convalidacion: mod.id_convalidacion ?? null,
-            id_convalidacion_externa: mod.id_convalidacion_externa ?? null,
         }));
     }
 

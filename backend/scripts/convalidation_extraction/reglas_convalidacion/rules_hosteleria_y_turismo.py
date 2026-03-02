@@ -27,7 +27,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo empresarial",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -48,7 +48,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124852,
     },
 
@@ -69,7 +69,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -100,7 +100,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Nutrición y seguridad alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -128,7 +128,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Gestión de calidad y ambiental en la industria alimentaria",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -152,7 +152,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo empresarial",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -173,7 +173,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -194,7 +194,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -218,7 +218,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -239,7 +239,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Protocolo empresarial",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
@@ -260,7 +260,7 @@ CONVALIDACIONES: list[dict] = [
                 "nombre_origen":  "Políticas de marketing",
             },
         ],
-        "source_link": None,
+        "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
         "source_page": 124853,
     },
 
