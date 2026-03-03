@@ -563,37 +563,62 @@ class AdminQueries:
         ]
 
     @staticmethod
-    def list_admin_convalidaciones(conn: sqlite3.Connection) -> list[dict]:
+    def list_admin_convalidaciones(
+        conn: sqlite3.Connection,
+        grado_id: Optional[int] = None,
+        ciclo_id: Optional[int] = None,
+    ) -> list[dict]:
+        where: list[str] = []
+        params: list[object] = []
+        if grado_id is not None:
+            where.append("cd.id_grado = ?")
+            params.append(grado_id)
+        if ciclo_id is not None:
+            where.append("cd.id = ?")
+            params.append(ciclo_id)
+        where_sql = f"WHERE {' AND '.join(where)}" if where else ""
+
         reglas = conn.execute(
-            """
+            f"""
             SELECT
                 cv.id,
                 cv.source_link,
                 cv.source_page,
                 md.id AS id_modulo_destino,
                 md.nombre AS modulo_destino_nombre,
+                md.id_oficial AS modulo_destino_codigo,
                 cd.id AS id_ciclo_destino,
                 cd.nombre AS ciclo_destino_nombre
             FROM convalidacion cv
             JOIN modulos md ON md.id = cv.id_modulo_destino
             JOIN ciclos cd ON cd.id = md.id_ciclo
+            {where_sql}
             ORDER BY cv.id DESC
-            """
+            """,
+            params,
         ).fetchall()
+        if not reglas:
+            return []
 
         origenes = conn.execute(
-            """
+            f"""
             SELECT
                 co.conv_id,
                 mo.id AS id_modulo_origen,
                 mo.nombre AS modulo_origen_nombre,
+                mo.id_oficial AS modulo_origen_codigo,
                 co2.id AS id_ciclo_origen,
                 co2.nombre AS ciclo_origen_nombre
             FROM convalidacion_origen co
+            JOIN convalidacion cv ON cv.id = co.conv_id
+            JOIN modulos md ON md.id = cv.id_modulo_destino
+            JOIN ciclos cd ON cd.id = md.id_ciclo
             JOIN modulos mo ON mo.id = co.id_modulo
             JOIN ciclos co2 ON co2.id = mo.id_ciclo
+            {where_sql}
             ORDER BY co.conv_id DESC, co2.nombre, mo.nombre
-            """
+            """,
+            params,
         ).fetchall()
 
         origenes_por_regla: dict[int, list[dict]] = {}
@@ -603,6 +628,7 @@ class AdminQueries:
                 {
                     "id_modulo_origen": origen["id_modulo_origen"],
                     "modulo_origen_nombre": origen["modulo_origen_nombre"],
+                    "modulo_origen_codigo": origen["modulo_origen_codigo"],
                     "id_ciclo_origen": origen["id_ciclo_origen"],
                     "ciclo_origen_nombre": origen["ciclo_origen_nombre"],
                 }
@@ -615,6 +641,7 @@ class AdminQueries:
                 "source_page": regla["source_page"],
                 "id_modulo_destino": regla["id_modulo_destino"],
                 "modulo_destino_nombre": regla["modulo_destino_nombre"],
+                "modulo_destino_codigo": regla["modulo_destino_codigo"],
                 "id_ciclo_destino": regla["id_ciclo_destino"],
                 "ciclo_destino_nombre": regla["ciclo_destino_nombre"],
                 "origenes": origenes_por_regla.get(regla["id"], []),
@@ -635,3 +662,29 @@ class AdminQueries:
             """
         ).fetchall()
         return [dict(row) for row in admins]
+
+    @staticmethod
+    def delete_convalidacion_rule(conn: sqlite3.Connection, convalidacion_id: int) -> int:
+        cursor = conn.execute(
+            """
+            DELETE FROM convalidacion
+            WHERE id = ?
+            """,
+            (convalidacion_id,),
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
+    def delete_convalidacion_origen(
+        conn: sqlite3.Connection,
+        convalidacion_id: int,
+        modulo_origen_id: int,
+    ) -> int:
+        cursor = conn.execute(
+            """
+            DELETE FROM convalidacion_origen
+            WHERE conv_id = ? AND id_modulo = ?
+            """,
+            (convalidacion_id, modulo_origen_id),
+        )
+        return int(cursor.rowcount)

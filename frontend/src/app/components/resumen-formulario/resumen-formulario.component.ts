@@ -20,6 +20,7 @@ const API_BASE = 'http://localhost:8000/convalidaciones';
 })
 export class ResumenFormularioComponent implements OnInit {
     @Output() prev = new EventEmitter<void>();
+    @Output() submitted = new EventEmitter<void>();
 
     estudios: EstudioEntry[] = [];
     acreditaciones: AcreditacionExterna[] = [];
@@ -141,7 +142,7 @@ export class ResumenFormularioComponent implements OnInit {
                 apellidos: this.personalData.apellidos,
                 dni: this.personalData.dni,
                 email: this.personalData.email,
-                estado: 1,
+                estado: 0,
                 enviado_at: null,
                 anotaciones: null,
                 id_modulos_registrados_aportados: [...new Set(idModulosAportados)],
@@ -166,12 +167,14 @@ export class ResumenFormularioComponent implements OnInit {
                 next: () => {
                     this.error = null;
                     this.enviado = true;
+                    this.submitted.emit();
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
                     if (err?.status === 200) {
                         this.error = null;
                         this.enviado = true;
+                        this.submitted.emit();
                         this.cdr.detectChanges();
                         return;
                     }

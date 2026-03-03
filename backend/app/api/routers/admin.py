@@ -1,12 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException
+import base64
+import hashlib
+import hmac
+import json
+import os
+import time
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.routing import APIRoute
 import sqlite3
 from pydantic import BaseModel
 from db import database
 
-router = APIRouter(
-    prefix="/admin",
-    tags=["admin"],
-)
+ADMIN_TOKEN_TTL_SECONDS = int(os.getenv("ADMIN_TOKEN_TTL_SECONDS", "43200"))
+ADMIN_AUTH_SECRET = os.getenv("ADMIN_AUTH_SECRET", "somo-admin-secret")
 
 class CambiarEstadoFormularioRequest(BaseModel):
     estado_id: int
@@ -33,6 +38,104 @@ class CrearModulosRequest(BaseModel):
     modulos: list[CrearModuloItemRequest]
 
 
+def _create_admin_token(admin_id: int, nombre: str) -> str:
+    payload = {
+        "id": int(admin_id),
+        "nombre": nombre,
+        "exp": int(time.time()) + ADMIN_TOKEN_TTL_SECONDS,
+    }
+    payload_json = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    payload_b64 = base64.urlsafe_b64encode(payload_json).decode("ascii").rstrip("=")
+    signature = hmac.new(
+        ADMIN_AUTH_SECRET.encode("utf-8"),
+        payload_b64.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+    return f"{payload_b64}.{signature}"
+
+
+def _decode_admin_token(token: str) -> dict | None:
+    try:
+        payload_b64, signature = token.split(".", 1)
+    except ValueError:
+        return None
+
+    expected = hmac.new(
+        ADMIN_AUTH_SECRET.encode("utf-8"),
+        payload_b64.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        return None
+
+    padding = "=" * ((4 - len(payload_b64) % 4) % 4)
+    try:
+        payload_json = base64.urlsafe_b64decode((payload_b64 + padding).encode("ascii"))
+        payload = json.loads(payload_json.decode("utf-8"))
+    except Exception:
+        return None
+
+    exp = int(payload.get("exp", 0))
+    if exp <= int(time.time()):
+        return None
+    if not payload.get("id") or not payload.get("nombre"):
+        return None
+    return payload
+
+
+def validate_admin_token(token: str, db: sqlite3.Connection) -> dict | None:
+    if not token:
+        return None
+    payload = _decode_admin_token(token)
+    if not payload:
+        return None
+
+    admin = db.execute(
+        """
+        SELECT id, nombre
+        FROM administradores
+        WHERE id = ? AND nombre = ?
+        """,
+        (int(payload["id"]), str(payload["nombre"])),
+    ).fetchone()
+    if not admin:
+        return None
+    return {"id": int(admin["id"]), "nombre": str(admin["nombre"])}
+
+
+class AdminAuthRoute(APIRoute):
+    def get_route_handler(self):
+        original_route_handler = super().get_route_handler()
+
+        async def custom_route_handler(request: Request):
+            if request.url.path.rstrip("/") != "/admin/login":
+                authorization = request.headers.get("Authorization") or ""
+                scheme, _, token = authorization.partition(" ")
+                if scheme.lower() != "bearer" or not token:
+                    raise HTTPException(status_code=401, detail="Falta cabecera Authorization válida")
+
+                conn = database.connect()
+                try:
+                    admin_user = validate_admin_token(token, conn)
+                finally:
+                    conn.close()
+
+                if not admin_user:
+                    raise HTTPException(status_code=401, detail="Token de administrador inválido o caducado")
+                request.state.admin = admin_user
+
+            return await original_route_handler(request)
+
+        return custom_route_handler
+
+
+router = APIRouter(
+    prefix="/admin",
+    tags=["admin"],
+    route_class=AdminAuthRoute,
+)
+
+
 @router.post("/login")
 async def login_admin(
     request: AdminLoginRequest,
@@ -43,7 +146,8 @@ async def login_admin(
         admin = database.AdminQueries.authenticate_admin(db, request.nombre, request.password)
         if not admin:
             raise HTTPException(status_code=401, detail="Credenciales inválidas")
-        return {"ok": True, "id": admin["id"], "nombre": admin["nombre"]}
+        token = _create_admin_token(admin["id"], admin["nombre"])
+        return {"ok": True, "id": admin["id"], "nombre": admin["nombre"], "token": token}
     except HTTPException:
         raise
     except sqlite3.Error as e:
@@ -51,7 +155,9 @@ async def login_admin(
 
 
 @router.get("/formularios")
-async def listar_formularios(db: sqlite3.Connection = Depends(database.get_db)):
+async def listar_formularios(
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """Lista todos los formularios con datos básicos del alumno y solicitudes."""
     try:
         return database.AdminQueries.list_admin_formularios(db)
@@ -112,7 +218,9 @@ async def cambiar_estado_solicitud(
 
 
 @router.get("/ciclos-modulos")
-async def listar_ciclos_modulos(db: sqlite3.Connection = Depends(database.get_db)):
+async def listar_ciclos_modulos(
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """Lista todos los ciclos y sus módulos."""
     try:
         return database.AdminQueries.list_admin_ciclos_modulos(db)
@@ -152,16 +260,26 @@ async def crear_ciclo(
 
 
 @router.get("/convalidaciones")
-async def listar_convalidaciones(db: sqlite3.Connection = Depends(database.get_db)):
+async def listar_convalidaciones(
+    grado_id: int | None = None,
+    ciclo_id: int | None = None,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """Lista todas las reglas de convalidación con módulo destino y origen."""
     try:
-        return database.AdminQueries.list_admin_convalidaciones(db)
+        return database.AdminQueries.list_admin_convalidaciones(
+            db,
+            grado_id=grado_id,
+            ciclo_id=ciclo_id,
+        )
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/administradores")
-async def listar_administradores(db: sqlite3.Connection = Depends(database.get_db)):
+async def listar_administradores(
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """Lista administradores registrados (sin exponer contraseña)."""
     try:
         return database.AdminQueries.list_admin_users(db)
@@ -200,6 +318,49 @@ async def eliminar_modulo(
             raise HTTPException(status_code=404, detail="Módulo no encontrado")
         db.commit()
         return {"ok": True, "id": id_modulo}
+    except HTTPException:
+        raise
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/convalidaciones/{id_convalidacion}")
+async def eliminar_convalidacion(
+    id_convalidacion: int,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Elimina una regla de convalidación por ID (y sus orígenes en cascada)."""
+    try:
+        deleted = database.AdminQueries.delete_convalidacion_rule(db, id_convalidacion)
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail="Regla de convalidación no encontrada")
+        db.commit()
+        return {"ok": True, "id": id_convalidacion}
+    except HTTPException:
+        raise
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/convalidaciones/{id_convalidacion}/origenes/{id_modulo_origen}")
+async def eliminar_convalidacion_origen(
+    id_convalidacion: int,
+    id_modulo_origen: int,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Elimina un módulo origen concreto de una regla de convalidación."""
+    try:
+        deleted = database.AdminQueries.delete_convalidacion_origen(
+            db,
+            convalidacion_id=id_convalidacion,
+            modulo_origen_id=id_modulo_origen,
+        )
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail="Origen de convalidación no encontrado")
+        db.commit()
+        return {"ok": True, "id_convalidacion": id_convalidacion, "id_modulo_origen": id_modulo_origen}
     except HTTPException:
         raise
     except sqlite3.Error as e:
