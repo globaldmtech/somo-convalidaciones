@@ -18,7 +18,7 @@ router = APIRouter(
 async def get_grados(db: sqlite3.Connection = Depends(database.get_db)):
     """List all existing degrees."""
     try:
-        return database.list_grados(db)
+        return database.CatalogQueries.list_grados(db)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -26,7 +26,7 @@ async def get_grados(db: sqlite3.Connection = Depends(database.get_db)):
 async def get_ciclos(grado_id: Optional[int] = None, db: sqlite3.Connection = Depends(database.get_db)):
     """List cycles, optionally filtered by degree ID."""
     try:
-        return database.list_ciclos(db, grado_id=grado_id)
+        return database.CatalogQueries.list_ciclos(db, grado_id=grado_id)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -34,15 +34,16 @@ async def get_ciclos(grado_id: Optional[int] = None, db: sqlite3.Connection = De
 async def get_modulos(ciclo_id: Optional[int] = None, db: sqlite3.Connection = Depends(database.get_db)):
     """List modules, optionally filtered by cycle ID."""
     try:
-        return database.list_modulos(db, ciclo_id=ciclo_id)
+        return database.CatalogQueries.list_modulos(db, ciclo_id=ciclo_id)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/acreditaciones_externas")
 async def get_acreditaciones_externas(db: sqlite3.Connection = Depends(database.get_db)):
     """List all external certifications."""
     try:
-        return database.list_acreditaciones_externas(db)
+        return database.CatalogQueries.list_acreditaciones_externas(db)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
         
@@ -55,7 +56,7 @@ async def calcular_convalidaciones(
     Calculate possible convalidations based on the provided studies and certifications.
     """
     try:
-        return database.get_convalidaciones_posibles(
+        return database.ConvalidationQueries.get_convalidaciones_posibles(
             db, 
             request.modulo_ids, 
             request.acreditacion_ids,
@@ -80,10 +81,10 @@ async def insertar_formulario_completo(
     Si cualquier paso falla se hace rollback de toda la operación.
     """
     try:
-        estado = request.estado if request.estado is not None else 1
+        estado = request.estado if request.estado is not None else 0
         enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
 
-        id_alumno = database.get_or_create_usuario_by_dni(
+        id_alumno = database.UserQueries.get_or_create_usuario_by_dni(
             conn=db,
             dni=request.dni,
             nombre=request.nombre,
@@ -92,7 +93,7 @@ async def insertar_formulario_completo(
         )
         id_alumno = int(id_alumno)
         # 1. Insertar formulario
-        formulario = database.insert_formulario(db,
+        formulario = database.FormularioQueries.insert_formulario(db,
             id_alumno=id_alumno,
             estado=estado,
             enviado_at=enviado_at,
@@ -103,7 +104,7 @@ async def insertar_formulario_completo(
         id_formulario = formulario["id"]
 
         # 2. Insertar módulos aportados
-        modulos_aportados = database.insert_modulo_aportado(
+        modulos_aportados = database.FormularioQueries.insert_modulo_aportado(
             db,
             id_formulario=id_formulario,
             id_modulos=request.id_modulos_registrados_aportados,
@@ -111,7 +112,7 @@ async def insertar_formulario_completo(
             descripciones=request.descripcion_no_registrados
         )
         # 3. Insertar solicitudes
-        solicitud = database.insert_formulario_solicitud(
+        solicitud = database.FormularioQueries.insert_formulario_solicitud(
             db,
             id_formulario=id_formulario,
             solicitudes_no_registradas=request.solicitudes_no_registradas,
