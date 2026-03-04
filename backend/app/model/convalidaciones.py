@@ -24,6 +24,10 @@ class SolicitudItem(BaseModel):
     id_convalidacion: Optional[int] = None
     descripcion: Optional[str] = None
 
+class ModuloAportadoDetalleItem(BaseModel):
+    id_modulo: int
+    nota: Optional[float] = None
+
 
 class FormularioCompletoRequest(BaseModel):
     """Datos para crear formulario + módulos aportados + solicitudes en un solo paso."""
@@ -40,6 +44,7 @@ class FormularioCompletoRequest(BaseModel):
 
     # Módulos aportados (lista de ids)
     id_modulos_registrados_aportados: List[int] #modulos de grado ciclo
+    modulos_aportados_detalle: Optional[List[ModuloAportadoDetalleItem]] = None
     id_acreditaciones_registradas_aportadas: List[int] #certificaciones o titulaciones aportadas
     descripcion_no_registrados: Optional[List[str]] = None #todo lo que sea texto input
 

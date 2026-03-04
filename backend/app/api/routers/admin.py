@@ -1,12 +1,14 @@
 import base64
 import hashlib
 import hmac
+import io
 import json
 import os
 import sqlite3
 import time
+from openpyxl import Workbook
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.routing import APIRoute
 
 from db import database
@@ -147,6 +149,63 @@ async def listar_formularios(
     """Lista todos los formularios con datos básicos del alumno y solicitudes."""
     try:
         return database.AdminQueries.list_admin_formularios(db)
+    except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/exportar_solicitudes_convalidacion")
+async def exportar_solicitudes_convalidacion(
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Exporta solicitudes de convalidación (formularios validados) en XLSX."""
+    try:
+        rows = database.AdminQueries.list_export_convalidaciones_rows(db)
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Solicitudes"
+        sheet.append(
+            [
+                "NOMBRE",
+                "DNI",
+                "EMAIL",
+                "CICLO MATRICULADO",
+                "MODULO A CONVALIDAR",
+                "RESOL.",
+                "CICLO CURSADO",
+                "MOD CURSADO",
+                "NOTA MOD.",
+                "OBSERVACIONES",
+            ]
+        )
+        for row in rows:
+            nota = row.get("nota_modulo")
+            sheet.append(
+                [
+                    row.get("alumno_nombre") or "",
+                    row.get("alumno_dni") or "",
+                    row.get("alumno_email") or "",
+                    row.get("ciclo_matriculado") or "",
+                    row.get("modulo_a_convalidar") or "",
+                    row.get("resolucion") or "",
+                    row.get("ciclo_cursado") or "",
+                    row.get("modulo_cursado") or "",
+                    None if nota is None else float(nota),
+                    row.get("observaciones") or "",
+                ]
+            )
+
+        output = io.BytesIO()
+        workbook.save(output)
+        content = output.getvalue()
+        return Response(
+            content=content,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition": 'attachment; filename="solicitudes_convalidacion_validadas.xlsx"'
+            },
+        )
+    except HTTPException:
+        raise
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 

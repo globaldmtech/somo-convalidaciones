@@ -13,6 +13,9 @@ export interface EstudioEntry {
     ciclo: Ciclo;
     modulos: Modulo[];      // selected
     allModulos: Modulo[];   // all available for this ciclo
+    allSelected: boolean;
+    notaMediaCiclo: number | null;
+    notasPorModulo: Record<number, number | null>;
 }
 
 // ── External certification ───────────────────────────────────────────────────
@@ -40,6 +43,8 @@ export class EstudiosCursadosComponent implements OnInit {
     selectedCicloId: number | null = null;
     selectedModuloIds: Set<number> = new Set();
     allSelected = false;
+    selectedModuloNotas = new Map<number, string>();
+    selectedNotaMediaCiclo = '';
 
     loadingGrados = false;
     loadingCiclos = false;
@@ -81,7 +86,13 @@ export class EstudiosCursadosComponent implements OnInit {
         this.loadAcreditacionesExternas();
 
         // Sync with service
-        this.estudios = this.convalidacionesService.getEstudios();
+        const estudiosRaw = this.convalidacionesService.getEstudios();
+        this.estudios = estudiosRaw.map((estudio) => ({
+            ...estudio,
+            allSelected: Boolean(estudio.allSelected),
+            notaMediaCiclo: typeof estudio.notaMediaCiclo === 'number' ? estudio.notaMediaCiclo : null,
+            notasPorModulo: { ...(estudio.notasPorModulo || {}) },
+        }));
         this.acreditacionesAdded = this.convalidacionesService.getAcreditaciones();
         this.otrosCiclosModulosAdded = this.convalidacionesService.getOtrosCiclosModulos();
 
@@ -144,6 +155,8 @@ export class EstudiosCursadosComponent implements OnInit {
     onCicloChange(): void {
         this.modulos = [];
         this.selectedModuloIds.clear();
+        this.selectedModuloNotas.clear();
+        this.selectedNotaMediaCiclo = '';
         this.allSelected = false;
 
         if (!this.selectedCicloId) return;
@@ -160,8 +173,12 @@ export class EstudiosCursadosComponent implements OnInit {
     toggleModulo(id: number): void {
         if (this.selectedModuloIds.has(id)) {
             this.selectedModuloIds.delete(id);
+            this.selectedModuloNotas.delete(id);
         } else {
             this.selectedModuloIds.add(id);
+            if (!this.selectedModuloNotas.has(id)) {
+                this.selectedModuloNotas.set(id, '');
+            }
         }
         this.allSelected = this.selectedModuloIds.size === this.modulos.length;
     }
@@ -169,9 +186,16 @@ export class EstudiosCursadosComponent implements OnInit {
     toggleAll(): void {
         if (this.allSelected) {
             this.selectedModuloIds.clear();
+            this.selectedModuloNotas.clear();
+            this.selectedNotaMediaCiclo = '';
             this.allSelected = false;
         } else {
-            this.modulos.forEach(m => this.selectedModuloIds.add(m.id));
+            this.modulos.forEach(m => {
+                this.selectedModuloIds.add(m.id);
+                if (!this.selectedModuloNotas.has(m.id)) {
+                    this.selectedModuloNotas.set(m.id, '');
+                }
+            });
             this.allSelected = true;
         }
     }
@@ -185,15 +209,34 @@ export class EstudiosCursadosComponent implements OnInit {
         const ciclo = this.ciclos.find(c => c.id === Number(this.selectedCicloId));
         const selectedModulos = this.modulos.filter(m => this.selectedModuloIds.has(m.id));
 
-        if (!grado || !ciclo || selectedModulos.length === 0) return;
+        if (!grado || !ciclo || selectedModulos.length === 0 || !this.canAddEstudio()) return;
 
-        this.estudios.push({ grado, ciclo, modulos: selectedModulos, allModulos: [...this.modulos] });
+        const esCicloCompleto = selectedModulos.length === this.modulos.length && this.modulos.length > 0;
+        const notaMedia = esCicloCompleto ? this.parseNota(this.selectedNotaMediaCiclo) : null;
+        const notasPorModulo: Record<number, number | null> = {};
+        if (!esCicloCompleto) {
+            for (const modulo of selectedModulos) {
+                notasPorModulo[modulo.id] = this.parseNota(this.selectedModuloNotas.get(modulo.id) || '');
+            }
+        }
+
+        this.estudios.push({
+            grado,
+            ciclo,
+            modulos: selectedModulos,
+            allModulos: [...this.modulos],
+            allSelected: esCicloCompleto,
+            notaMediaCiclo: notaMedia,
+            notasPorModulo,
+        });
 
         this.syncWithService();
 
         this.selectedGradoId = null;
         this.selectedCicloId = null;
         this.selectedModuloIds.clear();
+        this.selectedModuloNotas.clear();
+        this.selectedNotaMediaCiclo = '';
         this.ciclos = [];
         this.modulos = [];
         this.allSelected = false;
@@ -229,6 +272,22 @@ export class EstudiosCursadosComponent implements OnInit {
         const draft = this.editDraft.get(index);
         if (!draft) return;
         this.estudios[index].modulos = this.estudios[index].allModulos.filter(m => draft.has(m.id));
+        const estudio = this.estudios[index];
+        const esCicloCompleto = estudio.modulos.length > 0 && estudio.modulos.length === estudio.allModulos.length;
+        estudio.allSelected = esCicloCompleto;
+        if (esCicloCompleto) {
+            estudio.notasPorModulo = {};
+            if (estudio.notaMediaCiclo === null || estudio.notaMediaCiclo === undefined) {
+                estudio.notaMediaCiclo = null;
+            }
+        } else {
+            const nextNotas: Record<number, number | null> = {};
+            for (const modulo of estudio.modulos) {
+                nextNotas[modulo.id] = estudio.notasPorModulo?.[modulo.id] ?? null;
+            }
+            estudio.notasPorModulo = nextNotas;
+            estudio.notaMediaCiclo = null;
+        }
         this.editDraft.delete(index);
         this.editingStudios.delete(index);
         this.syncWithService();
@@ -264,7 +323,17 @@ export class EstudiosCursadosComponent implements OnInit {
     }
 
     canAddEstudio(): boolean {
-        return !!this.selectedGradoId && !!this.selectedCicloId && this.selectedModuloIds.size > 0;
+        if (!this.selectedGradoId || !this.selectedCicloId || this.selectedModuloIds.size === 0) return false;
+        const esCicloCompleto = this.selectedModuloIds.size === this.modulos.length && this.modulos.length > 0;
+        if (esCicloCompleto) {
+            return this.parseNota(this.selectedNotaMediaCiclo) !== null;
+        }
+        for (const moduloId of this.selectedModuloIds.values()) {
+            if (this.parseNota(this.selectedModuloNotas.get(moduloId) || '') === null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     canProceed(): boolean {
@@ -346,5 +415,32 @@ export class EstudiosCursadosComponent implements OnInit {
         this.otrosCiclosModulosAdded.splice(index, 1);
         this.syncWithService();
         this.cdr.detectChanges();
+    }
+
+    get selectedModulosConNota(): Modulo[] {
+        return this.modulos.filter((m) => this.selectedModuloIds.has(m.id));
+    }
+
+    getNotaModuloSeleccionado(moduloId: number): string {
+        return this.selectedModuloNotas.get(moduloId) || '';
+    }
+
+    setNotaModuloSeleccionado(moduloId: number, value: string): void {
+        this.selectedModuloNotas.set(moduloId, value);
+    }
+
+    private parseNota(value: string): number | null {
+        const raw = (value || '').toString().trim().replace(',', '.');
+        if (!raw) return null;
+        const nota = Number(raw);
+        if (!Number.isFinite(nota)) return null;
+        if (nota < 0 || nota > 10) return null;
+        return nota;
+    }
+
+    notaModuloEstudio(estudio: EstudioEntry, moduloId: number): number | null {
+        if (estudio.allSelected) return estudio.notaMediaCiclo;
+        const nota = estudio.notasPorModulo?.[moduloId];
+        return typeof nota === 'number' ? nota : null;
     }
 }

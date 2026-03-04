@@ -291,12 +291,38 @@ class FormularioQueries:
         id_modulos: Sequence[int],
         id_acreditaciones: Sequence[int],
         descripciones: Optional[Sequence[str]] = None,
+        modulos_detalle: Optional[Sequence[object]] = None,
     ) -> str:
-        for id_modulo in list(id_modulos) + list(id_acreditaciones):
+        notas_por_modulo: dict[int, Optional[float]] = {}
+        if modulos_detalle:
+            for item in modulos_detalle:
+                try:
+                    if isinstance(item, dict):
+                        id_modulo = int(item.get("id_modulo"))
+                        nota_raw = item.get("nota")
+                    else:
+                        id_modulo = int(getattr(item, "id_modulo"))
+                        nota_raw = getattr(item, "nota", None)
+                except Exception:
+                    continue
+
+                nota = float(nota_raw) if nota_raw is not None else None
+                notas_por_modulo[id_modulo] = nota
+
+        for id_modulo in id_modulos:
             conn.execute(
                 """
-                INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo)
-                VALUES (?, ?)
+                INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo, nota)
+                VALUES (?, ?, ?)
+                """,
+                (id_formulario, id_modulo, notas_por_modulo.get(int(id_modulo))),
+            )
+
+        for id_modulo in id_acreditaciones:
+            conn.execute(
+                """
+                INSERT INTO formulario_modulos_aportados (id_formulario, id_modulo, nota)
+                VALUES (?, ?, NULL)
                 """,
                 (id_formulario, id_modulo),
             )
@@ -305,8 +331,8 @@ class FormularioQueries:
             for descripcion in descripciones:
                 conn.execute(
                     """
-                    INSERT INTO formulario_modulos_aportados (id_formulario, descripcion)
-                    VALUES (?, ?)
+                    INSERT INTO formulario_modulos_aportados (id_formulario, descripcion, nota)
+                    VALUES (?, ?, NULL)
                     """,
                     (id_formulario, descripcion),
                 )
@@ -464,6 +490,7 @@ class AdminQueries:
                 SELECT
                     fma.id,
                     fma.id_modulo,
+                    fma.nota,
                     c.id AS ciclo_id,
                     c.nombre AS ciclo_nombre,
                     m.nombre AS modulo_nombre,
@@ -498,6 +525,39 @@ class AdminQueries:
             )
 
         return resultado
+
+    @staticmethod
+    def list_export_convalidaciones_rows(conn: sqlite3.Connection) -> list[dict]:
+        rows = conn.execute(
+            """
+            SELECT
+                u.nombre AS alumno_nombre,
+                u.DNI AS alumno_dni,
+                u.email AS alumno_email,
+                COALESCE(cd.nombre, 'Otros no registrados') AS ciclo_matriculado,
+                COALESCE(md.nombre, fs.descripcion, 'Módulo sin detalle') AS modulo_a_convalidar,
+                COALESCE(emd.nombre, '') AS resolucion,
+                COALESCE(co2.nombre, '') AS ciclo_cursado,
+                COALESCE(mo.nombre, '') AS modulo_cursado,
+                fma.nota AS nota_modulo,
+                COALESCE(f.anotaciones, '') AS observaciones
+            FROM formularios f
+            JOIN usuarios u ON u.id = f.id_alumno
+            JOIN formulario_solicitudes fs ON fs.id_formulario = f.id
+            LEFT JOIN modulos md ON md.id = fs.id_modulo_destino
+            LEFT JOIN ciclos cd ON cd.id = md.id_ciclo
+            LEFT JOIN estados_modulos_destino emd ON emd.id = fs.estado_modulo
+            LEFT JOIN convalidacion_origen co ON co.conv_id = fs.id_convalidacion
+            LEFT JOIN modulos mo ON mo.id = co.id_modulo
+            LEFT JOIN ciclos co2 ON co2.id = mo.id_ciclo
+            LEFT JOIN formulario_modulos_aportados fma
+                ON fma.id_formulario = f.id
+               AND fma.id_modulo = co.id_modulo
+            WHERE f.estado = 1
+            ORDER BY u.nombre, f.id, fs.id, co2.nombre, mo.nombre
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
 
     @staticmethod
     def update_formulario_estado(

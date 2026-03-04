@@ -34,8 +34,9 @@ type AdminAlumnoGroup = {
 
 type AdminCicloModulosGroup = {
   key: string;
+  cicloId: number | null;
   cicloNombre: string;
-  modulos: Array<{ id: number; nombre: string; codigo?: string | null }>;
+  modulos: Array<{ id: number; nombre: string; codigo?: string | null; nota?: number | null }>;
 };
 
 type AdminCicloSolicitudesGroup = {
@@ -104,7 +105,7 @@ type PendingConvalidacionOrigenDelete = {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="min-h-screen bg-slate-50 text-slate-900">
+    <div class="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div #headerInner class="max-w-6xl mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
           <div #headerBrand class="flex items-center gap-4 min-w-0">
@@ -264,30 +265,44 @@ type PendingConvalidacionOrigenDelete = {
 
         <ng-container *ngIf="isAuthenticated">
           <section *ngIf="activeTab === 'formularios'">
-            <div class="mb-3 flex flex-wrap gap-2">
+            <div class="mb-3 flex items-start justify-between gap-3 flex-wrap">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="formularioEstadoFiltro === 0 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="setFormularioEstadoFiltro(0)"
+                >
+                  En revisión ({{ countFormulariosByEstado(0) }})
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="formularioEstadoFiltro === 1 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="setFormularioEstadoFiltro(1)"
+                >
+                  Validadas ({{ countFormulariosByEstado(1) }})
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="formularioEstadoFiltro === 2 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="setFormularioEstadoFiltro(2)"
+                >
+                  Rechazadas ({{ countFormulariosByEstado(2) }})
+                </button>
+              </div>
               <button
+                *ngIf="formularioEstadoFiltro === 1"
                 type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="formularioEstadoFiltro === 0 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="setFormularioEstadoFiltro(0)"
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                [disabled]="formulariosFiltrados.length === 0"
+                (click)="exportarSolicitudesConvalidacion()"
               >
-                En revisión ({{ countFormulariosByEstado(0) }})
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="formularioEstadoFiltro === 1 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="setFormularioEstadoFiltro(1)"
-              >
-                Validadas ({{ countFormulariosByEstado(1) }})
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="formularioEstadoFiltro === 2 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="setFormularioEstadoFiltro(2)"
-              >
-                Rechazadas ({{ countFormulariosByEstado(2) }})
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"></path>
+                </svg>
+                Exportar solicitudes de convalidación
               </button>
             </div>
             <div *ngIf="!loading && !error" class="mb-4 flex flex-wrap gap-2">
@@ -411,6 +426,9 @@ type PendingConvalidacionOrigenDelete = {
                             >
                               <p class="text-sm font-semibold text-slate-700">{{ ciclo.cicloNombre }}</p>
                               <div class="flex items-center gap-2">
+                                <span *ngIf="getNotaMediaCiclo(ciclo) !== null" class="text-xs font-semibold text-indigo-700">
+                                  Nota media ciclo: {{ getNotaMediaCiclo(ciclo) | number:'1.0-2' }}
+                                </span>
                                 <span class="text-xs text-slate-500">{{ ciclo.modulos.length }} módulos</span>
                                 <svg
                                   class="w-4 h-4 text-slate-500 transition-transform"
@@ -426,9 +444,12 @@ type PendingConvalidacionOrigenDelete = {
                             <ul *ngIf="isCicloOpen(f.id, ciclo.key)" class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-4">
                               <li
                                 *ngFor="let modulo of ciclo.modulos"
-                                class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0"
+                                class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
                               >
-                                {{ modulo.nombre }}
+                                <span>{{ modulo.nombre }}</span>
+                                <span *ngIf="(modulo.nota !== null && modulo.nota !== undefined) && getNotaMediaCiclo(ciclo) === null" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
+                                  Nota: {{ modulo.nota | number:'1.0-2' }}
+                                </span>
                               </li>
                             </ul>
                           </div>
@@ -900,10 +921,12 @@ type PendingConvalidacionOrigenDelete = {
 
           <section *ngIf="activeTab === 'administradores'" class="space-y-4">
             <div class="rounded-2xl border border-slate-200 bg-white p-4">
-              <div class="flex flex-wrap items-center gap-3 justify-between">
-                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {{ administradores.length }} administradores
-                </span>
+              <div class="flex flex-wrap items-start gap-3 justify-between">
+                <div>
+                  <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ administradores.length }} administradores
+                  </span>
+                </div>
                 <input
                   type="text"
                   [(ngModel)]="filtroAdministradores"
@@ -911,6 +934,19 @@ type PendingConvalidacionOrigenDelete = {
                   placeholder="Filtrar por nombre"
                 />
               </div>
+            </div>
+            <div class="px-1">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                [disabled]="creatingAdmin"
+                (click)="abrirModalCrearAdministrador()"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Añadir administrador
+              </button>
             </div>
 
             <div *ngIf="loadingAdministradores" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
@@ -924,19 +960,59 @@ type PendingConvalidacionOrigenDelete = {
             </div>
 
             <div *ngIf="!loadingAdministradores && !errorAdministradores && administradoresFiltrados.length > 0" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-              <table class="min-w-full text-sm">
+              <table class="w-full table-fixed text-sm">
+                <colgroup>
+                  <col class="w-[36%]" />
+                  <col class="w-[34%]" />
+                  <col class="w-[30%]" />
+                </colgroup>
                 <thead class="bg-slate-50 border-b border-slate-200">
                   <tr>
-                    <th class="text-left px-4 py-2.5 font-semibold text-slate-600">ID</th>
                     <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Nombre</th>
                     <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Creado</th>
+                    <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let admin of administradoresFiltrados" class="border-b border-slate-100 last:border-b-0">
-                    <td class="px-4 py-2.5 text-slate-700">{{ admin.id }}</td>
                     <td class="px-4 py-2.5 font-medium text-slate-800">{{ admin.nombre }}</td>
                     <td class="px-4 py-2.5 text-slate-600">{{ formatDate(admin.created_at) }}</td>
+                    <td class="px-4 py-2.5">
+                      <div class="flex items-center gap-1">
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center w-8 h-8 text-slate-400 transition-colors disabled:opacity-100 disabled:cursor-not-allowed"
+                          (click)="abrirModalEditarAdministrador(admin)"
+                          title="Editar administrador"
+                          aria-label="Editar administrador"
+                          [disabled]="!canGestionarAdministrador(admin) || editingAdmin"
+                          [ngClass]="{
+                            'hover:text-indigo-600 text-slate-500': canGestionarAdministrador(admin),
+                            'text-slate-300': !canGestionarAdministrador(admin)
+                          }"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z"></path>
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center w-8 h-8 text-slate-400 transition-colors disabled:opacity-100 disabled:cursor-not-allowed"
+                          (click)="abrirModalEliminarAdministrador(admin)"
+                          title="Eliminar administrador"
+                          aria-label="Eliminar administrador"
+                          [disabled]="!canGestionarAdministrador(admin) || deletingAdmin"
+                          [ngClass]="{
+                            'hover:text-rose-600 text-slate-500': canGestionarAdministrador(admin),
+                            'text-slate-300': !canGestionarAdministrador(admin)
+                          }"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1472,6 +1548,127 @@ type PendingConvalidacionOrigenDelete = {
               </div>
             </div>
           </div>
+
+          <div *ngIf="editAdminModalOpen && adminToEdit" class="fixed inset-0 z-[120] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Editar administrador</h3>
+              <div class="mt-4 space-y-3">
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Usuario</span>
+                  <input
+                    type="text"
+                    [(ngModel)]="editAdminNombre"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    [disabled]="editingAdmin"
+                  />
+                </label>
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contraseña</span>
+                  <input
+                    type="password"
+                    [(ngModel)]="editAdminPassword"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    [disabled]="editingAdmin"
+                  />
+                </label>
+              </div>
+              <p *ngIf="editAdminError" class="mt-3 text-sm text-rose-700">{{ editAdminError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="editingAdmin"
+                  (click)="cerrarModalEditarAdministrador()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
+                  [disabled]="!canActualizarAdministrador || editingAdmin"
+                  (click)="actualizarAdministrador()"
+                >
+                  {{ editingAdmin ? 'Guardando...' : 'Guardar cambios' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="deleteAdminModalOpen && adminToDelete" class="fixed inset-0 z-[121] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Eliminar administrador</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                ¿Estás seguro que quieres eliminar este usuario?
+              </p>
+              <p class="mt-1 text-sm font-semibold text-slate-800">{{ adminToDelete.nombre }}</p>
+              <p *ngIf="deleteAdminError" class="mt-3 text-sm text-rose-700">{{ deleteAdminError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="deletingAdmin"
+                  (click)="cerrarModalEliminarAdministrador()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  [disabled]="deletingAdmin"
+                  (click)="confirmarEliminarAdministrador()"
+                >
+                  {{ deletingAdmin ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="createAdminModalOpen" class="fixed inset-0 z-[122] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Añadir administrador</h3>
+              <div class="mt-4 space-y-3">
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Usuario</span>
+                  <input
+                    type="text"
+                    [(ngModel)]="createAdminNombre"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="usuario_admin"
+                    [disabled]="creatingAdmin"
+                  />
+                </label>
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contraseña</span>
+                  <input
+                    type="password"
+                    [(ngModel)]="createAdminPassword"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="••••••••"
+                    [disabled]="creatingAdmin"
+                  />
+                </label>
+              </div>
+              <p *ngIf="createAdminError" class="mt-3 text-sm text-rose-700">{{ createAdminError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="creatingAdmin"
+                  (click)="cerrarModalCrearAdministrador()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
+                  [disabled]="creatingAdmin || !canCrearAdministrador"
+                  (click)="crearAdministrador()"
+                >
+                  {{ creatingAdmin ? 'Creando...' : 'Crear administrador' }}
+                </button>
+              </div>
+            </div>
+          </div>
         </ng-container>
       </main>
     </div>
@@ -1610,6 +1807,21 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   filtroConvalidacionesGradoId: number | null = null;
   filtroConvalidacionesCicloId: number | null = null;
   filtroAdministradores = '';
+  createAdminNombre = '';
+  createAdminPassword = '';
+  createAdminError: string | null = null;
+  creatingAdmin = false;
+  createAdminModalOpen = false;
+  editAdminModalOpen = false;
+  adminToEdit: AdminUser | null = null;
+  editAdminNombre = '';
+  editAdminPassword = '';
+  editAdminError: string | null = null;
+  editingAdmin = false;
+  deleteAdminModalOpen = false;
+  adminToDelete: AdminUser | null = null;
+  deleteAdminError: string | null = null;
+  deletingAdmin = false;
   convalidacionesGrados: Grado[] = [];
   convalidacionesCiclos: Ciclo[] = [];
   loadingConvalidacionesGrados = false;
@@ -1736,6 +1948,21 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.errorModulos = null;
     this.errorConvalidaciones = null;
     this.errorAdministradores = null;
+    this.createAdminNombre = '';
+    this.createAdminPassword = '';
+    this.createAdminError = null;
+    this.creatingAdmin = false;
+    this.createAdminModalOpen = false;
+    this.editAdminModalOpen = false;
+    this.adminToEdit = null;
+    this.editAdminNombre = '';
+    this.editAdminPassword = '';
+    this.editAdminError = null;
+    this.editingAdmin = false;
+    this.deleteAdminModalOpen = false;
+    this.adminToDelete = null;
+    this.deleteAdminError = null;
+    this.deletingAdmin = false;
 
     this.activeTab = 'formularios';
     this.menuTabsOpen = false;
@@ -1881,6 +2108,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             }))
           : [];
         this.alumnos = this.groupByAlumno(this.formularios);
+        if (!this.loadedModulos && !this.loadingModulos) {
+          this.cargarCiclosModulos();
+        }
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -1909,6 +2139,54 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get alumnosFiltrados(): AdminAlumnoGroup[] {
     return this.groupByAlumno(this.formulariosFiltrados);
+  }
+
+  exportarSolicitudesConvalidacion(): void {
+    if (this.formularioEstadoFiltro !== 1) return;
+    this.convalidacionesService.exportarSolicitudesConvalidacionAdmin().subscribe({
+      next: async (blob) => {
+        const fileName = 'solicitudes_convalidacion_validadas.xlsx';
+        const picker = (window as any).showSaveFilePicker;
+
+        if (typeof picker === 'function') {
+          try {
+            const handle = await picker({
+              suggestedName: fileName,
+              types: [
+                {
+                  description: 'Excel Workbook',
+                  accept: {
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                  },
+                },
+              ],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            return;
+          } catch (e: any) {
+            // Si cancela el diálogo, no hacemos fallback de descarga automática.
+            if (e?.name === 'AbortError') return;
+          }
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        if (this.handleAdminUnauthorized(err)) return;
+        const status = err?.status ? ` (HTTP ${err.status})` : '';
+        this.error = `No se pudo exportar solicitudes de convalidación${status}.`;
+        this.cdr.detectChanges();
+      },
+    });
   }
 
   cargarCiclosModulos(): void {
@@ -2101,6 +2379,171 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  get canCrearAdministrador(): boolean {
+    return this.createAdminNombre.trim().length > 0 && this.createAdminPassword.length > 0;
+  }
+
+  abrirModalCrearAdministrador(): void {
+    this.createAdminModalOpen = true;
+    this.createAdminNombre = '';
+    this.createAdminPassword = '';
+    this.createAdminError = null;
+  }
+
+  cerrarModalCrearAdministrador(): void {
+    if (this.creatingAdmin) return;
+    this.createAdminModalOpen = false;
+    this.createAdminError = null;
+  }
+
+  crearAdministrador(): void {
+    if (!this.canCrearAdministrador || this.creatingAdmin) return;
+
+    const nombre = this.createAdminNombre.trim();
+    const password = this.createAdminPassword;
+    this.creatingAdmin = true;
+    this.createAdminError = null;
+
+    this.convalidacionesService
+      .crearAdministradorAdmin({ nombre, password })
+      .pipe(
+        finalize(() => {
+          this.creatingAdmin = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.createAdminNombre = '';
+          this.createAdminPassword = '';
+          this.createAdminError = null;
+          this.createAdminModalOpen = false;
+          this.loadedAdministradores = false;
+          this.cargarAdministradores();
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.createAdminError = err?.error?.detail || 'No se pudo crear el administrador.';
+        },
+      });
+  }
+
+  canGestionarAdministrador(admin: AdminUser): boolean {
+    const sesionAdmin = this.adminDisplayName.trim().toLowerCase() === 'admin';
+    const filaAdmin = (admin?.nombre || '').trim().toLowerCase() === 'admin';
+    return sesionAdmin && !filaAdmin;
+  }
+
+  get canActualizarAdministrador(): boolean {
+    if (!this.adminToEdit) return false;
+    const nombre = this.editAdminNombre.trim();
+    const password = this.editAdminPassword;
+    if (!nombre) return false;
+    const nombreOriginal = (this.adminToEdit.nombre || '').trim();
+    const nombreCambio = nombre !== nombreOriginal;
+    const passwordCambio = password.length > 0;
+    return nombreCambio || passwordCambio;
+  }
+
+  abrirModalEditarAdministrador(admin: AdminUser): void {
+    if (!this.canGestionarAdministrador(admin) || this.editingAdmin) return;
+    this.adminToEdit = admin;
+    this.editAdminNombre = admin.nombre || '';
+    this.editAdminPassword = '';
+    this.editAdminError = null;
+    this.editAdminModalOpen = true;
+  }
+
+  cerrarModalEditarAdministrador(force = false): void {
+    if (!force && this.editingAdmin) return;
+    this.editAdminModalOpen = false;
+    this.adminToEdit = null;
+    this.editAdminNombre = '';
+    this.editAdminPassword = '';
+    this.editAdminError = null;
+  }
+
+  actualizarAdministrador(): void {
+    if (!this.adminToEdit || !this.canActualizarAdministrador || this.editingAdmin) return;
+    const adminId = Number(this.adminToEdit.id);
+    if (!Number.isFinite(adminId) || adminId <= 0) return;
+
+    const nombre = this.editAdminNombre.trim();
+    const password = this.editAdminPassword;
+    const payload: { nombre?: string; password?: string } = {};
+    if (nombre !== (this.adminToEdit.nombre || '').trim()) {
+      payload.nombre = nombre;
+    }
+    if (password.length > 0) {
+      payload.password = password;
+    }
+    if (!payload.nombre && !payload.password) return;
+
+    this.editingAdmin = true;
+    this.editAdminError = null;
+    this.convalidacionesService
+      .actualizarAdministradorAdmin(adminId, payload)
+      .pipe(
+        finalize(() => {
+          this.editingAdmin = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.cerrarModalEditarAdministrador(true);
+          this.loadedAdministradores = false;
+          this.cargarAdministradores();
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.editAdminError = err?.error?.detail || 'No se pudo actualizar el administrador.';
+        },
+      });
+  }
+
+  abrirModalEliminarAdministrador(admin: AdminUser): void {
+    if (!this.canGestionarAdministrador(admin) || this.deletingAdmin) return;
+    this.adminToDelete = admin;
+    this.deleteAdminError = null;
+    this.deleteAdminModalOpen = true;
+  }
+
+  cerrarModalEliminarAdministrador(force = false): void {
+    if (!force && this.deletingAdmin) return;
+    this.deleteAdminModalOpen = false;
+    this.adminToDelete = null;
+    this.deleteAdminError = null;
+  }
+
+  confirmarEliminarAdministrador(): void {
+    if (!this.adminToDelete || this.deletingAdmin) return;
+    const adminId = Number(this.adminToDelete.id);
+    if (!Number.isFinite(adminId) || adminId <= 0) return;
+
+    this.deletingAdmin = true;
+    this.deleteAdminError = null;
+    this.convalidacionesService
+      .eliminarAdministradorAdmin(adminId)
+      .pipe(
+        finalize(() => {
+          this.deletingAdmin = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.cerrarModalEliminarAdministrador(true);
+          this.loadedAdministradores = false;
+          this.cargarAdministradores();
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.deleteAdminError = err?.error?.detail || 'No se pudo eliminar el administrador.';
+        },
+      });
   }
 
   get totalModulosCatalogo(): number {
@@ -3007,12 +3450,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       const cicloNombre = modulo.ciclo_nombre?.trim() || (modulo.id_modulo ? 'Ciclo no identificado' : 'Otros no registrados');
       const key = String(modulo.ciclo_id ?? cicloNombre);
       if (!map.has(key)) {
-        map.set(key, { key, cicloNombre, modulos: [] });
+        map.set(key, { key, cicloId: modulo.ciclo_id ?? null, cicloNombre, modulos: [] });
       }
       map.get(key)!.modulos.push({
         id: modulo.id,
         nombre: modulo.modulo_nombre || modulo.descripcion || 'Módulo sin detalle',
         codigo: modulo.modulo_codigo ?? null,
+        nota: modulo.nota ?? null,
       });
     }
 
@@ -3023,6 +3467,26 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!aOtros && bOtros) return -1;
       return a.cicloNombre.localeCompare(b.cicloNombre, 'es');
     });
+  }
+
+  getNotaMediaCiclo(ciclo: AdminCicloModulosGroup): number | null {
+    if (ciclo.cicloId === null || ciclo.cicloId === undefined) return null;
+    const cicloCatalogo = this.ciclosConModulos.find((item) => Number(item.id) === Number(ciclo.cicloId));
+    if (!cicloCatalogo) return null;
+    const totalCatalogo = Array.isArray(cicloCatalogo.modulos)
+      ? cicloCatalogo.modulos.length
+      : Number(cicloCatalogo.total_modulos || 0);
+    if (totalCatalogo <= 0) return null;
+    if (ciclo.modulos.length !== totalCatalogo) return null;
+
+    if (!ciclo.modulos.length) return null;
+    const notas = ciclo.modulos
+      .map((m) => m.nota)
+      .filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
+    if (notas.length !== ciclo.modulos.length) return null;
+    const primera = notas[0];
+    if (notas.some((n) => n !== primera)) return null;
+    return primera;
   }
 
   getSolicitudesPorCiclo(formulario: AdminFormulario): AdminCicloSolicitudesGroup[] {

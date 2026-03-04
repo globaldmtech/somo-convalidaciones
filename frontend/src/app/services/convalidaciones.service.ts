@@ -52,6 +52,7 @@ export interface AdminFormularioSolicitud {
 export interface AdminFormularioModuloAportado {
     id: number;
     id_modulo: number | null;
+    nota?: number | null;
     ciclo_id?: number | null;
     ciclo_nombre?: string | null;
     modulo_nombre: string | null;
@@ -187,6 +188,33 @@ export interface AdminUser {
     id: number;
     nombre: string;
     created_at: string | null;
+}
+
+export interface AdminCreateUserRequest {
+    nombre: string;
+    password: string;
+}
+
+export interface AdminCreateUserResponse {
+    ok: boolean;
+    id: number;
+    nombre: string;
+    created_at: string | null;
+}
+
+export interface AdminUpdateUserRequest {
+    nombre?: string;
+    password?: string;
+}
+
+export interface AdminUpdateUserResponse {
+    ok: boolean;
+    id: number;
+}
+
+export interface AdminDeleteUserResponse {
+    ok: boolean;
+    id: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -415,7 +443,40 @@ export class ConvalidacionesService {
     }
 
     getAdministradoresAdmin(): Observable<AdminUser[]> {
-        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/administradores`, this.getAdminAuthHeaders());
+        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/listar_administradores`, this.getAdminAuthHeaders());
+    }
+
+    exportarSolicitudesConvalidacionAdmin(): Observable<Blob> {
+        return this.http.get(`${ADMIN_API_BASE}/exportar_solicitudes_convalidacion`, {
+            ...this.getAdminAuthHeaders(),
+            responseType: 'blob',
+        });
+    }
+
+    crearAdministradorAdmin(payload: AdminCreateUserRequest): Observable<AdminCreateUserResponse> {
+        return this.http.post<AdminCreateUserResponse>(
+            `${ADMIN_API_BASE}/crear_administrador`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    actualizarAdministradorAdmin(
+        idAdmin: number,
+        payload: AdminUpdateUserRequest
+    ): Observable<AdminUpdateUserResponse> {
+        return this.http.put<AdminUpdateUserResponse>(
+            `${ADMIN_API_BASE}/actualizar_administrador/${idAdmin}`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarAdministradorAdmin(idAdmin: number): Observable<AdminDeleteUserResponse> {
+        return this.http.delete<AdminDeleteUserResponse>(
+            `${ADMIN_API_BASE}/eliminar_administrador/${idAdmin}`,
+            this.getAdminAuthHeaders()
+        );
     }
 
     eliminarCicloAdmin(idCiclo: number): Observable<AdminDeleteCicloResponse> {

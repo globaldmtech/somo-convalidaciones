@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS formulario_modulos_aportados (
   id INTEGER PRIMARY KEY,
   id_formulario INTEGER NOT NULL,
   id_modulo INTEGER,
+  nota REAL,
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id) ON DELETE CASCADE,
   FOREIGN KEY (id_modulo) REFERENCES modulos(id) ON DELETE SET NULL

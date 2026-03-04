@@ -112,7 +112,33 @@ export class ResumenFormularioComponent implements OnInit {
         this.error = null;
         let payload: any;
         try {
+            const hayNotasInvalidas = this.estudios.some((estudio) => {
+                if (estudio.modulos.length === 0) return false;
+                if (estudio.allSelected) {
+                    return estudio.notaMediaCiclo === null || estudio.notaMediaCiclo === undefined;
+                }
+                return estudio.modulos.some((modulo) => {
+                    const nota = estudio.notasPorModulo?.[modulo.id];
+                    return nota === null || nota === undefined;
+                });
+            });
+            if (hayNotasInvalidas) {
+                throw new Error('Debes indicar nota en todos los módulos aportados.');
+            }
+
             const idModulosAportados = this.estudios.flatMap(e => e.modulos.map(m => m.id));
+            const modulosAportadosDetalle = this.estudios.flatMap((estudio) => {
+                if (estudio.allSelected && estudio.notaMediaCiclo !== null && estudio.notaMediaCiclo !== undefined) {
+                    return estudio.modulos.map((modulo) => ({
+                        id_modulo: Number(modulo.id),
+                        nota: Number(estudio.notaMediaCiclo),
+                    }));
+                }
+                return estudio.modulos.map((modulo) => ({
+                    id_modulo: Number(modulo.id),
+                    nota: estudio.notasPorModulo?.[modulo.id] ?? null,
+                }));
+            });
             const acreditacionesRegistradas = this.acreditaciones
                 .filter(a => a.tipo !== 'otros')
                 .map(a => a.id);
@@ -146,14 +172,15 @@ export class ResumenFormularioComponent implements OnInit {
                 enviado_at: null,
                 anotaciones: null,
                 id_modulos_registrados_aportados: [...new Set(idModulosAportados)],
+                modulos_aportados_detalle: modulosAportadosDetalle,
                 id_acreditaciones_registradas_aportadas: [...new Set(acreditacionesRegistradas)],
                 descripcion_no_registrados: descripcionNoRegistrados.length > 0 ? descripcionNoRegistrados : null,
                 solicitudes_registradas: [...solicitudesRegistradas, ...solicitudesRegistradasManuales],
                 solicitudes_no_registradas: [...this.otrosSolicitudes],
             };
-        } catch {
+        } catch (e: any) {
             this.enviando = false;
-            this.error = 'Error preparando el envío del formulario.';
+            this.error = e?.message || 'Error preparando el envío del formulario.';
             this.cdr.detectChanges();
             return;
         }

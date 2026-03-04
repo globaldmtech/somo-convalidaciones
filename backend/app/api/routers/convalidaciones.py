@@ -109,7 +109,8 @@ async def insertar_formulario_completo(
             id_formulario=id_formulario,
             id_modulos=request.id_modulos_registrados_aportados,
             id_acreditaciones = request.id_acreditaciones_registradas_aportadas,
-            descripciones=request.descripcion_no_registrados
+            descripciones=request.descripcion_no_registrados,
+            modulos_detalle=request.modulos_aportados_detalle,
         )
         # 3. Insertar solicitudes
         solicitud = database.FormularioQueries.insert_formulario_solicitud(
