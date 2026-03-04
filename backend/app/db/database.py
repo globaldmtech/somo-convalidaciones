@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import os
 import sqlite3
+import hashlib
+import hmac
+import secrets
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,9 +32,8 @@ def connect(config: Optional[DBConfig] = None) -> sqlite3.Connection:
     if config is None:
         config = DBConfig()
     config.path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(config.path, check_same_thread=False)
+    conn = sqlite3.connect(config.path, check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = OFF;")
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
@@ -142,6 +144,18 @@ class CatalogQueries:
             )
             inserted += 1
         return inserted
+
+    @staticmethod
+    def exists_ciclo(conn: sqlite3.Connection, ciclo_id: int) -> bool:
+        row = conn.execute(
+            """
+            SELECT id
+            FROM ciclos
+            WHERE id = ?
+            """,
+            (ciclo_id,),
+        ).fetchone()
+        return row is not None
 
 
 class ConvalidationQueries:
@@ -327,15 +341,68 @@ class FormularioQueries:
 
 
 class AdminQueries:
+    _PASSWORD_SCHEME = "pbkdf2_sha256"
+    _PASSWORD_ITERATIONS = 200000
+
+    @staticmethod
+    def _hash_password(password: str) -> str:
+        salt = secrets.token_hex(16)
+        digest = hashlib.pbkdf2_hmac(
+            "sha256",
+            password.encode("utf-8"),
+            salt.encode("utf-8"),
+            AdminQueries._PASSWORD_ITERATIONS,
+        ).hex()
+        return f"{AdminQueries._PASSWORD_SCHEME}${AdminQueries._PASSWORD_ITERATIONS}${salt}${digest}"
+
+    @staticmethod
+    def _verify_password(password: str, stored_value: str) -> bool:
+        if not stored_value:
+            return False
+
+        parts = stored_value.split("$")
+        if len(parts) == 4 and parts[0] == AdminQueries._PASSWORD_SCHEME:
+            _, iterations_raw, salt, digest_hex = parts
+            try:
+                iterations = int(iterations_raw)
+            except ValueError:
+                return False
+            computed = hashlib.pbkdf2_hmac(
+                "sha256",
+                password.encode("utf-8"),
+                salt.encode("utf-8"),
+                iterations,
+            ).hex()
+            return hmac.compare_digest(computed, digest_hex)
+
+        # Compatibilidad con administradores antiguos guardados en texto plano.
+        return hmac.compare_digest(password, stored_value)
+
     @staticmethod
     def authenticate_admin(conn: sqlite3.Connection, nombre: str, password: str) -> Optional[dict]:
         row = conn.execute(
             """
+            SELECT id, nombre, password
+            FROM administradores
+            WHERE nombre = ?
+            """,
+            (nombre,),
+        ).fetchone()
+        if not row:
+            return None
+        if not AdminQueries._verify_password(password, str(row["password"] or "")):
+            return None
+        return {"id": int(row["id"]), "nombre": str(row["nombre"])}
+
+    @staticmethod
+    def get_admin_by_id_nombre(conn: sqlite3.Connection, admin_id: int, nombre: str) -> Optional[dict]:
+        row = conn.execute(
+            """
             SELECT id, nombre
             FROM administradores
-            WHERE nombre = ? AND password = ?
+            WHERE id = ? AND nombre = ?
             """,
-            (nombre, password),
+            (admin_id, nombre),
         ).fetchone()
         return dict(row) if row else None
 
@@ -664,6 +731,62 @@ class AdminQueries:
         return [dict(row) for row in admins]
 
     @staticmethod
+    def create_admin_user(conn: sqlite3.Connection, nombre: str, password: str) -> dict:
+        created_at = datetime.now(timezone.utc).isoformat()
+        password_hash = AdminQueries._hash_password(password)
+        cursor = conn.execute(
+            """
+            INSERT INTO administradores (nombre, password, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (nombre, password_hash, created_at),
+        )
+        admin_id = int(cursor.lastrowid)
+        return admin_id, created_at
+
+    @staticmethod
+    def update_admin_user(
+        conn: sqlite3.Connection,
+        admin_id: int,
+        nombre: Optional[str] = None,
+        password: Optional[str] = None,
+    ) -> int:
+        updates: list[str] = []
+        params: list[object] = []
+
+        if nombre is not None:
+            updates.append("nombre = ?")
+            params.append(nombre)
+        if password is not None:
+            updates.append("password = ?")
+            params.append(AdminQueries._hash_password(password))
+
+        if not updates:
+            return 0
+
+        params.append(admin_id)
+        cursor = conn.execute(
+            f"""
+            UPDATE administradores
+            SET {", ".join(updates)}
+            WHERE id = ?
+            """,
+            params,
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
+    def delete_admin_user(conn: sqlite3.Connection, admin_id: int) -> int:
+        cursor = conn.execute(
+            """
+            DELETE FROM administradores
+            WHERE id = ?
+            """,
+            (admin_id,),
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
     def delete_convalidacion_rule(conn: sqlite3.Connection, convalidacion_id: int) -> int:
         cursor = conn.execute(
             """
@@ -688,3 +811,64 @@ class AdminQueries:
             (convalidacion_id, modulo_origen_id),
         )
         return int(cursor.rowcount)
+
+    @staticmethod
+    def create_convalidacion_rule(
+        conn: sqlite3.Connection,
+        id_modulo_destino: int,
+        id_modulos_origen: Sequence[int],
+        source_link: Optional[str] = None,
+        source_page: Optional[int] = None,
+    ) -> dict:
+        modulo_destino = conn.execute(
+            """
+            SELECT id
+            FROM modulos
+            WHERE id = ?
+            """,
+            (id_modulo_destino,),
+        ).fetchone()
+        if not modulo_destino:
+            raise ValueError("Módulo destino no encontrado")
+
+        origenes = sorted({int(item) for item in id_modulos_origen if int(item) > 0})
+        if not origenes:
+            raise ValueError("Debes indicar al menos un módulo de origen")
+
+        placeholders = ",".join(["?"] * len(origenes))
+        existentes = conn.execute(
+            f"""
+            SELECT id
+            FROM modulos
+            WHERE id IN ({placeholders})
+            """,
+            origenes,
+        ).fetchall()
+        existentes_set = {int(row["id"]) for row in existentes}
+        faltantes = [id_modulo for id_modulo in origenes if id_modulo not in existentes_set]
+        if faltantes:
+            faltantes_text = ", ".join(str(x) for x in faltantes)
+            raise ValueError(f"Módulos origen no encontrados: {faltantes_text}")
+
+        cursor = conn.execute(
+            """
+            INSERT INTO convalidacion (source_link, source_page, id_modulo_destino)
+            VALUES (?, ?, ?)
+            """,
+            (source_link, source_page, id_modulo_destino),
+        )
+        id_convalidacion = int(cursor.lastrowid)
+
+        conn.executemany(
+            """
+            INSERT INTO convalidacion_origen (conv_id, id_modulo)
+            VALUES (?, ?)
+            """,
+            [(id_convalidacion, id_modulo_origen) for id_modulo_origen in origenes],
+        )
+
+        return {
+            "id": id_convalidacion,
+            "id_modulo_destino": id_modulo_destino,
+            "id_modulos_origen": origenes,
+        }

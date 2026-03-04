@@ -3,45 +3,26 @@ import hashlib
 import hmac
 import json
 import os
+import sqlite3
 import time
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.routing import APIRoute
-import sqlite3
-from pydantic import BaseModel
+
 from db import database
+from model.admin import (
+    ActualizarAdministradorRequest,
+    AdminLoginRequest,
+    CambiarEstadoFormularioRequest,
+    CambiarEstadoSolicitudRequest,
+    CrearAdministradorRequest,
+    CrearCicloRequest,
+    CrearConvalidacionRequest,
+    CrearModulosRequest,
+)
 
 ADMIN_TOKEN_TTL_SECONDS = int(os.getenv("ADMIN_TOKEN_TTL_SECONDS", "43200"))
 ADMIN_AUTH_SECRET = os.getenv("ADMIN_AUTH_SECRET", "somo-admin-secret")
-
-class CambiarEstadoFormularioRequest(BaseModel):
-    estado_id: int
-    admin_id: int | None = None
-
-class CambiarEstadoSolicitudRequest(BaseModel):
-    estado_modulo_id: int
-    admin_id: int | None = None
-
-class AdminLoginRequest(BaseModel):
-    nombre: str
-    password: str
-
-class CrearCicloRequest(BaseModel):
-    nombre: str
-    id_familia: int
-    id_grado: int
-
-class CrearModuloItemRequest(BaseModel):
-    id_oficial: str | None = None
-    nombre: str
-
-class CrearModulosRequest(BaseModel):
-    modulos: list[CrearModuloItemRequest]
-
-class CrearConvalidacionRequest(BaseModel):
-    id_modulo_destino: int
-    id_modulos_origen: list[int]
-    source_link: str | None = None
-    source_page: int | None = None
 
 
 def _create_admin_token(admin_id: int, nombre: str) -> str:
@@ -92,20 +73,19 @@ def _decode_admin_token(token: str) -> dict | None:
 def validate_admin_token(token: str, db: sqlite3.Connection) -> dict | None:
     if not token:
         return None
+
     payload = _decode_admin_token(token)
     if not payload:
         return None
 
-    admin = db.execute(
-        """
-        SELECT id, nombre
-        FROM administradores
-        WHERE id = ? AND nombre = ?
-        """,
-        (int(payload["id"]), str(payload["nombre"])),
-    ).fetchone()
+    admin = database.AdminQueries.get_admin_by_id_nombre(
+        db,
+        int(payload["id"]),
+        str(payload["nombre"]),
+    )
     if not admin:
         return None
+
     return {"id": int(admin["id"]), "nombre": str(admin["nombre"])}
 
 
@@ -282,7 +262,7 @@ async def listar_convalidaciones(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/administradores")
+@router.get("/listar_administradores")
 async def listar_administradores(
     db: sqlite3.Connection = Depends(database.get_db),
 ):
@@ -290,6 +270,114 @@ async def listar_administradores(
     try:
         return database.AdminQueries.list_admin_users(db)
     except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/crear_administrador")
+async def crear_administrador(
+    request: CrearAdministradorRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Crea un nuevo usuario administrador."""
+    try:
+        nombre = (request.nombre or "").strip()
+        password = request.password or ""
+        if not nombre:
+            raise HTTPException(status_code=400, detail="El nombre del administrador es obligatorio")
+        if not password:
+            raise HTTPException(status_code=400, detail="La contraseña es obligatoria")
+
+        created, created_at = database.AdminQueries.create_admin_user(db, nombre=nombre, password=password)
+        db.commit()
+        return {
+            "ok": True,
+            "id": created,
+            "created_at": created_at,
+        }
+    except HTTPException:
+        raise
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        detail = str(e)
+        if "UNIQUE constraint failed: administradores.nombre" in detail:
+            detail = "Ya existe un administrador con ese nombre"
+        raise HTTPException(status_code=400, detail=detail)
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/actualizar_administrador/{id_admin}")
+async def actualizar_administrador(
+    id_admin: int,
+    request: ActualizarAdministradorRequest,
+    http_request: Request,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Actualiza nombre y/o contraseña de un administrador."""
+    try:
+        admin_logueado = getattr(http_request.state, "admin", None) or {}
+        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
+            raise HTTPException(status_code=403, detail="Solo el usuario admin puede actualizar administradores")
+
+        nombre = (request.nombre or "").strip() if request.nombre is not None else None
+        password = request.password
+
+        if nombre == "":
+            raise HTTPException(status_code=400, detail="El nombre no puede estar vacío")
+        if password == "":
+            raise HTTPException(status_code=400, detail="La contraseña no puede estar vacía")
+        if nombre is None and password is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Debes enviar al menos un campo para actualizar: nombre o password",
+            )
+
+        updated = database.AdminQueries.update_admin_user(
+            db,
+            admin_id=id_admin,
+            nombre=nombre,
+            password=password,
+        )
+        if updated == 0:
+            raise HTTPException(status_code=404, detail="Administrador no encontrado")
+
+        db.commit()
+        return {"ok": True, "id": id_admin}
+    except HTTPException:
+        raise
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        detail = str(e)
+        if "UNIQUE constraint failed: administradores.nombre" in detail:
+            detail = "Ya existe un administrador con ese nombre"
+        raise HTTPException(status_code=400, detail=detail)
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/eliminar_administrador/{id_admin}")
+async def eliminar_administrador(
+    id_admin: int,
+    request: Request,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Elimina un administrador por ID."""
+    try:
+        admin_logueado = getattr(request.state, "admin", None) or {}
+        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
+            raise HTTPException(status_code=403, detail="Solo el usuario admin puede eliminar administradores")
+
+        deleted = database.AdminQueries.delete_admin_user(db, admin_id=id_admin)
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail="Administrador no encontrado")
+        db.commit()
+        return {"ok": True, "id": id_admin}
+    except HTTPException:
+        raise
+    except sqlite3.Error as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -301,40 +389,32 @@ async def crear_convalidacion(
     """Crea una regla de convalidación y sus módulos de origen."""
     try:
         id_modulo_destino = int(request.id_modulo_destino)
-        origenes = request.id_modulos_origen
+        if id_modulo_destino <= 0:
+            raise HTTPException(status_code=400, detail="El módulo destino es obligatorio")
 
         source_link = (request.source_link or "").strip() or None
         source_page = int(request.source_page) if request.source_page is not None else None
 
-        cursor = db.execute(
-            """
-            INSERT INTO convalidacion (source_link, source_page, id_modulo_destino)
-            VALUES (?, ?, ?)
-            """,
-            (source_link, source_page, id_modulo_destino),
-        )
-        id_convalidacion = int(cursor.lastrowid)
-
-        db.executemany(
-            """
-            INSERT INTO convalidacion_origen (conv_id, id_modulo)
-            VALUES (?, ?)
-            """,
-            [(id_convalidacion, id_modulo_origen) for id_modulo_origen in origenes],
+        created = database.AdminQueries.create_convalidacion_rule(
+            db,
+            id_modulo_destino=id_modulo_destino,
+            id_modulos_origen=request.id_modulos_origen or [],
+            source_link=source_link,
+            source_page=source_page,
         )
 
         db.commit()
         return {
             "ok": True,
-            "id": id_convalidacion,
-            "id_modulo_destino": id_modulo_destino,
-            "id_modulos_origen": origenes,
+            "id": int(created["id"]),
+            "id_modulo_destino": int(created["id_modulo_destino"]),
+            "id_modulos_origen": list(created["id_modulos_origen"]),
         }
     except HTTPException:
         raise
-    except ValueError:
+    except ValueError as e:
         db.rollback()
-        raise HTTPException(status_code=400, detail="Formato inválido en los IDs enviados")
+        raise HTTPException(status_code=400, detail=str(e))
     except sqlite3.IntegrityError as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -432,8 +512,7 @@ async def crear_modulos(
 ):
     """Crea uno o varios módulos en un ciclo existente."""
     try:
-        ciclo = db.execute("SELECT id FROM ciclos WHERE id = ?", (id_ciclo,)).fetchone()
-        if not ciclo:
+        if not database.CatalogQueries.exists_ciclo(db, id_ciclo):
             raise HTTPException(status_code=404, detail="Ciclo no encontrado")
 
         payload = [
