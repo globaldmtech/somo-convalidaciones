@@ -37,6 +37,12 @@ class CrearModuloItemRequest(BaseModel):
 class CrearModulosRequest(BaseModel):
     modulos: list[CrearModuloItemRequest]
 
+class CrearConvalidacionRequest(BaseModel):
+    id_modulo_destino: int
+    id_modulos_origen: list[int]
+    source_link: str | None = None
+    source_page: int | None = None
+
 
 def _create_admin_token(admin_id: int, nombre: str) -> str:
     payload = {
@@ -284,6 +290,56 @@ async def listar_administradores(
     try:
         return database.AdminQueries.list_admin_users(db)
     except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/crear_convalidaciones")
+async def crear_convalidacion(
+    request: CrearConvalidacionRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Crea una regla de convalidación y sus módulos de origen."""
+    try:
+        id_modulo_destino = int(request.id_modulo_destino)
+        origenes = request.id_modulos_origen
+
+        source_link = (request.source_link or "").strip() or None
+        source_page = int(request.source_page) if request.source_page is not None else None
+
+        cursor = db.execute(
+            """
+            INSERT INTO convalidacion (source_link, source_page, id_modulo_destino)
+            VALUES (?, ?, ?)
+            """,
+            (source_link, source_page, id_modulo_destino),
+        )
+        id_convalidacion = int(cursor.lastrowid)
+
+        db.executemany(
+            """
+            INSERT INTO convalidacion_origen (conv_id, id_modulo)
+            VALUES (?, ?)
+            """,
+            [(id_convalidacion, id_modulo_origen) for id_modulo_origen in origenes],
+        )
+
+        db.commit()
+        return {
+            "ok": True,
+            "id": id_convalidacion,
+            "id_modulo_destino": id_modulo_destino,
+            "id_modulos_origen": origenes,
+        }
+    except HTTPException:
+        raise
+    except ValueError:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Formato inválido en los IDs enviados")
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 

@@ -123,6 +123,20 @@ export interface AdminCreateModulosRequest {
     modulos: AdminCreateModuloItemRequest[];
 }
 
+export interface AdminCreateConvalidacionRequest {
+    id_modulo_destino: number;
+    id_modulos_origen: number[];
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
+export interface AdminCreateConvalidacionResponse {
+    ok: boolean;
+    id: number;
+    id_modulo_destino: number;
+    id_modulos_origen: number[];
+}
+
 export interface AdminLoginResponse {
     ok: boolean;
     id: number;
@@ -370,6 +384,16 @@ export class ConvalidacionesService {
     crearModulosAdmin(idCiclo: number, payload: AdminCreateModulosRequest): Observable<{ ok: boolean; inserted: number }> {
         return this.http.post<{ ok: boolean; inserted: number }>(
             `${ADMIN_API_BASE}/ciclos/${idCiclo}/modulos`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    crearConvalidacionAdmin(
+        payload: AdminCreateConvalidacionRequest
+    ): Observable<AdminCreateConvalidacionResponse> {
+        return this.http.post<AdminCreateConvalidacionResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones`,
             payload,
             this.getAdminAuthHeaders()
         );
