@@ -48,6 +48,7 @@ type AdminCicloSolicitudesGroup = {
     codigo?: string | null;
     esOtroNoRegistrado?: boolean;
     convalidadoPor?: string | null;
+    convalidadoPorIds?: number[];
     estadoModuloId: number | null;
     estadoModulo: string | null;
   }>;
@@ -108,9 +109,8 @@ type PendingConvalidacionOrigenDelete = {
     <div class="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div #headerInner class="max-w-6xl mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
-          <div #headerBrand class="flex items-center gap-4 min-w-0">
-            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">AD</div>
-            <div class="font-black text-lg tracking-tight uppercase shrink-0">SOMO <span class="text-indigo-600">ADMIN</span></div>
+          <div #headerBrand class="flex items-center min-w-0">
+            <div class="font-black text-lg tracking-tight uppercase shrink-0">SOMO <span class="text-indigo-600">CONVALIDACIONES</span></div>
           </div>
           <nav *ngIf="isAuthenticated && !useMenuTabs" class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-6">
             <button
@@ -447,7 +447,7 @@ type PendingConvalidacionOrigenDelete = {
                                 class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
                               >
                                 <span>{{ modulo.nombre }}</span>
-                                <span *ngIf="(modulo.nota !== null && modulo.nota !== undefined) && getNotaMediaCiclo(ciclo) === null" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
+                                <span *ngIf="modulo.nota !== null && modulo.nota !== undefined" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
                                   Nota: {{ modulo.nota | number:'1.0-2' }}
                                 </span>
                               </li>
@@ -494,9 +494,24 @@ type PendingConvalidacionOrigenDelete = {
                                         <p *ngIf="solicitud.codigo || solicitud.esOtroNoRegistrado" class="text-[11px] text-slate-500 mt-0.5">
                                           {{ solicitud.codigo || '(otros no registrados)' }}
                                         </p>
-                                        <p *ngIf="solicitud.convalidadoPor" class="text-[11px] italic text-slate-500 mt-0.5">
-                                          Basado en: {{ solicitud.convalidadoPor }}
-                                        </p>
+                                        <ng-container *ngIf="solicitud.convalidadoPor as convalidadoPor">
+                                          <details
+                                            *ngIf="debeMostrarDesplegableConvalidadoPor(convalidadoPor); else convalidadoSimpleRevision"
+                                            class="mt-0.5 text-[11px] text-slate-500"
+                                          >
+                                            <summary class="italic cursor-pointer select-none">
+                                              Convalidado por: Ciclo completo
+                                            </summary>
+                                            <p class="mt-1 whitespace-pre-line">
+                                              {{ getConvalidadoPorConNota(f, solicitud).join('\n') }}
+                                            </p>
+                                          </details>
+                                          <ng-template #convalidadoSimpleRevision>
+                                            <p class="text-[11px] italic text-slate-500 mt-0.5">
+                                              Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                            </p>
+                                          </ng-template>
+                                        </ng-container>
                                       </div>
                                       <div *ngIf="f.estado_id === 0" class="flex items-center gap-1 shrink-0">
                                         <button
@@ -548,9 +563,24 @@ type PendingConvalidacionOrigenDelete = {
                                         <p *ngIf="solicitud.codigo || solicitud.esOtroNoRegistrado" class="text-[11px] text-slate-500 mt-0.5">
                                           {{ solicitud.codigo || '(otros no registrados)' }}
                                         </p>
-                                        <p *ngIf="solicitud.convalidadoPor" class="text-[11px] italic text-slate-500 mt-0.5">
-                                          Basado en: {{ solicitud.convalidadoPor }}
-                                        </p>
+                                        <ng-container *ngIf="solicitud.convalidadoPor as convalidadoPor">
+                                          <details
+                                            *ngIf="debeMostrarDesplegableConvalidadoPor(convalidadoPor); else convalidadoSimpleValidadas"
+                                            class="mt-0.5 text-[11px] text-slate-500"
+                                          >
+                                            <summary class="italic cursor-pointer select-none">
+                                              Convalidado por: Ciclo completo
+                                            </summary>
+                                            <p class="mt-1 whitespace-pre-line">
+                                              {{ getConvalidadoPorConNota(f, solicitud).join('\n') }}
+                                            </p>
+                                          </details>
+                                          <ng-template #convalidadoSimpleValidadas>
+                                            <p class="text-[11px] italic text-slate-500 mt-0.5">
+                                              Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                            </p>
+                                          </ng-template>
+                                        </ng-container>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -589,9 +619,24 @@ type PendingConvalidacionOrigenDelete = {
                                         <p *ngIf="solicitud.codigo || solicitud.esOtroNoRegistrado" class="text-[11px] text-slate-500 mt-0.5">
                                           {{ solicitud.codigo || '(otros no registrados)' }}
                                         </p>
-                                        <p *ngIf="solicitud.convalidadoPor" class="text-[11px] italic text-slate-500 mt-0.5">
-                                          Basado en: {{ solicitud.convalidadoPor }}
-                                        </p>
+                                        <ng-container *ngIf="solicitud.convalidadoPor as convalidadoPor">
+                                          <details
+                                            *ngIf="debeMostrarDesplegableConvalidadoPor(convalidadoPor); else convalidadoSimpleRechazadas"
+                                            class="mt-0.5 text-[11px] text-slate-500"
+                                          >
+                                            <summary class="italic cursor-pointer select-none">
+                                              Convalidado por: Ciclo completo
+                                            </summary>
+                                            <p class="mt-1 whitespace-pre-line">
+                                              {{ getConvalidadoPorConNota(f, solicitud).join('\n') }}
+                                            </p>
+                                          </details>
+                                          <ng-template #convalidadoSimpleRechazadas>
+                                            <p class="text-[11px] italic text-slate-500 mt-0.5">
+                                              Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                            </p>
+                                          </ng-template>
+                                        </ng-container>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -3470,23 +3515,95 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getNotaMediaCiclo(ciclo: AdminCicloModulosGroup): number | null {
-    if (ciclo.cicloId === null || ciclo.cicloId === undefined) return null;
-    const cicloCatalogo = this.ciclosConModulos.find((item) => Number(item.id) === Number(ciclo.cicloId));
-    if (!cicloCatalogo) return null;
-    const totalCatalogo = Array.isArray(cicloCatalogo.modulos)
-      ? cicloCatalogo.modulos.length
-      : Number(cicloCatalogo.total_modulos || 0);
-    if (totalCatalogo <= 0) return null;
-    if (ciclo.modulos.length !== totalCatalogo) return null;
-
-    if (!ciclo.modulos.length) return null;
+    if (ciclo.modulos.length <= 2) return null;
     const notas = ciclo.modulos
       .map((m) => m.nota)
       .filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
     if (notas.length !== ciclo.modulos.length) return null;
-    const primera = notas[0];
-    if (notas.some((n) => n !== primera)) return null;
-    return primera;
+    const total = notas.reduce((acc, current) => acc + current, 0);
+    return total / notas.length;
+  }
+
+  getConvalidadoPorLista(convalidadoPor: string | null | undefined): string[] {
+    if (!convalidadoPor) return [];
+    return convalidadoPor
+      .split(',')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  getConvalidadoPorConNota(
+    formulario: AdminFormulario,
+    solicitud: { convalidadoPor?: string | null; convalidadoPorIds?: number[] | null }
+  ): string[] {
+    const ids = solicitud.convalidadoPorIds ?? [];
+    if (ids.length > 0) {
+      const modulosById = this.getModulosAportadosById(formulario);
+      return ids.map((id) => {
+        const modulo = modulosById.get(id);
+        if (!modulo) return `Módulo ${id} (sin nota)`;
+        if (modulo.nota === null || modulo.nota === undefined) return `${modulo.nombre} (sin nota)`;
+        return `${modulo.nombre} (${this.formatearNotaModulo(modulo.nota)})`;
+      });
+    }
+
+    const notasPorNombre = this.getNotasPorNombreModuloFormulario(formulario);
+    return this.getConvalidadoPorLista(solicitud.convalidadoPor).map((nombre) => {
+      const nota = notasPorNombre.get(this.normalizarTextoModulo(nombre));
+      if (nota === null || nota === undefined) return `${nombre} (sin nota)`;
+      return `${nombre} (${this.formatearNotaModulo(nota)})`;
+    });
+  }
+
+  debeMostrarDesplegableConvalidadoPor(convalidadoPor: string | null | undefined): boolean {
+    return this.getConvalidadoPorLista(convalidadoPor).length > 2;
+  }
+
+  private getNotasPorNombreModuloFormulario(formulario: AdminFormulario): Map<string, number> {
+    const map = new Map<string, number>();
+    const modulos = formulario.modulos_aportados ?? [];
+    for (const modulo of modulos) {
+      const nombre = (modulo.modulo_nombre || modulo.descripcion || '').trim();
+      if (!nombre) continue;
+      const nota = modulo.nota;
+      if (typeof nota !== 'number' || !Number.isFinite(nota)) continue;
+      const key = this.normalizarTextoModulo(nombre);
+      if (!key) continue;
+      const actual = map.get(key);
+      if (actual === undefined || nota > actual) {
+        map.set(key, nota);
+      }
+    }
+    return map;
+  }
+
+  private getModulosAportadosById(
+    formulario: AdminFormulario
+  ): Map<number, { nombre: string; nota: number | null }> {
+    const map = new Map<number, { nombre: string; nota: number | null }>();
+    const modulos = formulario.modulos_aportados ?? [];
+    for (const modulo of modulos) {
+      const idModulo = Number(modulo.id_modulo);
+      if (!Number.isFinite(idModulo)) continue;
+      const nombre = (modulo.modulo_nombre || modulo.descripcion || `Módulo ${idModulo}`).trim();
+      const nota = typeof modulo.nota === 'number' && Number.isFinite(modulo.nota) ? modulo.nota : null;
+      const current = map.get(idModulo);
+      if (!current || ((current.nota ?? -Infinity) < (nota ?? -Infinity))) {
+        map.set(idModulo, { nombre, nota });
+      }
+    }
+    return map;
+  }
+
+  private normalizarTextoModulo(value: string): string {
+    return (value || '').toLowerCase().trim().replace(/\s+/g, ' ');
+  }
+
+  private formatearNotaModulo(value: number): string {
+    return value.toLocaleString('es-ES', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
   }
 
   getSolicitudesPorCiclo(formulario: AdminFormulario): AdminCicloSolicitudesGroup[] {
@@ -3505,6 +3622,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         codigo: solicitud.modulo_destino_codigo ?? null,
         esOtroNoRegistrado: !solicitud.id_modulo_destino,
         convalidadoPor: solicitud.convalidado_por ?? solicitud.convalidadoPor ?? null,
+        convalidadoPorIds: this.parseConvalidadoPorIds(solicitud.convalidado_por_ids ?? solicitud.convalidadoPorIds ?? null),
         estadoModuloId: solicitud.estado_modulo_id ?? null,
         estadoModulo: solicitud.estado_modulo ?? null,
       });
@@ -3531,6 +3649,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return ordered;
+  }
+
+  private parseConvalidadoPorIds(value: string | null): number[] {
+    if (!value) return [];
+    return value
+      .split(',')
+      .map((item) => Number(item.trim()))
+      .filter((id) => Number.isFinite(id));
   }
 
   private groupByAlumno(items: AdminFormulario[]): AdminAlumnoGroup[] {

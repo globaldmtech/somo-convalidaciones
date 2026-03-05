@@ -41,7 +41,9 @@ export interface AdminFormularioSolicitud {
     modulo_destino: string | null;
     modulo_destino_codigo?: string | null;
     convalidado_por?: string | null;
+    convalidado_por_ids?: string | null;
     convalidadoPor?: string | null;
+    convalidadoPorIds?: string | null;
     descripcion: string | null;
     estado_modulo_id?: number | null;
     estado_modulo?: string | null;

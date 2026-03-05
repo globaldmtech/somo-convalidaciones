@@ -7,6 +7,7 @@ import os
 import sqlite3
 import time
 from openpyxl import Workbook
+from openpyxl.styles import Alignment
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.routing import APIRoute
@@ -177,6 +178,16 @@ async def exportar_solicitudes_convalidacion(
                 "OBSERVACIONES",
             ]
         )
+        sheet.column_dimensions["A"].width = 28
+        sheet.column_dimensions["B"].width = 16
+        sheet.column_dimensions["C"].width = 34
+        sheet.column_dimensions["D"].width = 30
+        sheet.column_dimensions["E"].width = 34
+        sheet.column_dimensions["F"].width = 12
+        sheet.column_dimensions["G"].width = 34
+        sheet.column_dimensions["H"].width = 42
+        sheet.column_dimensions["I"].width = 12
+        sheet.column_dimensions["J"].width = 36
         for row in rows:
             nota = row.get("nota_modulo")
             sheet.append(
@@ -193,6 +204,9 @@ async def exportar_solicitudes_convalidacion(
                     row.get("observaciones") or "",
                 ]
             )
+            current_row = sheet.max_row
+            sheet.cell(row=current_row, column=7).alignment = Alignment(wrap_text=True)
+            sheet.cell(row=current_row, column=8).alignment = Alignment(wrap_text=True)
 
         output = io.BytesIO()
         workbook.save(output)

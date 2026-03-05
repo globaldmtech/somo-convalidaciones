@@ -83,6 +83,25 @@ export class ResumenFormularioComponent implements OnInit {
         return this.expandedEstudios.has(index);
     }
 
+    notaModuloEstudio(estudio: EstudioEntry, moduloId: number): number | null {
+        const nota = this.parseNotaFlexible(estudio.notasPorModulo?.[moduloId]);
+        if (nota !== null) return nota;
+        return this.parseNotaFlexible(estudio.notaMediaCiclo);
+    }
+
+    private parseNotaFlexible(value: unknown): number | null {
+        if (typeof value === 'number') {
+            return Number.isFinite(value) ? value : null;
+        }
+        if (typeof value === 'string') {
+            const raw = value.trim().replace(',', '.');
+            if (!raw) return null;
+            const parsed = Number(raw);
+            return Number.isFinite(parsed) ? parsed : null;
+        }
+        return null;
+    }
+
     get documentoDni(): UploadedDocument | null {
         return this.convalidacionesService.documentoDni;
     }
@@ -107,15 +126,15 @@ export class ResumenFormularioComponent implements OnInit {
             return;
         }
 
+        // Releer selección final por si hubo cambios asíncronos tras entrar al resumen.
+        this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
+
         this.enviando = true;
         this.error = null;
         let payload: any;
         try {
             const hayNotasInvalidas = this.estudios.some((estudio) => {
                 if (estudio.modulos.length === 0) return false;
-                if (estudio.allSelected) {
-                    return estudio.notaMediaCiclo === null || estudio.notaMediaCiclo === undefined;
-                }
                 return estudio.modulos.some((modulo) => {
                     const nota = estudio.notasPorModulo?.[modulo.id];
                     return nota === null || nota === undefined;
@@ -126,18 +145,12 @@ export class ResumenFormularioComponent implements OnInit {
             }
 
             const idModulosAportados = this.estudios.flatMap(e => e.modulos.map(m => m.id));
-            const modulosAportadosDetalle = this.estudios.flatMap((estudio) => {
-                if (estudio.allSelected && estudio.notaMediaCiclo !== null && estudio.notaMediaCiclo !== undefined) {
-                    return estudio.modulos.map((modulo) => ({
-                        id_modulo: Number(modulo.id),
-                        nota: Number(estudio.notaMediaCiclo),
-                    }));
-                }
-                return estudio.modulos.map((modulo) => ({
+            const modulosAportadosDetalle = this.estudios.flatMap((estudio) =>
+                estudio.modulos.map((modulo) => ({
                     id_modulo: Number(modulo.id),
                     nota: estudio.notasPorModulo?.[modulo.id] ?? null,
-                }));
-            });
+                }))
+            );
             const acreditacionesRegistradas = this.acreditaciones
                 .filter(a => a.tipo !== 'otros')
                 .map(a => a.id);
@@ -156,6 +169,10 @@ export class ResumenFormularioComponent implements OnInit {
                 id_convalidacion: null,
                 descripcion: null,
             }));
+            const solicitudesRegistradasUnicas = this.deduplicarSolicitudesRegistradas([
+                ...solicitudesRegistradas,
+                ...solicitudesRegistradasManuales,
+            ]);
 
             const descripcionNoRegistrados = [
                 ...this.otrosCiclosModulosCursados,
@@ -174,7 +191,7 @@ export class ResumenFormularioComponent implements OnInit {
                 modulos_aportados_detalle: modulosAportadosDetalle,
                 id_acreditaciones_registradas_aportadas: [...new Set(acreditacionesRegistradas)],
                 descripcion_no_registrados: descripcionNoRegistrados.length > 0 ? descripcionNoRegistrados : null,
-                solicitudes_registradas: [...solicitudesRegistradas, ...solicitudesRegistradasManuales],
+                solicitudes_registradas: solicitudesRegistradasUnicas,
                 solicitudes_no_registradas: [...this.otrosSolicitudes],
             };
         } catch (e: any) {
@@ -208,5 +225,37 @@ export class ResumenFormularioComponent implements OnInit {
                     this.cdr.detectChanges();
                 }
             });
+    }
+
+    private deduplicarSolicitudesRegistradas(
+        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>
+    ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }> {
+        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>();
+
+        for (const item of items) {
+            const moduloId = Number(item.id_modulo_destino);
+            if (!Number.isFinite(moduloId)) continue;
+
+            const current = byModulo.get(moduloId);
+            if (!current) {
+                byModulo.set(moduloId, {
+                    id_modulo_destino: moduloId,
+                    id_convalidacion: item.id_convalidacion ?? null,
+                    descripcion: null,
+                });
+                continue;
+            }
+
+            // Priorizamos la solicitud automática (con id_convalidacion) sobre la manual/null.
+            if (current.id_convalidacion === null && item.id_convalidacion !== null) {
+                byModulo.set(moduloId, {
+                    id_modulo_destino: moduloId,
+                    id_convalidacion: item.id_convalidacion,
+                    descripcion: null,
+                });
+            }
+        }
+
+        return Array.from(byModulo.values());
     }
 }

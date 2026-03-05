@@ -186,7 +186,8 @@ class ConvalidationQueries:
                     WHEN COUNT(DISTINCT c_source.id) = 1 THEN MIN(c_source.nombre)
                     ELSE 'Origen mixto'
                 END AS source_nombre,
-                REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen
+                REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen,
+                GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids
             FROM convalidacion conv
             JOIN modulos m ON conv.id_modulo_destino = m.id
             JOIN ciclos c_target ON m.id_ciclo = c_target.id
@@ -472,6 +473,11 @@ class AdminQueries:
                         JOIN modulos mo ON mo.id = co.id_modulo
                         WHERE co.conv_id = fs.id_convalidacion
                     ) AS convalidado_por,
+                    (
+                        SELECT GROUP_CONCAT(DISTINCT co.id_modulo)
+                        FROM convalidacion_origen co
+                        WHERE co.conv_id = fs.id_convalidacion
+                    ) AS convalidado_por_ids,
                     fs.descripcion,
                     fs.estado_modulo AS estado_modulo_id,
                     emd.nombre AS estado_modulo
@@ -537,9 +543,12 @@ class AdminQueries:
                 COALESCE(cd.nombre, 'Otros no registrados') AS ciclo_matriculado,
                 COALESCE(md.nombre, fs.descripcion, 'Módulo sin detalle') AS modulo_a_convalidar,
                 COALESCE(emd.nombre, '') AS resolucion,
-                COALESCE(co2.nombre, '') AS ciclo_cursado,
-                COALESCE(mo.nombre, '') AS modulo_cursado,
-                fma.nota AS nota_modulo,
+                COALESCE(REPLACE(GROUP_CONCAT(DISTINCT co2.nombre), ',', CHAR(10)), '') AS ciclo_cursado,
+                CASE
+                    WHEN COUNT(DISTINCT mo.id) > 2 THEN 'Ciclo completo'
+                    ELSE COALESCE(REPLACE(GROUP_CONCAT(DISTINCT mo.nombre), ',', CHAR(10)), '')
+                END AS modulo_cursado,
+                AVG(fma.nota) AS nota_modulo,
                 COALESCE(f.anotaciones, '') AS observaciones
             FROM formularios f
             JOIN usuarios u ON u.id = f.id_alumno
@@ -554,7 +563,18 @@ class AdminQueries:
                 ON fma.id_formulario = f.id
                AND fma.id_modulo = co.id_modulo
             WHERE f.estado = 1
-            ORDER BY u.nombre, f.id, fs.id, co2.nombre, mo.nombre
+            GROUP BY
+                f.id,
+                fs.id,
+                u.nombre,
+                u.DNI,
+                u.email,
+                cd.nombre,
+                md.nombre,
+                fs.descripcion,
+                emd.nombre,
+                f.anotaciones
+            ORDER BY u.nombre, f.id, fs.id
             """
         ).fetchall()
         return [dict(row) for row in rows]

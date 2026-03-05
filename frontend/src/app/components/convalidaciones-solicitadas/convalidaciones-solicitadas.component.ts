@@ -38,6 +38,7 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     results: any[] = [];
     groupedResults: { source: string, items: any[] }[] = [];
     loading = false;
+    private loadResultsRequestId = 0;
 
     // Selection State (ModuleID -> SourceName)
     selectedModuleSources = new Map<number, string>();
@@ -231,43 +232,26 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     loadResults(): void {
         if (!this.selectedCicloId) return;
 
+        const requestId = ++this.loadResultsRequestId;
         this.loading = true;
         this.cdr.detectChanges();
 
         this.convalidacionesService.calcularConvalidaciones(Number(this.selectedCicloId)).subscribe({
             next: (data) => {
+                if (requestId !== this.loadResultsRequestId) {
+                    return;
+                }
                 // Normalize source name
                 const normalized = data.map(item => ({
                     ...item,
                     source_nombre: item.source_nombre || 'Otros'
                 }));
 
-                const groups: { [key: string]: any[] } = {};
-                normalized.forEach(item => {
-                    const source = item.source_nombre;
-                    if (!groups[source]) groups[source] = [];
-                    groups[source].push(item);
-                });
-
-                // Keep only one source (ciclo origen). Prefer the one already selected by user if still valid;
-                // otherwise pick the source with most matches.
-                const sources = Object.keys(groups);
-                let preferredSource = '';
-                const existingSource = this.selectedModuleSources.size > 0
-                    ? Array.from(this.selectedModuleSources.values())[0]
-                    : '';
-                if (existingSource && groups[existingSource]) {
-                    preferredSource = existingSource;
-                } else if (sources.length > 0) {
-                    preferredSource = sources.sort((a, b) => {
-                        const diff = groups[b].length - groups[a].length;
-                        return diff !== 0 ? diff : a.localeCompare(b);
-                    })[0];
-                }
-
-                this.results = preferredSource ? groups[preferredSource] : [];
-                this.groupedResults = preferredSource
-                    ? [{ source: preferredSource, items: this.results }]
+                // Pick the best rule per target module across ALL sources,
+                // based on the highest average note from origin modules.
+                this.results = this.selectBestRulesByModule(normalized);
+                this.groupedResults = this.results.length > 0
+                    ? [{ source: 'Mejor opción por nota', items: this.results }]
                     : [];
 
                 // Cleanup: remove selections that are no longer valid in current results.
@@ -283,10 +267,10 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
                     }
                 });
 
-                // Default behavior: preselect all shown modules for the selected origin source.
-                if (preferredSource && this.selectedModuleSources.size === 0) {
+                // Default behavior: preselect all best options.
+                if (this.selectedModuleSources.size === 0) {
                     this.results.forEach(result => {
-                        this.selectedModuleSources.set(Number(result.id), preferredSource);
+                        this.selectedModuleSources.set(Number(result.id), String(result.source_nombre || 'Otros'));
                     });
                 }
                 this.syncTargetToService();
@@ -295,6 +279,9 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
                 this.cdr.detectChanges();
             },
             error: (err) => {
+                if (requestId !== this.loadResultsRequestId) {
+                    return;
+                }
                 console.error('Error loading convalidations:', err);
                 this.loading = false;
                 this.cdr.detectChanges();
@@ -346,5 +333,110 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             if (mod) selected.push(mod);
         });
         return selected;
+    }
+
+    private selectBestRulesByModule(results: any[]): any[] {
+        const bestByModulo = new Map<number, any>();
+        for (const result of results) {
+            const moduloId = Number(result?.id);
+            if (!Number.isFinite(moduloId)) continue;
+            const currentBest = bestByModulo.get(moduloId);
+            if (!currentBest || this.getRuleScore(result) > this.getRuleScore(currentBest)) {
+                bestByModulo.set(moduloId, result);
+            }
+        }
+        return Array.from(bestByModulo.values()).sort((a, b) =>
+            String(a?.nombre || '').localeCompare(String(b?.nombre || ''), 'es')
+        );
+    }
+
+    private getRuleScore(result: any): number {
+        const origenIds = this.getModulosOrigenIds(result?.modulos_origen_ids);
+        if (origenIds.length === 0) return -1;
+        const notasPorId = this.getNotasPorIdModulo();
+        const notas = origenIds
+            .map((id) => notasPorId.get(id))
+            .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
+        if (notas.length === 0) return -1;
+        const total = notas.reduce((acc, current) => acc + current, 0);
+        return total / notas.length;
+    }
+
+    private getModulosOrigenIds(rawIds: unknown): number[] {
+        if (!rawIds) return [];
+        return String(rawIds)
+            .split(',')
+            .map((token) => token.trim())
+            .filter(Boolean)
+            .map((token) => Number(token))
+            .filter((id) => Number.isFinite(id));
+    }
+
+    getModulosOrigenLista(modulosOrigen: string | null | undefined): string[] {
+        if (!modulosOrigen) return [];
+        return modulosOrigen
+            .split(',')
+            .map((item) => item.trim())
+            .filter(Boolean);
+    }
+
+    getModulosOrigenConNota(modulosOrigen: string | null | undefined): string[] {
+        const notasPorNombre = this.getNotasPorNombreModulo();
+        return this.getModulosOrigenLista(modulosOrigen).map((nombre) => {
+            const nota = notasPorNombre.get(this.normalizarTexto(nombre));
+            if (nota === null || nota === undefined) return `${nombre} (sin nota)`;
+            return `${nombre} (${this.formatearNota(nota)})`;
+        });
+    }
+
+    debeMostrarDesplegableModulosOrigen(modulosOrigen: string | null | undefined): boolean {
+        return this.getModulosOrigenLista(modulosOrigen).length > 2;
+    }
+
+    private getNotasPorNombreModulo(): Map<string, number> {
+        const map = new Map<string, number>();
+        const estudios = this.convalidacionesService.getEstudios() || [];
+        for (const estudio of estudios) {
+            for (const modulo of estudio.modulos || []) {
+                const nota = estudio.notasPorModulo?.[modulo.id];
+                if (typeof nota !== 'number' || !Number.isFinite(nota)) continue;
+                const key = this.normalizarTexto(modulo.nombre);
+                if (!key) continue;
+                const actual = map.get(key);
+                if (actual === undefined || nota > actual) {
+                    map.set(key, nota);
+                }
+            }
+        }
+        return map;
+    }
+
+    private getNotasPorIdModulo(): Map<number, number> {
+        const map = new Map<number, number>();
+        const estudios = this.convalidacionesService.getEstudios() || [];
+        for (const estudio of estudios) {
+            for (const modulo of estudio.modulos || []) {
+                const nota = estudio.notasPorModulo?.[modulo.id];
+                if (typeof nota !== 'number' || !Number.isFinite(nota)) continue;
+                const idModulo = Number(modulo.id);
+                if (!Number.isFinite(idModulo)) continue;
+                const actual = map.get(idModulo);
+                if (actual === undefined || nota > actual) {
+                    map.set(idModulo, nota);
+                }
+            }
+        }
+        return map;
+    }
+
+    private normalizarTexto(value: string): string {
+        return (value || '').toLowerCase().trim().replace(/\s+/g, ' ');
+    }
+
+    private formatearNota(value: number): string {
+        return value.toLocaleString('es-ES', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+        });
     }
 }

@@ -44,7 +44,6 @@ export class EstudiosCursadosComponent implements OnInit {
     selectedModuloIds: Set<number> = new Set();
     allSelected = false;
     selectedModuloNotas = new Map<number, string>();
-    selectedNotaMediaCiclo = '';
 
     loadingGrados = false;
     loadingCiclos = false;
@@ -56,6 +55,7 @@ export class EstudiosCursadosComponent implements OnInit {
     expandedStudios: Set<number> = new Set();
     editingStudios: Set<number> = new Set();
     editDraft: Map<number, Set<number>> = new Map();
+    editDraftNotas: Map<number, Map<number, string>> = new Map();
 
     // ── Acreditaciones externas ───────────────────────────────────────────────
     acreditacionesCatalog: AcreditacionExterna[] = [];
@@ -91,7 +91,7 @@ export class EstudiosCursadosComponent implements OnInit {
             ...estudio,
             allSelected: Boolean(estudio.allSelected),
             notaMediaCiclo: typeof estudio.notaMediaCiclo === 'number' ? estudio.notaMediaCiclo : null,
-            notasPorModulo: { ...(estudio.notasPorModulo || {}) },
+            notasPorModulo: this.migrateNotasPorModulo(estudio),
         }));
         this.acreditacionesAdded = this.convalidacionesService.getAcreditaciones();
         this.otrosCiclosModulosAdded = this.convalidacionesService.getOtrosCiclosModulos();
@@ -156,7 +156,6 @@ export class EstudiosCursadosComponent implements OnInit {
         this.modulos = [];
         this.selectedModuloIds.clear();
         this.selectedModuloNotas.clear();
-        this.selectedNotaMediaCiclo = '';
         this.allSelected = false;
 
         if (!this.selectedCicloId) return;
@@ -187,7 +186,6 @@ export class EstudiosCursadosComponent implements OnInit {
         if (this.allSelected) {
             this.selectedModuloIds.clear();
             this.selectedModuloNotas.clear();
-            this.selectedNotaMediaCiclo = '';
             this.allSelected = false;
         } else {
             this.modulos.forEach(m => {
@@ -212,12 +210,9 @@ export class EstudiosCursadosComponent implements OnInit {
         if (!grado || !ciclo || selectedModulos.length === 0 || !this.canAddEstudio()) return;
 
         const esCicloCompleto = selectedModulos.length === this.modulos.length && this.modulos.length > 0;
-        const notaMedia = esCicloCompleto ? this.parseNota(this.selectedNotaMediaCiclo) : null;
         const notasPorModulo: Record<number, number | null> = {};
-        if (!esCicloCompleto) {
-            for (const modulo of selectedModulos) {
-                notasPorModulo[modulo.id] = this.parseNota(this.selectedModuloNotas.get(modulo.id) || '');
-            }
+        for (const modulo of selectedModulos) {
+            notasPorModulo[modulo.id] = this.parseNota(this.selectedModuloNotas.get(modulo.id) || '');
         }
 
         this.estudios.push({
@@ -226,7 +221,7 @@ export class EstudiosCursadosComponent implements OnInit {
             modulos: selectedModulos,
             allModulos: [...this.modulos],
             allSelected: esCicloCompleto,
-            notaMediaCiclo: notaMedia,
+            notaMediaCiclo: null,
             notasPorModulo,
         });
 
@@ -236,7 +231,6 @@ export class EstudiosCursadosComponent implements OnInit {
         this.selectedCicloId = null;
         this.selectedModuloIds.clear();
         this.selectedModuloNotas.clear();
-        this.selectedNotaMediaCiclo = '';
         this.ciclos = [];
         this.modulos = [];
         this.allSelected = false;
@@ -256,39 +250,42 @@ export class EstudiosCursadosComponent implements OnInit {
 
     // ── Edit mode for saved LOE studies ───────────────────────────────────────
     startEdit(index: number): void {
-        const draft = new Set(this.estudios[index].modulos.map(m => m.id));
+        const estudio = this.estudios[index];
+        const draft = new Set(estudio.modulos.map(m => m.id));
+        const notas = new Map<number, string>();
+        for (const modulo of estudio.modulos) {
+            const nota = estudio.notasPorModulo?.[modulo.id];
+            notas.set(modulo.id, nota === null || nota === undefined ? '' : String(nota));
+        }
         this.editDraft.set(index, draft);
+        this.editDraftNotas.set(index, notas);
         this.editingStudios.add(index);
         this.cdr.detectChanges();
     }
 
     cancelEdit(index: number): void {
         this.editDraft.delete(index);
+        this.editDraftNotas.delete(index);
         this.editingStudios.delete(index);
         this.cdr.detectChanges();
     }
 
     saveEdit(index: number): void {
         const draft = this.editDraft.get(index);
-        if (!draft) return;
+        const draftNotas = this.editDraftNotas.get(index);
+        if (!draft || !draftNotas || !this.canSaveEdit(index)) return;
         this.estudios[index].modulos = this.estudios[index].allModulos.filter(m => draft.has(m.id));
         const estudio = this.estudios[index];
         const esCicloCompleto = estudio.modulos.length > 0 && estudio.modulos.length === estudio.allModulos.length;
         estudio.allSelected = esCicloCompleto;
-        if (esCicloCompleto) {
-            estudio.notasPorModulo = {};
-            if (estudio.notaMediaCiclo === null || estudio.notaMediaCiclo === undefined) {
-                estudio.notaMediaCiclo = null;
-            }
-        } else {
-            const nextNotas: Record<number, number | null> = {};
-            for (const modulo of estudio.modulos) {
-                nextNotas[modulo.id] = estudio.notasPorModulo?.[modulo.id] ?? null;
-            }
-            estudio.notasPorModulo = nextNotas;
-            estudio.notaMediaCiclo = null;
+        const nextNotas: Record<number, number | null> = {};
+        for (const modulo of estudio.modulos) {
+            nextNotas[modulo.id] = this.parseNota(draftNotas.get(modulo.id) || '');
         }
+        estudio.notasPorModulo = nextNotas;
+        estudio.notaMediaCiclo = null;
         this.editDraft.delete(index);
+        this.editDraftNotas.delete(index);
         this.editingStudios.delete(index);
         this.syncWithService();
         this.cdr.detectChanges();
@@ -296,13 +293,43 @@ export class EstudiosCursadosComponent implements OnInit {
 
     toggleDraftModulo(index: number, moduloId: number): void {
         const draft = this.editDraft.get(index);
-        if (!draft) return;
-        if (draft.has(moduloId)) { draft.delete(moduloId); } else { draft.add(moduloId); }
+        const notas = this.editDraftNotas.get(index);
+        if (!draft || !notas) return;
+        if (draft.has(moduloId)) {
+            draft.delete(moduloId);
+            notas.delete(moduloId);
+        } else {
+            draft.add(moduloId);
+            if (!notas.has(moduloId)) {
+                const notaActual = this.estudios[index].notasPorModulo?.[moduloId];
+                notas.set(moduloId, notaActual === null || notaActual === undefined ? '' : String(notaActual));
+            }
+        }
         this.cdr.detectChanges();
     }
 
     isDraftModuloSelected(index: number, moduloId: number): boolean {
         return this.editDraft.get(index)?.has(moduloId) ?? false;
+    }
+
+    getDraftNotaModulo(index: number, moduloId: number): string {
+        return this.editDraftNotas.get(index)?.get(moduloId) || '';
+    }
+
+    setDraftNotaModulo(index: number, moduloId: number, value: string): void {
+        const notas = this.editDraftNotas.get(index);
+        if (!notas) return;
+        notas.set(moduloId, value);
+    }
+
+    canSaveEdit(index: number): boolean {
+        const draft = this.editDraft.get(index);
+        const notas = this.editDraftNotas.get(index);
+        if (!draft || !notas || draft.size === 0) return false;
+        for (const moduloId of draft.values()) {
+            if (this.parseNota(notas.get(moduloId) || '') === null) return false;
+        }
+        return true;
     }
 
     isEditing(index: number): boolean {
@@ -324,10 +351,6 @@ export class EstudiosCursadosComponent implements OnInit {
 
     canAddEstudio(): boolean {
         if (!this.selectedGradoId || !this.selectedCicloId || this.selectedModuloIds.size === 0) return false;
-        const esCicloCompleto = this.selectedModuloIds.size === this.modulos.length && this.modulos.length > 0;
-        if (esCicloCompleto) {
-            return this.parseNota(this.selectedNotaMediaCiclo) !== null;
-        }
         for (const moduloId of this.selectedModuloIds.values()) {
             if (this.parseNota(this.selectedModuloNotas.get(moduloId) || '') === null) {
                 return false;
@@ -439,8 +462,17 @@ export class EstudiosCursadosComponent implements OnInit {
     }
 
     notaModuloEstudio(estudio: EstudioEntry, moduloId: number): number | null {
-        if (estudio.allSelected) return estudio.notaMediaCiclo;
         const nota = estudio.notasPorModulo?.[moduloId];
         return typeof nota === 'number' ? nota : null;
+    }
+
+    private migrateNotasPorModulo(estudio: EstudioEntry): Record<number, number | null> {
+        const next: Record<number, number | null> = { ...(estudio.notasPorModulo || {}) };
+        if (Object.keys(next).length === 0 && typeof estudio.notaMediaCiclo === 'number') {
+            for (const modulo of estudio.modulos || []) {
+                next[modulo.id] = estudio.notaMediaCiclo;
+            }
+        }
+        return next;
     }
 }

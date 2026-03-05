@@ -14,6 +14,7 @@ class ConvalidationResult(BaseModel):
     origen_tipo: str
     source_nombre: Optional[str] = None
     modulos_origen: Optional[str] = None
+    modulos_origen_ids: Optional[str] = None
     observaciones: Optional[str] = None
 
 # --- Solicitud unificada ---
