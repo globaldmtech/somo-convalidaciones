@@ -2098,17 +2098,27 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    // On wide desktops keep tabs visible in the top bar.
+    if (window.innerWidth >= 1280) {
+      if (this.useMenuTabs) {
+        this.useMenuTabs = false;
+        this.menuTabsOpen = false;
+        this.cdr.detectChanges();
+      }
+      return;
+    }
+
     const container = this.headerInnerRef?.nativeElement;
     const brand = this.headerBrandRef?.nativeElement;
     const tabsMeasure = this.headerTabsMeasureRef?.nativeElement;
     const actionsMeasure = this.headerActionsMeasureRef?.nativeElement;
     if (!container || !brand || !tabsMeasure || !actionsMeasure) return;
 
-    const availableWidth = container.clientWidth;
+    const availableWidth = Math.ceil(container.getBoundingClientRect().width);
     const requiredWidth =
-      brand.scrollWidth +
-      tabsMeasure.scrollWidth +
-      actionsMeasure.scrollWidth +
+      Math.ceil(brand.getBoundingClientRect().width) +
+      Math.ceil(tabsMeasure.getBoundingClientRect().width) +
+      Math.ceil(actionsMeasure.getBoundingClientRect().width) +
       56;
 
     const shouldUseMenu = requiredWidth > availableWidth;
