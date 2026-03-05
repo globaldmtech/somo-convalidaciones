@@ -9,8 +9,7 @@ import {
     UploadedDocument,
 } from '../../services/convalidaciones.service';
 import { EstudioEntry, AcreditacionExterna } from '../estudios-cursados/estudios-cursados.component';
-
-const API_BASE = 'http://localhost:8000/convalidaciones';
+import { API_BASE } from '../../config/api-paths';
 
 @Component({
     selector: 'app-resumen-formulario',

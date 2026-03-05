@@ -3,9 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursados/estudios-cursados.component';
-
-const API_BASE = 'http://localhost:8000/convalidaciones';
-const ADMIN_API_BASE = 'http://localhost:8000/admin';
+import { ADMIN_API_BASE, API_BASE } from '../config/api-paths';
 
 export interface PersonalData {
     nombre: string;

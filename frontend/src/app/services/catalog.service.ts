@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-const API_BASE = 'http://localhost:8000/convalidaciones';
+import { API_BASE } from '../config/api-paths';
 
 @Injectable({ providedIn: 'root' })
 export class CatalogService {
