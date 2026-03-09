@@ -32,8 +32,14 @@ import { ConvalidacionesService } from '../services/convalidaciones.service';
 
       <main class="flex-grow py-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
-          <div class="mb-12 px-12 sm:px-24">
-            <div class="relative flex items-center justify-between">
+          <div class="mb-12">
+            <div class="md:hidden mb-4 px-1">
+              <div class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-indigo-700">
+                Paso {{ getActiveStepNumber() }} de {{ steps.length }}
+              </div>
+            </div>
+
+            <div class="relative hidden md:flex items-center justify-between px-12 md:px-24">
               <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
 
               <div
@@ -182,5 +188,10 @@ export class FormularioPageComponent {
   onFormularioEnviado(): void {
     this.formularioEnviado = true;
     this.activeStep = 'resumen';
+  }
+
+  getActiveStepNumber(): number {
+    const index = this.steps.findIndex((step) => step.id === this.activeStep);
+    return index >= 0 ? index + 1 : 1;
   }
 }
