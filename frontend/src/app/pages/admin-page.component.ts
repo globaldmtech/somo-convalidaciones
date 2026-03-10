@@ -681,14 +681,27 @@ type PendingConvalidacionOrigenDelete = {
                         <ul *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="space-y-1">
                           <li
                             *ngFor="let documento of f.documentos_aportados"
-                            class="py-1"
+                            class="py-1 flex items-start justify-between gap-3"
                           >
+                            <div class="min-w-0">
+                              <button
+                                type="button"
+                                class="text-left text-sm font-semibold text-slate-800 hover:text-indigo-700 hover:underline break-all transition-colors"
+                                (click)="abrirDocumentoAportado(documento.ruta_almacenamiento)"
+                              >
+                                {{ documento.descripcion || documento.nombre_archivo }}
+                              </button>
+                            </div>
                             <button
                               type="button"
-                              class="text-left text-sm font-semibold text-slate-800 hover:text-indigo-700 hover:underline break-all transition-colors"
-                              (click)="abrirDocumentoAportado(documento.ruta_almacenamiento)"
+                              class="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-slate-100 transition-colors"
+                              (click)="descargarDocumentoAportado(documento.ruta_almacenamiento, documento.descripcion || documento.nombre_archivo); $event.stopPropagation()"
+                              title="Descargar documento"
+                              aria-label="Descargar documento"
                             >
-                              {{ documento.descripcion || documento.nombre_archivo }}
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path>
+                              </svg>
                             </button>
                           </li>
                         </ul>
@@ -2443,6 +2456,29 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.handleAdminUnauthorized(err)) return;
         const status = err?.status ? ` (HTTP ${err.status})` : '';
         this.error = `No se pudo abrir el documento${status}.`;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  descargarDocumentoAportado(path: string, fileName: string): void {
+    if (!path) return;
+
+    this.convalidacionesService.abrirDocumentoAdmin(path).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = (fileName || 'documento').trim() || 'documento';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+      error: (err: any) => {
+        if (this.handleAdminUnauthorized(err)) return;
+        const status = err?.status ? ` (HTTP ${err.status})` : '';
+        this.error = `No se pudo descargar el documento${status}.`;
         this.cdr.detectChanges();
       },
     });
