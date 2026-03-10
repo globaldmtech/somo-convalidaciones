@@ -67,6 +67,12 @@ type ModuloDraftRow = {
   nombre: string;
 };
 
+type AdminAcreditacionExternaGroup = {
+  key: string;
+  label: string;
+  modulos: Array<AdminCicloModulo & { cicloNombre: string }>;
+};
+
 type AdminConvalidacionCicloAgrupado = {
   key: string;
   cicloOrigenNombre: string;
@@ -691,6 +697,20 @@ type PendingConvalidacionOrigenDelete = {
               </button>
             </div>
 
+            <div *ngIf="modulosVistaActiva === 'acreditaciones'">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                [disabled]="!acreditacionExternaCiclo"
+                (click)="abrirModalCrearAcreditacionExterna()"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Añadir titulo externo
+              </button>
+            </div>
+
             <div class="rounded-2xl border border-slate-200 bg-white p-4">
               <div class="space-y-3">
                 <div class="flex flex-wrap items-center gap-2">
@@ -823,24 +843,34 @@ type PendingConvalidacionOrigenDelete = {
               </section>
             </div>
 
-            <div *ngIf="!loadingModulos && !errorModulos && modulosVistaActiva === 'acreditaciones'" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
-              <ul class="divide-y divide-slate-100">
-                <li *ngFor="let modulo of modulosAcreditacionesExternas" class="px-4 py-3 flex items-start justify-between gap-3">
-                  <p class="text-sm font-semibold text-slate-900 leading-5 flex-1">{{ modulo.nombre }}</p>
-                  <button
-                    type="button"
-                    class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-                    [disabled]="deletingModulos.has(modulo.id)"
-                    (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre, modulo.cicloNombre, true)"
-                    title="Eliminar módulo"
-                    aria-label="Eliminar módulo"
-                  >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
-                    </svg>
-                  </button>
-                </li>
-              </ul>
+            <div *ngIf="!loadingModulos && !errorModulos && modulosVistaActiva === 'acreditaciones'" class="space-y-4">
+              <section *ngFor="let grupo of acreditacionesExternasAgrupadas" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div class="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white px-4 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="text-sm font-bold text-slate-900">{{ grupo.label }}</p>
+                    <span class="rounded-full bg-indigo-50 px-2.5 py-1 text-[11px] font-semibold text-indigo-700">
+                      {{ grupo.modulos.length }} {{ grupo.modulos.length === 1 ? 'titulo' : 'titulos' }}
+                    </span>
+                  </div>
+                </div>
+                <ul class="divide-y divide-slate-100">
+                  <li *ngFor="let modulo of grupo.modulos" class="px-4 py-3 flex items-start justify-between gap-3 hover:bg-slate-50/70 transition-colors">
+                    <p class="text-sm font-semibold text-slate-900 leading-5 flex-1">{{ modulo.nombre }}</p>
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                      [disabled]="deletingModulos.has(modulo.id)"
+                      (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre, modulo.cicloNombre, true)"
+                      title="Eliminar módulo"
+                      aria-label="Eliminar módulo"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
+                      </svg>
+                    </button>
+                  </li>
+                </ul>
+              </section>
             </div>
           </section>
 
@@ -1219,6 +1249,81 @@ type PendingConvalidacionOrigenDelete = {
                   (click)="crearCiclo()"
                 >
                   {{ creatingCiclo ? 'Creando...' : 'Crear ciclo' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="createAcreditacionExternaModalOpen" class="fixed inset-0 z-[108] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Añadir titulo externo</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Se insertará dentro del ciclo de acreditaciones externas.
+              </p>
+              <div class="mt-4 space-y-3">
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tipo</span>
+                  <div class="mt-2 space-y-2">
+                    <label class="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        [checked]="createAcreditacionExternaCodigo === 'titulo_universitario'"
+                        [disabled]="creatingAcreditacionExterna"
+                        (change)="setCreateAcreditacionExternaCodigo('titulo_universitario', $any($event.target).checked)"
+                      />
+                      Título universitario
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        [checked]="createAcreditacionExternaCodigo === 'certificado_idioma'"
+                        [disabled]="creatingAcreditacionExterna"
+                        (change)="setCreateAcreditacionExternaCodigo('certificado_idioma', $any($event.target).checked)"
+                      />
+                      Certificado de idioma
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-slate-700">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        [checked]="createAcreditacionExternaCodigo === 'otros'"
+                        [disabled]="creatingAcreditacionExterna"
+                        (change)="setCreateAcreditacionExternaCodigo('otros', $any($event.target).checked)"
+                      />
+                      Otros
+                    </label>
+                  </div>
+                </label>
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre del titulo</span>
+                  <input
+                    type="text"
+                    [(ngModel)]="createAcreditacionExternaNombre"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="Ej: Certificado de Nivel C1 de Inglés"
+                    [disabled]="creatingAcreditacionExterna"
+                  />
+                </label>
+              </div>
+              <p *ngIf="createAcreditacionExternaError" class="mt-3 text-sm text-rose-700">{{ createAcreditacionExternaError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="creatingAcreditacionExterna"
+                  (click)="cerrarModalCrearAcreditacionExterna()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
+                  [disabled]="creatingAcreditacionExterna || !canCreateAcreditacionExterna()"
+                  (click)="crearAcreditacionExterna()"
+                >
+                  {{ creatingAcreditacionExterna ? 'Guardando...' : 'Guardar' }}
                 </button>
               </div>
             </div>
@@ -1827,6 +1932,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   createCicloNombre = '';
   createCicloError: string | null = null;
   creatingCiclo = false;
+  createAcreditacionExternaModalOpen = false;
+  createAcreditacionExternaCodigo = 'otros';
+  createAcreditacionExternaNombre = '';
+  createAcreditacionExternaError: string | null = null;
+  creatingAcreditacionExterna = false;
   showAddModulosForm = false;
   modulosDraft: ModuloDraftRow[] = [{ id_oficial: '', nombre: '' }];
   createModulosError: string | null = null;
@@ -2668,6 +2778,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.ciclosConModulos.filter((ciclo) => this.isAcreditacionExternaCiclo(ciclo));
   }
 
+  get acreditacionExternaCiclo(): AdminCicloConModulos | null {
+    return this.ciclosAcreditacionesExternasCatalogo[0] || null;
+  }
+
   get modulosAcreditacionesExternas(): Array<AdminCicloModulo & { cicloNombre: string }> {
     const modulos = new Map<number, AdminCicloModulo & { cicloNombre: string }>();
     for (const ciclo of this.ciclosAcreditacionesExternasCatalogo) {
@@ -2676,6 +2790,34 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return Array.from(modulos.values()).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  }
+
+  get acreditacionesExternasAgrupadas(): AdminAcreditacionExternaGroup[] {
+    const orderedKeys = ['certificado_idioma', 'titulo_universitario', 'otros'];
+    const labels: Record<string, string> = {
+      certificado_idioma: 'Certificado de idioma',
+      titulo_universitario: 'Título universitario',
+      otros: 'Otros',
+    };
+
+    const grouped = new Map<string, Array<AdminCicloModulo & { cicloNombre: string }>>();
+    for (const key of orderedKeys) {
+      grouped.set(key, []);
+    }
+
+    for (const modulo of this.modulosAcreditacionesExternas) {
+      const rawCode = (modulo.id_oficial || '').trim().toLowerCase();
+      const key = orderedKeys.includes(rawCode) ? rawCode : 'otros';
+      grouped.get(key)!.push(modulo);
+    }
+
+    return orderedKeys
+      .map((key) => ({
+        key,
+        label: labels[key],
+        modulos: grouped.get(key) || [],
+      }))
+      .filter((group) => group.modulos.length > 0);
   }
 
   get familiasCreateCiclo(): Array<{ id: number; nombre: string }> {
@@ -3333,6 +3475,32 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createCicloGradoId = null;
   }
 
+  abrirModalCrearAcreditacionExterna(): void {
+    if (!this.acreditacionExternaCiclo) return;
+    this.createAcreditacionExternaModalOpen = true;
+    this.createAcreditacionExternaCodigo = 'otros';
+    this.createAcreditacionExternaNombre = '';
+    this.createAcreditacionExternaError = null;
+    this.creatingAcreditacionExterna = false;
+  }
+
+  cerrarModalCrearAcreditacionExterna(): void {
+    if (this.creatingAcreditacionExterna) return;
+    this.createAcreditacionExternaModalOpen = false;
+    this.createAcreditacionExternaCodigo = 'otros';
+    this.createAcreditacionExternaNombre = '';
+    this.createAcreditacionExternaError = null;
+  }
+
+  setCreateAcreditacionExternaCodigo(codigo: string, checked: boolean): void {
+    if (!checked) return;
+    this.createAcreditacionExternaCodigo = codigo;
+  }
+
+  canCreateAcreditacionExterna(): boolean {
+    return !!this.acreditacionExternaCiclo && !!this.createAcreditacionExternaCodigo && this.createAcreditacionExternaNombre.trim().length > 0;
+  }
+
   canCreateCiclo(): boolean {
     return (
       !!this.createCicloFamiliaId &&
@@ -3371,6 +3539,43 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
           this.createCicloError = err?.error?.detail || 'No se pudo crear el ciclo.';
+        },
+      });
+  }
+
+  crearAcreditacionExterna(): void {
+    const ciclo = this.acreditacionExternaCiclo;
+    const codigo = this.createAcreditacionExternaCodigo;
+    const nombre = this.createAcreditacionExternaNombre.trim();
+    if (!ciclo || !codigo || !nombre || this.creatingAcreditacionExterna) return;
+
+    this.creatingAcreditacionExterna = true;
+    this.createAcreditacionExternaError = null;
+
+    this.convalidacionesService
+      .crearModulosAdmin(ciclo.id, {
+        modulos: [{ id_oficial: codigo, nombre }],
+      })
+      .pipe(
+        timeout(15000),
+        finalize(() => {
+          this.creatingAcreditacionExterna = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.createAcreditacionExternaModalOpen = false;
+          this.createAcreditacionExternaCodigo = 'otros';
+          this.createAcreditacionExternaNombre = '';
+          this.createAcreditacionExternaError = null;
+          this.loadedModulos = false;
+          this.cargarCiclosModulos();
+          this.errorModulos = null;
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.createAcreditacionExternaError = err?.error?.detail || 'No se pudo crear el titulo externo.';
         },
       });
   }
