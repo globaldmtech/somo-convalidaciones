@@ -670,6 +670,32 @@ type PendingConvalidacionOrigenDelete = {
                           <p class="text-sm text-slate-500">Sin solicitudes asociadas.</p>
                         </ng-template>
                       </div>
+
+                      <div class="p-1">
+                        <div class="mb-2 flex items-center justify-between gap-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
+                          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">DOCUMENTOS APORTADOS</p>
+                          <span class="text-xs text-slate-500 font-semibold">
+                            {{ (f.documentos_aportados || []).length }} documentos
+                          </span>
+                        </div>
+                        <ul *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="space-y-1">
+                          <li
+                            *ngFor="let documento of f.documentos_aportados"
+                            class="py-1"
+                          >
+                            <button
+                              type="button"
+                              class="text-left text-sm font-semibold text-slate-800 hover:text-indigo-700 hover:underline break-all transition-colors"
+                              (click)="abrirDocumentoAportado(documento.ruta_almacenamiento)"
+                            >
+                              {{ documento.descripcion || documento.nombre_archivo }}
+                            </button>
+                          </li>
+                        </ul>
+                        <ng-template #sinDocumentosAportados>
+                          <p class="text-sm text-slate-500">Sin documentos aportados.</p>
+                        </ng-template>
+                      </div>
                     </div>
                   </section>
                 </div>
@@ -2319,6 +2345,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
               ...row,
               solicitudes: Array.isArray(row?.solicitudes) ? row.solicitudes : [],
               modulos_aportados: Array.isArray(row?.modulos_aportados) ? row.modulos_aportados : [],
+              documentos_aportados: Array.isArray(row?.documentos_aportados) ? row.documentos_aportados : [],
             }))
           : [];
         this.alumnos = this.groupByAlumno(this.formularios);
@@ -2398,6 +2425,24 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.handleAdminUnauthorized(err)) return;
         const status = err?.status ? ` (HTTP ${err.status})` : '';
         this.error = `No se pudo exportar solicitudes de convalidación${status}.`;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  abrirDocumentoAportado(path: string): void {
+    if (!path) return;
+
+    this.convalidacionesService.abrirDocumentoAdmin(path).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank', 'noopener,noreferrer');
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      },
+      error: (err: any) => {
+        if (this.handleAdminUnauthorized(err)) return;
+        const status = err?.status ? ` (HTTP ${err.status})` : '';
+        this.error = `No se pudo abrir el documento${status}.`;
         this.cdr.detectChanges();
       },
     });

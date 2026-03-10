@@ -366,6 +366,27 @@ class FormularioQueries:
             )
         return "Solicitudes insertadas correctamente"
 
+    @staticmethod
+    def insert_formulario_archivos(
+        conn: sqlite3.Connection,
+        id_formulario: int,
+        archivos: Sequence[dict],
+    ) -> str:
+        for archivo in archivos:
+            conn.execute(
+                """
+                INSERT INTO formulario_archivos (id_formulario, nombre_archivo, descripcion, ruta_almacenamiento)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    id_formulario,
+                    archivo["nombre_archivo"],
+                    archivo.get("descripcion"),
+                    archivo["ruta_almacenamiento"],
+                ),
+            )
+        return "Archivos insertados correctamente"
+
 
 class AdminQueries:
     _PASSWORD_SCHEME = "pbkdf2_sha256"
@@ -511,6 +532,20 @@ class AdminQueries:
                 (row["id"],),
             ).fetchall()
 
+            documentos_aportados = conn.execute(
+                """
+                SELECT
+                    fa.id,
+                    fa.nombre_archivo,
+                    fa.descripcion,
+                    fa.ruta_almacenamiento
+                FROM formulario_archivos fa
+                WHERE fa.id_formulario = ?
+                ORDER BY fa.id
+                """,
+                (row["id"],),
+            ).fetchall()
+
             resultado.append(
                 {
                     "id": row["id"],
@@ -527,6 +562,7 @@ class AdminQueries:
                     },
                     "solicitudes": [dict(s) for s in solicitudes],
                     "modulos_aportados": [dict(m) for m in modulos_aportados],
+                    "documentos_aportados": [dict(d) for d in documentos_aportados],
                 }
             )
 

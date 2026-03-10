@@ -1,6 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { finalize, timeout } from 'rxjs/operators';
 import {
     ConvalidacionesService,
@@ -9,7 +8,6 @@ import {
     UploadedDocument,
 } from '../../services/convalidaciones.service';
 import { EstudioEntry, AcreditacionExterna } from '../estudios-cursados/estudios-cursados.component';
-import { API_BASE } from '../../config/api-paths';
 
 @Component({
     selector: 'app-resumen-formulario',
@@ -39,7 +37,6 @@ export class ResumenFormularioComponent implements OnInit {
 
     constructor(
         private convalidacionesService: ConvalidacionesService,
-        private http: HttpClient,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -201,7 +198,7 @@ export class ResumenFormularioComponent implements OnInit {
             return;
         }
 
-        this.http.post(`${API_BASE}/insertar_formulario_completo`, payload)
+        this.convalidacionesService.enviarFormularioCompleto(payload)
             .pipe(timeout(20000), finalize(() => {
                 this.enviando = false;
                 this.cdr.detectChanges();

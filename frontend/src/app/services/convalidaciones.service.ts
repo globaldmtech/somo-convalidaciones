@@ -60,6 +60,13 @@ export interface AdminFormularioModuloAportado {
     descripcion: string | null;
 }
 
+export interface AdminFormularioDocumentoAportado {
+    id: number;
+    nombre_archivo: string;
+    descripcion: string | null;
+    ruta_almacenamiento: string;
+}
+
 export interface AdminFormulario {
     id: number;
     id_alumno?: number;
@@ -75,6 +82,7 @@ export interface AdminFormulario {
     };
     solicitudes?: AdminFormularioSolicitud[];
     modulos_aportados?: AdminFormularioModuloAportado[];
+    documentos_aportados?: AdminFormularioDocumentoAportado[];
 }
 
 export interface AdminSolicitudEstadoUpdateResponse {
@@ -369,6 +377,34 @@ export class ConvalidacionesService {
         this.documentosOtros = [...this.documentosOtros, ...nuevos];
     }
 
+    enviarFormularioCompleto(payload: unknown): Observable<unknown> {
+        const formData = new FormData();
+        formData.append('payload', JSON.stringify(payload));
+
+        if (this.documentoDni) {
+            formData.append('documento_dni', this.documentoDni.file, this.documentoDni.file.name);
+            formData.append('documento_dni_nombre', this.documentoDni.displayName);
+        }
+
+        for (const documento of this.documentosCertificado) {
+            formData.append('documentos_certificado', documento.file, documento.file.name);
+        }
+        formData.append(
+            'documentos_certificado_nombres',
+            JSON.stringify(this.documentosCertificado.map((documento) => documento.displayName))
+        );
+
+        for (const documento of this.documentosOtros) {
+            formData.append('documentos_otros', documento.file, documento.file.name);
+        }
+        formData.append(
+            'documentos_otros_nombres',
+            JSON.stringify(this.documentosOtros.map((documento) => documento.displayName))
+        );
+
+        return this.http.post(`${API_BASE}/insertar_formulario_completo`, formData);
+    }
+
     getFormulariosAdmin(): Observable<AdminFormulario[]> {
         return this.http.get<AdminFormulario[]>(`${ADMIN_API_BASE}/formularios`, this.getAdminAuthHeaders());
     }
@@ -448,6 +484,14 @@ export class ConvalidacionesService {
 
     exportarSolicitudesConvalidacionAdmin(): Observable<Blob> {
         return this.http.get(`${ADMIN_API_BASE}/exportar_solicitudes_convalidacion`, {
+            ...this.getAdminAuthHeaders(),
+            responseType: 'blob',
+        });
+    }
+
+    abrirDocumentoAdmin(path: string): Observable<Blob> {
+        const url = `${ADMIN_API_BASE}/documentos/abrir?path=${encodeURIComponent(path)}`;
+        return this.http.get(url, {
             ...this.getAdminAuthHeaders(),
             responseType: 'blob',
         });

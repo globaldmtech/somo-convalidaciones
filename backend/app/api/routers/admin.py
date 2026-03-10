@@ -6,10 +6,12 @@ import json
 import os
 import sqlite3
 import time
+from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import FileResponse
 from fastapi.routing import APIRoute
 
 from db import database
@@ -26,6 +28,7 @@ from model.admin import (
 
 ADMIN_TOKEN_TTL_SECONDS = int(os.getenv("ADMIN_TOKEN_TTL_SECONDS", "43200"))
 ADMIN_AUTH_SECRET = os.getenv("ADMIN_AUTH_SECRET", "somo-admin-secret")
+ADMIN_UPLOAD_DIR = Path(os.getenv("FORM_UPLOAD_DIR", "/app/data/uploads")).resolve()
 
 
 def _create_admin_token(admin_id: int, nombre: str) -> str:
@@ -152,6 +155,22 @@ async def listar_formularios(
         return database.AdminQueries.list_admin_formularios(db)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/documentos/abrir")
+async def abrir_documento(path: str):
+    """Sirve un documento aportado para que el admin pueda abrirlo."""
+    try:
+        file_path = Path(path).resolve()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Ruta de documento inválida")
+
+    if not str(file_path).startswith(str(ADMIN_UPLOAD_DIR)):
+        raise HTTPException(status_code=403, detail="Ruta fuera del directorio permitido")
+    if not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Documento no encontrado")
+
+    return FileResponse(path=file_path)
 
 
 @router.get("/exportar_solicitudes_convalidacion")
