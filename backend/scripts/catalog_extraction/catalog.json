@@ -2,6 +2,8 @@
   "Administración y gestión - ADG": {
     "BÁSICA": {
       "Profesional Básico en Servicios Administrativos": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -18,6 +20,8 @@
         "E511. Operaciones básicas de tesorería"
       ],
       "Profesional Básico en Informática de Oficina": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -172,6 +176,8 @@
   "Agraria - AGA": {
     "BÁSICA": {
       "Profesional Básico en Aprovechamientos Forestales": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3059. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -188,6 +194,8 @@
         "E521. Tratamiento y aprovechamiento de restos forestales"
       ],
       "Profesional Básico en Actividades Agropecuarias": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3059. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -202,6 +210,8 @@
         "3115. Operaciones auxiliares de mantenimiento e higiene en\ninstalaciones ganaderas"
       ],
       "Profesional Básico en Agro-jardinería y Composiciones Florales": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3059. Ciencias aplicadas II",
         "3012. Comunicación y sociedad II",
         "3058. Formación en Centros de Trabajo",
@@ -356,6 +366,8 @@
   "Artes gráficas - ARG": {
     "BÁSICA": {
       "Profesional Básico en Artes Gráficas": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -472,6 +484,8 @@
   "Comercio y marketing - COM": {
     "BÁSICA": {
       "Profesional Básico en Servicios Comerciales": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -603,6 +617,8 @@
   "Electricidad y electrónica - ELE": {
     "BÁSICA": {
       "Profesional Básico en Electricidad y Electrónica": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -617,6 +633,8 @@
         "E571. Atención al cliente de servicios de electricidad y\nelectrónica"
       ],
       "Profesional Básico en Fabricación de Elementos Metálicos": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -632,6 +650,8 @@
         "E591. Operaciones básicas con máquina herramienta\n(Opción Mecanizado)"
       ],
       "Profesional Básico en Instalaciones Electrotécnicas y Mecánica": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -678,7 +698,7 @@
       ]
     },
     "GRADO SUPERIOR": {
-      "Técnico Superior en Sistemas Eletrotécnicos y Automatizados": [
+      "Técnico Superior en Sistemas Electrotécnicos y Automatizados": [
         "0529. Formación en Centros de Trabajo",
         "0527. Formación y Orientación Laboral",
         "0528. Empresa e Iniciativa Emprendedora",
@@ -891,6 +911,8 @@
   "Edificación y obra civil - EOC": {
     "BÁSICA": {
       "Profesional Básico en Reforma y Mantenimiento de Edificios": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1015,6 +1037,8 @@
   "Fabricación mecánica - FME": {
     "BÁSICA": {
       "Profesional Básico en Fabricación y Montaje": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1029,6 +1053,8 @@
         "3025. Montaje de equipos de climatización"
       ],
       "Profesional Básico en Fabricación de Elementos Metálicos": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1044,6 +1070,8 @@
         "E591. Operaciones básicas con máquina\nherramienta (Opción Mecanizado)"
       ],
       "Profesional Básico en Instalaciones Electrotécnicas y Mecánica": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1194,6 +1222,8 @@
   "Hostelería y turismo - HOT": {
     "BÁSICA": {
       "Profesional Básico en Alojamiento y Lavandería": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1209,6 +1239,8 @@
         "3005. Atención al cliente"
       ],
       "Profesional Básico en Cocina y Restauración": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1224,6 +1256,8 @@
         "3005. Atención al cliente"
       ],
       "Profesional Básico en Actividades de Panadería y Pastelería": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1414,6 +1448,8 @@
   "Informática y comunicaciones - IFC": {
     "BÁSICA": {
       "Profesional Básico en Informática de Oficina": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1427,6 +1463,8 @@
         "E510. Técnicas administrativas del proceso comercial"
       ],
       "Profesional Básico en Informática y Comunicaciones": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1540,6 +1578,8 @@
   "Instalación y mantenimiento - IMA": {
     "BÁSICA": {
       "Profesional Básico en Fabricación y Montaje": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1554,6 +1594,8 @@
         "3025. Montaje de equipos de climatización"
       ],
       "Profesional Básico en Mantenimiento de Viviendas": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1692,6 +1734,8 @@
   "Imagen personal - IMP": {
     "BÁSICA": {
       "Profesional Básico en Peluquería y Estética": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1834,7 +1878,7 @@
   },
   "Imagen y sonido - IMS": {
     "GRADO MEDIO": {
-      "Técnico en Video Disc-Jockey y Sonido": [
+      "Técnico en Vídeo Disc-Jockey y Sonido": [
         "1307. Formación en Centros de Trabajo",
         "1305. Formación y Orientación Laboral",
         "1306. Empresa e Iniciativa Emprendedora",
@@ -1942,6 +1986,8 @@
   "Industrias alimentarias - INA": {
     "BÁSICA": {
       "Profesional Básico en Industrias Alimentarias": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -1959,6 +2005,8 @@
         "E633. Operaciones en punto de venta y auxiliares (Opción\ncomercio alimentario)"
       ],
       "Profesional Básico en Actividades de Panadería y Pastelería": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2063,6 +2111,8 @@
   "Madera, mueble y corcho - MAM": {
     "BÁSICA": {
       "Profesional Básico en Carpintería y Mueble": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2147,6 +2197,8 @@
   "Marítimo pesquera - MAP": {
     "BÁSICA": {
       "Profesional Básico en Actividades Marítimo-Pesqueras": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2163,6 +2215,8 @@
         "E681. Extracción y preparación de crustáceos para su venta"
       ],
       "Profesional Básico en Mantenimiento de Embarcaciones Deportivas y de Recreo": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2575,7 +2629,17 @@
         "1533. Inspección de establecimientos, eventos e instalaciones para\nla prevención de incendios y emergencias",
         "0055. Atención sanitaria inicial en situaciones de emergencia",
         "0058. Apoyo psicológico en situaciones de emergencia",
-        "1534. Coordinación de equipos y unidades de emergencias"
+        "1534. Coordinación de equipos y unidades de emergencias",
+        "Aula polivalente",
+        "Laboratorio",
+        "Taller de educación ambiental",
+        "Aula técnica de coordinación de emergencias",
+        "Aula técnica de asistencia sanitaria inicial a emergencias",
+        "Aula técnica de mantenimiento de vehículos, máquinas y equipos de\nemergencias y protección civil",
+        "Aula técnica de mantenimiento y reparación de equipos especiales y utillaje",
+        "Laboratorio de análisis de riesgos",
+        "Área de simulacros e intervenciones operativas1",
+        "Área de intervención en incendios forestales1"
       ],
       "Técnico en Seguridad": [
         "1683. Formación en Centros de Trabajo",
@@ -2648,6 +2712,8 @@
   "Servicios socioculturales y a la comunidad - SSC": {
     "BÁSICA": {
       "Profesional Básico en Actividades Domésticas y Limpieza de Edificios": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3042. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2789,6 +2855,8 @@
   "Textil, confección y piel - TCP": {
     "BÁSICA": {
       "Profesional Básico en Arreglo y Reparación de Artículos Textiles y de Piel": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2804,6 +2872,8 @@
         "E700. Ensamblaje de tejidos y laminados"
       ],
       "Profesional Básico en Tapicería y Cortinaje": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2936,6 +3006,8 @@
   "Transporte y mantenimiento de vehículos - TMV": {
     "BÁSICA": {
       "Profesional Básico en Mantenimiento de Vehículos": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -2953,6 +3025,8 @@
         "E713. Elementos fijos (Opción Carrocería)"
       ],
       "Profesional Básico en Mantenimiento de Embarcaciones Deportivas y de Recreo": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3019. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",
@@ -3238,6 +3312,8 @@
   "Vidrio y cerámica - VIC": {
     "BÁSICA": {
       "Profesional Básico en Vidriería y Alfarería": [
+        "Tutoría y orientación I",
+        "Tutoría y orientación II",
         "3009. Ciencias aplicadas I",
         "3010. Ciencias aplicadas II",
         "3011. Comunicación y sociedad I",

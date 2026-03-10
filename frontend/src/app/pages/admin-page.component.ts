@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import {
+  AdminCicloModulo,
   AdminCicloConModulos,
   AdminConvalidacionRegla,
   AdminFormulario,
@@ -671,18 +672,40 @@ type PendingConvalidacionOrigenDelete = {
           </section>
 
           <section *ngIf="activeTab === 'modulos'" class="space-y-4">
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                [ngClass]="modulosVistaActiva === 'ciclos' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                (click)="modulosVistaActiva = 'ciclos'"
+              >
+                Ciclos
+              </button>
+              <button
+                type="button"
+                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                [ngClass]="modulosVistaActiva === 'acreditaciones' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                (click)="modulosVistaActiva = 'acreditaciones'"
+              >
+                Acreditaciones externas
+              </button>
+            </div>
+
             <div class="rounded-2xl border border-slate-200 bg-white p-4">
               <div class="space-y-3">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                    {{ ciclosConModulos.length }} ciclos
+                  <span *ngIf="modulosVistaActiva === 'ciclos'" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ ciclosCatalogo.length }} ciclos
                   </span>
-                  <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                  <span *ngIf="modulosVistaActiva === 'ciclos'" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
                     {{ totalModulosCatalogo }} modulos
+                  </span>
+                  <span *ngIf="modulosVistaActiva === 'acreditaciones'" class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ modulosAcreditacionesExternas.length }} titulos
                   </span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div *ngIf="modulosVistaActiva === 'ciclos'" class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <label class="flex flex-col gap-1">
                     <span class="text-[11px] uppercase tracking-wide text-slate-500 font-semibold">Familia</span>
                     <select
@@ -725,11 +748,14 @@ type PendingConvalidacionOrigenDelete = {
             <div *ngIf="!loadingModulos && errorModulos" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {{ errorModulos }}
             </div>
-            <div *ngIf="!loadingModulos && !errorModulos && ciclosConModulosFiltrados.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+            <div *ngIf="!loadingModulos && !errorModulos && modulosVistaActiva === 'ciclos' && ciclosConModulosFiltrados.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
               No hay resultados para el filtro aplicado.
             </div>
+            <div *ngIf="!loadingModulos && !errorModulos && modulosVistaActiva === 'acreditaciones' && modulosAcreditacionesExternas.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+              No hay acreditaciones externas disponibles.
+            </div>
 
-            <div class="space-y-5">
+            <div *ngIf="modulosVistaActiva === 'ciclos'" class="space-y-5">
               <section *ngFor="let familia of ciclosModulosAgrupados" class="space-y-3">
                 <div class="bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
                   <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
@@ -795,6 +821,26 @@ type PendingConvalidacionOrigenDelete = {
                   </article>
                 </div>
               </section>
+            </div>
+
+            <div *ngIf="!loadingModulos && !errorModulos && modulosVistaActiva === 'acreditaciones'" class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+              <ul class="divide-y divide-slate-100">
+                <li *ngFor="let modulo of modulosAcreditacionesExternas" class="px-4 py-3 flex items-start justify-between gap-3">
+                  <p class="text-sm font-semibold text-slate-900 leading-5 flex-1">{{ modulo.nombre }}</p>
+                  <button
+                    type="button"
+                    class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                    [disabled]="deletingModulos.has(modulo.id)"
+                    (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre, modulo.cicloNombre, true)"
+                    title="Eliminar módulo"
+                    aria-label="Eliminar módulo"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
+                    </svg>
+                  </button>
+                </li>
+              </ul>
             </div>
           </section>
 
@@ -1299,7 +1345,7 @@ type PendingConvalidacionOrigenDelete = {
             <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
               <h3 class="text-base font-bold text-slate-900">Eliminar módulo</h3>
               <p class="mt-2 text-sm text-slate-600">
-                ¿Quieres eliminar el módulo del ciclo seleccionado?
+                {{ deleteModuloEsAcreditacionExterna ? '¿Quieres eliminar esa acreditación externa?' : '¿Quieres eliminar el módulo del ciclo seleccionado?' }}
               </p>
               <p class="mt-1 text-sm font-semibold text-slate-800">
                 {{ moduloToDeleteNombre }}
@@ -1818,6 +1864,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   moduloToDeleteId: number | null = null;
   moduloToDeleteNombre = '';
   moduloToDeleteCicloNombre = '';
+  deleteModuloEsAcreditacionExterna = false;
 
   adminNombre = '';
   adminPassword = '';
@@ -1831,6 +1878,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   error: string | null = null;
 
   ciclosConModulos: AdminCicloConModulos[] = [];
+  modulosVistaActiva: 'ciclos' | 'acreditaciones' = 'ciclos';
   convalidaciones: AdminConvalidacionRegla[] = [];
   administradores: AdminUser[] = [];
 
@@ -2034,6 +2082,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.moduloToDeleteId = null;
     this.moduloToDeleteNombre = '';
     this.moduloToDeleteCicloNombre = '';
+    this.deleteModuloEsAcreditacionExterna = false;
     this.deleteConvalidacionModalOpen = false;
     this.convalidacionToDeleteKey = '';
     this.convalidacionToDeleteModuloNombre = '';
@@ -2602,12 +2651,36 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get totalModulosCatalogo(): number {
-    return this.ciclosConModulos.reduce((acc, ciclo) => acc + (ciclo.total_modulos || 0), 0);
+    return this.ciclosCatalogo.reduce((acc, ciclo) => acc + (ciclo.total_modulos || 0), 0);
+  }
+
+  private isAcreditacionExternaCiclo(ciclo: AdminCicloConModulos): boolean {
+    const familia = (ciclo.familia_nombre || '').trim();
+    const grado = (ciclo.grado_nombre || '').trim();
+    return !familia && !grado;
+  }
+
+  get ciclosCatalogo(): AdminCicloConModulos[] {
+    return this.ciclosConModulos.filter((ciclo) => !this.isAcreditacionExternaCiclo(ciclo));
+  }
+
+  get ciclosAcreditacionesExternasCatalogo(): AdminCicloConModulos[] {
+    return this.ciclosConModulos.filter((ciclo) => this.isAcreditacionExternaCiclo(ciclo));
+  }
+
+  get modulosAcreditacionesExternas(): Array<AdminCicloModulo & { cicloNombre: string }> {
+    const modulos = new Map<number, AdminCicloModulo & { cicloNombre: string }>();
+    for (const ciclo of this.ciclosAcreditacionesExternasCatalogo) {
+      for (const modulo of ciclo.modulos || []) {
+        modulos.set(modulo.id, { ...modulo, cicloNombre: ciclo.nombre });
+      }
+    }
+    return Array.from(modulos.values()).sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
   }
 
   get familiasCreateCiclo(): Array<{ id: number; nombre: string }> {
     const familias = new Map<number, string>();
-    for (const ciclo of this.ciclosConModulos) {
+    for (const ciclo of this.ciclosCatalogo) {
       if (ciclo.id_familia === null) continue;
       const nombre = (ciclo.familia_nombre || '').trim();
       if (!nombre) continue;
@@ -2620,7 +2693,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get gradosCreateCiclo(): Array<{ id: number; nombre: string }> {
     const grados = new Map<number, string>();
-    for (const ciclo of this.ciclosConModulos) {
+    for (const ciclo of this.ciclosCatalogo) {
       if (ciclo.id_grado === null) continue;
       const nombre = (ciclo.grado_nombre || '').trim();
       if (!nombre) continue;
@@ -2640,15 +2713,15 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get familiasFiltroModulos(): string[] {
-    return Array.from(new Set(this.ciclosConModulos.map((c) => this.familiaNombre(c))))
+    return Array.from(new Set(this.ciclosCatalogo.map((c) => this.familiaNombre(c))))
       .sort((a, b) => a.localeCompare(b, 'es'));
   }
 
   get gradosFiltroModulos(): string[] {
     const queryFamilia = this.filtroFamiliaModulos.trim().toLowerCase();
     const base = queryFamilia
-      ? this.ciclosConModulos.filter((c) => this.familiaNombre(c).toLowerCase().includes(queryFamilia))
-      : this.ciclosConModulos;
+      ? this.ciclosCatalogo.filter((c) => this.familiaNombre(c).toLowerCase().includes(queryFamilia))
+      : this.ciclosCatalogo;
     return Array.from(new Set(base.map((c) => this.gradoNombre(c))))
       .sort((a, b) => a.localeCompare(b, 'es'));
   }
@@ -2656,7 +2729,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   get ciclosFiltroModulos(): AdminCicloConModulos[] {
     const queryFamilia = this.filtroFamiliaModulos.trim().toLowerCase();
     const queryGrado = this.filtroGradoModulos.trim().toLowerCase();
-    let base = this.ciclosConModulos;
+    let base = this.ciclosCatalogo;
     if (queryFamilia) {
       base = base.filter((c) => this.familiaNombre(c).toLowerCase().includes(queryFamilia));
     }
@@ -2671,7 +2744,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const queryGrado = this.filtroGradoModulos.trim().toLowerCase();
     const queryCiclo = this.filtroCicloModulos.trim().toLowerCase();
 
-    return this.ciclosConModulos.filter((ciclo) => {
+    return this.ciclosCatalogo.filter((ciclo) => {
       if (queryFamilia && !this.familiaNombre(ciclo).toLowerCase().includes(queryFamilia)) return false;
       if (queryGrado && !this.gradoNombre(ciclo).toLowerCase().includes(queryGrado)) return false;
       if (queryCiclo && !ciclo.nombre.toLowerCase().includes(queryCiclo)) return false;
@@ -3409,10 +3482,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  abrirModalEliminarModulo(idModulo: number, nombreModulo: string): void {
+  abrirModalEliminarModulo(idModulo: number, nombreModulo: string, cicloNombre?: string, esAcreditacionExterna = false): void {
     this.moduloToDeleteId = idModulo;
     this.moduloToDeleteNombre = nombreModulo;
-    this.moduloToDeleteCicloNombre = this.modulosModalCiclo?.nombre || '';
+    this.moduloToDeleteCicloNombre = cicloNombre || this.modulosModalCiclo?.nombre || '';
+    this.deleteModuloEsAcreditacionExterna = esAcreditacionExterna;
     this.deleteModuloModalOpen = true;
   }
 
@@ -3422,6 +3496,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.moduloToDeleteId = null;
     this.moduloToDeleteNombre = '';
     this.moduloToDeleteCicloNombre = '';
+    this.deleteModuloEsAcreditacionExterna = false;
   }
 
   confirmarEliminarModulo(): void {

@@ -68,6 +68,41 @@ def _is_module_row(row):
     # Module rows start with a numeric code like "0702" or an E-code like "E200"
     return bool(re.match(r'^[A-Z]?\d{3,4}[\s./]', cell))
 
+def _looks_like_module_name_row(row):
+    """Return True for module rows without code, excluding headers, totals and notes."""
+    if not row or row[0] is None:
+        return False
+
+    cell = str(row[0]).strip()
+    if not cell:
+        return False
+
+    upper_cell = cell.upper()
+    if (
+        "DENOMINACIÓN" in upper_cell
+        or "PROFESORADO" in upper_cell
+        or "HORAS" in upper_cell
+        or upper_cell in {"TOTAL", "TOTALES"}
+    ):
+        return False
+
+    if re.fullmatch(r'\d+', cell):
+        return False
+
+    return bool(re.search(r'[A-ZÁÉÍÓÚÜÑ]', upper_cell))
+
+def _is_valid_module_row(row, has_hours):
+    """Accept coded rows and also unnumbered module names when they carry hours."""
+    if _is_module_row(row):
+        return True
+    return _looks_like_module_name_row(row) and any(has_hours)
+
+def _table_starts_with_module_row(table):
+    """Continuation tables may start with either a coded module or an unnumbered one."""
+    if not table:
+        return False
+    return _is_module_row(table[0]) or _looks_like_module_name_row(table[0])
+
 def _is_subheader_row(row):
     """Rows like ['', '', ..., '1º', '2º', '1º', '2º', ...]."""
     if not row:
@@ -240,9 +275,6 @@ def extract_modules_grouped(pdf_stream):
                     row_count = min(len(table), len(table_obj.rows))
                     for ridx in range(start_idx, row_count):
                         row = table[ridx]
-                        if not _is_module_row(row):
-                            continue
-
                         row_bbox = _row_bbox_from_cells(table_obj.rows[ridx].cells)
                         if not row_bbox:
                             continue
@@ -256,6 +288,9 @@ def extract_modules_grouped(pdf_stream):
                             _row_group_has_digits(page_chars, row_bbox, gb)
                             for gb in group_bboxes
                         ]
+                        if not _is_valid_module_row(row, has_hours):
+                            continue
+
                         mod = str(row[0]).strip()
                         _append_module_to_cycles(
                             module_text=mod,
@@ -265,7 +300,7 @@ def extract_modules_grouped(pdf_stream):
                             dual_code_pattern=dual_code_pattern,
                         )
 
-                elif in_module_table and _is_module_row(table[0]) and last_cycle_names and last_hours_group_bboxes:
+                elif in_module_table and _table_starts_with_module_row(table) and last_cycle_names and last_hours_group_bboxes:
                     # Continuation table: reuse previous cycle order + hour-group columns.
                     row_count = min(len(table), len(table_obj.rows))
                     group_bboxes = last_hours_group_bboxes[:len(last_cycle_names)]
@@ -274,9 +309,6 @@ def extract_modules_grouped(pdf_stream):
 
                     for ridx in range(row_count):
                         row = table[ridx]
-                        if not _is_module_row(row):
-                            continue
-
                         row_bbox = _row_bbox_from_cells(table_obj.rows[ridx].cells)
                         if not row_bbox:
                             continue
@@ -285,6 +317,9 @@ def extract_modules_grouped(pdf_stream):
                             _row_group_has_digits(page_chars, row_bbox, gb)
                             for gb in group_bboxes
                         ]
+                        if not _is_valid_module_row(row, has_hours):
+                            continue
+
                         mod = str(row[0]).strip()
                         _append_module_to_cycles(
                             module_text=mod,
