@@ -1200,7 +1200,7 @@ type PendingConvalidacionOrigenDelete = {
                 />
               </div>
             </div>
-            <div class="px-1">
+            <div *ngIf="isRootAdminSession" class="px-1">
               <button
                 type="button"
                 class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
@@ -3029,11 +3029,16 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  get isRootAdminSession(): boolean {
+    return this.adminDisplayName.trim().toLowerCase() === 'admin';
+  }
+
   get canCrearAdministrador(): boolean {
-    return this.createAdminNombre.trim().length > 0 && this.createAdminPassword.length > 0;
+    return this.isRootAdminSession && this.createAdminNombre.trim().length > 0 && this.createAdminPassword.length > 0;
   }
 
   abrirModalCrearAdministrador(): void {
+    if (!this.isRootAdminSession || this.creatingAdmin) return;
     this.createAdminModalOpen = true;
     this.createAdminNombre = '';
     this.createAdminPassword = '';
@@ -3079,9 +3084,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   canGestionarAdministrador(admin: AdminUser): boolean {
-    const sesionAdmin = this.adminDisplayName.trim().toLowerCase() === 'admin';
     const filaAdmin = (admin?.nombre || '').trim().toLowerCase() === 'admin';
-    return sesionAdmin && !filaAdmin;
+    return this.isRootAdminSession && !filaAdmin;
   }
 
   get canActualizarAdministrador(): boolean {

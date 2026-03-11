@@ -405,10 +405,15 @@ async def listar_administradores(
 @router.post("/crear_administrador")
 async def crear_administrador(
     request: CrearAdministradorRequest,
+    http_request: Request,
     db: sqlite3.Connection = Depends(database.get_db),
 ):
     """Crea un nuevo usuario administrador."""
     try:
+        admin_logueado = getattr(http_request.state, "admin", None) or {}
+        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
+            raise HTTPException(status_code=403, detail="Solo el usuario admin puede crear administradores")
+
         nombre = (request.nombre or "").strip()
         password = request.password or ""
         if not nombre:
