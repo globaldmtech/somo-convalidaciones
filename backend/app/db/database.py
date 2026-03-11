@@ -687,6 +687,30 @@ class AdminQueries:
         }
 
     @staticmethod
+    def delete_formulario(conn: sqlite3.Connection, formulario_id: int) -> int:
+        cursor = conn.execute(
+            """
+            DELETE FROM formularios
+            WHERE id = ?
+            """,
+            (formulario_id,),
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
+    def list_formulario_archivos(conn: sqlite3.Connection, formulario_id: int) -> list[dict]:
+        rows = conn.execute(
+            """
+            SELECT id, ruta_almacenamiento
+            FROM formulario_archivos
+            WHERE id_formulario = ?
+            ORDER BY id
+            """,
+            (formulario_id,),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    @staticmethod
     def list_admin_ciclos_modulos(conn: sqlite3.Connection) -> list[dict]:
         ciclos = conn.execute(
             """

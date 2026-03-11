@@ -96,6 +96,11 @@ export interface AdminFormularioEstadoUpdateResponse {
     estado_id: number;
 }
 
+export interface AdminDeleteFormularioResponse {
+    ok: boolean;
+    id: number;
+}
+
 export interface AdminDeleteCicloResponse {
     ok: boolean;
     id: number;
@@ -417,6 +422,13 @@ export class ConvalidacionesService {
         return this.http.put<AdminFormularioEstadoUpdateResponse>(
             `${ADMIN_API_BASE}/formularios/${idFormulario}/estado`,
             { estado_id: estadoId, admin_id: adminId ?? null },
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarFormularioAdmin(idFormulario: number): Observable<AdminDeleteFormularioResponse> {
+        return this.http.delete<AdminDeleteFormularioResponse>(
+            `${ADMIN_API_BASE}/formularios/${idFormulario}`,
             this.getAdminAuthHeaders()
         );
     }

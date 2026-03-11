@@ -30,7 +30,6 @@ export interface AcreditacionExterna {
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './estudios-cursados.component.html',
-    styleUrl: './estudios-cursados.component.css'
 })
 export class EstudiosCursadosComponent implements OnInit {
 

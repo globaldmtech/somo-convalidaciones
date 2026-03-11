@@ -272,7 +272,7 @@ type PendingConvalidacionOrigenDelete = {
 
         <ng-container *ngIf="isAuthenticated">
           <section *ngIf="activeTab === 'formularios'">
-            <div class="mb-3 flex items-start justify-between gap-3 flex-wrap">
+            <div *ngIf="formularioEstadoFiltro !== 3; else archivadasHeader" class="mb-3 flex items-start justify-between gap-3 flex-wrap">
               <div class="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -299,26 +299,90 @@ type PendingConvalidacionOrigenDelete = {
                   Rechazadas ({{ countFormulariosByEstado(2) }})
                 </button>
               </div>
-              <button
-                *ngIf="formularioEstadoFiltro === 1"
-                type="button"
-                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                [disabled]="formulariosFiltrados.length === 0"
-                (click)="exportarSolicitudesConvalidacion()"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"></path>
-                </svg>
-                Exportar solicitudes de convalidación
-              </button>
+              <div class="ml-auto flex flex-wrap justify-end gap-2">
+                <button
+                  *ngIf="formularioEstadoFiltro === 1"
+                  type="button"
+                  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  [disabled]="formulariosFiltrados.length === 0"
+                  (click)="exportarSolicitudesConvalidacion()"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"></path>
+                  </svg>
+                  Exportar solicitudes de convalidación
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="setFormularioEstadoFiltro(3)"
+                >
+                  Archivadas ({{ countFormulariosByEstado(3) }})
+                </button>
+              </div>
             </div>
-            <div *ngIf="!loading && !error" class="mb-4 flex flex-wrap gap-2">
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                {{ alumnosFiltrados.length }} alumnos
-              </span>
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                {{ formulariosFiltrados.length }} formularios
-              </span>
+            <ng-template #archivadasHeader>
+              <div class="mb-5 rounded-2xl border border-slate-200 bg-white px-5 py-4 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Formularios</p>
+                    <h1 class="text-2xl font-black text-slate-900">Formularios archivados</h1>
+                  </div>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                    (click)="volverDesdeArchivadas()"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    Volver atrás
+                  </button>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                    [ngClass]="archivadasEstadoFiltro === 3 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                    (click)="setArchivadasEstadoFiltro(3)"
+                  >
+                    Validadas ({{ countFormulariosArchivadosByEstado(3) }})
+                  </button>
+                  <button
+                    type="button"
+                    class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                    [ngClass]="archivadasEstadoFiltro === 4 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                    (click)="setArchivadasEstadoFiltro(4)"
+                  >
+                    Rechazadas ({{ countFormulariosArchivadosByEstado(4) }})
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+            <div *ngIf="!loading && !error" class="mb-4 flex flex-wrap items-end gap-2">
+              <label *ngIf="formularioEstadoFiltro === 3" class="min-w-[220px]">
+                <span class="mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Curso academico</span>
+                <select
+                  class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                  [ngModel]="cursoAcademicoFiltro"
+                  (ngModelChange)="setCursoAcademicoFiltro($event)"
+                  [disabled]="cursosAcademicosDisponibles.length === 0"
+                >
+                  <option *ngIf="cursosAcademicosDisponibles.length === 0" value="">---</option>
+                  <option *ngFor="let curso of cursosAcademicosDisponibles" [ngValue]="curso">
+                    {{ curso }}
+                  </option>
+                </select>
+              </label>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-none text-slate-700">
+                  {{ alumnosMostrados.length }} alumnos
+                </span>
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-none text-slate-700">
+                  {{ formulariosMostrados.length }} formularios
+                </span>
+              </div>
             </div>
 
             <div *ngIf="loading" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
@@ -327,12 +391,12 @@ type PendingConvalidacionOrigenDelete = {
             <div *ngIf="!loading && error" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {{ error }}
             </div>
-            <div *ngIf="!loading && !error && alumnosFiltrados.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+            <div *ngIf="!loading && !error && alumnosMostrados.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
               No hay formularios para ese estado.
             </div>
 
-            <div *ngIf="!loading && alumnosFiltrados.length > 0" class="space-y-4">
-              <article *ngFor="let alumno of alumnosFiltrados" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div *ngIf="!loading && alumnosMostrados.length > 0" class="space-y-4">
+              <article *ngFor="let alumno of alumnosMostrados" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <button
                   type="button"
                   class="w-full px-5 py-4 text-left hover:bg-slate-50 transition-colors"
@@ -376,12 +440,25 @@ type PendingConvalidacionOrigenDelete = {
                         <span *ngIf="f.estado_id !== 0" class="px-2.5 py-1 rounded-full text-xs font-bold" [ngClass]="estadoClass(f.estado_id)">
                           {{ estadoLabel(f) }}
                         </span>
+                        <button
+                          *ngIf="canFormularioBackToRevision(f.estado_id)"
+                          type="button"
+                          class="inline-flex items-center justify-center w-6 h-6 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="isFormularioUpdating(f.id)"
+                          (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 0, f.estado_id)"
+                          title="Volver a revisión"
+                          aria-label="Volver a revisión"
+                        >
+                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 109-9m0 0H8m4 0v4"></path>
+                          </svg>
+                        </button>
                         <div *ngIf="canFormularioValidateReject(f.estado_id)" class="flex items-center gap-1">
                           <button
                             type="button"
                             class="inline-flex items-center justify-center w-6 h-6 rounded border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             [disabled]="isFormularioUpdating(f.id)"
-                            (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 2)"
+                            (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 2, f.estado_id)"
                             title="Rechazar formulario"
                             aria-label="Rechazar formulario"
                           >
@@ -393,7 +470,7 @@ type PendingConvalidacionOrigenDelete = {
                             type="button"
                             class="inline-flex items-center justify-center w-6 h-6 rounded border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             [disabled]="isFormularioUpdating(f.id)"
-                            (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 1)"
+                            (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 1, f.estado_id)"
                             title="Validar formulario"
                             aria-label="Validar formulario"
                           >
@@ -402,19 +479,6 @@ type PendingConvalidacionOrigenDelete = {
                             </svg>
                           </button>
                         </div>
-                        <button
-                          *ngIf="canFormularioBackToRevision(f.estado_id)"
-                          type="button"
-                          class="inline-flex items-center justify-center w-6 h-6 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                          [disabled]="isFormularioUpdating(f.id)"
-                          (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, 0)"
-                          title="Volver a revisión"
-                          aria-label="Volver a revisión"
-                        >
-                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12a9 9 0 109-9m0 0H8m4 0v4"></path>
-                          </svg>
-                        </button>
                       </div>
                     </div>
                     <p *ngIf="isFormularioUpdating(f.id)" class="mb-2 text-[11px] text-slate-500 text-right">Guardando estado del formulario...</p>
@@ -708,6 +772,47 @@ type PendingConvalidacionOrigenDelete = {
                         <ng-template #sinDocumentosAportados>
                           <p class="text-sm text-slate-500">Sin documentos aportados.</p>
                         </ng-template>
+                      </div>
+                      <div class="flex flex-wrap justify-end gap-2 pt-1">
+                        <button
+                          *ngIf="canFormularioDelete(f.estado_id)"
+                          type="button"
+                          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="isFormularioDeleting(f.id)"
+                          (click)="abrirModalEliminarFormulario(f, alumno.nombre)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"></path>
+                          </svg>
+                          {{ isFormularioDeleting(f.id) ? 'Eliminando...' : 'Eliminar' }}
+                        </button>
+                        <button
+                          *ngIf="canFormularioUnarchive(f.estado_id)"
+                          type="button"
+                          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="isFormularioUpdating(f.id)"
+                          (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, getUnarchiveEstadoObjetivo(f.estado_id), f.estado_id)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                          </svg>
+                          Desarchivar
+                        </button>
+                        <button
+                          *ngIf="canFormularioArchive(f.estado_id)"
+                          type="button"
+                          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          [disabled]="isFormularioUpdating(f.id)"
+                          (click)="solicitarCambioEstadoFormulario(f.id, alumno.nombre, getArchiveEstadoObjetivo(f.estado_id), f.estado_id)"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-1 11a2 2 0 01-2 2H7a2 2 0 01-2-2L4 7"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 4h4"></path>
+                          </svg>
+                          Archivar
+                        </button>
                       </div>
                     </div>
                   </section>
@@ -1201,7 +1306,92 @@ type PendingConvalidacionOrigenDelete = {
                       : 'border-slate-300 text-slate-700 bg-slate-100 hover:bg-slate-200')"
                   (click)="confirmarValidacionFormulario()"
                 >
-                  {{ confirmEstadoObjetivo === 2 ? 'Rechazar' : (confirmEstadoObjetivo === 1 ? 'Validar' : 'Volver a revisión') }}
+                  {{ (confirmEstadoActual === 3 || confirmEstadoActual === 4) ? 'Desarchivar' : (confirmEstadoObjetivo === 2 ? 'Rechazar' : (confirmEstadoObjetivo === 1 ? 'Validar' : ((confirmEstadoObjetivo === 3 || confirmEstadoObjetivo === 4) ? 'Archivar' : 'Volver a revisión'))) }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="deleteFormularioModalOpen && formularioToDeleteId !== null" class="fixed inset-0 z-[101] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Eliminar formulario</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                ¿Estás seguro de que quieres eliminar este formulario? Se borrarán también sus solicitudes, módulos y documentos asociados.
+              </p>
+              <p class="mt-1 text-sm font-semibold text-slate-800">
+                Formulario #{{ formularioToDeleteId }}{{ formularioToDeleteAlumnoNombre ? ' · ' + formularioToDeleteAlumnoNombre : '' }}
+              </p>
+              <p *ngIf="deleteFormularioError" class="mt-3 text-sm text-rose-700">{{ deleteFormularioError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="deletingFormulario"
+                  (click)="cerrarModalEliminarFormulario()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  [disabled]="deletingFormulario"
+                  (click)="confirmarEliminarFormulario()"
+                >
+                  {{ deletingFormulario ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="exportArchiveModalOpen" class="fixed inset-0 z-[102] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Archivar formularios exportados</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                El Excel ya se ha descargado. Selecciona qué formularios quieres mover a archivados.
+              </p>
+              <div class="mt-4 space-y-3">
+                <label class="flex items-start gap-3 rounded-lg border border-slate-200 px-3 py-2">
+                  <input
+                    type="checkbox"
+                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    [(ngModel)]="exportArchiveValidadosSelected"
+                    [disabled]="archivandoTrasExportar || exportArchiveValidadosCount === 0"
+                  />
+                  <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-slate-900">Validados</span>
+                    <span class="block text-xs text-slate-500">{{ exportArchiveValidadosCount }} formularios</span>
+                  </span>
+                </label>
+                <label class="flex items-start gap-3 rounded-lg border border-slate-200 px-3 py-2">
+                  <input
+                    type="checkbox"
+                    class="mt-0.5 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    [(ngModel)]="exportArchiveRechazadosSelected"
+                    [disabled]="archivandoTrasExportar || exportArchiveRechazadosCount === 0"
+                  />
+                  <span class="min-w-0">
+                    <span class="block text-sm font-semibold text-slate-900">Rechazados</span>
+                    <span class="block text-xs text-slate-500">{{ exportArchiveRechazadosCount }} formularios</span>
+                  </span>
+                </label>
+              </div>
+              <p *ngIf="exportArchiveError" class="mt-3 text-sm text-rose-700">{{ exportArchiveError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="archivandoTrasExportar"
+                  (click)="cerrarModalArchivarTrasExportar()"
+                >
+                  Omitir
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  [disabled]="archivandoTrasExportar || !canConfirmExportArchive"
+                  (click)="confirmarArchivarTrasExportar()"
+                >
+                  {{ archivandoTrasExportar ? 'Archivando...' : 'Archivar seleccionados' }}
                 </button>
               </div>
             </div>
@@ -1908,32 +2098,6 @@ type PendingConvalidacionOrigenDelete = {
       </main>
     </div>
   `,
-  styles: [`
-    .thin-scroll {
-      scrollbar-width: thin;
-      scrollbar-color: #cbd5e1 transparent;
-    }
-
-    .thin-scroll::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    .thin-scroll::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .thin-scroll::-webkit-scrollbar-thumb {
-      background-color: #cbd5e1;
-      border-radius: 9999px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-    }
-
-    .thin-scroll::-webkit-scrollbar-thumb:hover {
-      background-color: #94a3b8;
-    }
-  `],
 })
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly adminSessionKey = 'somo_admin_session';
@@ -1949,18 +2113,32 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formularios: AdminFormulario[] = [];
   alumnos: AdminAlumnoGroup[] = [];
-  formularioEstadoFiltro: 0 | 1 | 2 = 0;
+  formularioEstadoFiltro: 0 | 1 | 2 | 3 = 0;
+  archivadasEstadoFiltro: 3 | 4 = 3;
+  cursoAcademicoFiltro = '';
   openAlumnos = new Set<string>();
   openCiclos = new Set<string>();
   openCatalogCiclos = new Set<number>();
   openConvalidaciones = new Set<number>();
   openConvalidacionCiclos = new Set<string>();
   updatingFormularios = new Set<number>();
+  deletingFormularios = new Set<number>();
   updatingSolicitudes = new Set<number>();
   confirmModalOpen = false;
   confirmFormularioId: number | null = null;
   confirmAlumnoNombre = '';
-  confirmEstadoObjetivo: 0 | 1 | 2 = 1;
+  confirmEstadoActual: number | null = null;
+  confirmEstadoObjetivo: 0 | 1 | 2 | 3 | 4 = 1;
+  deleteFormularioModalOpen = false;
+  formularioToDeleteId: number | null = null;
+  formularioToDeleteAlumnoNombre = '';
+  deleteFormularioError: string | null = null;
+  deletingFormulario = false;
+  exportArchiveModalOpen = false;
+  exportArchiveValidadosSelected = true;
+  exportArchiveRechazadosSelected = true;
+  exportArchiveError: string | null = null;
+  archivandoTrasExportar = false;
   modulosModalCiclo: AdminCicloConModulos | null = null;
   deleteCicloModalOpen = false;
   cicloToDelete: AdminCicloConModulos | null = null;
@@ -2361,6 +2539,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
               documentos_aportados: Array.isArray(row?.documentos_aportados) ? row.documentos_aportados : [],
             }))
           : [];
+        this.syncCursoAcademicoFiltro();
         this.alumnos = this.groupByAlumno(this.formularios);
         if (!this.loadedModulos && !this.loadingModulos) {
           this.cargarCiclosModulos();
@@ -2378,21 +2557,126 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  setFormularioEstadoFiltro(estado: 0 | 1 | 2): void {
+  setFormularioEstadoFiltro(estado: 0 | 1 | 2 | 3): void {
     this.formularioEstadoFiltro = estado;
+    if (estado === 3) {
+      this.archivadasEstadoFiltro = 3;
+    }
     this.openAlumnos.clear();
   }
 
-  countFormulariosByEstado(estado: 0 | 1 | 2): number {
-    return this.formularios.filter((f) => f.estado_id === estado).length;
+  setArchivadasEstadoFiltro(estado: 3 | 4): void {
+    this.archivadasEstadoFiltro = estado;
+    this.openAlumnos.clear();
+  }
+
+  volverDesdeArchivadas(): void {
+    this.setFormularioEstadoFiltro(1);
+  }
+
+  setCursoAcademicoFiltro(curso: string): void {
+    this.cursoAcademicoFiltro = curso || '';
+    this.openAlumnos.clear();
+  }
+
+  get cursosAcademicosDisponibles(): string[] {
+    const cursos = new Set<string>();
+    for (const formulario of this.formularios) {
+      const curso = this.getCursoAcademicoFormulario(formulario);
+      if (curso) {
+        cursos.add(curso);
+      }
+    }
+    return Array.from(cursos).sort((a, b) => b.localeCompare(a));
+  }
+
+  private syncCursoAcademicoFiltro(): void {
+    const cursos = this.cursosAcademicosDisponibles;
+    if (cursos.length === 0) {
+      this.cursoAcademicoFiltro = '';
+      return;
+    }
+    if (!this.cursoAcademicoFiltro || !cursos.includes(this.cursoAcademicoFiltro)) {
+      this.cursoAcademicoFiltro = cursos[0];
+    }
+  }
+
+  private getCursoAcademicoFormulario(formulario: AdminFormulario): string | null {
+    const raw = formulario.enviado_at;
+    if (!raw) return null;
+
+    const fecha = new Date(raw);
+    if (Number.isNaN(fecha.getTime())) return null;
+
+    const month = fecha.getUTCMonth() + 1;
+    const year = fecha.getUTCFullYear();
+
+    if (month >= 9) {
+      return `${year}-${year + 1}`;
+    }
+    if (month <= 7) {
+      return `${year - 1}-${year}`;
+    }
+    return null;
+  }
+
+  get formulariosCursoAcademicoFiltrados(): AdminFormulario[] {
+    if (!this.cursoAcademicoFiltro) return [];
+    return this.formularios.filter((f) => this.getCursoAcademicoFormulario(f) === this.cursoAcademicoFiltro);
+  }
+
+  countFormulariosByEstado(estado: 0 | 1 | 2 | 3): number {
+    if (estado === 3) {
+      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 3 || f.estado_id === 4).length;
+    }
+    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === estado).length;
+  }
+
+  countFormulariosArchivadosByEstado(estado: 3 | 4): number {
+    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === estado).length;
   }
 
   get formulariosFiltrados(): AdminFormulario[] {
-    return this.formularios.filter((f) => f.estado_id === this.formularioEstadoFiltro);
+    if (this.formularioEstadoFiltro === 3) {
+      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 3 || f.estado_id === 4);
+    }
+    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === this.formularioEstadoFiltro);
   }
 
   get alumnosFiltrados(): AdminAlumnoGroup[] {
     return this.groupByAlumno(this.formulariosFiltrados);
+  }
+
+  get formulariosMostrados(): AdminFormulario[] {
+    if (this.formularioEstadoFiltro === 3) {
+      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === this.archivadasEstadoFiltro);
+    }
+    return this.formulariosFiltrados;
+  }
+
+  get alumnosMostrados(): AdminAlumnoGroup[] {
+    return this.groupByAlumno(this.formulariosMostrados);
+  }
+
+  get formulariosValidadosExportables(): AdminFormulario[] {
+    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 1);
+  }
+
+  get formulariosRechazadosExportables(): AdminFormulario[] {
+    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 2);
+  }
+
+  get exportArchiveValidadosCount(): number {
+    return this.formulariosValidadosExportables.length;
+  }
+
+  get exportArchiveRechazadosCount(): number {
+    return this.formulariosRechazadosExportables.length;
+  }
+
+  get canConfirmExportArchive(): boolean {
+    return (this.exportArchiveValidadosSelected && this.exportArchiveValidadosCount > 0)
+      || (this.exportArchiveRechazadosSelected && this.exportArchiveRechazadosCount > 0);
   }
 
   exportarSolicitudesConvalidacion(): void {
@@ -2418,6 +2702,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             const writable = await handle.createWritable();
             await writable.write(blob);
             await writable.close();
+            this.abrirModalArchivarTrasExportar();
             return;
           } catch (e: any) {
             // Si cancela el diálogo, no hacemos fallback de descarga automática.
@@ -2433,6 +2718,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
+        this.abrirModalArchivarTrasExportar();
       },
       error: (err) => {
         if (this.handleAdminUnauthorized(err)) return;
@@ -2441,6 +2727,73 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  abrirModalArchivarTrasExportar(): void {
+    this.exportArchiveValidadosSelected = this.exportArchiveValidadosCount > 0;
+    this.exportArchiveRechazadosSelected = this.exportArchiveRechazadosCount > 0;
+    this.exportArchiveError = null;
+    this.exportArchiveModalOpen = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarModalArchivarTrasExportar(force = false): void {
+    if (!force && this.archivandoTrasExportar) return;
+    this.exportArchiveModalOpen = false;
+    this.exportArchiveError = null;
+    this.cdr.detectChanges();
+  }
+
+  confirmarArchivarTrasExportar(): void {
+    if (!this.canConfirmExportArchive || this.archivandoTrasExportar) return;
+
+    const actualizaciones = [
+      ...(this.exportArchiveValidadosSelected
+        ? this.formulariosValidadosExportables.map((f) =>
+            this.convalidacionesService.actualizarEstadoFormularioAdmin(f.id, 3, this.adminId)
+          )
+        : []),
+      ...(this.exportArchiveRechazadosSelected
+        ? this.formulariosRechazadosExportables.map((f) =>
+            this.convalidacionesService.actualizarEstadoFormularioAdmin(f.id, 4, this.adminId)
+          )
+        : []),
+    ];
+
+    if (actualizaciones.length === 0) {
+      this.cerrarModalArchivarTrasExportar(true);
+      return;
+    }
+
+    this.archivandoTrasExportar = true;
+    this.exportArchiveError = null;
+    forkJoin(actualizaciones)
+      .pipe(
+        finalize(() => {
+          this.archivandoTrasExportar = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (updatedRows) => {
+          for (const updated of updatedRows) {
+            const formulario = this.formularios.find((f) => f.id === updated.id);
+            if (formulario) {
+              formulario.estado_id = updated.estado_id;
+              formulario.estado = null;
+            }
+          }
+          this.cerrarModalArchivarTrasExportar(true);
+          this.error = null;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          const status = err?.status ? ` (HTTP ${err.status})` : '';
+          this.exportArchiveError = `No se pudieron archivar los formularios seleccionados${status}.`;
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   abrirDocumentoAportado(path: string): void {
@@ -4062,6 +4415,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   estadoLabel(formulario: AdminFormulario): string {
+    if (formulario.estado_id === 3) return 'validado';
+    if (formulario.estado_id === 4) return 'rechazado';
     if (formulario.estado) return formulario.estado;
     if (formulario.estado_id === 0) return 'revision';
     if (formulario.estado_id === 1) return 'validado';
@@ -4072,7 +4427,16 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   estadoClass(estadoId: number): string {
     if (estadoId === 1) return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
     if (estadoId === 2) return 'bg-rose-50 text-rose-700 border border-rose-200';
+    if (estadoId === 3 || estadoId === 4) return 'bg-slate-100 text-slate-700 border border-slate-300';
     return 'bg-amber-50 text-amber-700 border border-amber-200';
+  }
+
+  getArchiveEstadoObjetivo(estadoActual: number): 3 | 4 {
+    return estadoActual === 2 ? 4 : 3;
+  }
+
+  getUnarchiveEstadoObjetivo(estadoActual: number): 1 | 2 {
+    return estadoActual === 4 ? 2 : 1;
   }
 
   canFormularioValidateReject(estadoId: number): boolean {
@@ -4083,13 +4447,30 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return estadoId === 1 || estadoId === 2;
   }
 
+  canFormularioArchive(estadoId: number): boolean {
+    return estadoId === 1 || estadoId === 2;
+  }
+
+  canFormularioDelete(_estadoId: number): boolean {
+    return true;
+  }
+
+  canFormularioUnarchive(estadoId: number): boolean {
+    return estadoId === 3 || estadoId === 4;
+  }
+
   isFormularioUpdating(formularioId: number): boolean {
     return this.updatingFormularios.has(formularioId);
   }
 
-  solicitarCambioEstadoFormulario(formularioId: number, alumnoNombre: string, estadoObjetivo: 0 | 1 | 2): void {
+  isFormularioDeleting(formularioId: number): boolean {
+    return this.deletingFormularios.has(formularioId);
+  }
+
+  solicitarCambioEstadoFormulario(formularioId: number, alumnoNombre: string, estadoObjetivo: 0 | 1 | 2 | 3 | 4, estadoActual: number | null = null): void {
     this.confirmFormularioId = formularioId;
     this.confirmAlumnoNombre = (alumnoNombre || '').trim();
+    this.confirmEstadoActual = estadoActual;
     this.confirmEstadoObjetivo = estadoObjetivo;
     this.confirmModalOpen = true;
   }
@@ -4098,6 +4479,54 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.confirmModalOpen = false;
     this.confirmFormularioId = null;
     this.confirmAlumnoNombre = '';
+    this.confirmEstadoActual = null;
+  }
+
+  abrirModalEliminarFormulario(formulario: AdminFormulario, alumnoNombre: string): void {
+    if (this.deletingFormulario || this.isFormularioDeleting(formulario.id)) return;
+    this.formularioToDeleteId = formulario.id;
+    this.formularioToDeleteAlumnoNombre = (alumnoNombre || formulario.alumno?.nombre || '').trim();
+    this.deleteFormularioError = null;
+    this.deleteFormularioModalOpen = true;
+  }
+
+  cerrarModalEliminarFormulario(force = false): void {
+    if (!force && this.deletingFormulario) return;
+    this.deleteFormularioModalOpen = false;
+    this.formularioToDeleteId = null;
+    this.formularioToDeleteAlumnoNombre = '';
+    this.deleteFormularioError = null;
+  }
+
+  confirmarEliminarFormulario(): void {
+    if (this.formularioToDeleteId == null || this.deletingFormulario) return;
+    const formularioId = this.formularioToDeleteId;
+
+    this.deletingFormulario = true;
+    this.deleteFormularioError = null;
+    this.deletingFormularios.add(formularioId);
+    this.convalidacionesService
+      .eliminarFormularioAdmin(formularioId)
+      .pipe(
+        finalize(() => {
+          this.deletingFormulario = false;
+          this.deletingFormularios.delete(formularioId);
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.formularios = this.formularios.filter((f) => f.id !== formularioId);
+          this.syncCursoAcademicoFiltro();
+          this.alumnos = this.groupByAlumno(this.formularios);
+          this.cerrarModalEliminarFormulario(true);
+          this.error = null;
+        },
+        error: (err) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.deleteFormularioError = err?.error?.detail || 'No se pudo eliminar el formulario.';
+        },
+      });
   }
 
   confirmarValidacionFormulario(): void {
@@ -4106,20 +4535,34 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.confirmModalOpen = false;
     this.confirmFormularioId = null;
     this.confirmAlumnoNombre = '';
+    this.confirmEstadoActual = null;
     this.actualizarEstadoFormulario(formularioId, this.confirmEstadoObjetivo);
   }
 
   get confirmModalTitulo(): string {
+    const isDesarchivar = this.confirmEstadoActual === 3 || this.confirmEstadoActual === 4;
     const accion =
-      this.confirmEstadoObjetivo === 2
+      isDesarchivar
+        ? 'Desarchivar'
+        : this.confirmEstadoObjetivo === 2
         ? 'Rechazar'
-        : (this.confirmEstadoObjetivo === 1 ? 'Validar' : 'Volver a revisión');
+        : (this.confirmEstadoObjetivo === 1
+          ? 'Validar'
+          : ((this.confirmEstadoObjetivo === 3 || this.confirmEstadoObjetivo === 4)
+            ? 'Archivar'
+            : 'Volver a revisión'));
     return `${accion} formulario de ${this.confirmAlumnoNombre || 'usuario'}`;
   }
 
   get confirmModalDescripcion(): string {
+    if (this.confirmEstadoActual === 3 || this.confirmEstadoActual === 4) {
+      return `¿Quieres desarchivar el formulario de ${this.confirmAlumnoNombre || 'esta persona'}?`;
+    }
     if (this.confirmEstadoObjetivo === 2) {
       return '¿Quieres continuar con el rechazo del formulario?';
+    }
+    if (this.confirmEstadoObjetivo === 3 || this.confirmEstadoObjetivo === 4) {
+      return `¿Quieres archivar el formulario de ${this.confirmAlumnoNombre || 'esta persona'}?`;
     }
     if (this.confirmEstadoObjetivo === 0) {
       return `¿Quieres volver a revisar el formulario de ${this.confirmAlumnoNombre || 'esta persona'}?`;
@@ -4196,7 +4639,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           if (formulario) {
             formulario.estado_id = updated.estado_id;
             formulario.estado = null;
-            formulario.validado_at = new Date().toISOString();
+            formulario.validado_at = updated.estado_id === 1 ? new Date().toISOString() : formulario.validado_at;
           }
           this.error = null;
         },

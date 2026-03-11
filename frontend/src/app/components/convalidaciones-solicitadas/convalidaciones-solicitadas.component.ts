@@ -12,7 +12,6 @@ import { of } from 'rxjs';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './convalidaciones-solicitadas.component.html',
-    styleUrl: './convalidaciones-solicitadas.component.css'
 })
 export class ConvalidacionesSolicitadasComponent implements OnInit {
 

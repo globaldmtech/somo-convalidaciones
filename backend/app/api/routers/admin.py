@@ -269,6 +269,43 @@ async def cambiar_estado_formulario(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.delete("/formularios/{id_formulario}")
+async def eliminar_formulario(
+    id_formulario: int,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Elimina un formulario y sus datos relacionados (con borrado en cascada)."""
+    try:
+        archivos = database.AdminQueries.list_formulario_archivos(db, formulario_id=id_formulario)
+        deleted = database.AdminQueries.delete_formulario(db, formulario_id=id_formulario)
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail="Formulario no encontrado")
+
+        db.commit()
+
+        for archivo in archivos:
+            ruta = (archivo.get("ruta_almacenamiento") or "").strip()
+            if not ruta:
+                continue
+
+            try:
+                file_path = Path(ruta).resolve()
+            except Exception:
+                continue
+
+            if not str(file_path).startswith(str(ADMIN_UPLOAD_DIR)):
+                continue
+
+            file_path.unlink(missing_ok=True)
+
+        return {"ok": True, "id": id_formulario}
+    except HTTPException:
+        raise
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.put("/solicitudes/{id_solicitud}/estado")
 async def cambiar_estado_solicitud(
     id_solicitud: int,
