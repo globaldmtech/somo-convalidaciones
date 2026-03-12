@@ -133,14 +133,15 @@ class CatalogQueries:
         for modulo in modulos:
             nombre = (modulo.get("nombre") or "").strip()
             id_oficial = (modulo.get("id_oficial") or "").strip() or None
+            numerico = 0 if int(modulo.get("numerico", 1)) == 0 else 1
             if not nombre:
                 continue
             conn.execute(
                 """
-                INSERT INTO modulos (nombre, id_oficial, id_ciclo)
-                VALUES (?, ?, ?)
+                INSERT INTO modulos (nombre, id_oficial, id_ciclo, numerico)
+                VALUES (?, ?, ?, ?)
                 """,
-                (nombre, id_oficial, id_ciclo),
+                (nombre, id_oficial, id_ciclo, numerico),
             )
             inserted += 1
         return inserted
@@ -522,6 +523,7 @@ class AdminQueries:
                     c.nombre AS ciclo_nombre,
                     m.nombre AS modulo_nombre,
                     m.id_oficial AS modulo_codigo,
+                    m.numerico AS modulo_numerico,
                     fma.descripcion
                 FROM formulario_modulos_aportados fma
                 LEFT JOIN modulos m ON m.id = fma.id_modulo
@@ -584,7 +586,7 @@ class AdminQueries:
                     WHEN COUNT(DISTINCT mo.id) > 2 THEN 'Ciclo completo'
                     ELSE COALESCE(REPLACE(GROUP_CONCAT(DISTINCT mo.nombre), ',', CHAR(10)), '')
                 END AS modulo_cursado,
-                AVG(fma.nota) AS nota_modulo,
+                AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END) AS nota_modulo,
                 COALESCE(f.anotaciones, '') AS observaciones
             FROM formularios f
             JOIN usuarios u ON u.id = f.id_alumno
@@ -736,7 +738,8 @@ class AdminQueries:
                 m.id,
                 m.nombre,
                 m.id_oficial,
-                m.id_ciclo
+                m.id_ciclo,
+                m.numerico
             FROM modulos m
             ORDER BY m.id_ciclo, m.nombre
             """
@@ -750,6 +753,7 @@ class AdminQueries:
                     "id": modulo["id"],
                     "nombre": modulo["nombre"],
                     "id_oficial": modulo["id_oficial"],
+                    "numerico": modulo["numerico"],
                 }
             )
 

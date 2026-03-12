@@ -653,6 +653,7 @@ async def crear_modulos(
             {
                 "id_oficial": item.id_oficial,
                 "nombre": item.nombre,
+                "numerico": item.numerico,
             }
             for item in request.modulos
             if (item.nombre or "").strip()

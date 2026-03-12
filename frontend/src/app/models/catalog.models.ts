@@ -17,4 +17,5 @@ export interface Modulo {
     nombre: string;
     id_oficial: string | null;
     id_ciclo: number;
+    numerico: number;
 }

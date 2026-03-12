@@ -90,8 +90,11 @@ for raw_fam, grados_dict in data.items():
                 mod_str_clean = mod_str.replace("\n", " ").strip()
                 id_oficial = extract_code(mod_str_clean)
                 nombre_mod = extract_name(mod_str_clean) if id_oficial else esc(mod_str_clean)
+                is_fct = "Formación en Centros de Trabajo" in nombre_mod
+                numerico = 0 if is_fct else 1
+                
                 modulo_rows.append(
-                    f"  ({modulo_id}, '{esc(nombre_mod)}', {repr(id_oficial) if id_oficial else 'NULL'}, {ciclo_id})"
+                    f"  ({modulo_id}, '{esc(nombre_mod)}', {repr(id_oficial) if id_oficial else 'NULL'}, {ciclo_id}, {numerico})"
                 )
                 modulo_id += 1
             ciclo_id += 1
@@ -102,7 +105,7 @@ lines.append(",\n".join(ciclo_rows) + ";")
 lines.append("")
 
 lines.append("-- Modulos")
-lines.append("INSERT OR IGNORE INTO modulos (id, nombre, id_oficial, id_ciclo) VALUES")
+lines.append("INSERT OR IGNORE INTO modulos (id, nombre, id_oficial, id_ciclo, numerico) VALUES")
 # Fix repr() for None -> NULL
 modulo_rows_fixed = [r.replace("None", "NULL") for r in modulo_rows]
 lines.append(",\n".join(modulo_rows_fixed) + ";")

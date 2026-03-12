@@ -25,6 +25,7 @@ class CrearCicloRequest(BaseModel):
 class CrearModuloItemRequest(BaseModel):
     id_oficial: str | None = None
     nombre: str
+    numerico: int = 1
 
 
 class CrearModulosRequest(BaseModel):

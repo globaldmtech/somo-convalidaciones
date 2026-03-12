@@ -101,8 +101,11 @@
                         <div class="pt-3 border-t border-gray-200 flex flex-wrap gap-1.5">
                             <span *ngFor="let modulo of estudio.modulos"
                                 class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">
-                                {{ modulo.nombre }} · Nota:
-                                {{ notaModuloEstudio(estudio, modulo.id) !== null ? (notaModuloEstudio(estudio, modulo.id) | number:'1.0-2') : '—' }}
+                                {{ modulo.nombre }} ·
+                                {{ isModuloNumerico(modulo.id, estudio) ? 'Nota:' : 'Resultado:' }}
+                                {{ isModuloNumerico(modulo.id, estudio)
+                                    ? (notaModuloEstudio(estudio, modulo.id) !== null ? (notaModuloEstudio(estudio, modulo.id) | number:'1.0-2') : '—')
+                                    : (resultadoModuloEstudio(estudio, modulo.id) || '—') }}
                             </span>
                         </div>
                     </div>

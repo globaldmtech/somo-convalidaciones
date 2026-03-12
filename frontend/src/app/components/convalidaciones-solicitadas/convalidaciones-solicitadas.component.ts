@@ -354,6 +354,7 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
         if (origenIds.length === 0) return -1;
         const notasPorId = this.getNotasPorIdModulo();
         const notas = origenIds
+            .filter((id) => this.isModuloNumerico(id))
             .map((id) => notasPorId.get(id))
             .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
         if (notas.length === 0) return -1;
@@ -426,6 +427,17 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             }
         }
         return map;
+    }
+
+    private isModuloNumerico(moduloId: number): boolean {
+        const estudios = this.convalidacionesService.getEstudios() || [];
+        for (const estudio of estudios) {
+            const modulo = (estudio.modulos || []).find((item) => Number(item.id) === Number(moduloId));
+            if (modulo) {
+                return modulo.numerico !== 0;
+            }
+        }
+        return true;
     }
 
     private normalizarTexto(value: string): string {

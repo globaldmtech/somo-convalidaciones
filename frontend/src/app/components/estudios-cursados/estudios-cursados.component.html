@@ -60,7 +60,7 @@
                                 {{ mod.nombre }}
                                 <span class="text-gray-400"> · </span>
                                 <span class="font-semibold text-gray-600">
-                                    {{ notaModuloEstudio(estudio, mod.id) !== null ? (notaModuloEstudio(estudio, mod.id) | number:'1.0-2') : '—' }}
+                                    {{ etiquetaResultadoModulo(estudio, mod) }}
                                 </span>
                             </span>
                         </div>
@@ -87,7 +87,7 @@
                             Selecciona al menos uno
                         </p>
                         <p *ngIf="(editDraft.get(i)?.size ?? 0) > 0 && !canSaveEdit(i)" class="text-xs text-red-500 font-medium">
-                            Indica nota válida (0-10) en todos los módulos seleccionados
+                            Completa todos los módulos seleccionados
                         </p>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
@@ -102,7 +102,7 @@
                             <div class="min-w-0 flex-1">
                                 <span class="leading-snug font-medium block">{{ mod.nombre }}</span>
                                 <input
-                                    *ngIf="isDraftModuloSelected(i, mod.id)"
+                                    *ngIf="isDraftModuloSelected(i, mod.id) && isModuloNumerico(mod)"
                                     type="text"
                                     inputmode="decimal"
                                     [ngModel]="getDraftNotaModulo(i, mod.id)"
@@ -111,6 +111,18 @@
                                     class="mt-2 w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
                                     placeholder="Nota (0-10)"
                                 />
+                                <select
+                                    *ngIf="isDraftModuloSelected(i, mod.id) && !isModuloNumerico(mod)"
+                                    [ngModel]="getDraftNotaModulo(i, mod.id)"
+                                    (ngModelChange)="setDraftNotaModulo(i, mod.id, $event)"
+                                    (click)="$event.stopPropagation()"
+                                    class="mt-2 w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                                >
+                                    <option value="">Selecciona estado</option>
+                                    <option value="APTO">APTO</option>
+                                    <option value="NO_APTO">NO APTO</option>
+                                    <option value="EXENTO">EXENTO</option>
+                                </select>
                             </div>
                         </label>
                     </div>
@@ -237,23 +249,39 @@
                     </p>
 
                     <div *ngIf="selectedModuloIds.size > 0" class="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3 space-y-3">
-                        <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                            Notas módulos aportados
-                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-2 items-center">
+                            <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-600">
+                                Inserte las notas de los módulos seleccionados
+                            </h4>
+                            <p class="hidden sm:block text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                Notas
+                            </p>
+                        </div>
 
                         <div class="space-y-2">
                             <div *ngFor="let modulo of selectedModulosConNota" class="grid grid-cols-1 sm:grid-cols-[1fr_140px] gap-2 items-center">
                                 <p class="text-sm text-gray-700">{{ modulo.nombre }}</p>
                                 <input
+                                    *ngIf="isModuloNumerico(modulo)"
                                     type="text"
                                     inputmode="decimal"
                                     [ngModel]="getNotaModuloSeleccionado(modulo.id)"
                                     (ngModelChange)="setNotaModuloSeleccionado(modulo.id, $event)"
                                     class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
                                 />
+                                <select
+                                    *ngIf="!isModuloNumerico(modulo)"
+                                    [ngModel]="getNotaModuloSeleccionado(modulo.id)"
+                                    (ngModelChange)="setNotaModuloSeleccionado(modulo.id, $event)"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                                >
+                                    <option value="">Selecciona estado</option>
+                                    <option value="APTO">APTO</option>
+                                    <option value="NO_APTO">NO APTO</option>
+                                    <option value="EXENTO">EXENTO</option>
+                                </select>
                             </div>
                         </div>
-                        <p class="text-[11px] text-gray-500">Formato de nota: de 0 a 10.</p>
                     </div>
                 </div>
 
@@ -264,10 +292,7 @@
                         [class]="canAddEstudio()
                           ? 'bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer shadow-sm'
                           : 'bg-gray-100 text-gray-400 cursor-not-allowed'">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Añadir estudio
+                        Guardar
                     </button>
                 </div>
             </div>
@@ -451,13 +476,40 @@
                 {{ progresoPaso2Texto }}
             </p>
 
-            <button (click)="next.emit()" [disabled]="!canProceed()"
-                class="py-2.5 px-8 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200 flex items-center gap-2 shadow-lg shadow-indigo-100 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed">
-                Siguiente
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-            </button>
+            <div class="inline-flex" [attr.title]="mensajeBloqueoPaso2 || null">
+                <button (click)="onNext()" [disabled]="!canProceed()"
+                    class="py-2.5 px-8 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 text-white transition-all duration-200 flex items-center gap-2 shadow-lg shadow-indigo-100 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed">
+                    Siguiente
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="pendingEstudioModalOpen" class="fixed inset-0 z-[90] bg-slate-900/45 flex items-center justify-center p-4">
+        <div class="w-full max-w-md rounded-2xl bg-white border border-slate-200 shadow-xl p-6">
+            <h3 class="text-base font-bold text-slate-900">Tienes un estudio sin guardar</h3>
+            <p class="mt-2 text-sm text-slate-600">
+                Has comenzado a añadir otro estudio, pero no se ha guardado. Guarda este estudio antes de continuar o se perderá el progreso actual.
+            </p>
+            <div class="mt-5 flex items-center justify-end gap-3">
+                <button
+                    type="button"
+                    class="px-4 py-2 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                    (click)="cerrarPendingEstudioModal()"
+                >
+                    Volver
+                </button>
+                <button
+                    type="button"
+                    class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                    (click)="continuarSinGuardarEstudio()"
+                >
+                    Siguiente
+                </button>
+            </div>
         </div>
     </div>
 

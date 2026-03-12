@@ -16,6 +16,7 @@ export interface EstudioEntry {
     allSelected: boolean;
     notaMediaCiclo: number | null;
     notasPorModulo: Record<number, number | null>;
+    resultadosPorModulo: Record<number, string | null>;
 }
 
 // ── External certification ───────────────────────────────────────────────────
@@ -55,6 +56,7 @@ export class EstudiosCursadosComponent implements OnInit {
     editingStudios: Set<number> = new Set();
     editDraft: Map<number, Set<number>> = new Map();
     editDraftNotas: Map<number, Map<number, string>> = new Map();
+    pendingEstudioModalOpen = false;
 
     // ── Acreditaciones externas ───────────────────────────────────────────────
     acreditacionesCatalog: AcreditacionExterna[] = [];
@@ -91,6 +93,7 @@ export class EstudiosCursadosComponent implements OnInit {
             allSelected: Boolean(estudio.allSelected),
             notaMediaCiclo: typeof estudio.notaMediaCiclo === 'number' ? estudio.notaMediaCiclo : null,
             notasPorModulo: this.migrateNotasPorModulo(estudio),
+            resultadosPorModulo: this.migrateResultadosPorModulo(estudio),
         }));
         this.acreditacionesAdded = this.convalidacionesService.getAcreditaciones();
         this.otrosCiclosModulosAdded = this.convalidacionesService.getOtrosCiclosModulos();
@@ -210,8 +213,11 @@ export class EstudiosCursadosComponent implements OnInit {
 
         const esCicloCompleto = selectedModulos.length === this.modulos.length && this.modulos.length > 0;
         const notasPorModulo: Record<number, number | null> = {};
+        const resultadosPorModulo: Record<number, string | null> = {};
         for (const modulo of selectedModulos) {
-            notasPorModulo[modulo.id] = this.parseNota(this.selectedModuloNotas.get(modulo.id) || '');
+            const rawValue = this.selectedModuloNotas.get(modulo.id) || '';
+            notasPorModulo[modulo.id] = this.parseNotaByModulo(modulo, rawValue);
+            resultadosPorModulo[modulo.id] = this.parseResultadoByModulo(modulo, rawValue);
         }
 
         this.estudios.push({
@@ -222,6 +228,7 @@ export class EstudiosCursadosComponent implements OnInit {
             allSelected: esCicloCompleto,
             notaMediaCiclo: null,
             notasPorModulo,
+            resultadosPorModulo,
         });
 
         this.syncWithService();
@@ -253,8 +260,7 @@ export class EstudiosCursadosComponent implements OnInit {
         const draft = new Set(estudio.modulos.map(m => m.id));
         const notas = new Map<number, string>();
         for (const modulo of estudio.modulos) {
-            const nota = estudio.notasPorModulo?.[modulo.id];
-            notas.set(modulo.id, nota === null || nota === undefined ? '' : String(nota));
+            notas.set(modulo.id, this.getStoredInputValue(estudio, modulo));
         }
         this.editDraft.set(index, draft);
         this.editDraftNotas.set(index, notas);
@@ -278,10 +284,14 @@ export class EstudiosCursadosComponent implements OnInit {
         const esCicloCompleto = estudio.modulos.length > 0 && estudio.modulos.length === estudio.allModulos.length;
         estudio.allSelected = esCicloCompleto;
         const nextNotas: Record<number, number | null> = {};
+        const nextResultados: Record<number, string | null> = {};
         for (const modulo of estudio.modulos) {
-            nextNotas[modulo.id] = this.parseNota(draftNotas.get(modulo.id) || '');
+            const rawValue = draftNotas.get(modulo.id) || '';
+            nextNotas[modulo.id] = this.parseNotaByModulo(modulo, rawValue);
+            nextResultados[modulo.id] = this.parseResultadoByModulo(modulo, rawValue);
         }
         estudio.notasPorModulo = nextNotas;
+        estudio.resultadosPorModulo = nextResultados;
         estudio.notaMediaCiclo = null;
         this.editDraft.delete(index);
         this.editDraftNotas.delete(index);
@@ -300,8 +310,9 @@ export class EstudiosCursadosComponent implements OnInit {
         } else {
             draft.add(moduloId);
             if (!notas.has(moduloId)) {
-                const notaActual = this.estudios[index].notasPorModulo?.[moduloId];
-                notas.set(moduloId, notaActual === null || notaActual === undefined ? '' : String(notaActual));
+                const modulo = this.estudios[index].allModulos.find((item) => item.id === moduloId);
+                if (!modulo) return;
+                notas.set(moduloId, this.getStoredInputValue(this.estudios[index], modulo));
             }
         }
         this.cdr.detectChanges();
@@ -326,7 +337,9 @@ export class EstudiosCursadosComponent implements OnInit {
         const notas = this.editDraftNotas.get(index);
         if (!draft || !notas || draft.size === 0) return false;
         for (const moduloId of draft.values()) {
-            if (this.parseNota(notas.get(moduloId) || '') === null) return false;
+            const modulo = this.estudios[index].allModulos.find((item) => item.id === moduloId);
+            if (!modulo) return false;
+            if (this.parseNotaByModulo(modulo, notas.get(moduloId) || '') === null) return false;
         }
         return true;
     }
@@ -351,7 +364,9 @@ export class EstudiosCursadosComponent implements OnInit {
     canAddEstudio(): boolean {
         if (!this.selectedGradoId || !this.selectedCicloId || this.selectedModuloIds.size === 0) return false;
         for (const moduloId of this.selectedModuloIds.values()) {
-            if (this.parseNota(this.selectedModuloNotas.get(moduloId) || '') === null) {
+            const modulo = this.modulos.find((item) => item.id === moduloId);
+            if (!modulo) return false;
+            if (this.parseNotaByModulo(modulo, this.selectedModuloNotas.get(moduloId) || '') === null) {
                 return false;
             }
         }
@@ -360,6 +375,15 @@ export class EstudiosCursadosComponent implements OnInit {
 
     canProceed(): boolean {
         return this.estudios.length > 0 || this.acreditacionesAdded.length > 0 || this.otrosCiclosModulosAdded.length > 0;
+    }
+
+    hasUnsavedEstudioDraft(): boolean {
+        if (!this.showForm) return false;
+        if (this.selectedGradoId !== null) return true;
+        if (this.selectedCicloId !== null) return true;
+        if (this.selectedModuloIds.size > 0) return true;
+        if (this.selectedModuloNotas.size > 0) return true;
+        return false;
     }
 
     get totalModulos(): number {
@@ -378,6 +402,31 @@ export class EstudiosCursadosComponent implements OnInit {
             partes.push(`${this.otrosCiclosModulosAdded.length} otro${this.otrosCiclosModulosAdded.length !== 1 ? 's' : ''}`);
         }
         return partes.length > 0 ? partes.join(' · ') : 'Añade formación para continuar';
+    }
+
+    get mensajeBloqueoPaso2(): string {
+        if (this.canProceed()) return '';
+        return 'Tienes que añadir un estudio para poder continuar con el formulario.';
+    }
+
+    onNext(): void {
+        if (!this.canProceed()) return;
+        if (this.hasUnsavedEstudioDraft()) {
+            this.pendingEstudioModalOpen = true;
+            this.cdr.detectChanges();
+            return;
+        }
+        this.next.emit();
+    }
+
+    cerrarPendingEstudioModal(): void {
+        this.pendingEstudioModalOpen = false;
+        this.cdr.detectChanges();
+    }
+
+    continuarSinGuardarEstudio(): void {
+        this.pendingEstudioModalOpen = false;
+        this.next.emit();
     }
 
     // ── Acreditaciones externas methods ───────────────────────────────────────
@@ -451,7 +500,29 @@ export class EstudiosCursadosComponent implements OnInit {
         this.selectedModuloNotas.set(moduloId, value);
     }
 
-    private parseNota(value: string): number | null {
+    isModuloNumerico(modulo: Modulo): boolean {
+        return modulo.numerico !== 0;
+    }
+
+    notaModuloEstudio(estudio: EstudioEntry, moduloId: number): number | null {
+        const nota = estudio.notasPorModulo?.[moduloId];
+        return typeof nota === 'number' ? nota : null;
+    }
+
+    resultadoModuloEstudio(estudio: EstudioEntry, moduloId: number): string | null {
+        const value = estudio.resultadosPorModulo?.[moduloId];
+        return typeof value === 'string' && value.trim() ? value : null;
+    }
+
+    etiquetaResultadoModulo(estudio: EstudioEntry, modulo: Modulo): string {
+        if (!this.isModuloNumerico(modulo)) {
+            return this.formatResultado(estudio.resultadosPorModulo?.[modulo.id]) || '—';
+        }
+        const nota = this.notaModuloEstudio(estudio, modulo.id);
+        return nota !== null ? String(nota.toFixed(2)) : '—';
+    }
+
+    private parseNotaNumerica(value: string): number | null {
         const raw = (value || '').toString().trim().replace(',', '.');
         if (!raw) return null;
         const nota = Number(raw);
@@ -460,9 +531,46 @@ export class EstudiosCursadosComponent implements OnInit {
         return nota;
     }
 
-    notaModuloEstudio(estudio: EstudioEntry, moduloId: number): number | null {
-        const nota = estudio.notasPorModulo?.[moduloId];
-        return typeof nota === 'number' ? nota : null;
+    private parseNotaByModulo(modulo: Modulo, value: string): number | null {
+        if (this.isModuloNumerico(modulo)) {
+            return this.parseNotaNumerica(value);
+        }
+        const normalized = (value || '').trim().toUpperCase();
+        if (normalized === 'APTO') return 1;
+        if (normalized === 'NO_APTO') return 0;
+        if (normalized === 'EXENTO') return 2;
+        return null;
+    }
+
+    private parseResultadoByModulo(modulo: Modulo, value: string): string | null {
+        if (this.isModuloNumerico(modulo)) return null;
+        const normalized = (value || '').trim().toUpperCase();
+        if (normalized === 'APTO' || normalized === 'NO_APTO' || normalized === 'EXENTO') {
+            return normalized;
+        }
+        return null;
+    }
+
+    private getStoredInputValue(estudio: EstudioEntry, modulo: Modulo): string {
+        if (!this.isModuloNumerico(modulo)) {
+            const resultado = estudio.resultadosPorModulo?.[modulo.id];
+            if (typeof resultado === 'string' && resultado.trim()) {
+                return resultado;
+            }
+            const nota = estudio.notasPorModulo?.[modulo.id];
+            if (nota === 1) return 'APTO';
+            if (nota === 0) return 'NO_APTO';
+            if (nota === 2) return 'EXENTO';
+            return '';
+        }
+        const nota = estudio.notasPorModulo?.[modulo.id];
+        return nota === null || nota === undefined ? '' : String(nota);
+    }
+
+    private formatResultado(value: string | null | undefined): string | null {
+        if (!value) return null;
+        if (value === 'NO_APTO') return 'NO APTO';
+        return value;
     }
 
     private migrateNotasPorModulo(estudio: EstudioEntry): Record<number, number | null> {
@@ -470,6 +578,24 @@ export class EstudiosCursadosComponent implements OnInit {
         if (Object.keys(next).length === 0 && typeof estudio.notaMediaCiclo === 'number') {
             for (const modulo of estudio.modulos || []) {
                 next[modulo.id] = estudio.notaMediaCiclo;
+            }
+        }
+        return next;
+    }
+
+    private migrateResultadosPorModulo(estudio: EstudioEntry): Record<number, string | null> {
+        const current = (estudio as EstudioEntry & { resultadosPorModulo?: Record<number, string | null> }).resultadosPorModulo || {};
+        const next: Record<number, string | null> = { ...current };
+        for (const modulo of estudio.modulos || []) {
+            if (this.isModuloNumerico(modulo)) continue;
+            if (next[modulo.id]) continue;
+            const nota = estudio.notasPorModulo?.[modulo.id];
+            if (nota === 1) {
+                next[modulo.id] = 'APTO';
+            } else if (nota === 0) {
+                next[modulo.id] = 'NO_APTO';
+            } else if (nota === 2) {
+                next[modulo.id] = 'EXENTO';
             }
         }
         return next;

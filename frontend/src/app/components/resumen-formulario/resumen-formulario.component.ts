@@ -86,6 +86,18 @@ export class ResumenFormularioComponent implements OnInit {
         return this.parseNotaFlexible(estudio.notaMediaCiclo);
     }
 
+    resultadoModuloEstudio(estudio: EstudioEntry, moduloId: number): string | null {
+        const value = estudio.resultadosPorModulo?.[moduloId];
+        if (typeof value !== 'string' || !value.trim()) return null;
+        if (value === 'NO_APTO') return 'NO APTO';
+        return value;
+    }
+
+    isModuloNumerico(moduloId: number, estudio: EstudioEntry): boolean {
+        const modulo = (estudio.modulos || []).find((item) => Number(item.id) === Number(moduloId));
+        return modulo ? modulo.numerico !== 0 : true;
+    }
+
     private parseNotaFlexible(value: unknown): number | null {
         if (typeof value === 'number') {
             return Number.isFinite(value) ? value : null;

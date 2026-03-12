@@ -57,6 +57,7 @@ export interface AdminFormularioModuloAportado {
     ciclo_nombre?: string | null;
     modulo_nombre: string | null;
     modulo_codigo?: string | null;
+    modulo_numerico?: number | null;
     descripcion: string | null;
 }
 
@@ -131,6 +132,7 @@ export interface AdminCreateCicloRequest {
 export interface AdminCreateModuloItemRequest {
     id_oficial?: string | null;
     nombre: string;
+    numerico: number;
 }
 
 export interface AdminCreateModulosRequest {
@@ -162,6 +164,7 @@ export interface AdminCicloModulo {
     id: number;
     nombre: string;
     id_oficial: string | null;
+    numerico?: number | null;
 }
 
 export interface AdminCicloConModulos {

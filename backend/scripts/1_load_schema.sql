@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS modulos (
   id INTEGER PRIMARY KEY,
   nombre TEXT NOT NULL,
   id_oficial TEXT,
+  numerico INTEGER NOT NULL DEFAULT 1 CHECK (numerico IN (0, 1)),
   id_ciclo INTEGER NOT NULL,
   FOREIGN KEY (id_ciclo) REFERENCES ciclos(id) ON DELETE CASCADE
 );

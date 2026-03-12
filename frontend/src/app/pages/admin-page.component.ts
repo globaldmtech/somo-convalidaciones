@@ -37,7 +37,7 @@ type AdminCicloModulosGroup = {
   key: string;
   cicloId: number | null;
   cicloNombre: string;
-  modulos: Array<{ id: number; nombre: string; codigo?: string | null; nota?: number | null }>;
+  modulos: Array<{ id: number; nombre: string; codigo?: string | null; nota?: number | null; numerico?: number | null }>;
 };
 
 type AdminCicloSolicitudesGroup = {
@@ -65,6 +65,7 @@ type AdminFamiliaGradosGroup = {
 type ModuloDraftRow = {
   id_oficial: string;
   nombre: string;
+  numerico: number;
 };
 
 type AdminAcreditacionExternaGroup = {
@@ -519,8 +520,8 @@ type PendingConvalidacionOrigenDelete = {
                                 class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
                               >
                                 <span>{{ modulo.nombre }}</span>
-                                <span *ngIf="modulo.nota !== null && modulo.nota !== undefined" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
-                                  Nota: {{ modulo.nota | number:'1.0-2' }}
+                                <span *ngIf="getEtiquetaNotaModuloAdmin(modulo) as etiqueta" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
+                                  {{ etiqueta }}
                                 </span>
                               </li>
                             </ul>
@@ -1626,7 +1627,7 @@ type PendingConvalidacionOrigenDelete = {
                 </div>
 
                 <div *ngIf="showAddModulosForm" class="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
-                  <div *ngFor="let item of modulosDraft; let i = index" class="grid grid-cols-1 sm:grid-cols-[1fr_2fr_auto] gap-2">
+                  <div *ngFor="let item of modulosDraft; let i = index" class="grid grid-cols-1 sm:grid-cols-[1fr_2fr_180px_auto] gap-2">
                     <input
                       type="text"
                       [(ngModel)]="item.id_oficial"
@@ -1639,6 +1640,13 @@ type PendingConvalidacionOrigenDelete = {
                       placeholder="Nombre módulo"
                       class="rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
                     />
+                    <select
+                      [(ngModel)]="item.numerico"
+                      class="rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                    >
+                      <option [ngValue]="1">Numérico</option>
+                      <option [ngValue]="0">APTO/NO APTO/EXENTO</option>
+                    </select>
                     <button
                       type="button"
                       class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors"
@@ -1678,15 +1686,18 @@ type PendingConvalidacionOrigenDelete = {
                 </div>
 
                 <ul class="thin-scroll space-y-2 h-full max-h-[60vh] overflow-y-auto pr-1">
-                  <li
-                    *ngFor="let modulo of modulosModalCiclo.modulos"
-                    class="text-sm text-slate-700 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
-                  >
-                    <div class="min-w-0 flex-1">
-                      <span *ngIf="modulo.id_oficial" class="text-xs text-slate-500 mr-1">{{ modulo.id_oficial }}</span>
-                      {{ modulo.nombre }}
-                    </div>
-                    <button
+	                  <li
+	                    *ngFor="let modulo of modulosModalCiclo.modulos"
+	                    class="text-sm text-slate-700 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
+	                  >
+	                    <div class="min-w-0 flex-1">
+	                      <span *ngIf="modulo.id_oficial" class="text-xs text-slate-500 mr-1">{{ modulo.id_oficial }}</span>
+	                      {{ modulo.nombre }}
+                          <span class="ml-2 inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                            {{ modulo.numerico === 0 ? 'No numérico' : 'Numérico' }}
+                          </span>
+	                    </div>
+	                    <button
                       type="button"
                       class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                       [disabled]="deletingModulos.has(modulo.id)"
@@ -2203,7 +2214,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   createAcreditacionExternaError: string | null = null;
   creatingAcreditacionExterna = false;
   showAddModulosForm = false;
-  modulosDraft: ModuloDraftRow[] = [{ id_oficial: '', nombre: '' }];
+  modulosDraft: ModuloDraftRow[] = [{ id_oficial: '', nombre: '', numerico: 1 }];
   createModulosError: string | null = null;
   creatingModulos = false;
   deletingModulos = new Set<number>();
@@ -2448,7 +2459,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createCicloError = null;
     this.creatingCiclo = false;
     this.showAddModulosForm = false;
-    this.modulosDraft = [{ id_oficial: '', nombre: '' }];
+    this.modulosDraft = [{ id_oficial: '', nombre: '', numerico: 1 }];
     this.createModulosError = null;
     this.creatingModulos = false;
     this.deletingModulos.clear();
@@ -3690,6 +3701,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             nombre: item.nombre,
             id_oficial: item.id_oficial ?? null,
             id_ciclo: Number(item.id_ciclo),
+            numerico: Number(item.numerico ?? 1),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
@@ -3750,6 +3762,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             nombre: item.nombre,
             id_oficial: item.id_oficial ?? null,
             id_ciclo: Number(item.id_ciclo),
+            numerico: Number(item.numerico ?? 1),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
@@ -3959,7 +3972,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   abrirModalModulos(ciclo: AdminCicloConModulos): void {
     this.modulosModalCiclo = ciclo;
     this.showAddModulosForm = false;
-    this.modulosDraft = [{ id_oficial: '', nombre: '' }];
+    this.modulosDraft = [{ id_oficial: '', nombre: '', numerico: 1 }];
     this.createModulosError = null;
     this.creatingModulos = false;
   }
@@ -3967,7 +3980,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cerrarModalModulos(): void {
     this.modulosModalCiclo = null;
     this.showAddModulosForm = false;
-    this.modulosDraft = [{ id_oficial: '', nombre: '' }];
+    this.modulosDraft = [{ id_oficial: '', nombre: '', numerico: 1 }];
     this.createModulosError = null;
     this.creatingModulos = false;
   }
@@ -4072,7 +4085,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.convalidacionesService
       .crearModulosAdmin(ciclo.id, {
-        modulos: [{ id_oficial: codigo, nombre }],
+        modulos: [{ id_oficial: codigo, nombre, numerico: 0 }],
       })
       .pipe(
         timeout(15000),
@@ -4101,7 +4114,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleAddModulosForm(): void {
     this.showAddModulosForm = !this.showAddModulosForm;
     if (this.showAddModulosForm && this.modulosDraft.length === 0) {
-      this.modulosDraft = [{ id_oficial: '', nombre: '' }];
+      this.modulosDraft = [{ id_oficial: '', nombre: '', numerico: 1 }];
     }
     if (!this.showAddModulosForm) {
       this.createModulosError = null;
@@ -4109,7 +4122,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addModuloDraftRow(): void {
-    this.modulosDraft = [...this.modulosDraft, { id_oficial: '', nombre: '' }];
+    this.modulosDraft = [...this.modulosDraft, { id_oficial: '', nombre: '', numerico: 1 }];
   }
 
   removeModuloDraftRow(index: number): void {
@@ -4129,6 +4142,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .map((row) => ({
         id_oficial: row.id_oficial.trim() || null,
         nombre: row.nombre.trim(),
+        numerico: row.numerico === 0 ? 0 : 1,
       }))
       .filter((row) => row.nombre.length > 0);
 
@@ -4150,7 +4164,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.modulosDraft = [{ id_oficial: '', nombre: '' }];
+          this.modulosDraft = [{ id_oficial: '', nombre: '', numerico: 1 }];
           this.showAddModulosForm = false;
           this.loadedModulos = false;
           this.cargarCiclosModulos();
@@ -4310,6 +4324,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         nombre: modulo.modulo_nombre || modulo.descripcion || 'Módulo sin detalle',
         codigo: modulo.modulo_codigo ?? null,
         nota: modulo.nota ?? null,
+        numerico: modulo.modulo_numerico ?? null,
       });
     }
 
@@ -4325,9 +4340,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   getNotaMediaCiclo(ciclo: AdminCicloModulosGroup): number | null {
     if (ciclo.modulos.length <= 2) return null;
     const notas = ciclo.modulos
+      .filter((m) => m.numerico !== 0)
       .map((m) => m.nota)
       .filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
-    if (notas.length !== ciclo.modulos.length) return null;
+    const totalModulosNumericos = ciclo.modulos.filter((m) => m.numerico !== 0).length;
+    if (totalModulosNumericos === 0 || notas.length !== totalModulosNumericos) return null;
     const total = notas.reduce((acc, current) => acc + current, 0);
     return total / notas.length;
   }
@@ -4350,16 +4367,19 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return ids.map((id) => {
         const modulo = modulosById.get(id);
         if (!modulo) return `Módulo ${id} (sin nota)`;
-        if (modulo.nota === null || modulo.nota === undefined) return `${modulo.nombre} (sin nota)`;
-        return `${modulo.nombre} (${this.formatearNotaModulo(modulo.nota)})`;
+        const etiqueta = this.getEtiquetaNotaModuloAdmin(modulo);
+        if (!etiqueta) return `${modulo.nombre} (sin nota)`;
+        return `${modulo.nombre} (${etiqueta})`;
       });
     }
 
     const notasPorNombre = this.getNotasPorNombreModuloFormulario(formulario);
     return this.getConvalidadoPorLista(solicitud.convalidadoPor).map((nombre) => {
-      const nota = notasPorNombre.get(this.normalizarTextoModulo(nombre));
-      if (nota === null || nota === undefined) return `${nombre} (sin nota)`;
-      return `${nombre} (${this.formatearNotaModulo(nota)})`;
+      const modulo = notasPorNombre.get(this.normalizarTextoModulo(nombre));
+      if (!modulo) return `${nombre} (sin nota)`;
+      const etiqueta = this.getEtiquetaNotaModuloAdmin(modulo);
+      if (!etiqueta) return `${nombre} (sin nota)`;
+      return `${nombre} (${etiqueta})`;
     });
   }
 
@@ -4367,8 +4387,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.getConvalidadoPorLista(convalidadoPor).length > 2;
   }
 
-  private getNotasPorNombreModuloFormulario(formulario: AdminFormulario): Map<string, number> {
-    const map = new Map<string, number>();
+  private getNotasPorNombreModuloFormulario(formulario: AdminFormulario): Map<string, { nota: number; numerico: number | null }> {
+    const map = new Map<string, { nota: number; numerico: number | null }>();
     const modulos = formulario.modulos_aportados ?? [];
     for (const modulo of modulos) {
       const nombre = (modulo.modulo_nombre || modulo.descripcion || '').trim();
@@ -4378,8 +4398,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       const key = this.normalizarTextoModulo(nombre);
       if (!key) continue;
       const actual = map.get(key);
-      if (actual === undefined || nota > actual) {
-        map.set(key, nota);
+      if (actual === undefined || nota > actual.nota) {
+        map.set(key, { nota, numerico: modulo.modulo_numerico ?? null });
       }
     }
     return map;
@@ -4387,20 +4407,32 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getModulosAportadosById(
     formulario: AdminFormulario
-  ): Map<number, { nombre: string; nota: number | null }> {
-    const map = new Map<number, { nombre: string; nota: number | null }>();
+  ): Map<number, { nombre: string; nota: number | null; numerico: number | null }> {
+    const map = new Map<number, { nombre: string; nota: number | null; numerico: number | null }>();
     const modulos = formulario.modulos_aportados ?? [];
     for (const modulo of modulos) {
       const idModulo = Number(modulo.id_modulo);
       if (!Number.isFinite(idModulo)) continue;
       const nombre = (modulo.modulo_nombre || modulo.descripcion || `Módulo ${idModulo}`).trim();
       const nota = typeof modulo.nota === 'number' && Number.isFinite(modulo.nota) ? modulo.nota : null;
+      const numerico = modulo.modulo_numerico ?? null;
       const current = map.get(idModulo);
       if (!current || ((current.nota ?? -Infinity) < (nota ?? -Infinity))) {
-        map.set(idModulo, { nombre, nota });
+        map.set(idModulo, { nombre, nota, numerico });
       }
     }
     return map;
+  }
+
+  getEtiquetaNotaModuloAdmin(modulo: { nota?: number | null; numerico?: number | null }): string | null {
+    const nota = modulo.nota;
+    if (nota === null || nota === undefined || !Number.isFinite(nota)) return null;
+    if (modulo.numerico === 0) {
+      if (nota === 2) return 'EXENTO';
+      if (nota === 1) return 'APTO';
+      return 'NO APTO';
+    }
+    return `Nota: ${this.formatearNotaModulo(nota)}`;
   }
 
   private normalizarTextoModulo(value: string): string {
