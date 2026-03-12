@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursados/estudios-cursados.component';
@@ -440,8 +440,15 @@ export class ConvalidacionesService {
         return this.http.post(`${API_BASE}/insertar_formulario_completo`, formData);
     }
 
-    getFormulariosAdmin(): Observable<AdminFormulario[]> {
-        return this.http.get<AdminFormulario[]>(`${ADMIN_API_BASE}/formularios`, this.getAdminAuthHeaders());
+    getFormulariosAdmin(estadoId?: number | null): Observable<AdminFormulario[]> {
+        const options = this.getAdminAuthHeaders();
+        const params = estadoId === null || estadoId === undefined
+            ? undefined
+            : new HttpParams().set('estado_id', String(estadoId));
+        return this.http.get<AdminFormulario[]>(`${ADMIN_API_BASE}/formularios`, {
+            ...options,
+            params,
+        });
     }
 
     actualizarEstadoFormularioAdmin(

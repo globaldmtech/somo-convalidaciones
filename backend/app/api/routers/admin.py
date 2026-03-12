@@ -10,7 +10,9 @@ from pathlib import Path
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.routing import APIRoute
 
@@ -148,11 +150,12 @@ async def login_admin(
 
 @router.get("/formularios")
 async def listar_formularios(
+    estado_id: Optional[int] = Query(default=None),
     db: sqlite3.Connection = Depends(database.get_db),
 ):
     """Lista todos los formularios con datos básicos del alumno y solicitudes."""
     try:
-        return database.AdminQueries.list_admin_formularios(db)
+        return database.AdminQueries.list_admin_formularios(db, estado_id=estado_id)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 

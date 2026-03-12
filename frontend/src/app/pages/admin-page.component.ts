@@ -282,7 +282,7 @@ type PendingConvalidacionOrigenDelete = {
                   [ngClass]="formularioEstadoFiltro === 0 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                   (click)="setFormularioEstadoFiltro(0)"
                 >
-                  En revisión ({{ countFormulariosByEstado(0) }})
+                  En revisión{{ formularioEstadoFiltro === 0 && !loading ? ' (' + countFormulariosByEstado(0) + ')' : '' }}
                 </button>
                 <button
                   type="button"
@@ -290,7 +290,7 @@ type PendingConvalidacionOrigenDelete = {
                   [ngClass]="formularioEstadoFiltro === 1 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                   (click)="setFormularioEstadoFiltro(1)"
                 >
-                  Validadas ({{ countFormulariosByEstado(1) }})
+                  Validadas{{ formularioEstadoFiltro === 1 && !loading ? ' (' + countFormulariosByEstado(1) + ')' : '' }}
                 </button>
                 <button
                   type="button"
@@ -298,7 +298,7 @@ type PendingConvalidacionOrigenDelete = {
                   [ngClass]="formularioEstadoFiltro === 2 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                   (click)="setFormularioEstadoFiltro(2)"
                 >
-                  Rechazadas ({{ countFormulariosByEstado(2) }})
+                  Rechazadas{{ formularioEstadoFiltro === 2 && !loading ? ' (' + countFormulariosByEstado(2) + ')' : '' }}
                 </button>
               </div>
               <div class="ml-auto flex flex-wrap justify-end gap-2">
@@ -320,7 +320,7 @@ type PendingConvalidacionOrigenDelete = {
                   [ngClass]="'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                   (click)="setFormularioEstadoFiltro(3)"
                 >
-                  Archivadas ({{ countFormulariosByEstado(3) }})
+                  Archivadas
                 </button>
               </div>
             </div>
@@ -349,7 +349,7 @@ type PendingConvalidacionOrigenDelete = {
                     [ngClass]="archivadasEstadoFiltro === 3 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                     (click)="setArchivadasEstadoFiltro(3)"
                   >
-                    Validadas ({{ countFormulariosArchivadosByEstado(3) }})
+                    Validadas{{ archivadasEstadoFiltro === 3 && !loading ? ' (' + countFormulariosArchivadosByEstado(3) + ')' : '' }}
                   </button>
                   <button
                     type="button"
@@ -357,7 +357,7 @@ type PendingConvalidacionOrigenDelete = {
                     [ngClass]="archivadasEstadoFiltro === 4 ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
                     (click)="setArchivadasEstadoFiltro(4)"
                   >
-                    Rechazadas ({{ countFormulariosArchivadosByEstado(4) }})
+                    Rechazadas{{ archivadasEstadoFiltro === 4 && !loading ? ' (' + countFormulariosArchivadosByEstado(4) + ')' : '' }}
                   </button>
                 </div>
               </div>
@@ -2618,7 +2618,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.isAuthenticated) return;
 
     if (this.activeTab === 'formularios') {
-      this.cargarFormularios();
+      this.cargarFormularios(this.getFormularioEstadoBackend());
       return;
     }
     if (this.activeTab === 'modulos') {
@@ -2633,13 +2633,20 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cargarAdministradores();
   }
 
-  cargarFormularios(): void {
+  private getFormularioEstadoBackend(): 0 | 1 | 2 | 3 | 4 {
+    if (this.formularioEstadoFiltro === 3) {
+      return this.archivadasEstadoFiltro;
+    }
+    return this.formularioEstadoFiltro;
+  }
+
+  cargarFormularios(estadoId: 0 | 1 | 2 | 3 | 4 = this.getFormularioEstadoBackend()): void {
     if (!this.isAuthenticated) return;
 
     this.loading = true;
     this.error = null;
 
-    this.convalidacionesService.getFormulariosAdmin().subscribe({
+    this.convalidacionesService.getFormulariosAdmin(estadoId).subscribe({
       next: (rows) => {
         this.formularios = Array.isArray(rows)
           ? rows.map((row) => ({
@@ -2673,11 +2680,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.archivadasEstadoFiltro = 3;
     }
     this.openAlumnos.clear();
+    this.cargarFormularios(this.getFormularioEstadoBackend());
   }
 
   setArchivadasEstadoFiltro(estado: 3 | 4): void {
     this.archivadasEstadoFiltro = estado;
     this.openAlumnos.clear();
+    this.cargarFormularios(this.getFormularioEstadoBackend());
   }
 
   volverDesdeArchivadas(): void {
@@ -2736,21 +2745,17 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   countFormulariosByEstado(estado: 0 | 1 | 2 | 3): number {
-    if (estado === 3) {
-      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 3 || f.estado_id === 4).length;
-    }
-    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === estado).length;
+    if (estado !== this.formularioEstadoFiltro) return 0;
+    return this.formulariosCursoAcademicoFiltrados.length;
   }
 
   countFormulariosArchivadosByEstado(estado: 3 | 4): number {
-    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === estado).length;
+    if (this.formularioEstadoFiltro !== 3 || estado !== this.archivadasEstadoFiltro) return 0;
+    return this.formulariosCursoAcademicoFiltrados.length;
   }
 
   get formulariosFiltrados(): AdminFormulario[] {
-    if (this.formularioEstadoFiltro === 3) {
-      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === 3 || f.estado_id === 4);
-    }
-    return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === this.formularioEstadoFiltro);
+    return this.formulariosCursoAcademicoFiltrados;
   }
 
   get alumnosFiltrados(): AdminAlumnoGroup[] {
@@ -2758,9 +2763,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get formulariosMostrados(): AdminFormulario[] {
-    if (this.formularioEstadoFiltro === 3) {
-      return this.formulariosCursoAcademicoFiltrados.filter((f) => f.estado_id === this.archivadasEstadoFiltro);
-    }
     return this.formulariosFiltrados;
   }
 
@@ -2885,16 +2887,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (updatedRows) => {
-          for (const updated of updatedRows) {
-            const formulario = this.formularios.find((f) => f.id === updated.id);
-            if (formulario) {
-              formulario.estado_id = updated.estado_id;
-              formulario.estado = null;
-            }
-          }
+        next: () => {
           this.cerrarModalArchivarTrasExportar(true);
           this.error = null;
+          this.cargarFormularios(this.getFormularioEstadoBackend());
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -4743,11 +4739,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.formularios = this.formularios.filter((f) => f.id !== formularioId);
-          this.syncCursoAcademicoFiltro();
-          this.alumnos = this.groupByAlumno(this.formularios);
           this.cerrarModalEliminarFormulario(true);
           this.error = null;
+          this.cargarFormularios(this.getFormularioEstadoBackend());
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
@@ -4861,14 +4855,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (updated) => {
-          const formulario = this.formularios.find((f) => f.id === formularioId);
-          if (formulario) {
-            formulario.estado_id = updated.estado_id;
-            formulario.estado = null;
-            formulario.validado_at = updated.estado_id === 1 ? new Date().toISOString() : formulario.validado_at;
-          }
+        next: () => {
           this.error = null;
+          this.cargarFormularios(this.getFormularioEstadoBackend());
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;

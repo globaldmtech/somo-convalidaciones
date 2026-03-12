@@ -480,9 +480,11 @@ class AdminQueries:
         return dict(row) if row else None
 
     @staticmethod
-    def list_admin_formularios(conn: sqlite3.Connection) -> list[dict]:
-        formularios = conn.execute(
-            """
+    def list_admin_formularios(
+        conn: sqlite3.Connection,
+        estado_id: int | None = None,
+    ) -> list[dict]:
+        query = """
             SELECT
                 f.id,
                 f.id_alumno,
@@ -497,9 +499,14 @@ class AdminQueries:
             FROM formularios f
             JOIN usuarios u ON u.id = f.id_alumno
             LEFT JOIN estados_formularios ef ON ef.id = f.estado
-            ORDER BY f.id DESC
-            """
-        ).fetchall()
+        """
+        params: list[int] = []
+        if estado_id is not None:
+            query += " WHERE f.estado = ?"
+            params.append(estado_id)
+        query += " ORDER BY f.id DESC"
+
+        formularios = conn.execute(query, params).fetchall()
 
         resultado: list[dict] = []
         for row in formularios:
