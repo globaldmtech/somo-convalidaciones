@@ -50,22 +50,46 @@ def get_db() -> Generator[sqlite3.Connection, None, None]:
 class CatalogQueries:
     @staticmethod
     def list_grados(conn: sqlite3.Connection) -> Sequence[dict]:
-        return [dict(row) for row in conn.execute("SELECT * FROM grados").fetchall()]
+        return [
+            dict(row)
+            for row in conn.execute(
+                """
+                SELECT *
+                FROM grados
+                ORDER BY CASE LOWER(nombre)
+                    WHEN 'básica' THEN 1
+                    WHEN 'basica' THEN 1
+                    WHEN 'grado medio' THEN 2
+                    WHEN 'grado superior' THEN 3
+                    WHEN 'especialización' THEN 4
+                    WHEN 'especializacion' THEN 4
+                    ELSE 99
+                END,
+                nombre
+                """
+            ).fetchall()
+        ]
 
     @staticmethod
     def list_ciclos(conn: sqlite3.Connection, grado_id: Optional[int] = None) -> Sequence[dict]:
         if grado_id:
-            rows = conn.execute("SELECT * FROM ciclos WHERE id_grado = ?", (grado_id,)).fetchall()
+            rows = conn.execute(
+                "SELECT * FROM ciclos WHERE id_grado = ? ORDER BY nombre",
+                (grado_id,),
+            ).fetchall()
         else:
-            rows = conn.execute("SELECT * FROM ciclos").fetchall()
+            rows = conn.execute("SELECT * FROM ciclos ORDER BY nombre").fetchall()
         return [dict(row) for row in rows]
 
     @staticmethod
     def list_modulos(conn: sqlite3.Connection, ciclo_id: Optional[int] = None) -> Sequence[dict]:
         if ciclo_id:
-            rows = conn.execute("SELECT * FROM modulos WHERE id_ciclo = ?", (ciclo_id,)).fetchall()
+            rows = conn.execute(
+                "SELECT * FROM modulos WHERE id_ciclo = ? ORDER BY nombre",
+                (ciclo_id,),
+            ).fetchall()
         else:
-            rows = conn.execute("SELECT * FROM modulos").fetchall()
+            rows = conn.execute("SELECT * FROM modulos ORDER BY nombre").fetchall()
         return [dict(row) for row in rows]
 
     @staticmethod

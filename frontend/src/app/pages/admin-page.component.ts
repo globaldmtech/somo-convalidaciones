@@ -1906,72 +1906,121 @@ type PendingConvalidacionOrigenDelete = {
 
                   <section class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Formación a aportar</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label class="text-xs font-semibold text-slate-600">Ciclo origen</label>
-                        <select
-                          class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
-                          [(ngModel)]="createConvalidacionOrigenCicloId"
-                          (ngModelChange)="onCrearConvalidacionOrigenCicloChange()"
-                          [disabled]="loadingCreateConvalidacionCiclosOrigen"
-                        >
-                          <option [ngValue]="null">Selecciona un ciclo</option>
-                          <option *ngFor="let ciclo of createConvalidacionCiclosOrigen" [ngValue]="ciclo.id">
-                            {{ ciclo.nombre }}
-                          </option>
-                        </select>
-                        <p *ngIf="loadingCreateConvalidacionCiclosOrigen" class="mt-1 text-xs text-slate-500">
-                          Cargando ciclos...
-                        </p>
-                      </div>
-                      <div class="flex items-end">
+                    <div>
+                      <label class="text-xs font-semibold text-slate-600">Tipo de origen</label>
+                      <div class="mt-1 flex flex-wrap items-center gap-x-6 gap-y-2">
                         <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                           <input
-                            type="checkbox"
-                            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                            [(ngModel)]="createConvalidacionOrigenCicloCompleto"
-                            (ngModelChange)="onCrearConvalidacionOrigenCicloCompletoChange()"
-                            [disabled]="!createConvalidacionOrigenCicloId"
+                            type="radio"
+                            name="createConvalidacionOrigenTipo"
+                            class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [(ngModel)]="createConvalidacionOrigenTipo"
+                            [value]="'ciclo'"
+                            (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
                           />
-                          Seleccionar ciclo completo
+                          Ciclo
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="radio"
+                            name="createConvalidacionOrigenTipo"
+                            class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [(ngModel)]="createConvalidacionOrigenTipo"
+                            [value]="'acreditacion_externa'"
+                            (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
+                          />
+                          Acreditación externa
                         </label>
                       </div>
                     </div>
 
-                    <div *ngIf="createConvalidacionOrigenCicloId" class="rounded-md border border-slate-200 bg-slate-50 p-3">
-                      <div class="flex items-center justify-between gap-2 mb-2">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Módulos origen</p>
-                        <span class="text-xs text-slate-500">
-                          {{ createConvalidacionOrigenCicloCompleto ? createConvalidacionOrigenModulos.length : createConvalidacionOrigenModuloIds.length }} seleccionados
-                        </span>
-                      </div>
-                      <p
-                        class="mb-2 text-xs min-h-[16px]"
-                        [class.text-indigo-700]="createConvalidacionOrigenCicloCompleto"
-                        [class.text-slate-500]="!createConvalidacionOrigenCicloCompleto"
-                      >
-                        {{ createConvalidacionOrigenCicloCompleto ? 'Ciclo completo seleccionado: se incluyen todos los módulos.' : 'Seleccione los módulos.' }}
-                      </p>
-                      <p *ngIf="loadingCreateConvalidacionOrigenModulos" class="text-xs text-slate-500">
-                        Cargando módulos origen...
-                      </p>
-                      <ul *ngIf="!loadingCreateConvalidacionOrigenModulos" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
-                        <li *ngFor="let modulo of createConvalidacionOrigenModulos">
-                          <label class="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-white">
+                    <ng-container *ngIf="createConvalidacionOrigenTipo === 'ciclo'; else createConvalidacionAcreditacionExternaBlock">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <label class="text-xs font-semibold text-slate-600">Ciclo origen</label>
+                          <select
+                            class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                            [(ngModel)]="createConvalidacionOrigenCicloId"
+                            (ngModelChange)="onCrearConvalidacionOrigenCicloChange()"
+                            [disabled]="loadingCreateConvalidacionCiclosOrigen"
+                          >
+                            <option [ngValue]="null">Selecciona un ciclo</option>
+                            <option *ngFor="let ciclo of createConvalidacionCiclosOrigen" [ngValue]="ciclo.id">
+                              {{ ciclo.nombre }}
+                            </option>
+                          </select>
+                          <p *ngIf="loadingCreateConvalidacionCiclosOrigen" class="mt-1 text-xs text-slate-500">
+                            Cargando ciclos...
+                          </p>
+                        </div>
+                        <div class="flex items-end">
+                          <label class="inline-flex items-center gap-2 text-sm text-slate-700">
                             <input
                               type="checkbox"
-                              class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                              [checked]="createConvalidacionOrigenCicloCompleto || createConvalidacionOrigenModuloIds.includes(modulo.id)"
-                              [disabled]="createConvalidacionOrigenCicloCompleto"
-                              (change)="toggleCrearConvalidacionOrigenModulo(modulo.id, $any($event.target).checked)"
+                              class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                              [(ngModel)]="createConvalidacionOrigenCicloCompleto"
+                              (ngModelChange)="onCrearConvalidacionOrigenCicloCompletoChange()"
+                              [disabled]="!createConvalidacionOrigenCicloId"
                             />
-                            <span class="text-sm text-slate-700">
-                              {{ modulo.id_oficial ? (modulo.id_oficial + ' · ') : '' }}{{ modulo.nombre }}
-                            </span>
+                            Seleccionar ciclo completo
                           </label>
-                        </li>
-                      </ul>
-                    </div>
+                        </div>
+                      </div>
+
+                      <div *ngIf="createConvalidacionOrigenCicloId" class="rounded-md border border-slate-200 bg-slate-50 p-3">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Módulos origen</p>
+                          <span class="text-xs text-slate-500">
+                            {{ createConvalidacionOrigenCicloCompleto ? createConvalidacionOrigenModulos.length : createConvalidacionOrigenModuloIds.length }} seleccionados
+                          </span>
+                        </div>
+                        <p
+                          class="mb-2 text-xs min-h-[16px]"
+                          [class.text-indigo-700]="createConvalidacionOrigenCicloCompleto"
+                          [class.text-slate-500]="!createConvalidacionOrigenCicloCompleto"
+                        >
+                          {{ createConvalidacionOrigenCicloCompleto ? 'Ciclo completo seleccionado: se incluyen todos los módulos.' : 'Seleccione los módulos.' }}
+                        </p>
+                        <p *ngIf="loadingCreateConvalidacionOrigenModulos" class="text-xs text-slate-500">
+                          Cargando módulos origen...
+                        </p>
+                        <ul *ngIf="!loadingCreateConvalidacionOrigenModulos" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
+                          <li *ngFor="let modulo of createConvalidacionOrigenModulos">
+                            <label class="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-white">
+                              <input
+                                type="checkbox"
+                                class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                [checked]="createConvalidacionOrigenCicloCompleto || createConvalidacionOrigenModuloIds.includes(modulo.id)"
+                                [disabled]="createConvalidacionOrigenCicloCompleto"
+                                (change)="toggleCrearConvalidacionOrigenModulo(modulo.id, $any($event.target).checked)"
+                              />
+                              <span class="text-sm text-slate-700">
+                                {{ modulo.id_oficial ? (modulo.id_oficial + ' · ') : '' }}{{ modulo.nombre }}
+                              </span>
+                            </label>
+                          </li>
+                        </ul>
+                      </div>
+                    </ng-container>
+
+                    <ng-template #createConvalidacionAcreditacionExternaBlock>
+                      <div>
+                        <label class="text-xs font-semibold text-slate-600">Acreditación externa</label>
+                        <select
+                          class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                          [(ngModel)]="createConvalidacionOrigenAcreditacionId"
+                          [disabled]="loadingCreateConvalidacionAcreditacionesExternas"
+                        >
+                          <option [ngValue]="null">Selecciona una acreditación externa</option>
+                          <option *ngFor="let acreditacion of createConvalidacionAcreditacionesExternas" [ngValue]="acreditacion.id">
+                            {{ acreditacion.nombre }}
+                          </option>
+                        </select>
+                        <p *ngIf="loadingCreateConvalidacionAcreditacionesExternas" class="mt-1 text-xs text-slate-500">
+                          Cargando acreditaciones externas...
+                        </p>
+                      </div>
+                    </ng-template>
                   </section>
                 </div>
               </div>
@@ -2230,15 +2279,19 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   deletingConvalidacionOrigenes = new Set<string>();
   createConvalidacionModalOpen = false;
   createConvalidacionDestinoModuloId: number | null = null;
+  createConvalidacionOrigenTipo: 'ciclo' | 'acreditacion_externa' = 'ciclo';
   createConvalidacionDestinoModulos: Modulo[] = [];
   createConvalidacionCiclosOrigen: Ciclo[] = [];
   createConvalidacionOrigenCicloId: number | null = null;
   createConvalidacionOrigenCicloCompleto = false;
   createConvalidacionOrigenModulos: Modulo[] = [];
   createConvalidacionOrigenModuloIds: number[] = [];
+  createConvalidacionAcreditacionesExternas: Array<{ id: number; nombre: string; tipo: string | null }> = [];
+  createConvalidacionOrigenAcreditacionId: number | null = null;
   loadingCreateConvalidacionDestinoModulos = false;
   loadingCreateConvalidacionCiclosOrigen = false;
   loadingCreateConvalidacionOrigenModulos = false;
+  loadingCreateConvalidacionAcreditacionesExternas = false;
   creatingConvalidacion = false;
   createConvalidacionError: string | null = null;
   deleteConvalidacionOrigenModalOpen = false;
@@ -2973,7 +3026,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             nombre: String(item.nombre || '').trim().replace(/\s+/g, ' '),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
-          .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+          .sort((a, b) => this.compareGradosByPreferredOrder(a.nombre, b.nombre));
         this.loadedConvalidacionesGrados = true;
         this.loadingConvalidacionesGrados = false;
         this.cdr.detectChanges();
@@ -3659,31 +3712,39 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionModalOpen = true;
     this.createConvalidacionError = null;
     this.createConvalidacionDestinoModuloId = null;
+    this.createConvalidacionOrigenTipo = 'ciclo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
     this.createConvalidacionOrigenCicloCompleto = false;
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionOrigenModuloIds = [];
+    this.createConvalidacionAcreditacionesExternas = [];
+    this.createConvalidacionOrigenAcreditacionId = null;
     this.creatingConvalidacion = false;
     this.errorConvalidaciones = null;
 
     this.cargarModulosDestinoCrearConvalidacion(cicloDestinoId);
     this.cargarCiclosOrigenCrearConvalidacion();
+    this.cargarAcreditacionesExternasCrearConvalidacion();
   }
 
   cerrarModalCrearConvalidacion(_force = false): void {
     this.createConvalidacionModalOpen = false;
     this.createConvalidacionDestinoModuloId = null;
+    this.createConvalidacionOrigenTipo = 'ciclo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
     this.createConvalidacionOrigenCicloCompleto = false;
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionOrigenModuloIds = [];
+    this.createConvalidacionAcreditacionesExternas = [];
+    this.createConvalidacionOrigenAcreditacionId = null;
     this.loadingCreateConvalidacionDestinoModulos = false;
     this.loadingCreateConvalidacionCiclosOrigen = false;
     this.loadingCreateConvalidacionOrigenModulos = false;
+    this.loadingCreateConvalidacionAcreditacionesExternas = false;
     this.creatingConvalidacion = false;
     this.createConvalidacionError = null;
   }
@@ -3728,6 +3789,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             id_grado: Number(item.id_grado),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
+          .filter((item) => !this.isAcreditacionesExternasCiclo(item.nombre))
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
         this.loadingCreateConvalidacionCiclosOrigen = false;
         this.cdr.detectChanges();
@@ -3739,6 +3801,39 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  private cargarAcreditacionesExternasCrearConvalidacion(): void {
+    this.loadingCreateConvalidacionAcreditacionesExternas = true;
+    this.catalogService.getAcreditacionesExternas().subscribe({
+      next: (rows) => {
+        this.createConvalidacionAcreditacionesExternas = (Array.isArray(rows) ? rows : [])
+          .map((item) => ({
+            id: Number(item.id),
+            nombre: String(item.nombre || '').trim().replace(/\s+/g, ' '),
+            tipo: item.tipo ?? null,
+          }))
+          .filter((item) => Number.isFinite(item.id) && !!item.nombre)
+          .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
+        this.loadingCreateConvalidacionAcreditacionesExternas = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.createConvalidacionAcreditacionesExternas = [];
+        this.loadingCreateConvalidacionAcreditacionesExternas = false;
+        this.createConvalidacionError = 'No se pudieron cargar las acreditaciones externas.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  onCrearConvalidacionOrigenTipoChange(): void {
+    this.createConvalidacionError = null;
+    this.createConvalidacionOrigenCicloId = null;
+    this.createConvalidacionOrigenCicloCompleto = false;
+    this.createConvalidacionOrigenModulos = [];
+    this.createConvalidacionOrigenModuloIds = [];
+    this.createConvalidacionOrigenAcreditacionId = null;
   }
 
   onCrearConvalidacionOrigenCicloChange(): void {
@@ -3802,6 +3897,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get canGuardarNuevaConvalidacion(): boolean {
     if (!this.createConvalidacionDestinoModuloId) return false;
+    if (this.createConvalidacionOrigenTipo === 'acreditacion_externa') {
+      return !!this.createConvalidacionOrigenAcreditacionId;
+    }
     if (!this.createConvalidacionOrigenCicloId) return false;
     if (this.createConvalidacionOrigenCicloCompleto) return this.createConvalidacionOrigenModulos.length > 0;
     return this.createConvalidacionOrigenModuloIds.length > 0;
@@ -3815,13 +3913,15 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.creatingConvalidacion) return;
 
     const idModuloDestino = Number(this.createConvalidacionDestinoModuloId);
-    const idsOrigen = this.createConvalidacionOrigenCicloCompleto
-      ? this.createConvalidacionOrigenModulos
-          .map((modulo) => Number(modulo.id))
-          .filter((id) => Number.isFinite(id) && id > 0)
-      : this.createConvalidacionOrigenModuloIds
-          .map((id) => Number(id))
-          .filter((id) => Number.isFinite(id) && id > 0);
+    const idsOrigen = this.createConvalidacionOrigenTipo === 'acreditacion_externa'
+      ? [Number(this.createConvalidacionOrigenAcreditacionId)].filter((id) => Number.isFinite(id) && id > 0)
+      : this.createConvalidacionOrigenCicloCompleto
+        ? this.createConvalidacionOrigenModulos
+            .map((modulo) => Number(modulo.id))
+            .filter((id) => Number.isFinite(id) && id > 0)
+        : this.createConvalidacionOrigenModuloIds
+            .map((id) => Number(id))
+            .filter((id) => Number.isFinite(id) && id > 0);
     const idModulosOrigen = Array.from(new Set(idsOrigen)).sort((a, b) => a - b);
 
     if (!Number.isFinite(idModuloDestino) || idModuloDestino <= 0 || idModulosOrigen.length === 0) {
@@ -4380,6 +4480,20 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private compareGradosByPreferredOrder(a: string, b: string): number {
+    return this.getGradoSortRank(a) - this.getGradoSortRank(b)
+      || a.localeCompare(b, 'es', { sensitivity: 'base' });
+  }
+
+  private getGradoSortRank(nombre: string): number {
+    const normalized = String(nombre || '').trim().toLowerCase();
+    if (normalized === 'básica' || normalized === 'basica') return 1;
+    if (normalized === 'grado medio') return 2;
+    if (normalized === 'grado superior') return 3;
+    if (normalized === 'especialización' || normalized === 'especializacion') return 4;
+    return 99;
+  }
+
   debeMostrarDesplegableConvalidadoPor(convalidadoPor: string | null | undefined): boolean {
     return this.getConvalidadoPorLista(convalidadoPor).length > 2;
   }
@@ -4794,6 +4908,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.error = 'No se pudo actualizar el estado del módulo solicitado (timeout o error de red).';
         },
       });
+  }
+
+  private isAcreditacionesExternasCiclo(nombre: string | null | undefined): boolean {
+    return String(nombre || '').trim().toLowerCase() === 'acreditaciones externas';
   }
 
   getDocumentoPage(sourcePage: number | null): number | null {
