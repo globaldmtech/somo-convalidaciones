@@ -324,7 +324,7 @@ export class ConvalidacionesService {
     }
 
     calcularConvalidaciones(targetCicloId?: number): Observable<any[]> {
-        const modulo_ids = this.estudiosSubject.value.flatMap(e => e.modulos.map(m => m.id));
+        const modulo_ids = this.getApprovedModuloIds();
         const acreditacion_ids = this.acreditacionesSubject.value
             .filter(a => a.tipo !== 'otros')
             .map(a => a.id);
@@ -343,6 +343,33 @@ export class ConvalidacionesService {
                 return of([]);
             })
         );
+    }
+
+    private getApprovedModuloIds(): number[] {
+        const approvedIds: number[] = [];
+        for (const estudio of this.estudiosSubject.value) {
+            for (const modulo of estudio.modulos || []) {
+                if (!this.isModuloApproved(estudio, Number(modulo.id), modulo.numerico !== 0)) {
+                    continue;
+                }
+                approvedIds.push(Number(modulo.id));
+            }
+        }
+        return [...new Set(approvedIds)];
+    }
+
+    private isModuloApproved(estudio: EstudioEntry, moduloId: number, isNumerico: boolean): boolean {
+        const nota = estudio.notasPorModulo?.[moduloId];
+        if (isNumerico) {
+            return typeof nota === 'number' && Number.isFinite(nota) && nota >= 5;
+        }
+
+        const resultado = (estudio.resultadosPorModulo?.[moduloId] || '').trim().toUpperCase();
+        if (resultado === 'APTO' || resultado === 'EXENTO') {
+            return true;
+        }
+
+        return nota === 1 || nota === 2;
     }
 
     setDocumentoDni(file: File | null): void {
