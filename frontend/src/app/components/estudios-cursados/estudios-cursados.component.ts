@@ -378,11 +378,22 @@ export class EstudiosCursadosComponent implements OnInit {
     }
 
     hasUnsavedEstudioDraft(): boolean {
-        if (!this.showForm) return false;
-        if (this.selectedGradoId !== null) return true;
-        if (this.selectedCicloId !== null) return true;
-        if (this.selectedModuloIds.size > 0) return true;
-        if (this.selectedModuloNotas.size > 0) return true;
+        if (this.showForm) {
+            if (this.selectedGradoId !== null) return true;
+            if (this.selectedCicloId !== null) return true;
+            if (this.selectedModuloIds.size > 0) return true;
+            if (this.selectedModuloNotas.size > 0) return true;
+        }
+
+        if (this.showAcreditacionForm) {
+            if (this.selectedAcreditacionId !== null && this.selectedAcreditacionId !== '') return true;
+            if (this.otrosTexto.trim()) return true;
+        }
+
+        if (this.showOtrosCiclosModulosForm && this.otrosCiclosModulosInput.trim()) {
+            return true;
+        }
+
         return false;
     }
 
