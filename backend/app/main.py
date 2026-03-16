@@ -1,14 +1,11 @@
 import os
-import sqlite3
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from api.routers import admin, alumnos, convalidaciones
-from db import database
-
+from api.routers import admin, convalidaciones
 app = FastAPI(
     title="Somo-Convalidaciones API",
     description="Backend for Somorrostro Convalidaciones system.",
@@ -30,24 +27,8 @@ app.add_middleware(
 )
 
 # Include Routers
-app.include_router(alumnos.router)
 app.include_router(convalidaciones.router)
 app.include_router(admin.router)
-
-
-@app.delete("/convalidaciones/modulos/{id_modulo}")
-async def delete_modulo(id_modulo: int, db: sqlite3.Connection = Depends(database.get_db)):
-    try:
-        deleted = database.CatalogQueries.delete_modulo(db, id_modulo)
-        if deleted == 0:
-            raise HTTPException(status_code=404, detail="Módulo no encontrado")
-        db.commit()
-        return {"ok": True, "id": id_modulo}
-    except HTTPException:
-        raise
-    except sqlite3.Error as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
 
 def _dist_file_or_none(relative_path: str) -> Path | None:
     if not FRONTEND_DIST_DIR.exists():
