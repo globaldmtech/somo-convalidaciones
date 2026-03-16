@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS formulario_solicitudes (
   id_formulario INTEGER NOT NULL,
   id_modulo_destino INTEGER,
   id_convalidacion INTEGER,
+  nota_manual REAL,
   descripcion TEXT,
   estado_modulo INTEGER NOT NULL,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id) ON DELETE CASCADE,

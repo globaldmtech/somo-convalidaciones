@@ -514,6 +514,7 @@ class AdminQueries:
                     fs.id,
                     fs.id_modulo_destino,
                     fs.id_convalidacion,
+                    fs.nota_manual,
                     c.id AS ciclo_id,
                     c.nombre AS ciclo_nombre,
                     m.nombre AS modulo_destino,
@@ -615,7 +616,7 @@ class AdminQueries:
                     WHEN COUNT(DISTINCT mo.id) > 2 THEN 'Ciclo completo'
                     ELSE COALESCE(REPLACE(GROUP_CONCAT(DISTINCT mo.nombre), ',', CHAR(10)), '')
                 END AS modulo_cursado,
-                AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END) AS nota_modulo,
+                COALESCE(AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END), fs.nota_manual) AS nota_modulo,
                 COALESCE(f.anotaciones, '') AS observaciones
             FROM formularios f
             JOIN usuarios u ON u.id = f.id_alumno
@@ -679,10 +680,11 @@ class AdminQueries:
         id_solicitud: int,
         estado_modulo_id: int,
         admin_id: Optional[int] = None,
+        nota_manual: Optional[float] = None,
     ) -> Optional[dict]:
         formulario_row = conn.execute(
             """
-            SELECT fs.id_formulario, f.estado AS formulario_estado
+            SELECT fs.id_formulario, f.estado AS formulario_estado, fs.id_convalidacion
             FROM formulario_solicitudes fs
             JOIN formularios f ON f.id = fs.id_formulario
             WHERE fs.id = ?
@@ -695,10 +697,14 @@ class AdminQueries:
         conn.execute(
             """
             UPDATE formulario_solicitudes
-            SET estado_modulo = ?
+            SET estado_modulo = ?,
+                nota_manual = CASE
+                    WHEN id_convalidacion IS NULL AND ? = 1 THEN ?
+                    ELSE nota_manual
+                END
             WHERE id = ?
             """,
-            (estado_modulo_id, id_solicitud),
+            (estado_modulo_id, estado_modulo_id, nota_manual, id_solicitud),
         )
 
         if admin_id is not None:
@@ -715,6 +721,7 @@ class AdminQueries:
             "id": id_solicitud,
             "estado_modulo_id": estado_modulo_id,
             "id_formulario": formulario_row["id_formulario"],
+            "nota_manual": nota_manual if formulario_row["id_convalidacion"] is None else None,
         }
 
     @staticmethod

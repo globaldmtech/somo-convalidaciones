@@ -45,11 +45,13 @@ type AdminCicloSolicitudesGroup = {
   cicloNombre: string;
   solicitudes: Array<{
     id: number;
+    idConvalidacion?: number | null;
     nombre: string;
     codigo?: string | null;
     esOtroNoRegistrado?: boolean;
     convalidadoPor?: string | null;
     convalidadoPorIds?: number[];
+    nota_manual?: number | null;
     estadoModuloId: number | null;
     estadoModulo: string | null;
   }>;
@@ -603,7 +605,7 @@ type PendingConvalidacionOrigenDelete = {
                                           type="button"
                                           class="inline-flex items-center justify-center w-6 h-6 rounded border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                                           [disabled]="isSolicitudUpdating(solicitud.id)"
-                                          (click)="actualizarEstadoSolicitud(f.id, solicitud.id, 1)"
+                                          (click)="solicitarValidacionSolicitud(f, solicitud)"
                                           title="Validar"
                                           aria-label="Validar"
                                         >
@@ -636,7 +638,7 @@ type PendingConvalidacionOrigenDelete = {
                                         <p *ngIf="solicitud.codigo || solicitud.esOtroNoRegistrado" class="text-[11px] text-slate-500 mt-0.5">
                                           {{ solicitud.codigo || '(otros no registrados)' }}
                                         </p>
-                                        <ng-container *ngIf="solicitud.convalidadoPor as convalidadoPor">
+                                        <ng-container *ngIf="solicitud.convalidadoPor as convalidadoPor; else notaManualValidada">
                                           <details
                                             *ngIf="debeMostrarDesplegableConvalidadoPor(convalidadoPor); else convalidadoSimpleValidadas"
                                             class="mt-0.5 text-[11px] text-slate-500"
@@ -654,6 +656,11 @@ type PendingConvalidacionOrigenDelete = {
                                             </p>
                                           </ng-template>
                                         </ng-container>
+                                        <ng-template #notaManualValidada>
+                                          <p *ngIf="solicitud.nota_manual !== null && solicitud.nota_manual !== undefined" class="text-[11px] italic text-slate-500 mt-0.5">
+                                            Nota del módulo convalidado: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                          </p>
+                                        </ng-template>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -2198,6 +2205,57 @@ type PendingConvalidacionOrigenDelete = {
               </div>
             </div>
           </div>
+
+          <div *ngIf="manualNotaModalOpen && manualNotaSolicitud" class="fixed inset-0 z-[123] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Nota del módulo convalidado</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Esta solicitud no tiene una regla de convalidación asignada. Puedes guardar una nota manual antes de validarla.
+              </p>
+              <p class="mt-2 text-sm font-semibold text-slate-800">{{ manualNotaSolicitud.nombre }}</p>
+              <label class="block mt-4">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Nota opcional</span>
+                <input
+                  type="number"
+                  [(ngModel)]="manualNotaInput"
+                  class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  placeholder="Ej. 7,5"
+                  min="0"
+                  max="10"
+                  step="0.01"
+                  [disabled]="manualNotaSubmitting"
+                />
+              </label>
+              <p class="mt-2 text-xs text-slate-500">Puedes dejarlo vacío y continuar igualmente.</p>
+              <p *ngIf="manualNotaError" class="mt-3 text-sm text-rose-700">{{ manualNotaError }}</p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  [disabled]="manualNotaSubmitting"
+                  (click)="cerrarModalNotaManual()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  [disabled]="manualNotaSubmitting"
+                  (click)="confirmarValidacionSolicitudSinNota()"
+                >
+                  Validar sin nota
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
+                  [disabled]="manualNotaSubmitting"
+                  (click)="confirmarValidacionSolicitudConNota()"
+                >
+                  {{ manualNotaSubmitting ? 'Guardando...' : 'Guardar y validar' }}
+                </button>
+              </div>
+            </div>
+          </div>
         </ng-container>
       </main>
     </div>
@@ -2229,6 +2287,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   updatingFormularios = new Set<number>();
   deletingFormularios = new Set<number>();
   updatingSolicitudes = new Set<number>();
+  manualNotaModalOpen = false;
+  manualNotaFormularioId: number | null = null;
+  manualNotaSolicitud: AdminCicloSolicitudesGroup['solicitudes'][number] | null = null;
+  manualNotaInput = '';
+  manualNotaError: string | null = null;
+  manualNotaSubmitting = false;
   confirmModalOpen = false;
   confirmFormularioId: number | null = null;
   confirmAlumnoNombre = '';
@@ -2467,6 +2531,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openConvalidaciones.clear();
     this.openConvalidacionCiclos.clear();
     this.updatingFormularios.clear();
+    this.updatingSolicitudes.clear();
+    this.cerrarModalNotaManual(true);
 
     this.loadedModulos = false;
     this.loadedConvalidaciones = false;
@@ -4452,8 +4518,19 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getConvalidadoPorConNota(
     formulario: AdminFormulario,
-    solicitud: { convalidadoPor?: string | null; convalidadoPorIds?: number[] | null }
+    solicitud: { convalidadoPor?: string | null; convalidadoPorIds?: number[] | null; nota_manual?: number | null }
   ): string[] {
+    const notaManual = solicitud.nota_manual;
+    if (
+      (!solicitud.convalidadoPor || !solicitud.convalidadoPor.trim())
+      && (!solicitud.convalidadoPorIds || solicitud.convalidadoPorIds.length === 0)
+      && notaManual !== null
+      && notaManual !== undefined
+      && Number.isFinite(notaManual)
+    ) {
+      return [`Nota manual: ${this.formatearNotaModulo(notaManual)}`];
+    }
+
     const ids = solicitud.convalidadoPorIds ?? [];
     if (ids.length > 0) {
       const modulosById = this.getModulosAportadosById(formulario);
@@ -4474,6 +4551,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!etiqueta) return `${nombre} (sin nota)`;
       return `${nombre} (${etiqueta})`;
     });
+  }
+
+  private parseManualNotaInput(value: string): number | null | undefined {
+    const normalized = String(value || '').trim().replace(',', '.');
+    if (!normalized) return null;
+    const parsed = Number(normalized);
+    if (!Number.isFinite(parsed) || parsed < 0 || parsed > 10) return undefined;
+    return Math.round(parsed * 100) / 100;
   }
 
   private compareGradosByPreferredOrder(a: string, b: string): number {
@@ -4565,11 +4650,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       map.get(key)!.solicitudes.push({
         id: solicitud.id,
+        idConvalidacion: solicitud.id_convalidacion ?? null,
         nombre: solicitud.modulo_destino || solicitud.descripcion || 'Solicitud sin detalle',
         codigo: solicitud.modulo_destino_codigo ?? null,
         esOtroNoRegistrado: !solicitud.id_modulo_destino,
         convalidadoPor: solicitud.convalidado_por ?? solicitud.convalidadoPor ?? null,
         convalidadoPorIds: this.parseConvalidadoPorIds(solicitud.convalidado_por_ids ?? solicitud.convalidadoPorIds ?? null),
+        nota_manual: solicitud.nota_manual ?? null,
         estadoModuloId: solicitud.estado_modulo_id ?? null,
         estadoModulo: solicitud.estado_modulo ?? null,
       });
@@ -4867,15 +4954,75 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   actualizarEstadoSolicitud(formularioId: number, solicitudId: number, estadoModuloId: number): void {
+    this.actualizarEstadoSolicitudConNota(formularioId, solicitudId, estadoModuloId, null);
+  }
+
+  solicitarValidacionSolicitud(
+    formulario: AdminFormulario,
+    solicitud: AdminCicloSolicitudesGroup['solicitudes'][number]
+  ): void {
+    if (solicitud.idConvalidacion !== null && solicitud.idConvalidacion !== undefined) {
+      this.actualizarEstadoSolicitudConNota(formulario.id, solicitud.id, 1, null);
+      return;
+    }
+
+    this.manualNotaFormularioId = formulario.id;
+    this.manualNotaSolicitud = solicitud;
+    this.manualNotaInput = solicitud.nota_manual !== null && solicitud.nota_manual !== undefined
+      ? this.formatearNotaModulo(solicitud.nota_manual)
+      : '';
+    this.manualNotaError = null;
+    this.manualNotaSubmitting = false;
+    this.manualNotaModalOpen = true;
+  }
+
+  cerrarModalNotaManual(resetState = false): void {
+    this.manualNotaModalOpen = false;
+    this.manualNotaError = null;
+    this.manualNotaSubmitting = false;
+    if (resetState) {
+      this.manualNotaFormularioId = null;
+      this.manualNotaSolicitud = null;
+      this.manualNotaInput = '';
+    }
+  }
+
+  confirmarValidacionSolicitudSinNota(): void {
+    if (!this.manualNotaSolicitud || this.manualNotaFormularioId === null) return;
+    this.manualNotaSubmitting = true;
+    this.actualizarEstadoSolicitudConNota(this.manualNotaFormularioId, this.manualNotaSolicitud.id, 1, null, true);
+  }
+
+  confirmarValidacionSolicitudConNota(): void {
+    if (!this.manualNotaSolicitud || this.manualNotaFormularioId === null) return;
+
+    const parsedNota = this.parseManualNotaInput(this.manualNotaInput);
+    if (parsedNota === undefined) {
+      this.manualNotaError = 'Introduce una nota válida entre 0 y 10, o deja el campo vacío.';
+      return;
+    }
+
+    this.manualNotaSubmitting = true;
+    this.actualizarEstadoSolicitudConNota(this.manualNotaFormularioId, this.manualNotaSolicitud.id, 1, parsedNota, true);
+  }
+
+  private actualizarEstadoSolicitudConNota(
+    formularioId: number,
+    solicitudId: number,
+    estadoModuloId: number,
+    notaManual: number | null,
+    closeManualModal = false
+  ): void {
     if (this.updatingSolicitudes.has(solicitudId)) return;
 
     this.updatingSolicitudes.add(solicitudId);
     this.convalidacionesService
-      .actualizarEstadoSolicitudAdmin(solicitudId, estadoModuloId, this.adminId)
+      .actualizarEstadoSolicitudAdmin(solicitudId, estadoModuloId, notaManual, this.adminId)
       .pipe(
         timeout(15000),
         finalize(() => {
           this.updatingSolicitudes.delete(solicitudId);
+          this.manualNotaSubmitting = false;
           this.cdr.detectChanges();
         })
       )
@@ -4886,14 +5033,21 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           if (solicitud) {
             solicitud.estado_modulo_id = updated.estado_modulo_id;
             solicitud.estado_modulo = null;
+            solicitud.nota_manual = updated.nota_manual ?? notaManual;
           }
           if (formulario) {
             formulario.validado_at = new Date().toISOString();
+          }
+          if (closeManualModal) {
+            this.cerrarModalNotaManual(true);
           }
           this.error = null;
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
+          if (closeManualModal) {
+            this.manualNotaError = 'No se pudo validar la solicitud (timeout o error de red).';
+          }
           this.error = 'No se pudo actualizar el estado del módulo solicitado (timeout o error de red).';
         },
       });

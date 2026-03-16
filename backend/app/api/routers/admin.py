@@ -322,6 +322,7 @@ async def cambiar_estado_solicitud(
             id_solicitud=id_solicitud,
             estado_modulo_id=request.estado_modulo_id,
             admin_id=request.admin_id,
+            nota_manual=request.nota_manual,
         )
         if not updated:
             raise HTTPException(status_code=404, detail="Solicitud no encontrada")

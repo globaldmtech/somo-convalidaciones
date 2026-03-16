@@ -36,6 +36,7 @@ export interface AdminFormularioSolicitud {
     id: number;
     id_modulo_destino: number | null;
     id_convalidacion?: number | null;
+    nota_manual?: number | null;
     ciclo_id?: number | null;
     ciclo_nombre?: string | null;
     modulo_destino: string | null;
@@ -90,6 +91,7 @@ export interface AdminSolicitudEstadoUpdateResponse {
     id: number;
     estado_modulo_id: number;
     id_formulario?: number;
+    nota_manual?: number | null;
 }
 
 export interface AdminFormularioEstadoUpdateResponse {
@@ -473,11 +475,12 @@ export class ConvalidacionesService {
     actualizarEstadoSolicitudAdmin(
         idSolicitud: number,
         estadoModuloId: number,
+        notaManual?: number | null,
         adminId?: number | null
     ): Observable<AdminSolicitudEstadoUpdateResponse> {
         return this.http.put<AdminSolicitudEstadoUpdateResponse>(
             `${ADMIN_API_BASE}/solicitudes/${idSolicitud}/estado`,
-            { estado_modulo_id: estadoModuloId, admin_id: adminId ?? null },
+            { estado_modulo_id: estadoModuloId, admin_id: adminId ?? null, nota_manual: notaManual ?? null },
             this.getAdminAuthHeaders()
         );
     }

@@ -9,6 +9,7 @@ class CambiarEstadoFormularioRequest(BaseModel):
 class CambiarEstadoSolicitudRequest(BaseModel):
     estado_modulo_id: int
     admin_id: int | None = None
+    nota_manual: float | None = None
 
 
 class AdminLoginRequest(BaseModel):
