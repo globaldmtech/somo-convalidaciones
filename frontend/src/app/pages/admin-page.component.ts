@@ -1594,7 +1594,7 @@ type PendingConvalidacionOrigenDelete = {
                   </p>
                   <h3 class="text-base font-bold text-slate-900">{{ modulosModalCiclo.nombre }}</h3>
                   <p class="text-xs text-slate-500 mt-1">
-                    ID ciclo: {{ modulosModalCiclo.id }} · {{ modulosModalCiclo.total_modulos }} modulos
+                    {{ modulosModalCiclo.total_modulos }} modulos
                   </p>
                 </div>
                 <button

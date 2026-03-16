@@ -447,9 +447,7 @@ class AdminQueries:
                 iterations,
             ).hex()
             return hmac.compare_digest(computed, digest_hex)
-
-        # Compatibilidad con administradores antiguos guardados en texto plano.
-        return hmac.compare_digest(password, stored_value)
+        return False
 
     @staticmethod
     def authenticate_admin(conn: sqlite3.Connection, nombre: str, password: str) -> Optional[dict]:
