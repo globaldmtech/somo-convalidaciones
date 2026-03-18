@@ -31,7 +31,7 @@ El backend carga variables desde `backend/.env`. El contenido mínimo es:
 Variables útiles:
 
 - `DB_PATH`: ruta de la base de datos SQLite relativa a `backend/`
-- `FORM_UPLOAD_DIR`: carpeta donde se guardan los adjuntos. Por defect `/app/data/uploads`
+- `FORM_UPLOAD_DIR`: carpeta donde se guardan los adjuntos. Por defecto `/app/data/uploads`
 - `CORS_ALLOWED_ORIGINS`: orígenes permitidos para el frontend en desarrollo. Por defecto `http://localhost:4200`
 - `FRONTEND_DIST_DIR`: ruta del frontend compilado cuando se sirve desde FastAPI.
 
