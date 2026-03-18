@@ -6,7 +6,6 @@ El proyecto está compuesto por:
 
 - `backend/`: API en FastAPI y acceso a SQLite
 - `frontend/`: cliente Angular
-- `backend/scripts/`: scripts SQL y utilidades para cargar catálogo y reglas
 
 ## Requisitos
 
