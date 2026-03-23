@@ -66,39 +66,3 @@ Aplica los INSERTs al fichero `db.sqlite` directamente.
 ```bash
 python generate_convalidations.py --sql --db
 ```
-
----
-
-## Buscar módulos / ciclos
-
-Si no sabes el código oficial de un módulo, usa `db_helper.py` para buscarlo:
-
-```bash
-# Buscar un módulo por nombre parcial
-python db_helper.py modulo "logistica"
-
-# Buscar un ciclo por nombre parcial
-python db_helper.py ciclo "ventas"
-
-# Listar todas las familias
-python db_helper.py familia ""
-```
-
----
-
-## Estructura de la BD (tablas relevantes)
-
-```
-convalidacion
-  id               INTEGER PK
-  source_link      TEXT
-  source_page      INTEGER
-  id_modulo_destino INTEGER FK→modulos
-
-convalidacion_origen
-  conv_id    INTEGER FK→convalidacion
-  id_modulo  INTEGER FK→modulos
-  PK (conv_id, id_modulo)
-```
-
-> Cada regla crea **1 fila en `convalidacion`** y **N filas en `convalidacion_origen`** (una por módulo origen).
