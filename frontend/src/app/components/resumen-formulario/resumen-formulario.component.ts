@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { finalize, timeout } from 'rxjs/operators';
 import {
     ConvalidacionesService,
+    getPersonalDocumentTypeLabel,
     PersonalData,
     SelectedConvalidation,
     UploadedDocument,
@@ -24,6 +25,7 @@ export class ResumenFormularioComponent implements OnInit {
     otrosCiclosModulosCursados: string[] = [];
     convalidacionesSolicitadas: SelectedConvalidation[] = [];
     personalData: PersonalData = {
+        documentType: 'dni',
         nombre: '',
         apellidos: '',
         dni: '',
@@ -45,7 +47,9 @@ export class ResumenFormularioComponent implements OnInit {
         this.acreditaciones = this.convalidacionesService.getAcreditaciones();
         this.otrosCiclosModulosCursados = this.convalidacionesService.getOtrosCiclosModulos();
         this.personalData = this.convalidacionesService.getPersonalData();
-        this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
+        this.convalidacionesSolicitadas = this.deduplicarConvalidacionesSolicitadasPorMejorNota(
+            this.convalidacionesService.sharedSelectedConvalidations
+        );
     }
 
     get totalModulos(): number {
@@ -58,6 +62,10 @@ export class ResumenFormularioComponent implements OnInit {
 
     get gradoDestino(): string {
         return this.convalidacionesService.targetGradoNombre || '—';
+    }
+
+    get documentTypeLabel(): string {
+        return getPersonalDocumentTypeLabel(this.personalData.documentType || 'dni');
     }
 
     get otrosSolicitudes(): string[] {
@@ -98,6 +106,69 @@ export class ResumenFormularioComponent implements OnInit {
         return modulo ? modulo.numerico !== 0 : true;
     }
 
+    notaConvalidacionSolicitada(item: SelectedConvalidation): number | null {
+        const notaMediaOrigen = this.parseNotaFlexible(item.nota_media_origen);
+        if (notaMediaOrigen !== null) {
+            return this.redondearNotaConvalidacion(notaMediaOrigen);
+        }
+
+        const origenIds = this.getModulosOrigenIds(item.modulos_origen_ids);
+        if (origenIds.length === 0) return null;
+
+        const notasPorId = this.getNotasPorIdModulo();
+        const notas = origenIds
+            .map((id) => notasPorId.get(id))
+            .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
+
+        if (notas.length !== origenIds.length) return null;
+
+        const media = notas.reduce((acc, current) => acc + current, 0) / notas.length;
+        return this.redondearNotaConvalidacion(media);
+    }
+
+    viaConvalidacion(item: SelectedConvalidation): string {
+        const ciclo = (item.ciclo_origen || item.source || '').trim();
+        if (item.origen_tipo === 'ciclo_completo') {
+            return ciclo ? `${ciclo} · Ciclo completo` : 'Ciclo completo';
+        }
+        const modulos = (item.modulos_origen || '').trim();
+        if (ciclo && modulos) {
+            return `${ciclo} · ${modulos}`;
+        }
+        return ciclo || modulos || '—';
+    }
+
+    private redondearNotaConvalidacion(value: number): number {
+        return Math.floor(value + 0.5);
+    }
+
+    private getModulosOrigenIds(rawIds: unknown): number[] {
+        if (!rawIds) return [];
+        return String(rawIds)
+            .split(',')
+            .map((token) => token.trim())
+            .filter(Boolean)
+            .map((token) => Number(token))
+            .filter((id) => Number.isFinite(id));
+    }
+
+    private getNotasPorIdModulo(): Map<number, number> {
+        const map = new Map<number, number>();
+        for (const estudio of this.estudios || []) {
+            for (const modulo of estudio.modulos || []) {
+                const nota = this.parseNotaFlexible(estudio.notasPorModulo?.[modulo.id]);
+                if (nota === null) continue;
+                const idModulo = Number(modulo.id);
+                if (!Number.isFinite(idModulo)) continue;
+                const actual = map.get(idModulo);
+                if (actual === undefined || nota > actual) {
+                    map.set(idModulo, nota);
+                }
+            }
+        }
+        return map;
+    }
+
     private parseNotaFlexible(value: unknown): number | null {
         if (typeof value === 'number') {
             return Number.isFinite(value) ? value : null;
@@ -123,20 +194,30 @@ export class ResumenFormularioComponent implements OnInit {
         return this.convalidacionesService.documentosOtros;
     }
 
+    get duplicateDocumentNames(): string[] {
+        return this.convalidacionesService.getDuplicateDocumentNames();
+    }
+
     get documentosCompletos(): boolean {
-        return !!this.documentoDni && this.documentosCertificado.length > 0;
+        return !!this.documentoDni
+            && this.documentosCertificado.length > 0
+            && this.duplicateDocumentNames.length === 0;
     }
 
     enviar(): void {
         if (this.enviando) return;
 
         if (!this.documentosCompletos) {
-            this.error = 'Debes subir DNI y certificado académico antes de enviar.';
+            this.error = this.duplicateDocumentNames.length > 0
+                ? `Hay documentos con nombres duplicados: ${this.duplicateDocumentNames.join(', ')}. Cámbialos antes de enviar.`
+                : 'Debes subir DNI y certificado académico antes de enviar.';
             return;
         }
 
         // Releer selección final por si hubo cambios asíncronos tras entrar al resumen.
-        this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
+        this.convalidacionesSolicitadas = this.deduplicarConvalidacionesSolicitadasPorMejorNota(
+            this.convalidacionesService.sharedSelectedConvalidations
+        );
 
         this.enviando = true;
         this.error = null;
@@ -160,6 +241,12 @@ export class ResumenFormularioComponent implements OnInit {
                     nota: estudio.notasPorModulo?.[modulo.id] ?? null,
                 }))
             );
+            const ciclosAportadosDetalle = this.estudios
+                .filter((estudio) => estudio.cicloCompleto === true)
+                .map((estudio) => ({
+                    id_ciclo: Number(estudio.ciclo.id),
+                    nota_media: estudio.notaMediaCiclo ?? null,
+                }));
             const acreditacionesRegistradas = this.acreditaciones
                 .filter(a => a.tipo !== 'otros')
                 .map(a => a.id);
@@ -171,12 +258,16 @@ export class ResumenFormularioComponent implements OnInit {
             const solicitudesRegistradas = this.convalidacionesSolicitadas.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: item.id_convalidacion ?? null,
+                id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                 descripcion: null,
+                nota_media_origen: this.parseNotaFlexible(item.nota_media_origen),
             }));
             const solicitudesRegistradasManuales = this.convalidacionesService.otrosModulosCicloRegistrados.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: null,
+                id_convalidacion_ciclo: null,
                 descripcion: null,
+                nota_media_origen: null,
             }));
             const solicitudesRegistradasUnicas = this.deduplicarSolicitudesRegistradas([
                 ...solicitudesRegistradas,
@@ -189,6 +280,7 @@ export class ResumenFormularioComponent implements OnInit {
             ];
 
             payload = {
+                document_type: this.personalData.documentType,
                 nombre: this.personalData.nombre,
                 apellidos: this.personalData.apellidos,
                 dni: this.personalData.dni,
@@ -198,6 +290,7 @@ export class ResumenFormularioComponent implements OnInit {
                 anotaciones: null,
                 id_modulos_registrados_aportados: [...new Set(idModulosAportados)],
                 modulos_aportados_detalle: modulosAportadosDetalle,
+                ciclos_aportados_detalle: ciclosAportadosDetalle.length > 0 ? ciclosAportadosDetalle : null,
                 id_acreditaciones_registradas_aportadas: [...new Set(acreditacionesRegistradas)],
                 descripcion_no_registrados: descripcionNoRegistrados.length > 0 ? descripcionNoRegistrados : null,
                 solicitudes_registradas: solicitudesRegistradasUnicas,
@@ -237,9 +330,9 @@ export class ResumenFormularioComponent implements OnInit {
     }
 
     private deduplicarSolicitudesRegistradas(
-        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>
-    ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }> {
-        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>();
+        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null; nota_media_origen: number | null }>
+    ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }> {
+        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null; nota_media_origen: number | null }>();
 
         for (const item of items) {
             const moduloId = Number(item.id_modulo_destino);
@@ -250,21 +343,61 @@ export class ResumenFormularioComponent implements OnInit {
                 byModulo.set(moduloId, {
                     id_modulo_destino: moduloId,
                     id_convalidacion: item.id_convalidacion ?? null,
+                    id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
+                    nota_media_origen: item.nota_media_origen ?? null,
                 });
                 continue;
             }
 
-            // Priorizamos la solicitud automática (con id_convalidacion) sobre la manual/null.
-            if (current.id_convalidacion === null && item.id_convalidacion !== null) {
+            const currentEsAutomatica = current.id_convalidacion !== null || current.id_convalidacion_ciclo !== null;
+            const itemEsAutomatica = item.id_convalidacion !== null || item.id_convalidacion_ciclo !== null;
+            const currentNota = this.parseNotaFlexible(current.nota_media_origen);
+            const itemNota = this.parseNotaFlexible(item.nota_media_origen);
+            const itemTieneMejorNota = itemNota !== null && (currentNota === null || itemNota > currentNota);
+            const mismaNaturaleza = currentEsAutomatica === itemEsAutomatica;
+
+            if ((!currentEsAutomatica && itemEsAutomatica) || (mismaNaturaleza && itemTieneMejorNota)) {
                 byModulo.set(moduloId, {
                     id_modulo_destino: moduloId,
-                    id_convalidacion: item.id_convalidacion,
+                    id_convalidacion: item.id_convalidacion ?? null,
+                    id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
+                    nota_media_origen: item.nota_media_origen ?? null,
                 });
             }
         }
 
-        return Array.from(byModulo.values());
+        return Array.from(byModulo.values()).map(({ nota_media_origen: _nota, ...item }) => item);
+    }
+
+    private deduplicarConvalidacionesSolicitadasPorMejorNota(items: SelectedConvalidation[]): SelectedConvalidation[] {
+        const byModulo = new Map<number, SelectedConvalidation>();
+
+        for (const item of items || []) {
+            const moduloId = Number(item.id);
+            if (!Number.isFinite(moduloId)) continue;
+
+            const current = byModulo.get(moduloId);
+            if (!current) {
+                byModulo.set(moduloId, item);
+                continue;
+            }
+
+            const currentEsAutomatica = current.id_convalidacion !== null || current.id_convalidacion_ciclo !== null;
+            const itemEsAutomatica = item.id_convalidacion !== null || item.id_convalidacion_ciclo !== null;
+            const currentNota = this.parseNotaFlexible(current.nota_media_origen);
+            const itemNota = this.parseNotaFlexible(item.nota_media_origen);
+            const itemTieneMejorNota = itemNota !== null && (currentNota === null || itemNota > currentNota);
+            const mismaNaturaleza = currentEsAutomatica === itemEsAutomatica;
+
+            if ((!currentEsAutomatica && itemEsAutomatica) || (mismaNaturaleza && itemTieneMejorNota)) {
+                byModulo.set(moduloId, item);
+            }
+        }
+
+        return Array.from(byModulo.values()).sort((a, b) =>
+            String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es')
+        );
     }
 }

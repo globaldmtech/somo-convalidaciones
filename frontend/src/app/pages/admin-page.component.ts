@@ -9,12 +9,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import {
   AdminCicloModulo,
   AdminCicloConModulos,
   AdminConvalidacionRegla,
+  AdminCreateConvalidacionesMasivasResponse,
+  AdminDeleteConvalidacionesMasivasResponse,
   AdminFormulario,
   AdminUser,
   ConvalidacionesService,
@@ -24,6 +27,8 @@ import { Ciclo, Grado, Modulo } from '../models/catalog.models';
 import { finalize, timeout } from 'rxjs/operators';
 
 type AdminTab = 'formularios' | 'modulos' | 'convalidaciones' | 'administradores';
+type AdminConvalidacionesView = 'destino' | 'multiple';
+type AdminBusquedaOrigenTipo = 'modulos' | 'ciclos' | 'acreditaciones';
 
 type AdminAlumnoGroup = {
   key: string;
@@ -52,6 +57,7 @@ type AdminCicloSolicitudesGroup = {
     convalidadoPor?: string | null;
     convalidadoPorIds?: number[];
     nota_manual?: number | null;
+    nota_media_origen?: number | null;
     estadoModuloId: number | null;
     estadoModulo: string | null;
   }>;
@@ -79,6 +85,7 @@ type AdminAcreditacionExternaGroup = {
 type AdminConvalidacionCicloAgrupado = {
   key: string;
   cicloOrigenNombre: string;
+  esCicloCompleto: boolean;
   totalModulosNecesarios: number;
   modulosOrigen: Array<{ nombre: string; codigo: string | null }>;
   fuentes: Array<{ sourceLink: string | null; sourcePage: number | null }>;
@@ -98,11 +105,42 @@ type AdminConvalidacionModuloAgrupado = {
 type AdminConvalidacionOrigenEditable = {
   key: string;
   idConvalidacion: number;
-  idModuloOrigen: number;
-  moduloOrigenNombre: string;
+  idModuloOrigen: number | null;
+  moduloOrigenNombre: string | null;
   moduloOrigenCodigo: string | null;
   cicloOrigenNombre: string;
+  esCicloCompleto: boolean;
 };
+
+type AdminBusquedaModuloResultado = {
+  key: string;
+  nombre: string;
+  codigo: string | null;
+  totalCiclos: number;
+  ciclos: Array<{
+    moduloId: number;
+    moduloNombre: string;
+    moduloCodigo: string | null;
+    cicloId: number;
+    cicloNombre: string;
+    cicloCodigo: string | null;
+    familiaNombre: string | null;
+    gradoNombre: string | null;
+  }>;
+};
+
+type AdminBusquedaModuloSeleccionItem = {
+  origenTipo: 'modulo' | 'ciclo' | 'acreditacion_externa' | 'destino';
+  moduloId: number | null;
+  moduloNombre: string | null;
+  moduloCodigo: string | null;
+  cicloId: number;
+  cicloNombre: string;
+  gradoNombre: string | null;
+  familiaNombre: string | null;
+};
+
+type AdminConvalidacionesMultiplesAction = 'crear' | 'eliminar';
 
 type PendingConvalidacionOrigenDelete = {
   key: string;
@@ -119,7 +157,7 @@ type PendingConvalidacionOrigenDelete = {
   template: `
     <div class="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div #headerInner class="max-w-6xl mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
+        <div #headerInner class="max-w-[1600px] mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
           <div #headerBrand class="flex items-center min-w-0">
             <div class="font-black text-lg tracking-tight uppercase shrink-0">SOMO <span class="text-indigo-600">CONVALIDACIONES</span></div>
           </div>
@@ -232,7 +270,7 @@ type PendingConvalidacionOrigenDelete = {
         </div>
       </header>
 
-      <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
         <section *ngIf="!isAuthenticated" class="max-w-md mx-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 class="text-2xl font-black text-slate-900">Acceso Admin</h1>
           <p class="text-sm text-slate-500 mt-1">Inicia sesión para visualizar y gestionar formularios.</p>
@@ -400,7 +438,7 @@ type PendingConvalidacionOrigenDelete = {
             </div>
 
             <div *ngIf="!loading && alumnosMostrados.length > 0" class="space-y-4">
-              <article *ngFor="let alumno of alumnosMostrados" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <article *ngFor="let alumno of alumnosMostrados; trackBy: trackByAlumno" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <button
                   type="button"
                   class="w-full px-5 py-4 text-left hover:bg-slate-50 transition-colors"
@@ -434,7 +472,7 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
 
                 <div *ngIf="isAlumnoOpen(alumno.key)" class="border-t border-slate-100 bg-slate-50/60 px-4 py-4 space-y-4">
-                  <section *ngFor="let f of alumno.formularios" class="rounded-xl border border-slate-200 bg-white p-4">
+                  <section *ngFor="let f of alumno.formularios; trackBy: trackByFormulario" class="rounded-xl border border-slate-200 bg-white p-4">
                     <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                       <div>
                         <h3 class="text-sm font-bold text-slate-900">Formulario #{{ f.id }}</h3>
@@ -488,50 +526,134 @@ type PendingConvalidacionOrigenDelete = {
                     <p *ngIf="isFormularioUpdating(f.id)" class="mb-2 text-[11px] text-slate-500 text-right">Guardando estado del formulario...</p>
 
                     <div class="space-y-4">
-                      <div class="p-1">
-                        <div class="mb-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
-                          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">MÓDULOS APORTADOS</p>
-                        </div>
-                        <div class="space-y-2" *ngIf="getModulosPorCiclo(f).length > 0; else sinModulos">
-                          <div *ngFor="let ciclo of getModulosPorCiclo(f)" class="rounded-md border border-slate-200 bg-white p-3">
-                            <button
-                              type="button"
-                              class="w-full text-left flex items-center justify-between gap-2"
-                              (click)="toggleCiclo(f.id, ciclo.key)"
-                            >
-                              <p class="text-sm font-semibold text-slate-700">{{ ciclo.cicloNombre }}</p>
-                              <div class="flex items-center gap-2">
-                                <span *ngIf="getNotaMediaCiclo(ciclo) !== null" class="text-xs font-semibold text-indigo-700">
-                                  Nota media ciclo: {{ getNotaMediaCiclo(ciclo) | number:'1.0-2' }}
-                                </span>
-                                <span class="text-xs text-slate-500">{{ ciclo.modulos.length }} módulos</span>
-                                <svg
-                                  class="w-4 h-4 text-slate-500 transition-transform"
-                                  [class.rotate-180]="isCicloOpen(f.id, ciclo.key)"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                              </div>
-                            </button>
-                            <ul *ngIf="isCicloOpen(f.id, ciclo.key)" class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                              <li
-                                *ngFor="let modulo of ciclo.modulos"
-                                class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
+                      <div class="grid grid-cols-1 xl:grid-cols-[minmax(320px,0.95fr)_minmax(520px,1.55fr)] gap-4 p-1">
+                        <div class="flex flex-col">
+                          <div class="mb-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
+                            <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">MÓDULOS APORTADOS</p>
+                          </div>
+                          <div class="space-y-2" [class.xl:h-[616px]]="shouldStretchModulosPanel(f)" *ngIf="getModulosPorCiclo(f).length > 0; else sinModulos">
+                            <div *ngFor="let ciclo of getModulosPorCiclo(f)" class="rounded-md border border-slate-200 bg-white p-3 flex flex-col" [class.xl:h-full]="shouldStretchModulosPanel(f)">
+                              <button
+                                type="button"
+                                class="w-full text-left flex items-center justify-between gap-2"
+                                (click)="toggleCiclo(f.id, ciclo.key)"
                               >
-                                <span>{{ modulo.nombre }}</span>
-                                <span *ngIf="getEtiquetaNotaModuloAdmin(modulo) as etiqueta" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
-                                  {{ etiqueta }}
-                                </span>
-                              </li>
-                            </ul>
+                                <p class="text-sm font-semibold text-slate-700">{{ ciclo.cicloNombre }}</p>
+                                <div class="flex items-center gap-2">
+                                  <span *ngIf="getNotaMediaCiclo(ciclo) !== null" class="text-xs font-semibold text-indigo-700">
+                                    Nota media ciclo: {{ getNotaMediaCiclo(ciclo) | number:'1.0-2' }}
+                                  </span>
+                                  <span class="text-xs text-slate-500">{{ ciclo.modulos.length }} módulos</span>
+                                  <svg
+                                    class="w-4 h-4 text-slate-500 transition-transform"
+                                    [class.rotate-180]="isCicloOpen(f.id, ciclo.key)"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                  </svg>
+                                </div>
+                              </button>
+                              <ul *ngIf="isCicloOpen(f.id, ciclo.key)" class="mt-3 xl:flex-1 overflow-y-auto pr-1 max-h-[560px] xl:max-h-none">
+                                <li
+                                  *ngFor="let modulo of ciclo.modulos"
+                                  class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
+                                >
+                                  <span>{{ modulo.nombre }}</span>
+                                  <span *ngIf="getEtiquetaNotaModuloAdmin(modulo) as etiqueta" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
+                                    {{ etiqueta }}
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                          <ng-template #sinModulos>
+                            <p class="text-sm text-slate-500">Sin módulos aportados.</p>
+                          </ng-template>
+                        </div>
+
+                        <div>
+                          <div class="mb-2 flex items-center justify-between gap-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
+                            <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">DOCUMENTOS APORTADOS</p>
+                            <span class="text-xs text-slate-500 font-semibold">
+                              {{ (f.documentos_aportados || []).length }} documentos
+                            </span>
+                          </div>
+                          <div class="rounded-md border border-slate-200 bg-white overflow-hidden">
+                            <div *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="flex flex-col">
+                              <div class="border-b border-slate-200 bg-slate-50 p-2">
+                                <div class="flex items-start gap-2">
+                                  <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                      <button
+                                        *ngFor="let documento of f.documentos_aportados; let i = index"
+                                        type="button"
+                                        class="inline-flex items-center rounded-md border px-2.5 py-1.5 text-sm transition-colors"
+                                        [ngClass]="isDocumentoPreviewSelected(f.id, documento.ruta_almacenamiento)
+                                          ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'"
+                                        (click)="seleccionarDocumentoPreview(f.id, documento.ruta_almacenamiento)"
+                                      >
+                                        <span class="block">
+                                          {{ getDocumentoDisplayName(documento, i) }}
+                                        </span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <div class="shrink-0 flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      class="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                      [disabled]="!getDocumentoPreviewSeleccionado(f)"
+                                      (click)="abrirDocumentoPreviewSeleccionado(f)"
+                                      title="Abrir documento seleccionado"
+                                      aria-label="Abrir documento seleccionado"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h6M5 5v14h14v-6"></path>
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      class="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                      [disabled]="!getDocumentoPreviewSeleccionado(f)"
+                                      (click)="descargarDocumentoPreviewSeleccionado(f)"
+                                      title="Descargar documento seleccionado"
+                                      aria-label="Descargar documento seleccionado"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="relative h-[560px] bg-slate-50">
+                                <iframe
+                                  [attr.id]="getDocumentoPreviewFrameId(f.id)"
+                                  class="w-full h-full bg-white"
+                                  [class.hidden]="!hasDocumentoPreviewUrl(f.id)"
+                                  title="Vista previa del documento aportado"
+                                ></iframe>
+                                <div *ngIf="isDocumentoPreviewLoading(f.id)" class="absolute inset-0 flex items-center justify-center text-sm text-slate-500 bg-slate-50/90">
+                                  Cargando documento...
+                                </div>
+                                <div *ngIf="!isDocumentoPreviewLoading(f.id) && getDocumentoPreviewError(f.id) as previewError" class="absolute inset-0 flex items-center justify-center px-4 text-sm text-rose-600 text-center bg-slate-50/90">
+                                  {{ previewError }}
+                                </div>
+                                <div *ngIf="!isDocumentoPreviewLoading(f.id) && !getDocumentoPreviewError(f.id) && !hasDocumentoPreviewUrl(f.id)" class="absolute inset-0 flex items-center justify-center px-4 text-sm text-slate-500 text-center">
+                                  Selecciona un documento para visualizarlo.
+                                </div>
+                              </div>
+                            </div>
+                            <ng-template #sinDocumentosAportados>
+                              <div class="p-4 text-sm text-slate-500">Sin documentos aportados.</div>
+                            </ng-template>
                           </div>
                         </div>
-                        <ng-template #sinModulos>
-                          <p class="text-sm text-slate-500">Sin módulos aportados.</p>
-                        </ng-template>
                       </div>
 
                       <div class="p-1">
@@ -661,6 +783,9 @@ type PendingConvalidacionOrigenDelete = {
                                             Nota del módulo convalidado: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
                                           </p>
                                         </ng-template>
+                                        <p *ngIf="getNotaConvalidadaRedondeada(solicitud.nota_media_origen) !== null" class="text-[11px] italic text-slate-500 mt-0.5">
+                                          Nota convalidada: {{ getNotaConvalidadaRedondeada(solicitud.nota_media_origen) }}
+                                        </p>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -711,12 +836,15 @@ type PendingConvalidacionOrigenDelete = {
                                               {{ getConvalidadoPorConNota(f, solicitud).join('\n') }}
                                             </p>
                                           </details>
-                                          <ng-template #convalidadoSimpleRechazadas>
-                                            <p class="text-[11px] italic text-slate-500 mt-0.5">
-                                              Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
-                                            </p>
-                                          </ng-template>
+                                        <ng-template #convalidadoSimpleRechazadas>
+                                          <p class="text-[11px] italic text-slate-500 mt-0.5">
+                                            Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                          </p>
+                                        </ng-template>
                                         </ng-container>
+                                        <p *ngIf="getNotaConvalidadaRedondeada(solicitud.nota_media_origen) !== null" class="text-[11px] italic text-slate-500 mt-0.5">
+                                          Nota convalidada: {{ getNotaConvalidadaRedondeada(solicitud.nota_media_origen) }}
+                                        </p>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -744,44 +872,6 @@ type PendingConvalidacionOrigenDelete = {
                         </ng-template>
                       </div>
 
-                      <div class="p-1">
-                        <div class="mb-2 flex items-center justify-between gap-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
-                          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">DOCUMENTOS APORTADOS</p>
-                          <span class="text-xs text-slate-500 font-semibold">
-                            {{ (f.documentos_aportados || []).length }} documentos
-                          </span>
-                        </div>
-                        <ul *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="space-y-1">
-                          <li
-                            *ngFor="let documento of f.documentos_aportados"
-                            class="py-1 flex items-start justify-between gap-3"
-                          >
-                            <div class="min-w-0">
-                              <button
-                                type="button"
-                                class="text-left text-sm font-semibold text-slate-800 hover:text-indigo-700 hover:underline break-all transition-colors"
-                                (click)="abrirDocumentoAportado(documento.ruta_almacenamiento)"
-                              >
-                                {{ documento.descripcion || documento.nombre_archivo }}
-                              </button>
-                            </div>
-                            <button
-                              type="button"
-                              class="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-slate-100 transition-colors"
-                              (click)="descargarDocumentoAportado(documento.ruta_almacenamiento, documento.descripcion || documento.nombre_archivo); $event.stopPropagation()"
-                              title="Descargar documento"
-                              aria-label="Descargar documento"
-                            >
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path>
-                              </svg>
-                            </button>
-                          </li>
-                        </ul>
-                        <ng-template #sinDocumentosAportados>
-                          <p class="text-sm text-slate-500">Sin documentos aportados.</p>
-                        </ng-template>
-                      </div>
                       <div class="flex flex-wrap justify-end gap-2 pt-1">
                         <button
                           *ngIf="canFormularioDelete(f.estado_id)"
@@ -828,22 +918,33 @@ type PendingConvalidacionOrigenDelete = {
           </section>
 
           <section *ngIf="activeTab === 'modulos'" class="space-y-4">
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="modulosVistaActiva === 'ciclos' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="modulosVistaActiva = 'ciclos'"
+                >
+                  Ciclos
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="modulosVistaActiva === 'acreditaciones' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="modulosVistaActiva = 'acreditaciones'"
+                >
+                  Acreditaciones externas
+                </button>
+              </div>
+
               <button
+                *ngIf="modulosVistaActiva === 'ciclos'"
                 type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="modulosVistaActiva === 'ciclos' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="modulosVistaActiva = 'ciclos'"
+                class="text-sm font-semibold text-slate-600 underline underline-offset-4 decoration-slate-300 hover:text-indigo-600 hover:decoration-indigo-300 transition-colors"
+                (click)="mostrarTodosLosCiclos = !mostrarTodosLosCiclos"
               >
-                Ciclos
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="modulosVistaActiva === 'acreditaciones' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="modulosVistaActiva = 'acreditaciones'"
-              >
-                Acreditaciones externas
+                {{ mostrarTodosLosCiclos ? 'Ver ciclos Somorrostro' : 'Ver todos los ciclos' }}
               </button>
             </div>
 
@@ -944,7 +1045,11 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  <article *ngFor="let ciclo of familia.ciclos" class="rounded-xl border border-slate-200 bg-white shadow-sm p-4 h-[210px] flex flex-col">
+                  <article
+                    *ngFor="let ciclo of familia.ciclos"
+                    class="group rounded-xl border border-slate-200 bg-white shadow-sm p-4 min-h-[172px] flex flex-col transition-colors hover:border-slate-300 hover:bg-slate-50/40 cursor-pointer"
+                    (click)="abrirModalModulos(ciclo)"
+                  >
                     <div class="mb-3">
                       <div class="min-w-0">
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">
@@ -952,22 +1057,21 @@ type PendingConvalidacionOrigenDelete = {
                         </p>
                         <h4 class="text-sm font-bold text-slate-900 leading-5 line-clamp-2">{{ ciclo.nombre }}</h4>
                         <p class="text-xs text-slate-500 mt-1">{{ ciclo.total_modulos }} modulos</p>
-                        <button
-                          type="button"
-                          class="mt-2 rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1 text-[11px] font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors"
-                          (click)="abrirModalModulos(ciclo)"
-                        >
-                          Mostrar modulos
-                        </button>
                       </div>
                     </div>
 
-                    <div class="border-t border-slate-100 pt-3 mt-auto">
+                    <div class="border-t border-slate-100 pt-3 mt-auto flex items-center justify-between gap-3 rounded-b-lg transition-colors">
+                      <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-indigo-700">
+                        <span class="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1 transition-colors hover:bg-indigo-100">
+                          Mostrar modulos
+                        </span>
+                      </div>
+
                       <div class="flex items-center justify-end gap-2">
                         <button
                           type="button"
                           class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-indigo-600 transition-colors"
-                          (click)="editarCiclo(ciclo)"
+                          (click)="$event.stopPropagation(); editarCiclo(ciclo)"
                           title="Editar ciclo"
                           aria-label="Editar ciclo"
                         >
@@ -978,7 +1082,7 @@ type PendingConvalidacionOrigenDelete = {
                         <button
                           type="button"
                           class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors"
-                          (click)="eliminarCiclo(ciclo)"
+                          (click)="$event.stopPropagation(); eliminarCiclo(ciclo)"
                           title="Eliminar ciclo"
                           aria-label="Eliminar ciclo"
                         >
@@ -1025,6 +1129,32 @@ type PendingConvalidacionOrigenDelete = {
           </section>
 
           <section *ngIf="activeTab === 'convalidaciones'" class="space-y-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="inline-flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+                  [ngClass]="convalidacionesView === 'destino'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                  (click)="setConvalidacionesView('destino')"
+                >
+                  Convalidaciones por destino
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+                  [ngClass]="convalidacionesView === 'multiple'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                  (click)="setConvalidacionesView('multiple')"
+                >
+                  Edición multiples convalidaciones
+                </button>
+              </div>
+            </div>
+
+            <ng-container *ngIf="convalidacionesView === 'destino'">
             <div class="rounded-2xl border border-slate-200 bg-white p-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
@@ -1050,16 +1180,25 @@ type PendingConvalidacionOrigenDelete = {
                     [disabled]="loadingConvalidacionesCiclos"
                   >
                     <option [ngValue]="null">Todos los ciclos</option>
-                    <option *ngFor="let ciclo of convalidacionesCiclos" [ngValue]="ciclo.id">
-                      {{ ciclo.nombre }}
-                    </option>
+                    <optgroup *ngIf="convalidacionesCiclosSomorrostro.length > 0" label="Ciclos Somorrostro">
+                      <option *ngFor="let ciclo of convalidacionesCiclosSomorrostro" [ngValue]="ciclo.id">
+                        {{ ciclo.nombre }}
+                      </option>
+                    </optgroup>
+                    <optgroup *ngIf="convalidacionesCiclosRestantes.length > 0" label="Ciclos restantes">
+                      <option *ngFor="let ciclo of convalidacionesCiclosRestantes" [ngValue]="ciclo.id">
+                        {{ ciclo.nombre }}
+                      </option>
+                    </optgroup>
                   </select>
                 </div>
               </div>
               <div class="mt-3 flex flex-wrap items-center gap-3 justify-between">
-                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {{ convalidacionesAgrupadas.length }} modulos
-                </span>
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ convalidacionesAgrupadas.length }} modulos
+                  </span>
+                </div>
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-md border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
@@ -1142,7 +1281,7 @@ type PendingConvalidacionOrigenDelete = {
                           (click)="toggleConvalidacionCiclo(ciclo.key)"
                         >
                           <span class="inline-flex text-[11px] font-semibold px-2 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap">
-                            {{ ciclo.totalModulosNecesarios }} modulos
+                            {{ ciclo.esCicloCompleto ? 'Ciclo completo' : (ciclo.totalModulosNecesarios + ' modulos') }}
                           </span>
                           <span
                             class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
@@ -1201,12 +1340,15 @@ type PendingConvalidacionOrigenDelete = {
                           </ng-template>
                           <span class="ml-2">
                             <span class="font-semibold text-slate-700">Página:</span>
-                            <span>{{ getDocumentoPage(fuente.sourcePage) ?? 'sin página' }}</span>
+                            <span>{{ getDocumentoPage(fuente.sourcePage, fuente.sourceLink) ?? 'sin página' }}</span>
                           </span>
                         </li>
                       </ul>
-                      <p class="text-[11px] uppercase tracking-wide font-semibold text-indigo-700 mb-1.5">Módulos aportados</p>
-                      <ul class="space-y-1.5">
+                      <p class="text-[11px] uppercase tracking-wide font-semibold text-indigo-700 mb-1.5">
+                        {{ ciclo.esCicloCompleto ? 'Formación aportada' : 'Módulos aportados' }}
+                      </p>
+                      <p *ngIf="ciclo.esCicloCompleto" class="text-sm text-slate-700 leading-5">Ciclo completo</p>
+                      <ul *ngIf="!ciclo.esCicloCompleto" class="space-y-1.5">
                         <li *ngFor="let modulo of ciclo.modulosOrigen" class="text-sm text-slate-700 leading-5">
                           <span *ngIf="modulo.codigo" class="text-slate-500">{{ modulo.codigo }} · </span>{{ modulo.nombre }}
                         </li>
@@ -1216,6 +1358,138 @@ type PendingConvalidacionOrigenDelete = {
                 </div>
               </div>
             </article>
+            </ng-container>
+
+            <ng-container *ngIf="convalidacionesView === 'multiple'">
+              <div *ngIf="loadingModulos" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+                Cargando ciclos y modulos...
+              </div>
+              <div *ngIf="!loadingModulos && errorModulos" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ errorModulos }}
+              </div>
+
+              <div *ngIf="!loadingModulos && !errorModulos" class="space-y-4">
+                <section class="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 flex flex-col gap-4">
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Crear reglas de convalidación</p>
+                    <p class="mt-1 text-sm text-slate-500">
+                      Selecciona orígenes y módulos destino para crear o eliminar reglas en bloque.
+                    </p>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Origen</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900">
+                          {{ totalBusquedaModuloOrigenSeleccionados }} orígenes seleccionados
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        (click)="abrirModalBusquedaOrigen()"
+                      >
+                        Seleccionar
+                      </button>
+                    </div>
+                    <div *ngIf="selectedBusquedaModuloOrigenItems.length > 0; else sinOrigenSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
+                      <p *ngFor="let item of selectedBusquedaModuloOrigenItems" class="text-xs text-slate-600">
+                        {{ formatBusquedaModuloSeleccionItem(item) }}
+                      </p>
+                    </div>
+                    <ng-template #sinOrigenSeleccionado>
+                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado orígenes.</p>
+                    </ng-template>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Destino</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900">
+                          {{ totalBusquedaModuloDestinoSeleccionados }} módulos seleccionados
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        (click)="abrirModalBusquedaDestino()"
+                      >
+                        Seleccionar
+                      </button>
+                    </div>
+                    <div *ngIf="selectedBusquedaModuloDestinoItems.length > 0; else sinDestinoSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
+                      <p *ngFor="let item of selectedBusquedaModuloDestinoItems" class="text-xs text-slate-600">
+                        {{ formatBusquedaModuloSeleccionItem(item) }}
+                      </p>
+                    </div>
+                    <ng-template #sinDestinoSeleccionado>
+                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado módulos de destino.</p>
+                    </ng-template>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fuente</p>
+                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <label class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-slate-600">URL</span>
+                        <input
+                          type="url"
+                          [(ngModel)]="createMultipleConvalidacionesSourceLink"
+                          class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                          placeholder="https://..."
+                        />
+                      </label>
+                      <label class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-slate-600">Página</span>
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          [(ngModel)]="createMultipleConvalidacionesSourcePage"
+                          class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                          placeholder="Ej. 147"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-3">
+                    <p class="text-sm font-semibold text-indigo-900">Resumen</p>
+                    <p class="mt-1 text-xs text-indigo-800">
+                      Se procesarán {{ totalCombinacionesConvalidacionMultiples }} reglas:
+                      cada origen seleccionado con cada módulo de destino.
+                    </p>
+                  </div>
+
+                  <p *ngIf="createMultipleConvalidacionesError" class="text-sm text-rose-700">{{ createMultipleConvalidacionesError }}</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      class="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-indigo-600 hover:bg-indigo-700"
+                      [disabled]="!canCrearConvalidacionesMultiples || creatingMultipleConvalidaciones"
+                      (click)="setConvalidacionesMultiplesAction('crear'); crearConvalidacionesMultiples()"
+                    >
+                      {{ creatingMultipleConvalidaciones && convalidacionesMultiplesAction === 'crear'
+                        ? 'Creando reglas...'
+                        : 'Crear reglas de convalidación' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-slate-600 hover:bg-slate-700"
+                      [disabled]="!canCrearConvalidacionesMultiples || creatingMultipleConvalidaciones"
+                      (click)="abrirModalEliminarConvalidacionesMultiples()"
+                    >
+                      {{ creatingMultipleConvalidaciones && convalidacionesMultiplesAction === 'eliminar'
+                        ? 'Eliminando reglas...'
+                        : 'Eliminar reglas de convalidación' }}
+                    </button>
+                  </div>
+                </section>
+
+              </div>
+            </ng-container>
           </section>
 
           <section *ngIf="activeTab === 'administradores'" class="space-y-4">
@@ -1431,6 +1705,465 @@ type PendingConvalidacionOrigenDelete = {
             </div>
           </div>
 
+          <div *ngIf="createMultipleConvalidacionesResultModalOpen" class="fixed inset-0 z-[103] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">
+                {{ createMultipleConvalidacionesResultAction === 'crear' ? 'Reglas de convalidación creadas' : 'Reglas de convalidación eliminadas' }}
+              </h3>
+              <p class="mt-3 text-sm text-slate-700">
+                {{ createMultipleConvalidacionesResultAction === 'crear' ? 'Se han creado' : 'Se han eliminado' }}
+                {{ createMultipleConvalidacionesResultCreatedCount }} reglas de convalidación.
+              </p>
+              <p class="mt-2 text-sm text-slate-700">
+                {{ createMultipleConvalidacionesResultSkippedCount }}
+                {{ createMultipleConvalidacionesResultAction === 'crear'
+                  ? 'reglas no se han insertado porque ya existían.'
+                  : 'reglas no se han eliminado porque no existían.' }}
+              </p>
+              <div class="mt-5 flex items-center justify-end">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+                  (click)="cerrarModalResultadoConvalidacionesMultiples()"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="deleteMultipleConvalidacionesModalOpen" class="fixed inset-0 z-[104] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Eliminar reglas de convalidación</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                ¿Estás seguro de que quieres eliminar {{ totalCombinacionesConvalidacionMultiples }} reglas?
+              </p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  (click)="cerrarModalEliminarConvalidacionesMultiples()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 bg-slate-700 text-white hover:bg-slate-800 transition-colors disabled:opacity-60"
+                  [disabled]="creatingMultipleConvalidaciones"
+                  (click)="confirmarEliminarConvalidacionesMultiples()"
+                >
+                  Eliminar reglas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="busquedaOrigenModalOpen" class="fixed inset-0 z-[124] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-3xl max-h-[85vh] rounded-xl bg-white border border-slate-200 shadow-xl flex flex-col overflow-hidden">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-4 bg-white shrink-0">
+                <div>
+                  <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Origen</p>
+                  <p class="mt-1 text-sm text-slate-500">Selecciona los orígenes que se aplicarán a las reglas.</p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center w-8 h-8 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+                  (click)="cerrarModalBusquedaOrigen()"
+                  aria-label="Cerrar"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="flex-1 min-h-0 overflow-y-auto">
+                <div class="border-b border-slate-200 px-4 py-4 bg-white">
+                  <div class="mt-3">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de origen</label>
+                    <div class="flex flex-wrap items-center gap-4">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('modulos')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Módulo</span>
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('ciclos')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Ciclo</span>
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('acreditaciones')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Acreditación externa</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloIzquierdaGrado"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todos los grados</option>
+                        <option *ngFor="let grado of gradosBusquedaModuloIzquierda" [value]="grado">{{ grado }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloIzquierdaFamilia"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todas las familias</option>
+                        <option *ngFor="let familia of familiasBusquedaModuloIzquierda" [value]="familia">{{ familia }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscador de ciclos' : 'Buscador de módulos' }}
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="busquedaModuloIzquierda"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    [placeholder]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscar ciclo...' : 'Buscar módulo...'"
+                  />
+                  <p class="mt-2 text-xs text-slate-500">
+                    {{ resultadosBusquedaModuloIzquierda.length }}
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                      ? (resultadosBusquedaModuloIzquierda.length === 1 ? 'ciclo encontrado' : 'ciclos encontrados')
+                      : (resultadosBusquedaModuloIzquierda.length === 1 ? 'módulo único encontrado' : 'módulos únicos encontrados') }}
+                  </p>
+                </div>
+
+                <div class="p-4">
+                  <p *ngIf="!busquedaModuloIzquierdaNormalizada" class="px-2 py-1 text-sm text-slate-500">
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                      ? 'Escribe una acreditación para ver las acreditaciones externas disponibles.'
+                      : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                        ? 'Escribe un ciclo para ver los ciclos disponibles y seleccionar todos sus módulos.'
+                        : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.') }}
+                  </p>
+                  <p *ngIf="busquedaModuloIzquierdaNormalizada && resultadosBusquedaModuloIzquierda.length === 0" class="px-2 py-1 text-sm text-slate-500">
+                    No hay {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'ciclos' : 'módulos' }} que coincidan con esa búsqueda.
+                  </p>
+                  <div *ngIf="resultadosBusquedaModuloIzquierda.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                    <button
+                      type="button"
+                      class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                      (click)="toggleBusquedaModuloSeleccion('izquierda')"
+                    >
+                      {{ isBusquedaModuloAllSelected('izquierda')
+                        ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                          ? 'Deseleccionar todas las acreditaciones'
+                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'Deseleccionar todos los ciclos'
+                            : 'Deseleccionar todos los módulos y ciclos'))
+                        : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                          ? 'Seleccionar todas las acreditaciones'
+                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'Seleccionar todos los ciclos'
+                            : 'Seleccionar todos los módulos y ciclos')) }}
+                    </button>
+                    <article *ngFor="let resultado of resultadosBusquedaModuloIzquierda" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                      <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenNoAcreditacion">
+                        <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                          <input
+                            *ngIf="resultado.ciclos[0] as acreditacion"
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', acreditacion.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', acreditacion.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">{{ resultado.nombre }}</span>
+                          </span>
+                        </label>
+                      </ng-container>
+                      <ng-template #resultadoOrigenNoAcreditacion>
+                      <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'; else resultadoOrigenConDesplegable">
+                        <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                          <input
+                            *ngIf="resultado.ciclos[0] as ciclo"
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">
+                              <ng-container *ngIf="resultado.codigo">
+                                <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                              </ng-container>
+                              {{ resultado.nombre }}
+                            </span>
+                            <span *ngIf="formatBusquedaModuloMeta(resultado)" class="block text-xs text-slate-500">
+                              {{ formatBusquedaModuloMeta(resultado) }}
+                            </span>
+                          </span>
+                        </label>
+                      </ng-container>
+                      <ng-template #resultadoOrigenConDesplegable>
+                      <button
+                        type="button"
+                        class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                        (click)="toggleBusquedaModuloRow('izquierda', resultado.key)"
+                      >
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-900">
+                              <ng-container *ngIf="resultado.codigo">
+                                <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                              </ng-container>
+                              {{ resultado.nombre }}
+                            </p>
+                            <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">
+                              {{ formatBusquedaModuloMeta(resultado) }}
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                              {{ resultado.totalCiclos }}
+                              {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? (resultado.totalCiclos === 1 ? 'módulo' : 'módulos')
+                                : (resultado.totalCiclos === 1 ? 'ciclo' : 'ciclos') }}
+                            </span>
+                            <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                              [class.rotate-180]="isBusquedaModuloRowOpen('izquierda', resultado.key)">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                      <div *ngIf="isBusquedaModuloRowOpen('izquierda', resultado.key)" class="px-2 pt-1">
+                        <button
+                          type="button"
+                          class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloResultadoSeleccion('izquierda', resultado)"
+                        >
+                          {{ isBusquedaModuloResultadoAllSelected('izquierda', resultado)
+                            ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Deseleccionar esta acreditación'
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Deseleccionar todos los módulos de este ciclo'
+                                : 'Deseleccionar todos los ciclos de este módulo'))
+                            : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Seleccionar esta acreditación'
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Seleccionar todos los módulos de este ciclo'
+                                : 'Seleccionar todos los ciclos de este módulo')) }}
+                        </button>
+                        <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">
+                              {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? ((ciclo.moduloCodigo ? (ciclo.moduloCodigo + ' · ') : '') + ciclo.moduloNombre)
+                                : ciclo.cicloNombre }}
+                            </span>
+                            <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">
+                              {{ formatBusquedaModuloCicloMeta(ciclo) }}
+                            </span>
+                          </span>
+                        </label>
+                      </div>
+                      </ng-template>
+                      </ng-template>
+                    </article>
+                  </div>
+                </div>
+                <div class="border-t border-slate-200 px-4 py-4 bg-white flex justify-end">
+                  <button
+                    type="button"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                    (click)="guardarModalBusquedaOrigen()"
+                  >
+                    Guardar selección
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="busquedaDestinoModalOpen" class="fixed inset-0 z-[125] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-3xl max-h-[85vh] rounded-xl bg-white border border-slate-200 shadow-xl flex flex-col overflow-hidden">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-4 bg-white shrink-0">
+                <div>
+                  <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Destino</p>
+                  <p class="mt-1 text-sm text-slate-500">Selecciona los módulos destino que se usarán en bloque.</p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center w-8 h-8 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+                  (click)="cerrarModalBusquedaDestino()"
+                  aria-label="Cerrar"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="flex-1 min-h-0 overflow-y-auto">
+                <div class="border-b border-slate-200 px-4 py-4 bg-white">
+                  <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloDerechaGrado"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todos los grados</option>
+                        <option *ngFor="let grado of gradosBusquedaModuloDerecha" [value]="grado">{{ grado }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloDerechaFamilia"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todas las familias</option>
+                        <option *ngFor="let familia of familiasBusquedaModuloDerecha" [value]="familia">{{ familia }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="busquedaModuloDerecha"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="Buscar módulo..."
+                  />
+                  <p class="mt-2 text-xs text-slate-500">
+                    {{ resultadosBusquedaModuloDerecha.length }} módulos únicos encontrados
+                  </p>
+                </div>
+
+                <div class="p-4">
+                  <p *ngIf="!busquedaModuloDerechaNormalizada" class="px-2 py-1 text-sm text-slate-500">
+                    Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.
+                  </p>
+                  <p *ngIf="busquedaModuloDerechaNormalizada && resultadosBusquedaModuloDerecha.length === 0" class="px-2 py-1 text-sm text-slate-500">
+                    No hay módulos que coincidan con esa búsqueda.
+                  </p>
+                  <div *ngIf="resultadosBusquedaModuloDerecha.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                    <button
+                      type="button"
+                      class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                      (click)="toggleBusquedaModuloSeleccion('derecha')"
+                    >
+                      {{ isBusquedaModuloAllSelected('derecha') ? 'Deseleccionar todos los módulos y ciclos' : 'Seleccionar todos los módulos y ciclos' }}
+                    </button>
+                    <article *ngFor="let resultado of resultadosBusquedaModuloDerecha" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                      <button
+                        type="button"
+                        class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                        (click)="toggleBusquedaModuloRow('derecha', resultado.key)"
+                      >
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-900">
+                              <span *ngIf="resultado.codigo" class="text-slate-500">{{ resultado.codigo }} · </span>{{ resultado.nombre }}
+                            </p>
+                            <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">{{ formatBusquedaModuloMeta(resultado) }}</p>
+                          </div>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                              {{ resultado.totalCiclos }} ciclos
+                            </span>
+                            <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                              [class.rotate-180]="isBusquedaModuloRowOpen('derecha', resultado.key)">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                      <div *ngIf="isBusquedaModuloRowOpen('derecha', resultado.key)" class="px-2 pt-1">
+                        <button
+                          type="button"
+                          class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloResultadoSeleccion('derecha', resultado)"
+                        >
+                          {{ isBusquedaModuloResultadoAllSelected('derecha', resultado) ? 'Deseleccionar todos los ciclos de este módulo' : 'Seleccionar todos los ciclos de este módulo' }}
+                        </button>
+                        <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('derecha', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('derecha', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">{{ ciclo.cicloNombre }}</span>
+                            <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">{{ formatBusquedaModuloCicloMeta(ciclo) }}</span>
+                          </span>
+                        </label>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <div class="border-t border-slate-200 px-4 py-4 bg-white flex justify-end">
+                  <button
+                    type="button"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                    (click)="guardarModalBusquedaDestino()"
+                  >
+                    Guardar selección
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div *ngIf="deleteCicloModalOpen && cicloToDelete" class="fixed inset-0 z-[105] bg-slate-900/45 flex items-center justify-center p-4">
             <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
               <h3 class="text-base font-bold text-slate-900">Eliminar ciclo</h3>
@@ -1494,6 +2227,16 @@ type PendingConvalidacionOrigenDelete = {
                     placeholder="Ej: Desarrollo de Aplicaciones Multiplataforma"
                   />
                 </label>
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Centro</span>
+                  <select
+                    [(ngModel)]="createCicloEsSomorrostro"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  >
+                    <option [ngValue]="true">Somorrostro</option>
+                    <option [ngValue]="false">No Somorrostro</option>
+                  </select>
+                </label>
               </div>
               <p *ngIf="createCicloError" class="mt-3 text-sm text-rose-700">{{ createCicloError }}</p>
               <div class="mt-5 flex items-center justify-end gap-2">
@@ -1509,9 +2252,9 @@ type PendingConvalidacionOrigenDelete = {
                   type="button"
                   class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
                   [disabled]="creatingCiclo || !canCreateCiclo()"
-                  (click)="crearCiclo()"
+                  (click)="guardarCiclo()"
                 >
-                  {{ creatingCiclo ? 'Creando...' : 'Crear ciclo' }}
+                  {{ creatingCiclo ? (editingCicloId !== null ? 'Guardando...' : 'Creando...') : (editingCicloId !== null ? 'Guardar cambios' : 'Crear ciclo') }}
                 </button>
               </div>
             </div>
@@ -1601,7 +2344,10 @@ type PendingConvalidacionOrigenDelete = {
                   </p>
                   <h3 class="text-base font-bold text-slate-900">{{ modulosModalCiclo.nombre }}</h3>
                   <p class="text-xs text-slate-500 mt-1">
-                    {{ modulosModalCiclo.total_modulos }} modulos
+                    {{ modulosModalCiclo.total_modulos }} módulos
+                  </p>
+                  <p *ngIf="modulosModalDeprecated.length > 0" class="text-xs text-slate-500 mt-1">
+                    {{ modulosModalActivos.length }} activos · {{ modulosModalDeprecated.length }} obsoletos
                   </p>
                 </div>
                 <button
@@ -1689,32 +2435,80 @@ type PendingConvalidacionOrigenDelete = {
                   <p *ngIf="createModulosError" class="text-sm text-rose-700">{{ createModulosError }}</p>
                 </div>
 
-                <ul class="thin-scroll space-y-2 h-full max-h-[60vh] overflow-y-auto pr-1">
-	                  <li
-	                    *ngFor="let modulo of modulosModalCiclo.modulos"
-	                    class="text-sm text-slate-700 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
-	                  >
-	                    <div class="min-w-0 flex-1">
-	                      <span *ngIf="modulo.id_oficial" class="text-xs text-slate-500 mr-1">{{ modulo.id_oficial }}</span>
-	                      {{ modulo.nombre }}
+                <div class="thin-scroll h-full max-h-[60vh] overflow-y-auto pr-1 space-y-5">
+                  <section>
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Módulos activos</h4>
+                      <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                        {{ modulosModalActivos.length }}
+                      </span>
+                    </div>
+                    <ul class="space-y-2">
+                      <li
+                        *ngFor="let modulo of modulosModalActivos"
+                        class="text-sm text-slate-700 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
+                      >
+                        <div class="min-w-0 flex-1">
+                          <span *ngIf="modulo.id_oficial" class="text-xs text-slate-500 mr-1">{{ modulo.id_oficial }}</span>
+                          {{ modulo.nombre }}
                           <span class="ml-2 inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
                             {{ modulo.numerico === 0 ? 'No numérico' : 'Numérico' }}
                           </span>
-	                    </div>
-	                    <button
-                      type="button"
-                      class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-                      [disabled]="deletingModulos.has(modulo.id)"
-                      (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre)"
-                      title="Eliminar módulo"
-                      aria-label="Eliminar módulo"
-                    >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
-                      </svg>
-                    </button>
-                  </li>
-                </ul>
+                        </div>
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                          [disabled]="deletingModulos.has(modulo.id)"
+                          (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre)"
+                          title="Eliminar módulo"
+                          aria-label="Eliminar módulo"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
+                          </svg>
+                        </button>
+                      </li>
+                    </ul>
+                  </section>
+
+                  <section *ngIf="modulosModalDeprecated.length > 0">
+                    <div class="mb-2 flex items-center justify-between gap-2">
+                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Módulos obsoletos</h4>
+                      <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                        {{ modulosModalDeprecated.length }}
+                      </span>
+                    </div>
+                    <ul class="space-y-2">
+                      <li
+                        *ngFor="let modulo of modulosModalDeprecated"
+                        class="text-sm text-slate-500 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
+                      >
+                        <div class="min-w-0 flex-1">
+                          <span *ngIf="modulo.id_oficial" class="text-xs text-slate-400 mr-1">{{ modulo.id_oficial }}</span>
+                          {{ modulo.nombre }}
+                          <span class="ml-2 inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">
+                            Obsoleto
+                          </span>
+                          <span class="ml-2 inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                            {{ modulo.numerico === 0 ? 'No numérico' : 'Numérico' }}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                          [disabled]="deletingModulos.has(modulo.id)"
+                          (click)="abrirModalEliminarModulo(modulo.id, modulo.nombre)"
+                          title="Eliminar módulo"
+                          aria-label="Eliminar módulo"
+                        >
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m3 0V5a1 1 0 011-1h6a1 1 0 011 1v2m-9 0h10"></path>
+                          </svg>
+                        </button>
+                      </li>
+                    </ul>
+                  </section>
+                </div>
               </div>
             </div>
           </div>
@@ -1830,17 +2624,31 @@ type PendingConvalidacionOrigenDelete = {
                     <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Ciclo origen</p>
                     <p class="text-sm text-slate-800 mt-0.5">{{ editConvalidacionCicloOrigenNombre }}</p>
                   </div>
-                  <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Módulo o módulos origen</p>
-                <ul class="thin-scroll space-y-2 h-full max-h-[58vh] overflow-y-auto pr-1">
+                  <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                    {{ editConvalidacionOrigenes.length > 0 && editConvalidacionOrigenes[0].esCicloCompleto ? 'Formación aportada' : 'Módulo o módulos origen' }}
+                  </p>
+                <p *ngIf="editConvalidacionOrigenes.length > 0 && editConvalidacionOrigenes[0].esCicloCompleto" class="text-sm text-slate-800 mt-0.5">
+                  Ciclo completo
+                </p>
+                <ul
+                  *ngIf="!(editConvalidacionOrigenes.length > 0 && editConvalidacionOrigenes[0].esCicloCompleto)"
+                  class="thin-scroll space-y-2 h-full max-h-[58vh] overflow-y-auto pr-1"
+                >
                   <li
                     *ngFor="let origen of editConvalidacionOrigenes"
                     class="text-sm text-slate-700 leading-5 border-b border-slate-100 pb-2 flex items-start justify-between gap-3"
                   >
                     <div class="min-w-0 flex-1">
-                      <span *ngIf="origen.moduloOrigenCodigo" class="text-xs text-slate-500 mr-1">{{ origen.moduloOrigenCodigo }}</span>
-                      {{ origen.moduloOrigenNombre }}
+                      <ng-container *ngIf="origen.esCicloCompleto; else moduloOrigenEditable">
+                        Ciclo completo
+                      </ng-container>
+                      <ng-template #moduloOrigenEditable>
+                        <span *ngIf="origen.moduloOrigenCodigo" class="text-xs text-slate-500 mr-1">{{ origen.moduloOrigenCodigo }}</span>
+                        {{ origen.moduloOrigenNombre }}
+                      </ng-template>
                     </div>
                     <button
+                      *ngIf="!origen.esCicloCompleto"
                       type="button"
                       class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                       [disabled]="deletingConvalidacionOrigenes.has(origen.key)"
@@ -1859,8 +2667,8 @@ type PendingConvalidacionOrigenDelete = {
             </div>
           </div>
 
-          <div *ngIf="createConvalidacionModalOpen" class="fixed inset-0 z-[118] bg-slate-900/45 flex items-center justify-center p-4">
-            <div class="w-full max-w-3xl max-h-[88vh] rounded-xl bg-white border border-slate-200 shadow-xl p-5 flex flex-col overflow-hidden">
+          <div *ngIf="createConvalidacionModalOpen" class="fixed inset-0 z-[118] bg-slate-900/45 overflow-y-auto p-4">
+            <div class="thin-scroll w-full max-w-3xl max-h-[88vh] my-6 mx-auto rounded-xl bg-white border border-slate-200 shadow-xl p-5 overflow-y-auto">
               <div class="flex items-start justify-between gap-3 shrink-0">
                 <div class="min-w-0">
                   <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Añadir regla de convalidación</p>
@@ -1881,8 +2689,8 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
               </div>
 
-              <div class="border-t border-slate-100 mt-4 pt-4 flex-1 min-h-0 overflow-hidden">
-                <div class="thin-scroll h-full overflow-y-auto pr-1 space-y-5">
+              <div class="border-t border-slate-100 mt-4 pt-4">
+                <div class="space-y-5">
                   <section class="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Formación a convalidar</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1922,6 +2730,17 @@ type PendingConvalidacionOrigenDelete = {
                             name="createConvalidacionOrigenTipo"
                             class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
                             [(ngModel)]="createConvalidacionOrigenTipo"
+                            [value]="'modulo'"
+                            (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
+                          />
+                          Módulo
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="radio"
+                            name="createConvalidacionOrigenTipo"
+                            class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [(ngModel)]="createConvalidacionOrigenTipo"
                             [value]="'ciclo'"
                             (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
                           />
@@ -1941,8 +2760,8 @@ type PendingConvalidacionOrigenDelete = {
                       </div>
                     </div>
 
-                    <ng-container *ngIf="createConvalidacionOrigenTipo === 'ciclo'; else createConvalidacionAcreditacionExternaBlock">
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <ng-container *ngIf="createConvalidacionOrigenTipo !== 'acreditacion_externa'; else createConvalidacionAcreditacionExternaBlock">
+                      <div>
                         <div>
                           <label class="text-xs font-semibold text-slate-600">Ciclo origen</label>
                           <select
@@ -1952,53 +2771,56 @@ type PendingConvalidacionOrigenDelete = {
                             [disabled]="loadingCreateConvalidacionCiclosOrigen"
                           >
                             <option [ngValue]="null">Selecciona un ciclo</option>
-                            <option *ngFor="let ciclo of createConvalidacionCiclosOrigen" [ngValue]="ciclo.id">
-                              {{ ciclo.nombre }}
-                            </option>
+                            <optgroup *ngIf="createConvalidacionCiclosOrigenSomorrostro.length > 0" label="Ciclos Somorrostro">
+                              <option *ngFor="let ciclo of createConvalidacionCiclosOrigenSomorrostro" [ngValue]="ciclo.id">
+                                {{ ciclo.nombre }}
+                              </option>
+                            </optgroup>
+                            <optgroup *ngIf="createConvalidacionCiclosOrigenRestantes.length > 0" label="Ciclos restantes">
+                              <option *ngFor="let ciclo of createConvalidacionCiclosOrigenRestantes" [ngValue]="ciclo.id">
+                                {{ ciclo.nombre }}
+                              </option>
+                            </optgroup>
                           </select>
                           <p *ngIf="loadingCreateConvalidacionCiclosOrigen" class="mt-1 text-xs text-slate-500">
                             Cargando ciclos...
                           </p>
                         </div>
-                        <div class="flex items-end">
-                          <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                            <input
-                              type="checkbox"
-                              class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                              [(ngModel)]="createConvalidacionOrigenCicloCompleto"
-                              (ngModelChange)="onCrearConvalidacionOrigenCicloCompletoChange()"
-                              [disabled]="!createConvalidacionOrigenCicloId"
-                            />
-                            Seleccionar ciclo completo
-                          </label>
-                        </div>
                       </div>
 
                       <div *ngIf="createConvalidacionOrigenCicloId" class="rounded-md border border-slate-200 bg-slate-50 p-3">
                         <div class="flex items-center justify-between gap-2 mb-2">
-                          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Módulos origen</p>
+                          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            {{ createConvalidacionOrigenTipo === 'ciclo' ? 'Ciclo origen' : 'Módulos origen' }}
+                          </p>
                           <span class="text-xs text-slate-500">
-                            {{ createConvalidacionOrigenCicloCompleto ? createConvalidacionOrigenModulos.length : createConvalidacionOrigenModuloIds.length }} seleccionados
+                            {{ createConvalidacionOrigenTipo === 'ciclo'
+                              ? '1 seleccionado'
+                              : (createConvalidacionOrigenModuloIds.length + ' seleccionados') }}
                           </span>
                         </div>
                         <p
                           class="mb-2 text-xs min-h-[16px]"
-                          [class.text-indigo-700]="createConvalidacionOrigenCicloCompleto"
-                          [class.text-slate-500]="!createConvalidacionOrigenCicloCompleto"
+                          [class.text-indigo-700]="createConvalidacionOrigenTipo === 'ciclo'"
+                          [class.text-slate-500]="createConvalidacionOrigenTipo !== 'ciclo'"
                         >
-                          {{ createConvalidacionOrigenCicloCompleto ? 'Ciclo completo seleccionado: se incluyen todos los módulos.' : 'Seleccione los módulos.' }}
+                          {{ createConvalidacionOrigenTipo === 'ciclo'
+                            ? 'Se utilizará el ciclo completo como origen.'
+                            : 'Seleccione los módulos.' }}
                         </p>
                         <p *ngIf="loadingCreateConvalidacionOrigenModulos" class="text-xs text-slate-500">
                           Cargando módulos origen...
                         </p>
-                        <ul *ngIf="!loadingCreateConvalidacionOrigenModulos" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
+                        <div *ngIf="!loadingCreateConvalidacionOrigenModulos && createConvalidacionOrigenTipo === 'ciclo'" class="text-sm text-slate-700">
+                          {{ createConvalidacionOrigenCicloNombreSeleccionado || 'Ciclo completo seleccionado' }}
+                        </div>
+                        <ul *ngIf="!loadingCreateConvalidacionOrigenModulos && createConvalidacionOrigenTipo === 'modulo'" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
                           <li *ngFor="let modulo of createConvalidacionOrigenModulos">
                             <label class="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-white">
                               <input
                                 type="checkbox"
                                 class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="createConvalidacionOrigenCicloCompleto || createConvalidacionOrigenModuloIds.includes(modulo.id)"
-                                [disabled]="createConvalidacionOrigenCicloCompleto"
+                                [checked]="createConvalidacionOrigenModuloIds.includes(modulo.id)"
                                 (change)="toggleCrearConvalidacionOrigenModulo(modulo.id, $any($event.target).checked)"
                               />
                               <span class="text-sm text-slate-700">
@@ -2028,13 +2850,40 @@ type PendingConvalidacionOrigenDelete = {
                         </p>
                       </div>
                     </ng-template>
+
                   </section>
+                </div>
+              </div>
+
+              <div class="mt-5 space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fuente</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-600">URL</label>
+                    <input
+                      type="url"
+                      class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                      [(ngModel)]="createConvalidacionSourceLink"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-600">Página</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                      [(ngModel)]="createConvalidacionSourcePage"
+                      placeholder="Ej. 124860"
+                    />
+                  </div>
                 </div>
               </div>
 
               <p *ngIf="createConvalidacionError" class="mt-3 text-sm text-rose-700">{{ createConvalidacionError }}</p>
 
-              <div class="mt-4 flex items-center justify-end gap-2 shrink-0">
+              <div class="mt-4 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
@@ -2263,7 +3112,6 @@ type PendingConvalidacionOrigenDelete = {
 })
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly adminSessionKey = 'somo_admin_session';
-  private readonly sourcePageBaseOffset = 124713;
   private resizeObserver: ResizeObserver | null = null;
   @ViewChild('headerInner') headerInnerRef?: ElementRef<HTMLDivElement>;
   @ViewChild('headerBrand') headerBrandRef?: ElementRef<HTMLDivElement>;
@@ -2313,9 +3161,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cicloToDelete: AdminCicloConModulos | null = null;
   deletingCiclo = false;
   createCicloModalOpen = false;
+  editingCicloId: number | null = null;
   createCicloFamiliaId: number | null = null;
   createCicloGradoId: number | null = null;
   createCicloNombre = '';
+  createCicloEsSomorrostro = true;
   createCicloError: string | null = null;
   creatingCiclo = false;
   createAcreditacionExternaModalOpen = false;
@@ -2343,7 +3193,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   deletingConvalidacionOrigenes = new Set<string>();
   createConvalidacionModalOpen = false;
   createConvalidacionDestinoModuloId: number | null = null;
-  createConvalidacionOrigenTipo: 'ciclo' | 'acreditacion_externa' = 'ciclo';
+  createConvalidacionOrigenTipo: 'modulo' | 'ciclo' | 'acreditacion_externa' = 'modulo';
   createConvalidacionDestinoModulos: Modulo[] = [];
   createConvalidacionCiclosOrigen: Ciclo[] = [];
   createConvalidacionOrigenCicloId: number | null = null;
@@ -2352,6 +3202,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   createConvalidacionOrigenModuloIds: number[] = [];
   createConvalidacionAcreditacionesExternas: Array<{ id: number; nombre: string; tipo: string | null }> = [];
   createConvalidacionOrigenAcreditacionId: number | null = null;
+  createConvalidacionSourceLink = '';
+  createConvalidacionSourcePage: number | null = null;
   loadingCreateConvalidacionDestinoModulos = false;
   loadingCreateConvalidacionCiclosOrigen = false;
   loadingCreateConvalidacionOrigenModulos = false;
@@ -2379,6 +3231,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ciclosConModulos: AdminCicloConModulos[] = [];
   modulosVistaActiva: 'ciclos' | 'acreditaciones' = 'ciclos';
+  mostrarTodosLosCiclos = false;
   convalidaciones: AdminConvalidacionRegla[] = [];
   administradores: AdminUser[] = [];
 
@@ -2397,8 +3250,35 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   filtroFamiliaModulos = '';
   filtroGradoModulos = '';
   filtroCicloModulos = '';
+  convalidacionesView: AdminConvalidacionesView = 'destino';
   filtroConvalidacionesGradoId: number | null = null;
   filtroConvalidacionesCicloId: number | null = null;
+  filtroBusquedaModuloIzquierdaGrado = '';
+  filtroBusquedaModuloIzquierdaFamilia = '';
+  filtroBusquedaModuloIzquierdaOrigenTipo: AdminBusquedaOrigenTipo = 'modulos';
+  filtroBusquedaModuloDerechaGrado = '';
+  filtroBusquedaModuloDerechaFamilia = '';
+  busquedaModuloIzquierda = '';
+  busquedaModuloDerecha = '';
+  openBusquedaModuloIzquierda = new Set<string>();
+  openBusquedaModuloDerecha = new Set<string>();
+  selectedBusquedaModuloIzquierda = new Set<number>();
+  selectedBusquedaModuloDerecha = new Set<number>();
+  draftSelectedBusquedaModuloIzquierda = new Set<number>();
+  draftSelectedBusquedaModuloDerecha = new Set<number>();
+  convalidacionesMultiplesAction: AdminConvalidacionesMultiplesAction = 'crear';
+  creatingMultipleConvalidaciones = false;
+  createMultipleConvalidacionesError: string | null = null;
+  createMultipleConvalidacionesSuccess: string | null = null;
+  createMultipleConvalidacionesSourceLink = '';
+  createMultipleConvalidacionesSourcePage: number | null = null;
+  createMultipleConvalidacionesResultModalOpen = false;
+  createMultipleConvalidacionesResultAction: AdminConvalidacionesMultiplesAction = 'crear';
+  createMultipleConvalidacionesResultCreatedCount = 0;
+  createMultipleConvalidacionesResultSkippedCount = 0;
+  deleteMultipleConvalidacionesModalOpen = false;
+  busquedaOrigenModalOpen = false;
+  busquedaDestinoModalOpen = false;
   filtroAdministradores = '';
   createAdminNombre = '';
   createAdminPassword = '';
@@ -2420,6 +3300,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   loadingConvalidacionesGrados = false;
   loadingConvalidacionesCiclos = false;
   loadedConvalidacionesGrados = false;
+  documentoPreviewObjectUrls = new Map<number, string>();
+  documentoPreviewSelectedPaths = new Map<number, string>();
+  documentoPreviewLoading = new Set<number>();
+  documentoPreviewErrors = new Map<number, string>();
 
   constructor(
     private convalidacionesService: ConvalidacionesService,
@@ -2471,6 +3355,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
     }
+    this.clearDocumentoPreviews();
   }
 
   @HostListener('window:resize')
@@ -2569,9 +3454,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.deleteCicloModalOpen = false;
     this.cicloToDelete = null;
     this.createCicloModalOpen = false;
+    this.editingCicloId = null;
     this.createCicloFamiliaId = null;
     this.createCicloGradoId = null;
     this.createCicloNombre = '';
+    this.createCicloEsSomorrostro = true;
     this.createCicloError = null;
     this.creatingCiclo = false;
     this.showAddModulosForm = false;
@@ -2598,10 +3485,37 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editConvalidacionOrigenes = [];
     this.deletingConvalidacionOrigenes.clear();
     this.cerrarModalCrearConvalidacion(true);
+    this.convalidacionesView = 'destino';
     this.filtroConvalidacionesGradoId = null;
     this.filtroConvalidacionesCicloId = null;
     this.convalidacionesGrados = [];
     this.convalidacionesCiclos = [];
+    this.filtroBusquedaModuloIzquierdaGrado = '';
+    this.filtroBusquedaModuloIzquierdaFamilia = '';
+    this.filtroBusquedaModuloIzquierdaOrigenTipo = 'modulos';
+    this.filtroBusquedaModuloDerechaGrado = '';
+    this.filtroBusquedaModuloDerechaFamilia = '';
+    this.busquedaModuloIzquierda = '';
+    this.busquedaModuloDerecha = '';
+    this.openBusquedaModuloIzquierda.clear();
+    this.openBusquedaModuloDerecha.clear();
+    this.selectedBusquedaModuloIzquierda.clear();
+    this.selectedBusquedaModuloDerecha.clear();
+    this.draftSelectedBusquedaModuloIzquierda.clear();
+    this.draftSelectedBusquedaModuloDerecha.clear();
+    this.convalidacionesMultiplesAction = 'crear';
+    this.creatingMultipleConvalidaciones = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+    this.createMultipleConvalidacionesSourceLink = '';
+    this.createMultipleConvalidacionesSourcePage = null;
+    this.createMultipleConvalidacionesResultModalOpen = false;
+    this.createMultipleConvalidacionesResultAction = 'crear';
+    this.createMultipleConvalidacionesResultCreatedCount = 0;
+    this.createMultipleConvalidacionesResultSkippedCount = 0;
+    this.deleteMultipleConvalidacionesModalOpen = false;
+    this.busquedaOrigenModalOpen = false;
+    this.busquedaDestinoModalOpen = false;
   }
 
   private handleAdminUnauthorized(err: any): boolean {
@@ -2640,6 +3554,469 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'bg-indigo-50 text-indigo-700';
     }
     return 'text-slate-700 hover:bg-slate-100';
+  }
+
+  setConvalidacionesView(view: AdminConvalidacionesView): void {
+    this.convalidacionesView = view;
+    if (view === 'multiple') {
+      this.cargarCiclosModulos();
+    }
+  }
+
+  setBusquedaModuloIzquierdaOrigenTipo(tipo: AdminBusquedaOrigenTipo): void {
+    if (this.filtroBusquedaModuloIzquierdaOrigenTipo === tipo) return;
+    this.filtroBusquedaModuloIzquierdaOrigenTipo = tipo;
+    this.filtroBusquedaModuloIzquierdaGrado = '';
+    this.filtroBusquedaModuloIzquierdaFamilia = '';
+    this.busquedaModuloIzquierda = '';
+    this.openBusquedaModuloIzquierda.clear();
+    this.selectedBusquedaModuloIzquierda.clear();
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloRow(side: 'izquierda' | 'derecha', key: string): void {
+    const target = side === 'izquierda' ? this.openBusquedaModuloIzquierda : this.openBusquedaModuloDerecha;
+    if (target.has(key)) {
+      target.delete(key);
+      return;
+    }
+    target.add(key);
+  }
+
+  isBusquedaModuloRowOpen(side: 'izquierda' | 'derecha', key: string): boolean {
+    const target = side === 'izquierda' ? this.openBusquedaModuloIzquierda : this.openBusquedaModuloDerecha;
+    return target.has(key);
+  }
+
+  toggleBusquedaModuloCicloSeleccion(
+    side: 'izquierda' | 'derecha',
+    moduloId: number,
+    selected: boolean
+  ): void {
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    if (selected) {
+      target.add(Number(moduloId));
+      this.createMultipleConvalidacionesError = null;
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+    target.delete(Number(moduloId));
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  isBusquedaModuloCicloSelected(side: 'izquierda' | 'derecha', moduloId: number): boolean {
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    return target.has(Number(moduloId));
+  }
+
+  toggleBusquedaModuloSeleccionTotal(side: 'izquierda' | 'derecha', selected: boolean): void {
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
+    for (const cicloId of visibleIds) {
+      if (selected) {
+        target.add(cicloId);
+      } else {
+        target.delete(cicloId);
+      }
+    }
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloSeleccion(side: 'izquierda' | 'derecha'): void {
+    this.toggleBusquedaModuloSeleccionTotal(side, !this.isBusquedaModuloAllSelected(side));
+  }
+
+  isBusquedaModuloAllSelected(side: 'izquierda' | 'derecha'): boolean {
+    const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
+    if (visibleIds.length === 0) return false;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    return visibleIds.every((cicloId) => target.has(cicloId));
+  }
+
+  totalBusquedaModuloModulosVisibles(side: 'izquierda' | 'derecha'): number {
+    return this.getBusquedaModuloVisibleModuloIds(side).length;
+  }
+
+  toggleBusquedaModuloResultadoSeleccionTotal(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado,
+    selected: boolean
+  ): void {
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    for (const ciclo of resultado.ciclos) {
+      const cicloId = Number(ciclo.moduloId);
+      if (!Number.isFinite(cicloId)) continue;
+      if (selected) {
+        target.add(cicloId);
+      } else {
+        target.delete(cicloId);
+      }
+    }
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloResultadoSeleccion(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado
+  ): void {
+    this.toggleBusquedaModuloResultadoSeleccionTotal(
+      side,
+      resultado,
+      !this.isBusquedaModuloResultadoAllSelected(side, resultado)
+    );
+  }
+
+  isBusquedaModuloResultadoAllSelected(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado
+  ): boolean {
+    if (!resultado.ciclos.length) return false;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
+    return resultado.ciclos.every((ciclo) => {
+      const cicloId = Number(ciclo.moduloId);
+      return Number.isFinite(cicloId) && target.has(cicloId);
+    });
+  }
+
+  get selectedBusquedaModuloOrigenItems(): AdminBusquedaModuloSeleccionItem[] {
+    return this.getSelectedBusquedaModuloItems('izquierda', true);
+  }
+
+  get selectedBusquedaModuloDestinoItems(): AdminBusquedaModuloSeleccionItem[] {
+    return this.getSelectedBusquedaModuloItems('derecha', true);
+  }
+
+  get totalBusquedaModuloOrigenSeleccionados(): number {
+    return this.selectedBusquedaModuloOrigenItems.length;
+  }
+
+  get totalBusquedaModuloDestinoSeleccionados(): number {
+    return this.selectedBusquedaModuloDestinoItems.length;
+  }
+
+  get canCrearConvalidacionesMultiples(): boolean {
+    return this.totalCombinacionesConvalidacionMultiples > 0
+      && !this.creatingMultipleConvalidaciones;
+  }
+
+  get totalCombinacionesConvalidacionMultiples(): number {
+    return this.getBusquedaModuloCombinacionesMultiples().length;
+  }
+
+  setConvalidacionesMultiplesAction(action: AdminConvalidacionesMultiplesAction): void {
+    this.convalidacionesMultiplesAction = action;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  abrirModalEliminarConvalidacionesMultiples(): void {
+    if (!this.canCrearConvalidacionesMultiples || this.creatingMultipleConvalidaciones) return;
+    this.setConvalidacionesMultiplesAction('eliminar');
+    this.deleteMultipleConvalidacionesModalOpen = true;
+  }
+
+  cerrarModalEliminarConvalidacionesMultiples(): void {
+    this.deleteMultipleConvalidacionesModalOpen = false;
+  }
+
+  confirmarEliminarConvalidacionesMultiples(): void {
+    if (this.creatingMultipleConvalidaciones) return;
+    this.deleteMultipleConvalidacionesModalOpen = false;
+    this.setConvalidacionesMultiplesAction('eliminar');
+    this.crearConvalidacionesMultiples();
+  }
+
+  formatBusquedaModuloSeleccionItem(item: AdminBusquedaModuloSeleccionItem): string {
+    if (item.origenTipo === 'ciclo') {
+      return [
+        item.cicloNombre.trim() || null,
+        item.gradoNombre?.trim() || null,
+        item.familiaNombre?.trim() || null,
+      ]
+        .filter((value): value is string => !!value)
+        .join(' · ');
+    }
+    if (item.origenTipo === 'acreditacion_externa') {
+      return item.moduloNombre?.trim() || item.cicloNombre.trim();
+    }
+    return [
+      item.moduloCodigo?.trim() || null,
+      item.moduloNombre?.trim() || null,
+      item.cicloNombre.trim() || null,
+    ]
+      .filter((value): value is string => !!value)
+      .join(' · ');
+  }
+
+  crearConvalidacionesMultiples(): void {
+    const combinaciones = this.getBusquedaModuloCombinacionesMultiples();
+
+    if (combinaciones.length === 0) {
+      this.createMultipleConvalidacionesError = 'No hay combinaciones válidas para crear reglas de convalidación.';
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+    if (this.creatingMultipleConvalidaciones) return;
+
+    const sourceLink = this.createMultipleConvalidacionesSourceLink.trim() || null;
+    const rawSourcePage = this.createMultipleConvalidacionesSourcePage;
+    const sourcePage = rawSourcePage === null || rawSourcePage === undefined
+      ? null
+      : Number(rawSourcePage);
+
+    if (this.convalidacionesMultiplesAction === 'crear'
+      && sourcePage !== null
+      && (!Number.isInteger(sourcePage) || sourcePage <= 0)) {
+      this.createMultipleConvalidacionesError = 'La página debe ser un número entero mayor que 0.';
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+
+    this.creatingMultipleConvalidaciones = true;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+    const combinacionesModulo = combinaciones.filter((item): item is { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number } => item.tipo === 'modulo');
+    const combinacionesCiclo = combinaciones.filter((item): item is { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number } => item.tipo === 'ciclo');
+    const requests: Array<Observable<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse>> = [];
+
+    if (combinacionesModulo.length > 0) {
+      requests.push(
+        this.convalidacionesMultiplesAction === 'crear'
+          ? this.convalidacionesService.crearConvalidacionesMasivasAdmin({
+              reglas: combinacionesModulo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_modulo_origen: item.idModuloOrigen,
+              })),
+              source_link: sourceLink,
+              source_page: sourcePage,
+            })
+          : this.convalidacionesService.eliminarConvalidacionesMasivasAdmin({
+              reglas: combinacionesModulo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_modulo_origen: item.idModuloOrigen,
+              })),
+            })
+      );
+    }
+
+    if (combinacionesCiclo.length > 0) {
+      requests.push(
+        this.convalidacionesMultiplesAction === 'crear'
+          ? this.convalidacionesService.crearConvalidacionesCicloMasivasAdmin({
+              reglas: combinacionesCiclo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_ciclo_origen: item.idCicloOrigen,
+              })),
+              source_link: sourceLink,
+              source_page: sourcePage,
+            })
+          : this.convalidacionesService.eliminarConvalidacionesCicloMasivasAdmin({
+              reglas: combinacionesCiclo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_ciclo_origen: item.idCicloOrigen,
+              })),
+            })
+      );
+    }
+
+    const request$ = forkJoin(requests);
+
+    request$
+      .pipe(
+        finalize(() => {
+          this.creatingMultipleConvalidaciones = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (responses: Array<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse>) => {
+          this.createMultipleConvalidacionesResultAction = this.convalidacionesMultiplesAction;
+          const processedCount = responses.reduce((acc, resp) => acc + Number(this.convalidacionesMultiplesAction === 'crear'
+            ? (resp as any)?.created_count || 0
+            : (resp as any)?.deleted_count || 0), 0);
+          const skippedCount = responses.reduce((acc, resp) => acc + Number(this.convalidacionesMultiplesAction === 'crear'
+            ? (resp as any)?.skipped_existing_count || 0
+            : (resp as any)?.skipped_missing_count || 0), 0);
+          this.createMultipleConvalidacionesResultCreatedCount = processedCount;
+          this.createMultipleConvalidacionesResultSkippedCount = skippedCount;
+          this.createMultipleConvalidacionesResultModalOpen = true;
+          this.createMultipleConvalidacionesSuccess = null;
+          this.deleteMultipleConvalidacionesModalOpen = false;
+          this.selectedBusquedaModuloIzquierda.clear();
+          this.selectedBusquedaModuloDerecha.clear();
+          this.createMultipleConvalidacionesSourceLink = '';
+          this.createMultipleConvalidacionesSourcePage = null;
+          this.errorConvalidaciones = null;
+          if (this.hasConvalidacionesFiltroAplicado) {
+            this.cargarConvalidaciones(true);
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err: HttpErrorResponse) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.deleteMultipleConvalidacionesModalOpen = false;
+          this.createMultipleConvalidacionesError = err?.error?.detail || 'No se pudieron crear las reglas de convalidación.';
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  cerrarModalResultadoConvalidacionesMultiples(): void {
+    this.createMultipleConvalidacionesResultModalOpen = false;
+    this.createMultipleConvalidacionesResultAction = 'crear';
+    this.createMultipleConvalidacionesResultCreatedCount = 0;
+    this.createMultipleConvalidacionesResultSkippedCount = 0;
+  }
+
+  abrirModalBusquedaOrigen(): void {
+    this.draftSelectedBusquedaModuloIzquierda = new Set(this.selectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = true;
+  }
+
+  cerrarModalBusquedaOrigen(): void {
+    this.draftSelectedBusquedaModuloIzquierda = new Set(this.selectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = false;
+  }
+
+  guardarModalBusquedaOrigen(): void {
+    this.selectedBusquedaModuloIzquierda = new Set(this.draftSelectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  abrirModalBusquedaDestino(): void {
+    this.draftSelectedBusquedaModuloDerecha = new Set(this.selectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = true;
+  }
+
+  cerrarModalBusquedaDestino(): void {
+    this.draftSelectedBusquedaModuloDerecha = new Set(this.selectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = false;
+  }
+
+  guardarModalBusquedaDestino(): void {
+    this.selectedBusquedaModuloDerecha = new Set(this.draftSelectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  private getBusquedaModuloEditableSelectionTarget(side: 'izquierda' | 'derecha'): Set<number> {
+    if (side === 'izquierda') {
+      return this.busquedaOrigenModalOpen ? this.draftSelectedBusquedaModuloIzquierda : this.selectedBusquedaModuloIzquierda;
+    }
+    return this.busquedaDestinoModalOpen ? this.draftSelectedBusquedaModuloDerecha : this.selectedBusquedaModuloDerecha;
+  }
+
+  private getBusquedaModuloCombinacionesMultiples(): Array<
+    | { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number }
+    | { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number }
+  > {
+    const origenItems = this.selectedBusquedaModuloOrigenItems;
+    const destinoItems = this.selectedBusquedaModuloDestinoItems;
+    const combinaciones: Array<
+      | { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number }
+      | { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number }
+    > = [];
+    const seen = new Set<string>();
+
+    for (const destino of destinoItems) {
+      for (const origen of origenItems) {
+        if (origen.origenTipo === 'modulo' || origen.origenTipo === 'acreditacion_externa') {
+          if (destino.moduloId === origen.moduloId && destino.cicloId === origen.cicloId) {
+            continue;
+          }
+          const key = `modulo::${destino.moduloId}::${origen.moduloId}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          combinaciones.push({
+            tipo: 'modulo',
+            idModuloDestino: Number(destino.moduloId),
+            idModuloOrigen: Number(origen.moduloId),
+          });
+          continue;
+        }
+
+        const key = `ciclo::${destino.moduloId}::${origen.cicloId}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        combinaciones.push({
+          tipo: 'ciclo',
+          idModuloDestino: Number(destino.moduloId),
+          idCicloOrigen: Number(origen.cicloId),
+        });
+      }
+    }
+
+    return combinaciones.filter(
+      (item) => Number.isFinite(item.idModuloDestino)
+        && item.idModuloDestino > 0
+        && (
+          (item.tipo === 'modulo' && Number.isFinite(item.idModuloOrigen) && item.idModuloOrigen > 0)
+          || (item.tipo === 'ciclo' && Number.isFinite(item.idCicloOrigen) && item.idCicloOrigen > 0)
+        )
+    );
+  }
+
+  private getSelectedBusquedaModuloItems(
+    side: 'izquierda' | 'derecha',
+    onlyVisible = false
+  ): AdminBusquedaModuloSeleccionItem[] {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const visibleIds = onlyVisible ? new Set(this.getBusquedaModuloVisibleModuloIds(side)) : null;
+    const items: AdminBusquedaModuloSeleccionItem[] = [];
+    if (side === 'izquierda' && this.filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos') {
+      for (const ciclo of this.ciclosConModulos) {
+        const cicloId = Number(ciclo.id);
+        const selectableId = -cicloId;
+        if (!Number.isFinite(cicloId) || !target.has(selectableId)) continue;
+        if (visibleIds && !visibleIds.has(selectableId)) continue;
+        items.push({
+          origenTipo: 'ciclo',
+          moduloId: null,
+          moduloNombre: null,
+          moduloCodigo: null,
+          cicloId,
+          cicloNombre: String(ciclo.nombre || '').trim().replace(/\s+/g, ' '),
+          gradoNombre: ciclo.grado_nombre?.trim() || null,
+          familiaNombre: ciclo.familia_nombre?.trim() || null,
+        });
+      }
+      return items.sort((a, b) => a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' }));
+    }
+
+    for (const ciclo of this.ciclosConModulos) {
+      const cicloNombre = String(ciclo.nombre || '').trim().replace(/\s+/g, ' ');
+      const gradoNombre = ciclo.grado_nombre?.trim() || null;
+      const familiaNombre = ciclo.familia_nombre?.trim() || null;
+      for (const modulo of ciclo.modulos || []) {
+        const moduloId = Number(modulo.id);
+        if (!Number.isFinite(moduloId) || !target.has(moduloId)) continue;
+        if (visibleIds && !visibleIds.has(moduloId)) continue;
+        items.push({
+          origenTipo: side === 'derecha'
+            ? 'destino'
+            : (this.filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones' ? 'acreditacion_externa' : 'modulo'),
+          moduloId,
+          moduloNombre: String(modulo.nombre || '').trim().replace(/\s+/g, ' '),
+          moduloCodigo: (modulo.id_oficial || '').trim() || null,
+          cicloId: Number(ciclo.id),
+          cicloNombre,
+          gradoNombre,
+          familiaNombre,
+        });
+      }
+    }
+    return items.sort((a, b) => {
+      const byModulo = (a.moduloNombre || '').localeCompare(b.moduloNombre || '', 'es', { sensitivity: 'base' });
+      if (byModulo !== 0) return byModulo;
+      return a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' });
+    });
   }
 
   private evaluateHeaderLayout(): void {
@@ -2692,6 +4069,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (this.activeTab === 'convalidaciones') {
+      this.cargarCiclosModulos();
       this.loadConvalidacionesGrados();
       this.loadConvalidacionesCiclos();
       return;
@@ -2714,7 +4092,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.convalidacionesService.getFormulariosAdmin(estadoId).subscribe({
       next: (rows) => {
-        this.formularios = Array.isArray(rows)
+        const nextFormularios = Array.isArray(rows)
           ? rows.map((row) => ({
               ...row,
               solicitudes: Array.isArray(row?.solicitudes) ? row.solicitudes : [],
@@ -2722,6 +4100,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
               documentos_aportados: Array.isArray(row?.documentos_aportados) ? row.documentos_aportados : [],
             }))
           : [];
+        this.reconcileDocumentoPreviews(nextFormularios);
+        this.formularios = nextFormularios;
         this.syncCursoAcademicoFiltro();
         this.alumnos = this.groupByAlumno(this.formularios);
         if (!this.loadedModulos && !this.loadingModulos) {
@@ -2729,6 +4109,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.loading = false;
         this.cdr.detectChanges();
+        queueMicrotask(() => this.restoreAllDocumentoPreviewFrames());
       },
       error: (err) => {
         if (this.handleAdminUnauthorized(err)) return;
@@ -2834,6 +4215,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get alumnosMostrados(): AdminAlumnoGroup[] {
     return this.groupByAlumno(this.formulariosMostrados);
+  }
+
+  trackByAlumno(_index: number, alumno: AdminAlumnoGroup): string {
+    return alumno.key;
+  }
+
+  trackByFormulario(_index: number, formulario: AdminFormulario): number {
+    return formulario.id;
   }
 
   get formulariosValidadosExportables(): AdminFormulario[] {
@@ -2986,6 +4375,161 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  seleccionarDocumentoPreview(formularioId: number, path: string): void {
+    if (!path || this.documentoPreviewLoading.has(formularioId)) return;
+    if (
+      this.documentoPreviewSelectedPaths.get(formularioId) === path
+      && this.documentoPreviewObjectUrls.has(formularioId)
+    ) {
+      return;
+    }
+
+    this.documentoPreviewSelectedPaths.set(formularioId, path);
+    this.documentoPreviewErrors.delete(formularioId);
+    this.documentoPreviewLoading.add(formularioId);
+
+    this.convalidacionesService.abrirDocumentoAdmin(path).subscribe({
+      next: (blob: Blob) => {
+        const previousUrl = this.documentoPreviewObjectUrls.get(formularioId);
+        if (previousUrl) {
+          URL.revokeObjectURL(previousUrl);
+        }
+
+        const objectUrl = URL.createObjectURL(blob);
+        this.documentoPreviewObjectUrls.set(formularioId, objectUrl);
+        this.documentoPreviewLoading.delete(formularioId);
+        this.cdr.detectChanges();
+        queueMicrotask(() => this.setDocumentoPreviewFrameSrc(formularioId, objectUrl));
+      },
+      error: (err: any) => {
+        if (this.handleAdminUnauthorized(err)) return;
+        const status = err?.status ? ` (HTTP ${err.status})` : '';
+        this.documentoPreviewErrors.set(formularioId, `No se pudo cargar el documento${status}.`);
+        this.documentoPreviewLoading.delete(formularioId);
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  hasDocumentoPreviewUrl(formularioId: number): boolean {
+    return this.documentoPreviewObjectUrls.has(formularioId);
+  }
+
+  isDocumentoPreviewLoading(formularioId: number): boolean {
+    return this.documentoPreviewLoading.has(formularioId);
+  }
+
+  getDocumentoPreviewError(formularioId: number): string | null {
+    return this.documentoPreviewErrors.get(formularioId) ?? null;
+  }
+
+  isDocumentoPreviewSelected(formularioId: number, path: string): boolean {
+    return this.documentoPreviewSelectedPaths.get(formularioId) === path;
+  }
+
+  getDocumentoDisplayName(
+    documento: { descripcion?: string | null; nombre_archivo?: string | null; ruta_almacenamiento?: string | null },
+    index?: number
+  ): string {
+    const descripcion = String(documento.descripcion || '').trim();
+    if (descripcion) return descripcion;
+    const nombreArchivo = String(documento.nombre_archivo || '').trim();
+    if (nombreArchivo) return nombreArchivo;
+
+    const ruta = String(documento.ruta_almacenamiento || '').trim();
+    const rutaNormalizada = ruta.replace(/\\/g, '/');
+    const nombreDesdeRuta = rutaNormalizada.split('/').pop()?.trim() || '';
+    if (nombreDesdeRuta) return nombreDesdeRuta;
+
+    if (typeof index === 'number') {
+      return `Documento ${index + 1}`;
+    }
+    return 'Documento';
+  }
+
+  getDocumentoPreviewSeleccionado(
+    formulario: AdminFormulario
+  ): { ruta_almacenamiento: string; descripcion?: string | null; nombre_archivo: string } | null {
+    const selectedPath = this.documentoPreviewSelectedPaths.get(formulario.id);
+    if (!selectedPath) return null;
+    return (formulario.documentos_aportados || []).find((documento) => documento.ruta_almacenamiento === selectedPath) ?? null;
+  }
+
+  abrirDocumentoPreviewSeleccionado(formulario: AdminFormulario): void {
+    const documento = this.getDocumentoPreviewSeleccionado(formulario);
+    if (!documento) return;
+    this.abrirDocumentoAportado(documento.ruta_almacenamiento);
+  }
+
+  descargarDocumentoPreviewSeleccionado(formulario: AdminFormulario): void {
+    const documento = this.getDocumentoPreviewSeleccionado(formulario);
+    if (!documento) return;
+    this.descargarDocumentoAportado(
+      documento.ruta_almacenamiento,
+      documento.descripcion || documento.nombre_archivo
+    );
+  }
+
+  private clearDocumentoPreviews(): void {
+    this.documentoPreviewObjectUrls.forEach((_, formularioId) => this.setDocumentoPreviewFrameSrc(formularioId, 'about:blank'));
+    this.documentoPreviewObjectUrls.forEach((url) => URL.revokeObjectURL(url));
+    this.documentoPreviewObjectUrls.clear();
+    this.documentoPreviewSelectedPaths.clear();
+    this.documentoPreviewLoading.clear();
+    this.documentoPreviewErrors.clear();
+  }
+
+  getDocumentoPreviewFrameId(formularioId: number): string {
+    return `documento-preview-${formularioId}`;
+  }
+
+  private setDocumentoPreviewFrameSrc(formularioId: number, src: string): void {
+    const iframe = document.getElementById(this.getDocumentoPreviewFrameId(formularioId)) as HTMLIFrameElement | null;
+    if (!iframe) return;
+    if (iframe.src === src) return;
+    iframe.src = src;
+  }
+
+  private restoreDocumentoPreviewFrame(formularioId: number): void {
+    const objectUrl = this.documentoPreviewObjectUrls.get(formularioId);
+    if (!objectUrl) return;
+    this.setDocumentoPreviewFrameSrc(formularioId, objectUrl);
+  }
+
+  private restoreAllDocumentoPreviewFrames(): void {
+    this.documentoPreviewObjectUrls.forEach((_, formularioId) => {
+      this.restoreDocumentoPreviewFrame(formularioId);
+    });
+  }
+
+  private reconcileDocumentoPreviews(formularios: AdminFormulario[]): void {
+    const formulariosMap = new Map<number, AdminFormulario>();
+    for (const formulario of formularios) {
+      formulariosMap.set(formulario.id, formulario);
+    }
+
+    const previewIds = Array.from(this.documentoPreviewObjectUrls.keys());
+    for (const formularioId of previewIds) {
+      const formulario = formulariosMap.get(formularioId);
+      const selectedPath = this.documentoPreviewSelectedPaths.get(formularioId);
+      const shouldKeep = !!formulario
+        && !!selectedPath
+        && (formulario.documentos_aportados || []).some((documento) => documento.ruta_almacenamiento === selectedPath);
+
+      if (shouldKeep) continue;
+
+      this.setDocumentoPreviewFrameSrc(formularioId, 'about:blank');
+      const objectUrl = this.documentoPreviewObjectUrls.get(formularioId);
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      this.documentoPreviewObjectUrls.delete(formularioId);
+      this.documentoPreviewSelectedPaths.delete(formularioId);
+      this.documentoPreviewLoading.delete(formularioId);
+      this.documentoPreviewErrors.delete(formularioId);
+    }
+  }
+
   descargarDocumentoAportado(path: string, fileName: string): void {
     if (!path) return;
 
@@ -3102,7 +4646,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadConvalidacionesCiclos(gradoId?: number | null): void {
     this.loadingConvalidacionesCiclos = true;
-    this.catalogService.getCiclos(gradoId ?? undefined).subscribe({
+    this.catalogService
+      .getCiclos(gradoId ?? undefined, false)
+      .subscribe({
       next: (rows) => {
         this.convalidacionesCiclos = (Array.isArray(rows) ? rows : [])
           .map((item) => ({
@@ -3112,6 +4658,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             normativa: item.normativa ?? null,
             id_familia: Number(item.id_familia),
             id_grado: Number(item.id_grado),
+            es_somorrostro: item.es_somorrostro == null ? null : Number(item.es_somorrostro),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
@@ -3121,6 +4668,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           !this.convalidacionesCiclos.some((ciclo) => Number(ciclo.id) === Number(this.filtroConvalidacionesCicloId))
         ) {
           this.filtroConvalidacionesCicloId = null;
+          this.convalidaciones = [];
+          this.loadedConvalidaciones = false;
+          this.openConvalidaciones.clear();
+          this.openConvalidacionCiclos.clear();
         }
         this.cdr.detectChanges();
       },
@@ -3275,6 +4826,22 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  get convalidacionesCiclosSomorrostro(): Ciclo[] {
+    return this.convalidacionesCiclos.filter((ciclo) => Number(ciclo.es_somorrostro) === 1);
+  }
+
+  get convalidacionesCiclosRestantes(): Ciclo[] {
+    return this.convalidacionesCiclos.filter((ciclo) => Number(ciclo.es_somorrostro) !== 1);
+  }
+
+  get createConvalidacionCiclosOrigenSomorrostro(): Ciclo[] {
+    return this.createConvalidacionCiclosOrigen.filter((ciclo) => Number(ciclo.es_somorrostro) === 1);
+  }
+
+  get createConvalidacionCiclosOrigenRestantes(): Ciclo[] {
+    return this.createConvalidacionCiclosOrigen.filter((ciclo) => Number(ciclo.es_somorrostro) !== 1);
+  }
+
   canGestionarAdministrador(admin: AdminUser): boolean {
     const filaAdmin = (admin?.nombre || '').trim().toLowerCase() === 'admin';
     return this.isRootAdminSession && !filaAdmin;
@@ -3394,6 +4961,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.ciclosCatalogo.reduce((acc, ciclo) => acc + (ciclo.total_modulos || 0), 0);
   }
 
+  get modulosModalActivos(): AdminCicloModulo[] {
+    return (this.modulosModalCiclo?.modulos || []).filter((modulo) => !modulo.deprecated);
+  }
+
+  get modulosModalDeprecated(): AdminCicloModulo[] {
+    return (this.modulosModalCiclo?.modulos || []).filter((modulo) => !!modulo.deprecated);
+  }
+
   private isAcreditacionExternaCiclo(ciclo: AdminCicloConModulos): boolean {
     const familia = (ciclo.familia_nombre || '').trim();
     const grado = (ciclo.grado_nombre || '').trim();
@@ -3401,7 +4976,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get ciclosCatalogo(): AdminCicloConModulos[] {
-    return this.ciclosConModulos.filter((ciclo) => !this.isAcreditacionExternaCiclo(ciclo));
+    return this.ciclosConModulos.filter(
+      (ciclo) => !this.isAcreditacionExternaCiclo(ciclo)
+        && (this.mostrarTodosLosCiclos || Number(ciclo.es_somorrostro) === 1)
+    );
   }
 
   get ciclosAcreditacionesExternasCatalogo(): AdminCicloConModulos[] {
@@ -3573,19 +5151,61 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.convalidaciones;
   }
 
+  get busquedaModuloIzquierdaNormalizada(): string {
+    return this.normalizeSearchText(this.busquedaModuloIzquierda);
+  }
+
+  get busquedaModuloDerechaNormalizada(): string {
+    return this.normalizeSearchText(this.busquedaModuloDerecha);
+  }
+
+  get gradosBusquedaModuloIzquierda(): string[] {
+    return this.getBusquedaModuloGrados(this.filtroBusquedaModuloIzquierdaFamilia, this.filtroBusquedaModuloIzquierdaOrigenTipo);
+  }
+
+  get familiasBusquedaModuloIzquierda(): string[] {
+    return this.getBusquedaModuloFamilias(this.filtroBusquedaModuloIzquierdaGrado, this.filtroBusquedaModuloIzquierdaOrigenTipo);
+  }
+
+  get gradosBusquedaModuloDerecha(): string[] {
+    return this.getBusquedaModuloGrados(this.filtroBusquedaModuloDerechaFamilia);
+  }
+
+  get familiasBusquedaModuloDerecha(): string[] {
+    return this.getBusquedaModuloFamilias(this.filtroBusquedaModuloDerechaGrado);
+  }
+
+  get resultadosBusquedaModuloIzquierda(): AdminBusquedaModuloResultado[] {
+    return this.buscarModulosEnCiclos(
+      this.busquedaModuloIzquierdaNormalizada,
+      this.filtroBusquedaModuloIzquierdaGrado,
+      this.filtroBusquedaModuloIzquierdaFamilia,
+      this.filtroBusquedaModuloIzquierdaOrigenTipo
+    );
+  }
+
+  get resultadosBusquedaModuloDerecha(): AdminBusquedaModuloResultado[] {
+    return this.buscarModulosEnCiclos(
+      this.busquedaModuloDerechaNormalizada,
+      this.filtroBusquedaModuloDerechaGrado,
+      this.filtroBusquedaModuloDerechaFamilia
+    );
+  }
+
   get convalidacionesAgrupadas(): AdminConvalidacionModuloAgrupado[] {
     const modulosMap = new Map<number, {
       idModuloDestino: number;
       moduloDestinoNombre: string;
       moduloDestinoCodigo: string | null;
-        cicloDestinoNombre: string;
-        ciclosMap: Map<string, {
-          cicloOrigenNombre: string;
-          modulosOrigenMap: Map<string, { nombre: string; codigo: string | null }>;
-          fuentesMap: Map<string, { sourceLink: string | null; sourcePage: number | null }>;
-          reglas: Set<number>;
-        }>;
-      }>();
+      cicloDestinoNombre: string;
+      ciclosMap: Map<string, {
+        cicloOrigenNombre: string;
+        esCicloCompleto: boolean;
+        modulosOrigenMap: Map<string, { nombre: string; codigo: string | null }>;
+        fuentesMap: Map<string, { sourceLink: string | null; sourcePage: number | null }>;
+        reglas: Set<number>;
+      }>;
+    }>();
 
     for (const regla of this.convalidacionesFiltradas) {
       const moduloId = Number(regla.id_modulo_destino);
@@ -3604,12 +5224,16 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!modulo.ciclosMap.has(cicloOrigenNombre)) {
           modulo.ciclosMap.set(cicloOrigenNombre, {
             cicloOrigenNombre,
+            esCicloCompleto: false,
             modulosOrigenMap: new Map<string, { nombre: string; codigo: string | null }>(),
             fuentesMap: new Map<string, { sourceLink: string | null; sourcePage: number | null }>(),
             reglas: new Set<number>(),
           });
         }
         const ciclo = modulo.ciclosMap.get(cicloOrigenNombre)!;
+        if (origen.es_ciclo_completo) {
+          ciclo.esCicloCompleto = true;
+        }
         const moduloOrigenNombre = (origen.modulo_origen_nombre || '').trim();
         if (moduloOrigenNombre) {
           const codigo = (origen.modulo_origen_codigo || '').trim() || null;
@@ -3638,6 +5262,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           .map((ciclo) => ({
             key: `${modulo.idModuloDestino}::${ciclo.cicloOrigenNombre}`,
             cicloOrigenNombre: ciclo.cicloOrigenNombre,
+            esCicloCompleto: ciclo.esCicloCompleto,
             totalModulosNecesarios: ciclo.modulosOrigenMap.size,
             modulosOrigen: Array.from(ciclo.modulosOrigenMap.values()).sort((a, b) => {
               const byNombre = a.nombre.localeCompare(b.nombre, 'es');
@@ -3655,6 +5280,38 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           .sort((a, b) => a.cicloOrigenNombre.localeCompare(b.cicloOrigenNombre, 'es')),
       }))
       .sort((a, b) => a.moduloDestinoNombre.localeCompare(b.moduloDestinoNombre, 'es'));
+  }
+
+  formatBusquedaModuloMeta(resultado: AdminBusquedaModuloResultado): string {
+    const grados = Array.from(
+      new Set(
+        resultado.ciclos
+          .map((ciclo) => ciclo.gradoNombre?.trim() || '')
+          .filter((item) => !!item)
+      )
+    );
+    const familias = Array.from(
+      new Set(
+        resultado.ciclos
+          .map((ciclo) => ciclo.familiaNombre?.trim() || '')
+          .filter((item) => !!item)
+      )
+    );
+
+    const meta: string[] = [];
+    if (grados.length === 1) meta.push(grados[0]);
+    if (familias.length === 1) meta.push(familias[0]);
+    return meta.join(' · ');
+  }
+
+  formatBusquedaModuloCicloMeta(ciclo: AdminBusquedaModuloResultado['ciclos'][number]): string {
+    return [
+      ciclo.gradoNombre?.trim() || null,
+      ciclo.familiaNombre?.trim() || null,
+      ciclo.cicloCodigo?.trim() || null,
+    ]
+      .filter((item): item is string => !!item)
+      .join(' · ');
   }
 
   get administradoresFiltrados(): AdminUser[] {
@@ -3677,6 +5334,161 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCatalogCicloOpen(cicloId: number): boolean {
     return this.openCatalogCiclos.has(cicloId);
+  }
+
+  private getBusquedaModuloGrados(familiaFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'modulos'): string[] {
+    const familiaNormalizada = this.normalizeSearchText(familiaFiltro);
+    const grados = new Set<string>();
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const familia = (ciclo.familia_nombre || '').trim();
+      const grado = (ciclo.grado_nombre || '').trim();
+      if (!grado) continue;
+      if (familiaNormalizada && this.normalizeSearchText(familia) !== familiaNormalizada) continue;
+      grados.add(grado);
+    }
+    return Array.from(grados.values()).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }
+
+  private getBusquedaModuloFamilias(gradoFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'modulos'): string[] {
+    const gradoNormalizado = this.normalizeSearchText(gradoFiltro);
+    const familias = new Set<string>();
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const familia = (ciclo.familia_nombre || '').trim();
+      const grado = (ciclo.grado_nombre || '').trim();
+      if (!familia) continue;
+      if (gradoNormalizado && this.normalizeSearchText(grado) !== gradoNormalizado) continue;
+      familias.add(familia);
+    }
+    return Array.from(familias.values()).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }
+
+  private buscarModulosEnCiclos(
+    query: string,
+    gradoFiltro = '',
+    familiaFiltro = '',
+    origenTipo: AdminBusquedaOrigenTipo = 'modulos'
+  ): AdminBusquedaModuloResultado[] {
+    if (!query) return [];
+
+    const modulosMap = new Map<string, AdminBusquedaModuloResultado>();
+    const gradoNormalizado = this.normalizeSearchText(gradoFiltro);
+    const familiaNormalizada = this.normalizeSearchText(familiaFiltro);
+
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const gradoNombre = ciclo.grado_nombre?.trim() || null;
+      const familiaNombre = ciclo.familia_nombre?.trim() || null;
+      if (gradoNormalizado && this.normalizeSearchText(gradoNombre) !== gradoNormalizado) continue;
+      if (familiaNormalizada && this.normalizeSearchText(familiaNombre) !== familiaNormalizada) continue;
+
+      const cicloInfo = {
+        moduloId: 0,
+        moduloNombre: '',
+        moduloCodigo: null,
+        cicloId: Number(ciclo.id),
+        cicloNombre: String(ciclo.nombre || '').trim().replace(/\s+/g, ' '),
+        cicloCodigo: (ciclo.id_oficial || '').trim() || null,
+        familiaNombre,
+        gradoNombre,
+      };
+
+      if (origenTipo === 'ciclos') {
+        const cicloText = this.normalizeSearchText(`${cicloInfo.cicloNombre} ${cicloInfo.cicloCodigo || ''}`);
+        if (!cicloText.includes(query)) continue;
+
+        const key = `ciclo::${cicloInfo.cicloId}`;
+        modulosMap.set(key, {
+          key,
+          nombre: cicloInfo.cicloNombre,
+          codigo: cicloInfo.cicloCodigo,
+          totalCiclos: 1,
+          ciclos: [{
+            ...cicloInfo,
+            moduloId: -cicloInfo.cicloId,
+            moduloNombre: '',
+            moduloCodigo: null,
+          }],
+        });
+        continue;
+      }
+
+      for (const modulo of ciclo.modulos || []) {
+        const nombre = String(modulo.nombre || '').trim().replace(/\s+/g, ' ');
+        const codigo = (modulo.id_oficial || '').trim() || null;
+        const text = this.normalizeSearchText(`${nombre} ${codigo || ''}`);
+        if (!text.includes(query)) continue;
+        const moduloId = Number(modulo.id);
+        if (!Number.isFinite(moduloId)) continue;
+
+        const key = `${this.normalizeSearchText(nombre)}::${this.normalizeSearchText(codigo || '')}`;
+        if (!modulosMap.has(key)) {
+          modulosMap.set(key, {
+            key,
+            nombre,
+            codigo,
+            totalCiclos: 0,
+            ciclos: [],
+          });
+        }
+
+        const item = modulosMap.get(key)!;
+        if (!item.ciclos.some((existing) => existing.moduloId === moduloId)) {
+          item.ciclos.push({
+            ...cicloInfo,
+            moduloId,
+            moduloNombre: nombre,
+            moduloCodigo: codigo,
+          });
+        }
+      }
+    }
+
+    return Array.from(modulosMap.values())
+      .map((item) => ({
+        ...item,
+        ciclos: [...item.ciclos].sort((a, b) => a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' })),
+        totalCiclos: item.ciclos.length,
+      }))
+      .sort((a, b) => {
+        const byNombre = a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+        if (byNombre !== 0) return byNombre;
+        return (a.codigo || '').localeCompare(b.codigo || '', 'es', { sensitivity: 'base' });
+      });
+  }
+
+  private getBusquedaModuloVisibleModuloIds(side: 'izquierda' | 'derecha'): number[] {
+    const resultados = side === 'izquierda'
+      ? this.resultadosBusquedaModuloIzquierda
+      : this.resultadosBusquedaModuloDerecha;
+    const ids = new Set<number>();
+    for (const resultado of resultados) {
+      for (const ciclo of resultado.ciclos) {
+        const selectableId = side === 'izquierda' && this.filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+          ? -Number(ciclo.cicloId)
+          : Number(ciclo.moduloId);
+        if (Number.isFinite(selectableId)) {
+          ids.add(selectableId);
+        }
+      }
+    }
+    return Array.from(ids.values()).sort((a, b) => a - b);
+  }
+
+  private normalizeSearchText(value: string | null | undefined): string {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');
   }
 
   toggleConvalidacion(idModuloDestino: number): void {
@@ -3725,10 +5537,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         origenes.push({
           key: itemKey,
           idConvalidacion: Number(regla.id),
-          idModuloOrigen: Number(origen.id_modulo_origen),
+          idModuloOrigen: origen.id_modulo_origen == null ? null : Number(origen.id_modulo_origen),
           moduloOrigenNombre: origen.modulo_origen_nombre,
           moduloOrigenCodigo: origen.modulo_origen_codigo ?? null,
           cicloOrigenNombre: origen.ciclo_origen_nombre,
+          esCicloCompleto: !!origen.es_ciclo_completo,
         });
       }
     }
@@ -3738,7 +5551,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editConvalidacionCicloDestinoNombre = grupo.cicloDestinoNombre;
     this.editConvalidacionCicloOrigenNombre = ciclo.cicloOrigenNombre;
     this.editConvalidacionOrigenes = origenes.sort((a, b) => {
-      const byNombre = a.moduloOrigenNombre.localeCompare(b.moduloOrigenNombre, 'es');
+      const byNombre = (a.moduloOrigenNombre || '').localeCompare(b.moduloOrigenNombre || '', 'es');
       if (byNombre !== 0) return byNombre;
       const byCodigo = (a.moduloOrigenCodigo || '').localeCompare(b.moduloOrigenCodigo || '', 'es');
       if (byCodigo !== 0) return byCodigo;
@@ -3774,7 +5587,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionModalOpen = true;
     this.createConvalidacionError = null;
     this.createConvalidacionDestinoModuloId = null;
-    this.createConvalidacionOrigenTipo = 'ciclo';
+    this.createConvalidacionOrigenTipo = 'modulo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
@@ -3783,6 +5596,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionAcreditacionesExternas = [];
     this.createConvalidacionOrigenAcreditacionId = null;
+    this.createConvalidacionSourceLink = '';
+    this.createConvalidacionSourcePage = null;
     this.creatingConvalidacion = false;
     this.errorConvalidaciones = null;
 
@@ -3794,7 +5609,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cerrarModalCrearConvalidacion(_force = false): void {
     this.createConvalidacionModalOpen = false;
     this.createConvalidacionDestinoModuloId = null;
-    this.createConvalidacionOrigenTipo = 'ciclo';
+    this.createConvalidacionOrigenTipo = 'modulo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
@@ -3803,6 +5618,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionAcreditacionesExternas = [];
     this.createConvalidacionOrigenAcreditacionId = null;
+    this.createConvalidacionSourceLink = '';
+    this.createConvalidacionSourcePage = null;
     this.loadingCreateConvalidacionDestinoModulos = false;
     this.loadingCreateConvalidacionCiclosOrigen = false;
     this.loadingCreateConvalidacionOrigenModulos = false;
@@ -3839,7 +5656,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private cargarCiclosOrigenCrearConvalidacion(): void {
     this.loadingCreateConvalidacionCiclosOrigen = true;
-    this.catalogService.getCiclos().subscribe({
+    this.catalogService.getCiclos(undefined, false).subscribe({
       next: (rows) => {
         this.createConvalidacionCiclosOrigen = (Array.isArray(rows) ? rows : [])
           .map((item) => ({
@@ -3849,6 +5666,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             normativa: item.normativa ?? null,
             id_familia: Number(item.id_familia),
             id_grado: Number(item.id_grado),
+            es_somorrostro: item.es_somorrostro == null ? null : Number(item.es_somorrostro),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .filter((item) => !this.isAcreditacionesExternasCiclo(item.nombre))
@@ -3892,14 +5710,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   onCrearConvalidacionOrigenTipoChange(): void {
     this.createConvalidacionError = null;
     this.createConvalidacionOrigenCicloId = null;
-    this.createConvalidacionOrigenCicloCompleto = false;
+    this.createConvalidacionOrigenCicloCompleto = this.createConvalidacionOrigenTipo === 'ciclo';
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionOrigenAcreditacionId = null;
   }
 
   onCrearConvalidacionOrigenCicloChange(): void {
-    this.createConvalidacionOrigenCicloCompleto = false;
+    this.createConvalidacionOrigenCicloCompleto = this.createConvalidacionOrigenTipo === 'ciclo';
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionError = null;
@@ -3920,6 +5738,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+        if (this.createConvalidacionOrigenTipo === 'ciclo') {
+          this.createConvalidacionOrigenModuloIds = this.createConvalidacionOrigenModulos
+            .map((modulo) => Number(modulo.id))
+            .filter((id) => Number.isFinite(id))
+            .sort((a, b) => a - b);
+        }
         this.loadingCreateConvalidacionOrigenModulos = false;
         this.cdr.detectChanges();
       },
@@ -3933,6 +5757,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCrearConvalidacionOrigenCicloCompletoChange(): void {
+    if (this.createConvalidacionOrigenTipo === 'ciclo') {
+      this.createConvalidacionOrigenCicloCompleto = true;
+    }
     if (this.createConvalidacionOrigenCicloCompleto) {
       this.createConvalidacionOrigenModuloIds = this.createConvalidacionOrigenModulos
         .map((modulo) => Number(modulo.id))
@@ -3944,7 +5771,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleCrearConvalidacionOrigenModulo(idModulo: number, selected: boolean): void {
-    if (this.createConvalidacionOrigenCicloCompleto) return;
+    if (this.createConvalidacionOrigenTipo === 'ciclo' || this.createConvalidacionOrigenCicloCompleto) return;
     const id = Number(idModulo);
     if (!Number.isFinite(id)) return;
 
@@ -3963,8 +5790,17 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return !!this.createConvalidacionOrigenAcreditacionId;
     }
     if (!this.createConvalidacionOrigenCicloId) return false;
-    if (this.createConvalidacionOrigenCicloCompleto) return this.createConvalidacionOrigenModulos.length > 0;
+    if (this.createConvalidacionOrigenTipo === 'ciclo' || this.createConvalidacionOrigenCicloCompleto) {
+      return this.createConvalidacionOrigenModulos.length > 0;
+    }
     return this.createConvalidacionOrigenModuloIds.length > 0;
+  }
+
+  get createConvalidacionOrigenCicloNombreSeleccionado(): string {
+    const ciclo = this.createConvalidacionCiclosOrigen.find(
+      (item) => Number(item.id) === Number(this.createConvalidacionOrigenCicloId)
+    );
+    return ciclo?.nombre || '';
   }
 
   guardarNuevaConvalidacion(): void {
@@ -3975,6 +5811,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.creatingConvalidacion) return;
 
     const idModuloDestino = Number(this.createConvalidacionDestinoModuloId);
+    const idCicloOrigen = this.createConvalidacionOrigenCicloId ? Number(this.createConvalidacionOrigenCicloId) : null;
     const idsOrigen = this.createConvalidacionOrigenTipo === 'acreditacion_externa'
       ? [Number(this.createConvalidacionOrigenAcreditacionId)].filter((id) => Number.isFinite(id) && id > 0)
       : this.createConvalidacionOrigenCicloCompleto
@@ -3986,21 +5823,49 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             .filter((id) => Number.isFinite(id) && id > 0);
     const idModulosOrigen = Array.from(new Set(idsOrigen)).sort((a, b) => a - b);
 
-    if (!Number.isFinite(idModuloDestino) || idModuloDestino <= 0 || idModulosOrigen.length === 0) {
+    if (!Number.isFinite(idModuloDestino) || idModuloDestino <= 0) {
+      this.createConvalidacionError = 'No se ha podido preparar la regla con los datos seleccionados.';
+      return;
+    }
+    if (this.createConvalidacionOrigenTipo === 'ciclo') {
+      if (!Number.isFinite(idCicloOrigen) || !idCicloOrigen || idCicloOrigen <= 0) {
+        this.createConvalidacionError = 'No se ha podido preparar la regla con los datos seleccionados.';
+        return;
+      }
+    } else if (idModulosOrigen.length === 0) {
       this.createConvalidacionError = 'No se ha podido preparar la regla con los datos seleccionados.';
       return;
     }
 
     this.creatingConvalidacion = true;
     this.createConvalidacionError = null;
+    const sourceLink = this.createConvalidacionSourceLink.trim() || null;
+    const rawSourcePage = this.createConvalidacionSourcePage;
+    const sourcePage = rawSourcePage === null || rawSourcePage === undefined
+      ? null
+      : Number(rawSourcePage);
 
-    this.convalidacionesService
-      .crearConvalidacionAdmin({
-        id_modulo_destino: idModuloDestino,
-        id_modulos_origen: idModulosOrigen,
-        source_link: null,
-        source_page: null,
-      })
+    if (sourcePage !== null && (!Number.isInteger(sourcePage) || sourcePage <= 0)) {
+      this.creatingConvalidacion = false;
+      this.createConvalidacionError = 'La página debe ser un número entero mayor que 0.';
+      return;
+    }
+
+    const request$ = this.createConvalidacionOrigenTipo === 'ciclo'
+      ? this.convalidacionesService.crearConvalidacionCicloAdmin({
+          id_modulo_destino: idModuloDestino,
+          id_ciclo_origen: idCicloOrigen!,
+          source_link: sourceLink,
+          source_page: sourcePage,
+        })
+      : this.convalidacionesService.crearConvalidacionAdmin({
+          id_modulo_destino: idModuloDestino,
+          id_modulos_origen: idModulosOrigen,
+          source_link: sourceLink,
+          source_page: sourcePage,
+        });
+
+    request$
       .pipe(
         finalize(() => {
           this.creatingConvalidacion = false;
@@ -4022,6 +5887,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   eliminarModuloOrigenConvalidacion(origen: AdminConvalidacionOrigenEditable): void {
     if (this.deletingConvalidacionOrigenes.has(origen.key)) return;
+    if (origen.esCicloCompleto || origen.idModuloOrigen == null || !origen.moduloOrigenNombre) return;
     this.convalidacionOrigenToDelete = {
       key: origen.key,
       idConvalidacion: origen.idConvalidacion,
@@ -4107,7 +5973,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.deletingConvalidacionCiclos.add(key);
     const requests = this.convalidacionToDeleteReglaIds.map((id) =>
-      this.convalidacionesService.eliminarConvalidacionAdmin(id)
+      id < 0
+        ? this.convalidacionesService.eliminarConvalidacionCicloAdmin(Math.abs(id))
+        : this.convalidacionesService.eliminarConvalidacionAdmin(id)
     );
     forkJoin(requests)
       .pipe(
@@ -4145,24 +6013,34 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   editarCiclo(ciclo: AdminCicloConModulos): void {
-    this.abrirModalModulos(ciclo);
+    this.createCicloModalOpen = true;
+    this.editingCicloId = ciclo.id;
+    this.createCicloError = null;
+    this.createCicloNombre = ciclo.nombre;
+    this.createCicloFamiliaId = ciclo.id_familia === null ? null : Number(ciclo.id_familia);
+    this.createCicloGradoId = ciclo.id_grado === null ? null : Number(ciclo.id_grado);
+    this.createCicloEsSomorrostro = Number(ciclo.es_somorrostro) === 1;
   }
 
   abrirModalCrearCiclo(idFamiliaSugerida: number | null): void {
     this.createCicloModalOpen = true;
+    this.editingCicloId = null;
     this.createCicloError = null;
     this.createCicloNombre = '';
     this.createCicloFamiliaId = idFamiliaSugerida;
     this.createCicloGradoId = null;
+    this.createCicloEsSomorrostro = true;
   }
 
-  cerrarModalCrearCiclo(): void {
-    if (this.creatingCiclo) return;
+  cerrarModalCrearCiclo(force = false): void {
+    if (this.creatingCiclo && !force) return;
     this.createCicloModalOpen = false;
+    this.editingCicloId = null;
     this.createCicloError = null;
     this.createCicloNombre = '';
     this.createCicloFamiliaId = null;
     this.createCicloGradoId = null;
+    this.createCicloEsSomorrostro = true;
   }
 
   abrirModalCrearAcreditacionExterna(): void {
@@ -4199,19 +6077,25 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  crearCiclo(): void {
+  guardarCiclo(): void {
     const nombre = this.createCicloNombre.trim();
     if (!this.createCicloFamiliaId || !this.createCicloGradoId || !nombre || this.creatingCiclo) return;
 
     this.creatingCiclo = true;
     this.createCicloError = null;
 
-    this.convalidacionesService
-      .crearCicloAdmin({
-        nombre,
-        id_familia: Number(this.createCicloFamiliaId),
-        id_grado: Number(this.createCicloGradoId),
-      })
+    const payload = {
+      nombre,
+      id_familia: Number(this.createCicloFamiliaId),
+      id_grado: Number(this.createCicloGradoId),
+      es_somorrostro: this.createCicloEsSomorrostro ? 1 : 0,
+    };
+
+    const request$ = this.editingCicloId !== null
+      ? this.convalidacionesService.actualizarCicloAdmin(this.editingCicloId, payload)
+      : this.convalidacionesService.crearCicloAdmin(payload);
+
+    request$
       .pipe(
         timeout(15000),
         finalize(() => {
@@ -4224,11 +6108,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loadedModulos = false;
           this.cargarCiclosModulos();
           this.errorModulos = null;
-          this.cerrarModalCrearCiclo();
+          this.cerrarModalCrearCiclo(true);
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
-          this.createCicloError = err?.error?.detail || 'No se pudo crear el ciclo.';
+          this.createCicloError = err?.error?.detail || (this.editingCicloId !== null
+            ? 'No se pudo actualizar el ciclo.'
+            : 'No se pudo crear el ciclo.');
         },
       });
   }
@@ -4459,9 +6345,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const key = `${formularioId}::${cicloKey}`;
     if (this.openCiclos.has(key)) {
       this.openCiclos.delete(key);
-      return;
+    } else {
+      this.openCiclos.add(key);
     }
-    this.openCiclos.add(key);
+    this.cdr.detectChanges();
+    queueMicrotask(() => this.restoreDocumentoPreviewFrame(formularioId));
   }
 
   isCicloOpen(formularioId: number, cicloKey: string): boolean {
@@ -4508,6 +6396,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return total / notas.length;
   }
 
+  shouldStretchModulosPanel(formulario: AdminFormulario): boolean {
+    return this.getModulosPorCiclo(formulario).length === 1;
+  }
+
   getConvalidadoPorLista(convalidadoPor: string | null | undefined): string[] {
     if (!convalidadoPor) return [];
     return convalidadoPor
@@ -4551,6 +6443,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!etiqueta) return `${nombre} (sin nota)`;
       return `${nombre} (${etiqueta})`;
     });
+  }
+
+  getNotaConvalidadaRedondeada(nota: number | null | undefined): number | null {
+    if (nota === null || nota === undefined || !Number.isFinite(nota)) return null;
+    return Math.floor(nota + 0.5);
   }
 
   private parseManualNotaInput(value: string): number | null | undefined {
@@ -4657,6 +6554,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         convalidadoPor: solicitud.convalidado_por ?? solicitud.convalidadoPor ?? null,
         convalidadoPorIds: this.parseConvalidadoPorIds(solicitud.convalidado_por_ids ?? solicitud.convalidadoPorIds ?? null),
         nota_manual: solicitud.nota_manual ?? null,
+        nota_media_origen: solicitud.nota_media_origen ?? null,
         estadoModuloId: solicitud.estado_modulo_id ?? null,
         estadoModulo: solicitud.estado_modulo ?? null,
       });
@@ -5057,9 +6955,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return String(nombre || '').trim().toLowerCase() === 'acreditaciones externas';
   }
 
-  getDocumentoPage(sourcePage: number | null): number | null {
+  getDocumentoPage(sourcePage: number | null, _sourceLink: string | null = null): number | null {
     if (sourcePage === null || sourcePage === undefined) return null;
-    const page = Math.trunc(Number(sourcePage)) - this.sourcePageBaseOffset;
+    const page = Math.trunc(Number(sourcePage));
     return Number.isFinite(page) && page > 0 ? page : null;
   }
 

@@ -16,5 +16,6 @@ services:
       - backend/.env
     volumes:
       - ./backend/scripts/db.sqlite:/app/backend/scripts/db.sqlite
+      - ./data/uploads:/app/data/uploads
     networks:
       - proxy_net

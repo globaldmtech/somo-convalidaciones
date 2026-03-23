@@ -98,12 +98,21 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             .filter((m): m is Modulo => !!m)
             .map(m => ({ id: Number(m.id), nombre: m.nombre }));
         this.convalidacionesService.sharedSelectedModuleSources = new Map(this.selectedModuleSources);
-        this.convalidacionesService.sharedSelectedConvalidations = this.selectedModules.map(mod => ({
-            id: Number(mod.id),
-            nombre: mod.nombre,
-            source: mod.source_nombre,
-            id_convalidacion: mod.id_convalidacion ?? null,
-        }));
+        this.convalidacionesService.sharedSelectedConvalidations = this.selectedModules.map(mod => {
+            const notaSeleccionada = this.getRuleScore(mod);
+            return {
+                id: Number(mod.id),
+                nombre: mod.nombre,
+                source: mod.source_nombre,
+                ciclo_origen: mod.source_nombre ?? null,
+                origen_tipo: mod.origen_tipo ?? null,
+                modulos_origen: mod.modulos_origen ?? null,
+                modulos_origen_ids: mod.modulos_origen_ids ?? null,
+                nota_media_origen: Number.isFinite(notaSeleccionada) ? notaSeleccionada : null,
+                id_convalidacion: mod.id_convalidacion ?? null,
+                id_convalidacion_ciclo: mod.id_convalidacion_ciclo ?? null,
+            };
+        });
     }
 
     addOtro(): void {
@@ -246,9 +255,10 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
                     source_nombre: item.source_nombre || 'Otros'
                 }));
 
-                // Pick the best rule per target module across ALL sources,
-                // based on the highest average note from origin modules.
-                this.results = this.selectBestRulesByModule(normalized);
+                // Backend already returns the best rule per target module.
+                this.results = normalized.sort((a, b) =>
+                    String(a?.nombre || '').localeCompare(String(b?.nombre || ''), 'es')
+                );
                 this.groupedResults = this.results.length > 0
                     ? [{ source: 'Mejor opción por nota', items: this.results }]
                     : [];
@@ -334,32 +344,27 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
         return selected;
     }
 
-    private selectBestRulesByModule(results: any[]): any[] {
-        const bestByModulo = new Map<number, any>();
-        for (const result of results) {
-            const moduloId = Number(result?.id);
-            if (!Number.isFinite(moduloId)) continue;
-            const currentBest = bestByModulo.get(moduloId);
-            if (!currentBest || this.getRuleScore(result) > this.getRuleScore(currentBest)) {
-                bestByModulo.set(moduloId, result);
-            }
-        }
-        return Array.from(bestByModulo.values()).sort((a, b) =>
-            String(a?.nombre || '').localeCompare(String(b?.nombre || ''), 'es')
-        );
-    }
-
     private getRuleScore(result: any): number {
+        const notaMediaOrigenRaw = result?.nota_media_origen;
+        const notaMediaOrigen = typeof notaMediaOrigenRaw === 'number'
+            ? notaMediaOrigenRaw
+            : (typeof notaMediaOrigenRaw === 'string' && notaMediaOrigenRaw.trim()
+                ? Number(notaMediaOrigenRaw.replace(',', '.'))
+                : NaN);
+        if (Number.isFinite(notaMediaOrigen)) {
+            return notaMediaOrigen;
+        }
         const origenIds = this.getModulosOrigenIds(result?.modulos_origen_ids);
         if (origenIds.length === 0) return -1;
         const notasPorId = this.getNotasPorIdModulo();
-        const notas = origenIds
-            .filter((id) => this.isModuloNumerico(id))
-            .map((id) => notasPorId.get(id))
-            .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
-        if (notas.length === 0) return -1;
-        const total = notas.reduce((acc, current) => acc + current, 0);
-        return total / notas.length;
+        const notas = origenIds.map((id) => notasPorId.get(id));
+        if (notas.some((nota) => typeof nota !== 'number' || !Number.isFinite(nota))) {
+            return -1;
+        }
+        const notasValidas = notas as number[];
+        if (notasValidas.length === 1) return notasValidas[0];
+        const total = notasValidas.reduce((acc, current) => acc + current, 0);
+        return total / notasValidas.length;
     }
 
     private getModulosOrigenIds(rawIds: unknown): number[] {
@@ -380,35 +385,30 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             .filter(Boolean);
     }
 
-    getModulosOrigenConNota(modulosOrigen: string | null | undefined): string[] {
-        const notasPorNombre = this.getNotasPorNombreModulo();
-        return this.getModulosOrigenLista(modulosOrigen).map((nombre) => {
-            const nota = notasPorNombre.get(this.normalizarTexto(nombre));
+    getModulosOrigenConNota(modulosOrigen: string | null | undefined, modulosOrigenIds: unknown): string[] {
+        const nombres = this.getModulosOrigenLista(modulosOrigen);
+        const ids = this.getModulosOrigenIds(modulosOrigenIds);
+        const notasPorId = this.getNotasPorIdModulo();
+
+        return nombres.map((nombre, index) => {
+            const nota = notasPorId.get(ids[index]);
             if (nota === null || nota === undefined) return `${nombre} (sin nota)`;
             return `${nombre} (${this.formatearNota(nota)})`;
         });
     }
 
-    debeMostrarDesplegableModulosOrigen(modulosOrigen: string | null | undefined): boolean {
-        return this.getModulosOrigenLista(modulosOrigen).length > 2;
+    getNotaConvalidadaRedondeada(nota: unknown): number | null {
+        const value = typeof nota === 'number'
+            ? nota
+            : (typeof nota === 'string' && nota.trim() ? Number(nota.replace(',', '.')) : NaN);
+        if (!Number.isFinite(value)) {
+            return null;
+        }
+        return Math.floor(value + 0.5);
     }
 
-    private getNotasPorNombreModulo(): Map<string, number> {
-        const map = new Map<string, number>();
-        const estudios = this.convalidacionesService.getEstudios() || [];
-        for (const estudio of estudios) {
-            for (const modulo of estudio.modulos || []) {
-                const nota = estudio.notasPorModulo?.[modulo.id];
-                if (typeof nota !== 'number' || !Number.isFinite(nota)) continue;
-                const key = this.normalizarTexto(modulo.nombre);
-                if (!key) continue;
-                const actual = map.get(key);
-                if (actual === undefined || nota > actual) {
-                    map.set(key, nota);
-                }
-            }
-        }
-        return map;
+    debeMostrarDesplegableModulosOrigen(modulosOrigen: string | null | undefined): boolean {
+        return this.getModulosOrigenLista(modulosOrigen).length > 2;
     }
 
     private getNotasPorIdModulo(): Map<number, number> {
@@ -427,21 +427,6 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             }
         }
         return map;
-    }
-
-    private isModuloNumerico(moduloId: number): boolean {
-        const estudios = this.convalidacionesService.getEstudios() || [];
-        for (const estudio of estudios) {
-            const modulo = (estudio.modulos || []).find((item) => Number(item.id) === Number(moduloId));
-            if (modulo) {
-                return modulo.numerico !== 0;
-            }
-        }
-        return true;
-    }
-
-    private normalizarTexto(value: string): string {
-        return (value || '').toLowerCase().trim().replace(/\s+/g, ' ');
     }
 
     private formatearNota(value: number): string {

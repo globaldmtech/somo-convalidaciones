@@ -23,17 +23,42 @@
             </div>
 
             <div class="space-y-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">DNI <span
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Documento de identidad <span
                         class="text-red-500">*</span></label>
-                <input type="text" [(ngModel)]="dni" required placeholder="Ej: 12345678Z"
-                    class="block w-full px-4 py-3 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-gray-50/50">
+                <div class="grid grid-cols-1 sm:grid-cols-[180px_minmax(0,1fr)] gap-3">
+                    <select [(ngModel)]="documentType" (ngModelChange)="onDocumentTypeChange()"
+                        class="block w-full px-4 py-3 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-gray-50/50">
+                        <option *ngFor="let option of documentTypeOptions" [ngValue]="option">{{ getDocumentTypeOptionLabel(option) }}</option>
+                    </select>
+                    <input type="text" [(ngModel)]="dni" (blur)="onDocumentBlur()" required [placeholder]="documentPlaceholder"
+                        [class.border-red-400]="showDocumentError"
+                        [class.focus:ring-red-500]="showDocumentError"
+                        [class.focus:border-red-500]="showDocumentError"
+                        class="block w-full px-4 py-3 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-gray-50/50">
+                </div>
+                <p class="text-xs text-gray-500">Tipo seleccionado: {{ documentTypeLabel }}.</p>
+                <p *ngIf="showDocumentError" class="flex items-center gap-2 text-sm text-red-600">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
+                    </svg>
+                    {{ documentErrorMessage }}
+                </p>
             </div>
 
             <div class="space-y-2">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Correo electrónico <span
                         class="text-red-500">*</span></label>
-                <input type="email" [(ngModel)]="email" required placeholder="Ej: juan.perez@email.com"
+                <input type="email" [(ngModel)]="email" (blur)="onEmailBlur()" required placeholder="Ej: juan.perez@email.com"
+                    [class.border-red-400]="showEmailError"
+                    [class.focus:ring-red-500]="showEmailError"
+                    [class.focus:border-red-500]="showEmailError"
                     class="block w-full px-4 py-3 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-gray-50/50">
+                <p *ngIf="showEmailError" class="flex items-center gap-2 text-sm text-red-600">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
+                    </svg>
+                    El formato del correo electrónico no es correcto.
+                </p>
             </div>
 
         </div>

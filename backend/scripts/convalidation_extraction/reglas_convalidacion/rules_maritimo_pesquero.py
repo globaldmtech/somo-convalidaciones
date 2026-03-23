@@ -29,7 +29,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -51,7 +51,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # DESTINO: T. Navegación y Pesca de Litoral (RD 1144/2012)
@@ -76,7 +76,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -98,7 +98,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # DESTINO: T. Operaciones Subacuáticas e Hiperbáricas (RD 1073/2012)
@@ -124,7 +124,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
     {
         "familia_destino":       "Marítimo pesquera",
@@ -143,7 +143,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # Origen: TS Transporte Marítimo y Pesca de Altura — Ciclo Completo
@@ -166,7 +166,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
     {
         "familia_destino":       "Marítimo pesquera",
@@ -185,7 +185,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -213,7 +213,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -235,7 +235,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
     # Origen: TS Patronaje y Moda (Textil, Confección y Piel) — módulo específico
@@ -256,7 +256,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124866,
+        "source_page": 153,
     },
 
 ]

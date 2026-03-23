@@ -34,7 +34,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # Origen: TS Iluminación, Captación y Tratamiento de Imagen (Imagen y Sonido) — Ciclo Completo
@@ -56,7 +56,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -85,7 +85,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # Origen: TS Animaciones 3D, Juegos y Entornos Interactivos (Imagen y Sonido) — Ciclo Completo
@@ -107,7 +107,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # DESTINO: TS Diseño y Gestión de la Producción Gráfica (RD 175/2013)
@@ -132,7 +132,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # Origen: TS Iluminación, Captación y Tratamiento de Imagen (Imagen y Sonido) — Ciclo Completo
@@ -154,7 +154,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
 ]

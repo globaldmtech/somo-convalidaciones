@@ -29,7 +29,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -51,7 +51,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # Origen: TS Marketing y Publicidad (Comercio y Marketing) — Ciclo Completo
@@ -73,7 +73,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # DESTINO: T. Peluquería y Cosmética Capilar (RD 1588/2011)
@@ -98,7 +98,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -120,7 +120,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # Origen: TS Marketing y Publicidad (Comercio y Marketing) — Ciclo Completo
@@ -142,7 +142,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -171,7 +171,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
 ]

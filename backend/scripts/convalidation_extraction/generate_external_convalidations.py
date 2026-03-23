@@ -20,7 +20,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from db_helper import DEFAULT_DB
+from db_helper import DEFAULT_DB, convalidacion_ciclo_exists, get_ciclo_id, get_grado_id, get_familia_id, get_modulos_por_ciclo
 
 OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "6_load_convalidations_externa.sql")
 CICLO_ACREDITACIONES_NOMBRE = "Acreditaciones externas"
@@ -102,8 +102,15 @@ def convalidacion_ext_unificada_exists(
     )
 
 
+def get_next_conv_ciclo_id(conn: sqlite3.Connection) -> int:
+    row = conn.execute("SELECT COALESCE(MAX(conv_id_ciclo), 0) + 1 FROM convalidacion_ciclo").fetchone()
+    return row[0] if row else 1
+
+
 def generate(dry_run: bool = False) -> list[str]:
     conn = sqlite3.connect(DEFAULT_DB)
+    conn.row_factory = sqlite3.Row
+    conv_ciclo_id = get_next_conv_ciclo_id(conn)
 
     sql_lines: list[str] = []
     sql_lines.append("-- ===========================================================")
@@ -167,6 +174,23 @@ def generate(dry_run: bool = False) -> list[str]:
         elif dry_run:
             print(f"  Ya existia como modulo id={id_origen}")
 
+        if acred.get("ciclo_completo_origen"):
+            ciclo_nombre = acred.get("ciclo_origen")
+            grado_nombre = acred.get("grado_origen")
+            familia_nombre = acred.get("familia_origen")
+            if not ciclo_nombre:
+                print("  WARN: acreditacion externa con ciclo_completo_origen pero sin ciclo_origen. Saltando.")
+                sql_lines.append("")
+                continue
+
+            id_grado = get_grado_id(grado_nombre) if grado_nombre else None
+            id_familia = get_familia_id(familia_nombre) if familia_nombre else None
+            id_ciclo_origen = get_ciclo_id(ciclo_nombre, id_familia=id_familia, id_grado=id_grado)
+            if id_ciclo_origen is None or not get_modulos_por_ciclo(id_ciclo_origen):
+                print(f"  WARN: ciclo completo origen no resoluble para '{nombre}'. Saltando.")
+                sql_lines.append("")
+                continue
+
         for id_oficial in acred["destinos_id_oficial"]:
             modulo_destino_ids = get_modulos_by_id_oficial(conn, id_oficial)
             if not modulo_destino_ids:
@@ -176,6 +200,22 @@ def generate(dry_run: bool = False) -> list[str]:
             print(f"  Modulo destino {id_oficial}: {len(modulo_destino_ids)} instancias")
 
             for id_modulo_destino in modulo_destino_ids:
+                if acred.get("ciclo_completo_origen"):
+                    if convalidacion_ciclo_exists(id_modulo_destino, id_ciclo_origen):
+                        total_reglas_existentes += 1
+                        continue
+
+                    sql_lines.append(
+                        "INSERT INTO convalidacion_ciclo "
+                        "(conv_id_ciclo, source_link, source_page, id_modulo_destino, id_ciclo_origen) "
+                        f"VALUES ({conv_ciclo_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_modulo_destino}, {id_ciclo_origen});"
+                    )
+                    total_reglas_nuevas += 1
+                    if dry_run:
+                        print(f"    -> regla nueva por ciclo completo hacia id_modulo={id_modulo_destino}")
+                    conv_ciclo_id += 1
+                    continue
+
                 if id_origen and convalidacion_ext_unificada_exists(conn, id_origen, id_modulo_destino):
                     total_reglas_existentes += 1
                     continue

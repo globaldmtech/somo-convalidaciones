@@ -34,7 +34,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: TS Gestión del Agua (Energía y Agua) — dos módulos específicos
@@ -62,7 +62,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: TS Mantenimiento Electrónico (RD 1578/2011) — Ciclo Completo
@@ -84,7 +84,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: TS Mantenimiento Electrónico (RD 1578/2011) — Ciclo Completo
@@ -106,7 +106,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # DESTINO: T. Instalaciones de Telecomunicaciones (RD 1632/2009)
@@ -137,7 +137,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas — tres módulos específicos
@@ -172,7 +172,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: TS Mantenimiento Electrónico — Ciclo Completo
@@ -194,7 +194,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Mantenimiento Electrónico — Ciclo Completo
@@ -216,7 +216,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Sistemas Microinformáticos y Redes (Informática y Com.) — Ciclo Completo
@@ -238,7 +238,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Sistemas Microinformáticos y Redes (Informática y Com.) — Ciclo Completo
@@ -260,7 +260,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -289,7 +289,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados — módulo específico
@@ -310,7 +310,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Desarrollo de Aplicaciones Multiplataforma (Informática y Com.) — Ciclo Completo
@@ -332,7 +332,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # DESTINO: TS Electromedicina Clínica (RD 838/2015)
@@ -356,7 +356,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Mantenimiento Electrónico — dos módulos específicos
@@ -384,7 +384,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados — dos módulos específicos
@@ -412,7 +412,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Desarrollo de Proyectos de Instalaciones Térmicas y de Fluidos
@@ -441,7 +441,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # Origen: TS Mantenimiento de Instalaciones Térmicas y de Fluidos
@@ -470,7 +470,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124846,
+        "source_page": 133,
     },
 
     # DESTINO: TS Sistemas Electrotécnicos y Automatizados (RD 1127/2010)
@@ -494,7 +494,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: TS Mantenimiento Electrónico — Ciclo Completo
@@ -516,7 +516,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: TS Sistemas de Telecomunicaciones e Informáticos — dos módulos específicos
@@ -544,7 +544,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # DESTINO: TS Sistemas de Telecomunicación e Informáticos (RD 883/2011)
@@ -569,7 +569,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # DESTINO: TS Electromedicina Clínica — adicional
@@ -593,7 +593,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
 ]

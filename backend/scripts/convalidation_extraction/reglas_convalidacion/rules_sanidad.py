@@ -29,7 +29,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: T. Electromecánica de Vehículos Automóviles (Transporte y Mantenimiento de Vehículos) — Ciclo completo
@@ -51,7 +51,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — Ciclo completo
@@ -73,7 +73,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: T. Mantenimiento de Material Rodante Ferroviario (Transporte y Mantenimiento de Vehículos) — Ciclo completo
@@ -95,7 +95,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — Ciclo completo
@@ -117,7 +117,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: TS Automoción (Transporte y Mantenimiento de Vehículos) — Ciclo completo
@@ -139,7 +139,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # DESTINO: T. Farmacia y Parafarmacia (RD 1689/2007)
@@ -164,7 +164,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
     # Origen: TS Laboratorio de Análisis y de Control de Calidad (Química) — Ciclo completo
@@ -186,7 +186,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124868,
+        "source_page": 155,
     },
 
 ]

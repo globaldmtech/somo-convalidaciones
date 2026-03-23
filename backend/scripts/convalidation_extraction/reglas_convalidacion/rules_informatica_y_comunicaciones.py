@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Mantenimiento Electrónico (Electricidad y Electrónica) — Ciclo Completo
@@ -50,7 +50,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: TS Mantenimiento Electrónico (Electricidad y Electrónica) — Ciclo Completo
@@ -72,7 +72,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -101,7 +101,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # DESTINO: TS Desarrollo de Aplicaciones Multiplataforma (RD 450/2010)
@@ -126,7 +126,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Administración de Sistemas Informáticos en Red — Ciclo Completo
@@ -148,7 +148,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Animaciones 3D, Juegos y Entornos Interactivos (Imagen y Sonido) — Ciclo Completo
@@ -170,7 +170,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # DESTINO: TS Desarrollo de Aplicaciones Web (RD 686/2010)
@@ -195,7 +195,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Administración de Sistemas Informáticos en Red — Ciclo Completo
@@ -217,7 +217,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
 ]

@@ -55,6 +55,7 @@ async def _persist_uploaded_files(
     documentos_otros_nombres: list[str],
 ) -> list[dict]:
     FORM_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    used_storage_names: set[str] = set()
 
     def build_target_path(file_name: str) -> Path:
         target = (FORM_UPLOAD_DIR / file_name).resolve()
@@ -69,9 +70,18 @@ async def _persist_uploaded_files(
         descripcion: str,
     ) -> None:
         storage_name = _build_storage_name(dni, id_formulario, descripcion, upload.filename or "")
+        if storage_name in used_storage_names:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Ya existe un documento con el nombre '{descripcion}'. "
+                    "Cámbialo antes de enviar el formulario."
+                ),
+            )
         target_path = build_target_path(storage_name)
         content = await upload.read()
         target_path.write_bytes(content)
+        used_storage_names.add(storage_name)
         saved_files.append(
             {
                 "nombre_archivo": storage_name,
@@ -111,10 +121,18 @@ async def get_grados(db: sqlite3.Connection = Depends(database.get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/ciclos_existentes")
-async def get_ciclos(grado_id: Optional[int] = None, db: sqlite3.Connection = Depends(database.get_db)):
+async def get_ciclos(
+    grado_id: Optional[int] = None,
+    solo_somorrostro: bool = True,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """List cycles, optionally filtered by degree ID."""
     try:
-        return database.CatalogQueries.list_ciclos(db, grado_id=grado_id)
+        return database.CatalogQueries.list_ciclos(
+            db,
+            grado_id=grado_id,
+            solo_somorrostro=solo_somorrostro,
+        )
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -146,8 +164,9 @@ async def calcular_convalidaciones(
     try:
         return database.ConvalidationQueries.get_convalidaciones_posibles(
             db, 
-            request.modulo_ids, 
+            request.modulos_aportados,
             request.acreditacion_ids,
+            request.ciclos_completos,
             request.target_ciclo_id
         )
     except Exception as e:
@@ -209,6 +228,11 @@ async def insertar_formulario_completo(
             id_acreditaciones = request.id_acreditaciones_registradas_aportadas,
             descripciones=request.descripcion_no_registrados,
             modulos_detalle=request.modulos_aportados_detalle,
+        )
+        database.FormularioQueries.insert_ciclo_aportado(
+            db,
+            id_formulario=id_formulario,
+            ciclos_detalle=request.ciclos_aportados_detalle,
         )
         # 3. Insertar solicitudes
         solicitud = database.FormularioQueries.insert_formulario_solicitud(

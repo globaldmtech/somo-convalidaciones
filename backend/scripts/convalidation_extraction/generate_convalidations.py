@@ -1,7 +1,8 @@
 """
 generate_convalidations.py
 ==========================
-Genera los INSERTs para las tablas `convalidacion` y `convalidacion_origen`
+Genera los INSERTs para las tablas `convalidacion`, `convalidacion_origen`
+y `convalidacion_ciclo`
 a partir de las reglas definidas en rules.py, y los aplica a la base de datos
 (o los vuelca a un fichero SQL según el modo elegido).
 
@@ -38,6 +39,7 @@ from db_helper import (
     get_grado_id,
     get_modulos_por_ciclo,
     convalidacion_exists,
+    convalidacion_ciclo_exists,
     DEFAULT_DB,
 )
 
@@ -127,6 +129,12 @@ def get_next_conv_id() -> int:
     return row[0]
 
 
+def get_next_conv_ciclo_id() -> int:
+    with sqlite3.connect(DEFAULT_DB) as conn:
+        row = conn.execute("SELECT COALESCE(MAX(conv_id_ciclo), 0) + 1 FROM convalidacion_ciclo").fetchone()
+    return row[0]
+
+
 # ─────────────────────────────────────────────────────────────────────
 # Generación principal
 # ─────────────────────────────────────────────────────────────────────
@@ -149,6 +157,7 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
     sql_lines.append("")
 
     conv_id = get_next_conv_id()
+    conv_ciclo_id = get_next_conv_ciclo_id()
     errors = 0
     inserted = 0
     skipped = 0
@@ -181,6 +190,7 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
 
         # ── ORÍGENES ──────────────────────────────────────────────────
         origen_ids: list[int] = []
+        origen_ciclo_ids: list[int] = []
         for j, origen in enumerate(regla.get("origenes", [])):
             origen_label = f"{label} Origen #{j + 1}"
             id_ciclo_origen = None
@@ -192,7 +202,7 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
                     grado=origen.get("grado_origen"),
                 )
 
-            # ── CICLO COMPLETO: añadir TODOS los módulos del ciclo origen ──
+            # ── CICLO COMPLETO: insertar contra el ciclo origen ──
             if origen.get("ciclo_completo_origen"):
                 if id_ciclo_origen is None:
                     print(f"  ✗ ERROR: No se pudo resolver el ciclo para {origen_label} (ciclo completo), SALTANDO.")
@@ -202,8 +212,8 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
                     if not ids_ciclo:
                         print(f"  ⚠ WARN: El ciclo id={id_ciclo_origen} no tiene módulos en la BD ({origen_label}).")
                     else:
-                        print(f"  ✓ {origen_label}: ciclo completo → {len(ids_ciclo)} módulo(s) (ciclo_id={id_ciclo_origen})")
-                        origen_ids.extend(ids_ciclo)
+                        print(f"  ✓ {origen_label}: ciclo completo → ciclo_id={id_ciclo_origen}")
+                        origen_ciclo_ids.append(id_ciclo_origen)
                 continue  # No buscar módulo individual
 
             # ── MÓDULO ESPECÍFICO ────────────────────────────────
@@ -218,15 +228,14 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
             else:
                 origen_ids.append(id_mod_origen)
 
-        if not origen_ids:
-            print(f"  → {label}: SALTADA, sin orígenes resueltos.\n")
+        if origen_ciclo_ids and origen_ids:
+            print(f"  ✗ ERROR: {label} mezcla orígenes por módulo y por ciclo completo. SALTADA.\n")
             errors += 1
             continue
 
-        # ── Comprobar si la regla ya existe en la BD ──────────────────
-        if convalidacion_exists(id_modulo_destino, origen_ids):
-            print(f"  ↷ {label}: YA EXISTE (destino={id_modulo_destino}, orígenes={origen_ids}), SALTADA.")
-            skipped += 1
+        if not origen_ids and not origen_ciclo_ids:
+            print(f"  → {label}: SALTADA, sin orígenes resueltos.\n")
+            errors += 1
             continue
 
         # ── Construir el SQL ──────────────────────────────────────────
@@ -235,6 +244,45 @@ def generate(dry_run: bool = False, rules_file: str | None = None) -> list[str]:
 
         link_sql = f"'{source_link}'" if source_link else "NULL"
         page_sql = str(source_page) if source_page is not None else "NULL"
+
+        if origen_ciclo_ids:
+            inserted_in_rule = 0
+            for id_ciclo_origen in origen_ciclo_ids:
+                if convalidacion_ciclo_exists(id_modulo_destino, id_ciclo_origen):
+                    print(
+                        f"  ↷ {label}: YA EXISTE (destino={id_modulo_destino}, ciclo_origen={id_ciclo_origen}), SALTADA."
+                    )
+                    skipped += 1
+                    continue
+
+                sql_lines.append(
+                    f"-- {label}: módulo destino id={id_modulo_destino}, ciclo origen id={id_ciclo_origen}"
+                )
+                sql_lines.append(
+                    f"INSERT OR IGNORE INTO convalidacion_ciclo "
+                    f"(conv_id_ciclo, source_link, source_page, id_modulo_destino, id_ciclo_origen) "
+                    f"VALUES ({conv_ciclo_id}, {link_sql}, {page_sql}, {id_modulo_destino}, {id_ciclo_origen});"
+                )
+                sql_lines.append("")
+
+                if dry_run:
+                    print(
+                        f"  ► {label}: conv_id_ciclo={conv_ciclo_id} | destino_modulo_id={id_modulo_destino} "
+                        f"| ciclo_origen_id={id_ciclo_origen}"
+                    )
+
+                conv_ciclo_id += 1
+                inserted += 1
+                inserted_in_rule += 1
+
+            if inserted_in_rule == 0:
+                continue
+            continue
+
+        if convalidacion_exists(id_modulo_destino, origen_ids):
+            print(f"  ↷ {label}: YA EXISTE (destino={id_modulo_destino}, orígenes={origen_ids}), SALTADA.")
+            skipped += 1
+            continue
 
         sql_lines.append(f"-- {label}: módulo destino id={id_modulo_destino}, orígenes={origen_ids}")
         sql_lines.append(

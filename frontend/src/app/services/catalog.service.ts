@@ -11,9 +11,16 @@ export class CatalogService {
         return this.http.get<any[]>(`${API_BASE}/grados_existentes`);
     }
 
-    getCiclos(gradoId?: number): Observable<any[]> {
-        const params = gradoId ? `?grado_id=${gradoId}` : '';
-        return this.http.get<any[]>(`${API_BASE}/ciclos_existentes${params}`);
+    getCiclos(gradoId?: number, soloSomorrostro = true): Observable<any[]> {
+        const searchParams = new URLSearchParams();
+        if (gradoId) {
+            searchParams.set('grado_id', String(gradoId));
+        }
+        if (!soloSomorrostro) {
+            searchParams.set('solo_somorrostro', 'false');
+        }
+        const params = searchParams.toString();
+        return this.http.get<any[]>(`${API_BASE}/ciclos_existentes${params ? `?${params}` : ''}`);
     }
 
     getModulos(cicloId?: number): Observable<any[]> {
