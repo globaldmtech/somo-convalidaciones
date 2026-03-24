@@ -9,6 +9,8 @@
 MODULOS_GLOBALES = [
     "Formación y Orientación Laboral",
     "Empresa e Iniciativa Emprendedora",
+    "Itinerario personal para la empleabilidad I",
+    "Itinerario personal para la empleabilidad II"
 ]
 
 # ──────────────────────────────────────────────────────────────────────
@@ -55,5 +57,13 @@ REGLAS_MODULO_A_MODULO = [
     {
         "id_oficial_origen":  "0179",
         "id_oficial_destino": "0156",
+    },
+    {
+        "modulo_origen":"Formación y Orientación Laboral",
+        "modulo_destino": "Itinerario personal para la empleabilidad I"
+    },
+    {
+        "modulo_origen":"Empresa e Iniciativa Emprendedora",
+        "modulo_destino": "Itinerario personal para la empleabilidad II"
     },
 ]

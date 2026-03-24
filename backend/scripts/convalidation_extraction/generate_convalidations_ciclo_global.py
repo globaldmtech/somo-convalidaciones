@@ -32,7 +32,7 @@ from db_helper import (
     get_grado_id,
     get_familia_id,
     get_modulos_por_ciclo,
-    convalidacion_exists,
+    convalidacion_ciclo_exists,
 )
 from reglas_convalidacion.rules_otros import REGLAS_CICLO_A_MODULO_UNIVERSAL
 
@@ -47,11 +47,23 @@ def get_next_conv_id() -> int:
     return row[0]
 
 
+def get_next_conv_ciclo_id() -> int:
+    with sqlite3.connect(DEFAULT_DB) as conn:
+        row = conn.execute("SELECT COALESCE(MAX(conv_id_ciclo), 0) + 1 FROM convalidacion_ciclo").fetchone()
+    return row[0]
+
+
+def load_existing_conv_ciclo_pairs(cursor: sqlite3.Cursor) -> set[tuple[int, int]]:
+    cursor.execute("SELECT id_modulo_destino, id_ciclo_origen FROM convalidacion_ciclo")
+    return {(row["id_modulo_destino"], row["id_ciclo_origen"]) for row in cursor.fetchall()}
+
+
 def generate(dry_run: bool = False) -> list[str]:
     conn = get_connection()
     cursor = conn.cursor()
 
-    conv_id = get_next_conv_id()
+    conv_ciclo_id = get_next_conv_ciclo_id()
+    existing_conv_ciclo_pairs = load_existing_conv_ciclo_pairs(cursor)
     sql_lines = []
 
     sql_lines.append("-- ==========================================================")
@@ -115,28 +127,24 @@ def generate(dry_run: bool = False) -> list[str]:
                 print(f"  WARN: destino id={id_dest} es el unico modulo del ciclo, sin origenes validos.")
                 continue
 
-            if convalidacion_exists(id_dest, origen_ids_filtrados):
-                print(f"  Ya existia convalidacion para modulo destino id={id_dest}")
+            if (id_dest, id_ciclo) in existing_conv_ciclo_pairs:
+                print(f"  Ya existia convalidacion_ciclo para modulo destino id={id_dest} y ciclo origen id={id_ciclo}")
                 total_skipped += 1
                 continue
 
             sql_lines.append(f"-- {label}: ciclo '{ciclo_nombre}' (completo) -> modulo destino id={id_dest}")
             sql_lines.append(
-                f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
-                f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
+                f"INSERT INTO convalidacion_ciclo (conv_id_ciclo, source_link, source_page, id_modulo_destino, id_ciclo_origen) "
+                f"VALUES ({conv_ciclo_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest}, {id_ciclo});"
             )
-            for id_orig in origen_ids_filtrados:
-                sql_lines.append(
-                    f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "
-                    f"VALUES ({conv_id}, {id_orig});"
-                )
             sql_lines.append("")
 
             if dry_run:
-                print(f"  [Dry-run] conv_id={conv_id}: destino={id_dest} <- {len(origen_ids_filtrados)} origenes (ciclo completo)")
+                print(f"  [Dry-run] conv_id_ciclo={conv_ciclo_id}: destino={id_dest} <- ciclo_origen={id_ciclo}")
 
-            conv_id += 1
+            conv_ciclo_id += 1
             total_inserted += 1
+            existing_conv_ciclo_pairs.add((id_dest, id_ciclo))
 
     sql_lines.append("PRAGMA foreign_keys = ON;")
     sql_lines.append("")

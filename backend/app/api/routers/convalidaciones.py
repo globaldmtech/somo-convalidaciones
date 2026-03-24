@@ -148,6 +148,7 @@ async def calcular_convalidaciones(
             db, 
             request.modulo_ids, 
             request.acreditacion_ids,
+            request.ciclos_completos,
             request.target_ciclo_id
         )
     except Exception as e:
@@ -209,6 +210,11 @@ async def insertar_formulario_completo(
             id_acreditaciones = request.id_acreditaciones_registradas_aportadas,
             descripciones=request.descripcion_no_registrados,
             modulos_detalle=request.modulos_aportados_detalle,
+        )
+        database.FormularioQueries.insert_ciclo_aportado(
+            db,
+            id_formulario=id_formulario,
+            ciclos_detalle=request.ciclos_aportados_detalle,
         )
         # 3. Insertar solicitudes
         solicitud = database.FormularioQueries.insert_formulario_solicitud(

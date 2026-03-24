@@ -103,6 +103,7 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             nombre: mod.nombre,
             source: mod.source_nombre,
             id_convalidacion: mod.id_convalidacion ?? null,
+            id_convalidacion_ciclo: mod.id_convalidacion_ciclo ?? null,
         }));
     }
 
@@ -350,6 +351,10 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
     }
 
     private getRuleScore(result: any): number {
+        const notaMediaOrigen = Number(result?.nota_media_origen);
+        if (Number.isFinite(notaMediaOrigen)) {
+            return notaMediaOrigen;
+        }
         const origenIds = this.getModulosOrigenIds(result?.modulos_origen_ids);
         if (origenIds.length === 0) return -1;
         const notasPorId = this.getNotasPorIdModulo();
@@ -358,6 +363,7 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             .map((id) => notasPorId.get(id))
             .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
         if (notas.length === 0) return -1;
+        if (notas.length === 1) return notas[0];
         const total = notas.reduce((acc, current) => acc + current, 0);
         return total / notas.length;
     }

@@ -25,6 +25,7 @@ from model.admin import (
     CrearAdministradorRequest,
     CrearCicloRequest,
     CrearConvalidacionRequest,
+    CrearConvalidacionCicloRequest,
     CrearModulosRequest,
 )
 
@@ -561,6 +562,51 @@ async def crear_convalidacion(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.post("/crear_convalidaciones_ciclo")
+async def crear_convalidacion_ciclo(
+    request: CrearConvalidacionCicloRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Crea una regla de convalidación por ciclo completo."""
+    try:
+        id_modulo_destino = int(request.id_modulo_destino)
+        id_ciclo_origen = int(request.id_ciclo_origen)
+        if id_modulo_destino <= 0:
+            raise HTTPException(status_code=400, detail="El módulo destino es obligatorio")
+        if id_ciclo_origen <= 0:
+            raise HTTPException(status_code=400, detail="El ciclo origen es obligatorio")
+
+        source_link = (request.source_link or "").strip() or None
+        source_page = int(request.source_page) if request.source_page is not None else None
+
+        created = database.AdminQueries.create_convalidacion_ciclo_rule(
+            db,
+            id_modulo_destino=id_modulo_destino,
+            id_ciclo_origen=id_ciclo_origen,
+            source_link=source_link,
+            source_page=source_page,
+        )
+
+        db.commit()
+        return {
+            "ok": True,
+            "id": int(created["id"]),
+            "id_modulo_destino": int(created["id_modulo_destino"]),
+            "id_ciclo_origen": int(created["id_ciclo_origen"]),
+        }
+    except HTTPException:
+        raise
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.delete("/ciclos/{id_ciclo}")
 async def eliminar_ciclo(
     id_ciclo: int,
@@ -611,6 +657,25 @@ async def eliminar_convalidacion(
             raise HTTPException(status_code=404, detail="Regla de convalidación no encontrada")
         db.commit()
         return {"ok": True, "id": id_convalidacion}
+    except HTTPException:
+        raise
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/convalidaciones-ciclo/{id_convalidacion_ciclo}")
+async def eliminar_convalidacion_ciclo(
+    id_convalidacion_ciclo: int,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Elimina una regla de convalidación de ciclo completo por ID."""
+    try:
+        deleted = database.AdminQueries.delete_convalidacion_ciclo_rule(db, id_convalidacion_ciclo)
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail="Regla de convalidación por ciclo no encontrada")
+        db.commit()
+        return {"ok": True, "id": id_convalidacion_ciclo}
     except HTTPException:
         raise
     except sqlite3.Error as e:

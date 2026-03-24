@@ -12,6 +12,25 @@ GRADO_NORM = {
     "OTROS": 4,
 }
 
+COMMON_MODULES_BY_GRADE = {
+    "GRADO MEDIO": [
+        "0156. Inglés Profesional (Grado Medio)",
+        "1664. Digitalización aplicada a los sectores productivos (Grado Medio)",
+        "1708. Sostenibilidad aplicada al sistema productivo",
+        "1709. Itinerario personal para la empleabilidad I",
+        "1710. Itinerario personal para la empleabilidad II",
+        "1713. Proyecto intermodular",
+    ],
+    "GRADO SUPERIOR": [
+        "0179. Inglés Profesional (Grado Superior)",
+        "1665. Digitalización aplicada a los sectores productivos (Grado Superior)",
+        "1708. Sostenibilidad aplicada al sistema productivo",
+        "1709. Itinerario personal para la empleabilidad I",
+        "1710. Itinerario personal para la empleabilidad II",
+        "1713. Proyecto intermodular",
+    ],
+}
+
 def esc(s):
     """Escape single quotes for SQL."""
     return s.replace("'", "''").replace("\n", " ")
@@ -27,8 +46,36 @@ def extract_name(module_str):
     return m.group(1).strip() if m else module_str.strip().replace("\n", " ")
 
 
+def add_common_modules(data):
+    """Ensure common transversal modules exist on every ciclo of Medio/Superior."""
+    for grados_dict in data.values():
+        for grado_str, common_modules in COMMON_MODULES_BY_GRADE.items():
+            ciclos_dict = grados_dict.get(grado_str)
+            if not ciclos_dict:
+                continue
+
+            for ciclo_nombre, modulos_list in ciclos_dict.items():
+                existing_modules = {mod.strip() for mod in modulos_list}
+                for module in common_modules:
+                    if module not in existing_modules:
+                        modulos_list.append(module)
+                        existing_modules.add(module)
+
+
+def is_deprecated_module(module_name, module_code):
+    normalized = module_name.strip().lower()
+    normalized_code = (module_code or "").strip().upper()
+    return normalized in {
+        "empresa e iniciativa emprendedora",
+        "formación y orientación laboral",
+        "formacion y orientacion laboral",
+    } or normalized_code in {"E100", "E200"}
+
+
 with open(INPUT, encoding="utf-8") as f:
     data = json.load(f)
+
+add_common_modules(data)
 
 lines = []
 lines.append("-- ============================================================")
@@ -92,9 +139,10 @@ for raw_fam, grados_dict in data.items():
                 nombre_mod = extract_name(mod_str_clean) if id_oficial else esc(mod_str_clean)
                 is_fct = "Formación en Centros de Trabajo" in nombre_mod
                 numerico = 0 if is_fct else 1
+                deprecated = 1 if is_deprecated_module(nombre_mod, id_oficial) else 0
                 
                 modulo_rows.append(
-                    f"  ({modulo_id}, '{esc(nombre_mod)}', {repr(id_oficial) if id_oficial else 'NULL'}, {ciclo_id}, {numerico})"
+                    f"  ({modulo_id}, '{esc(nombre_mod)}', {repr(id_oficial) if id_oficial else 'NULL'}, {ciclo_id}, {numerico}, {deprecated})"
                 )
                 modulo_id += 1
             ciclo_id += 1
@@ -105,7 +153,7 @@ lines.append(",\n".join(ciclo_rows) + ";")
 lines.append("")
 
 lines.append("-- Modulos")
-lines.append("INSERT OR IGNORE INTO modulos (id, nombre, id_oficial, id_ciclo, numerico) VALUES")
+lines.append("INSERT OR IGNORE INTO modulos (id, nombre, id_oficial, id_ciclo, numerico, deprecated) VALUES")
 # Fix repr() for None -> NULL
 modulo_rows_fixed = [r.replace("None", "NULL") for r in modulo_rows]
 lines.append(",\n".join(modulo_rows_fixed) + ";")

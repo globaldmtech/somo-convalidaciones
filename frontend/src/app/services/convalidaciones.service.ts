@@ -17,6 +17,7 @@ export interface SelectedConvalidation {
     nombre: string;
     source: string;
     id_convalidacion?: number | null;
+    id_convalidacion_ciclo?: number | null;
 }
 
 export interface RegisteredManualModule {
@@ -36,6 +37,7 @@ export interface AdminFormularioSolicitud {
     id: number;
     id_modulo_destino: number | null;
     id_convalidacion?: number | null;
+    id_convalidacion_ciclo?: number | null;
     nota_manual?: number | null;
     ciclo_id?: number | null;
     ciclo_nombre?: string | null;
@@ -148,6 +150,13 @@ export interface AdminCreateConvalidacionRequest {
     source_page?: number | null;
 }
 
+export interface AdminCreateConvalidacionCicloRequest {
+    id_modulo_destino: number;
+    id_ciclo_origen: number;
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
 export interface AdminCreateConvalidacionResponse {
     ok: boolean;
     id: number;
@@ -167,6 +176,7 @@ export interface AdminCicloModulo {
     nombre: string;
     id_oficial: string | null;
     numerico?: number | null;
+    deprecated?: number | null;
 }
 
 export interface AdminCicloConModulos {
@@ -183,15 +193,17 @@ export interface AdminCicloConModulos {
 }
 
 export interface AdminConvalidacionOrigen {
-    id_modulo_origen: number;
-    modulo_origen_nombre: string;
+    id_modulo_origen: number | null;
+    modulo_origen_nombre: string | null;
     modulo_origen_codigo?: string | null;
     id_ciclo_origen: number;
     ciclo_origen_nombre: string;
+    es_ciclo_completo?: boolean;
 }
 
 export interface AdminConvalidacionRegla {
     id: number;
+    tipo_regla?: 'modulo' | 'ciclo';
     source_link: string | null;
     source_page: number | null;
     id_modulo_destino: number;
@@ -199,6 +211,7 @@ export interface AdminConvalidacionRegla {
     modulo_destino_codigo?: string | null;
     id_ciclo_destino: number;
     ciclo_destino_nombre: string;
+    id_convalidacion_ciclo?: number | null;
     origenes: AdminConvalidacionOrigen[];
 }
 
@@ -330,14 +343,21 @@ export class ConvalidacionesService {
         const acreditacion_ids = this.acreditacionesSubject.value
             .filter(a => a.tipo !== 'otros')
             .map(a => a.id);
+        const ciclos_completos = this.estudiosSubject.value
+            .filter((estudio) => estudio.cicloCompleto === true && typeof estudio.notaMediaCiclo === 'number' && Number.isFinite(estudio.notaMediaCiclo))
+            .map((estudio) => ({
+                id_ciclo: Number(estudio.ciclo.id),
+                nota_media: Number(estudio.notaMediaCiclo),
+            }));
 
-        if (modulo_ids.length === 0 && acreditacion_ids.length === 0) {
+        if (modulo_ids.length === 0 && acreditacion_ids.length === 0 && ciclos_completos.length === 0) {
             return of([]);
         }
 
         return this.http.post<any[]>(`${API_BASE}/calcular`, {
             modulo_ids: [...new Set(modulo_ids)],
             acreditacion_ids: [...new Set(acreditacion_ids)],
+            ciclos_completos,
             target_ciclo_id: targetCicloId || null
         }).pipe(
             catchError(err => {
@@ -515,6 +535,16 @@ export class ConvalidacionesService {
         );
     }
 
+    crearConvalidacionCicloAdmin(
+        payload: AdminCreateConvalidacionCicloRequest
+    ): Observable<AdminCreateConvalidacionResponse> {
+        return this.http.post<AdminCreateConvalidacionResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_ciclo`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
     getConvalidacionesAdmin(gradoId?: number | null, cicloId?: number | null): Observable<AdminConvalidacionRegla[]> {
         const params = new URLSearchParams();
         if (gradoId !== null && gradoId !== undefined) {
@@ -586,6 +616,13 @@ export class ConvalidacionesService {
     eliminarConvalidacionAdmin(idConvalidacion: number): Observable<AdminDeleteConvalidacionResponse> {
         return this.http.delete<AdminDeleteConvalidacionResponse>(
             `${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}`,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionCicloAdmin(idConvalidacionCiclo: number): Observable<AdminDeleteConvalidacionResponse> {
+        return this.http.delete<AdminDeleteConvalidacionResponse>(
+            `${ADMIN_API_BASE}/convalidaciones-ciclo/${idConvalidacionCiclo}`,
             this.getAdminAuthHeaders()
         );
     }

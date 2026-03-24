@@ -18,4 +18,5 @@ export interface Modulo {
     id_oficial: string | null;
     id_ciclo: number;
     numerico: number;
+    deprecated?: number | null;
 }

@@ -83,6 +83,12 @@
                             <p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1 font-semibold">
                                 {{ estudio.modulos.length }} módulos seleccionados
                             </p>
+                            <p class="text-[11px] text-indigo-600 mt-1 font-semibold">
+                                {{ estudio.cicloCompleto === true ? 'Ciclo completo cursado' : (estudio.cicloCompleto === false ? 'No ha cursado el ciclo completo' : 'Ciclo completo sin indicar') }}
+                            </p>
+                            <p *ngIf="estudio.cicloCompleto === true && estudio.notaMediaCiclo !== null" class="text-[11px] text-gray-500 mt-1">
+                                Nota media: {{ estudio.notaMediaCiclo | number:'1.0-2' }}
+                            </p>
                         </div>
                         <div class="ml-3 flex items-center gap-2 shrink-0">
                             <span class="text-xs font-semibold text-indigo-600">

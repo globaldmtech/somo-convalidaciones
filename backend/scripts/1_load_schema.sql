@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS modulos (
   nombre TEXT NOT NULL,
   id_oficial TEXT,
   numerico INTEGER NOT NULL DEFAULT 1 CHECK (numerico IN (0, 1)),
+  deprecated INTEGER NOT NULL DEFAULT 0 CHECK (deprecated IN (0, 1)),
   id_ciclo INTEGER NOT NULL,
   FOREIGN KEY (id_ciclo) REFERENCES ciclos(id) ON DELETE CASCADE
 );
@@ -48,6 +49,16 @@ CREATE TABLE IF NOT EXISTS convalidacion_origen (
   PRIMARY KEY (conv_id, id_modulo),
   FOREIGN KEY (conv_id) REFERENCES convalidacion(id) ON DELETE CASCADE,
   FOREIGN KEY (id_modulo) REFERENCES modulos(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS convalidacion_ciclo (
+  conv_id_ciclo INTEGER PRIMARY KEY,
+  source_link TEXT,
+  source_page INTEGER,
+  id_modulo_destino INTEGER NOT NULL,
+  id_ciclo_origen INTEGER NOT NULL,
+  FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id) ON DELETE CASCADE,
+  FOREIGN KEY (id_ciclo_origen) REFERENCES ciclos(id) ON DELETE CASCADE
 );
 
 -- Usuarios, administradores y formularios
@@ -95,12 +106,14 @@ CREATE TABLE IF NOT EXISTS formulario_solicitudes (
   id_formulario INTEGER NOT NULL,
   id_modulo_destino INTEGER,
   id_convalidacion INTEGER,
+  id_convalidacion_ciclo INTEGER,
   nota_manual REAL,
   descripcion TEXT,
   estado_modulo INTEGER NOT NULL,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id) ON DELETE CASCADE,
   FOREIGN KEY (id_modulo_destino) REFERENCES modulos(id) ON DELETE SET NULL,
   FOREIGN KEY (id_convalidacion) REFERENCES convalidacion(id) ON DELETE SET NULL,
+  FOREIGN KEY (id_convalidacion_ciclo) REFERENCES convalidacion_ciclo(conv_id_ciclo) ON DELETE SET NULL,
   FOREIGN KEY (estado_modulo) REFERENCES estados_modulos_destino(id)
 );
 
@@ -112,6 +125,15 @@ CREATE TABLE IF NOT EXISTS formulario_modulos_aportados (
   descripcion TEXT,
   FOREIGN KEY (id_formulario) REFERENCES formularios(id) ON DELETE CASCADE,
   FOREIGN KEY (id_modulo) REFERENCES modulos(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS formulario_ciclos_aportados (
+  id INTEGER PRIMARY KEY,
+  id_formulario INTEGER NOT NULL,
+  id_ciclo INTEGER,
+  nota_media REAL,
+  FOREIGN KEY (id_formulario) REFERENCES formularios(id) ON DELETE CASCADE,
+  FOREIGN KEY (id_ciclo) REFERENCES ciclos(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS formulario_archivos (

@@ -32,6 +32,13 @@
                     </span>
                     <span class="text-gray-800 text-sm font-medium flex-1 truncate">{{ estudio.ciclo.nombre
                         }}</span>
+                    <span class="hidden sm:inline-flex bg-indigo-50 text-indigo-700 text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap">
+                        {{ estudio.cicloCompleto === true ? 'Ciclo completo' : (estudio.cicloCompleto === false ? 'Ciclo no completo' : 'Sin indicar') }}
+                    </span>
+                    <span *ngIf="estudio.cicloCompleto === true && estudio.notaMediaCiclo !== null"
+                        class="hidden sm:inline-flex bg-white text-gray-600 text-[11px] font-semibold px-2 py-0.5 rounded-full border border-gray-200 whitespace-nowrap">
+                        Nota media: {{ estudio.notaMediaCiclo | number:'1.0-2' }}
+                    </span>
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <button (click)="toggleExpand(i)"
                             class="flex items-center gap-1 text-xs text-indigo-500 hover:text-indigo-700 font-medium transition-colors border border-indigo-200 hover:border-indigo-400 rounded-md px-2.5 py-1">
@@ -54,7 +61,12 @@
                 <!-- Module panel: VIEW mode (tags + edit pencil) -->
                 <div *ngIf="isExpanded(i) && !isEditing(i)" class="border-t border-gray-100 px-4 py-3 bg-gray-50">
                     <div class="flex items-start justify-between gap-3">
-                        <div class="flex flex-wrap gap-1.5 flex-1">
+                        <div class="flex-1">
+                            <p *ngIf="estudio.cicloCompleto === true && estudio.notaMediaCiclo !== null"
+                                class="text-xs font-semibold text-gray-500 mb-2">
+                                Nota media del ciclo: {{ estudio.notaMediaCiclo | number:'1.0-2' }}
+                            </p>
+                        <div class="flex flex-wrap gap-1.5">
                             <span *ngFor="let mod of estudio.modulos"
                                 class="bg-white text-gray-500 text-xs px-2 py-0.5 rounded-md border border-gray-200">
                                 {{ mod.nombre }}
@@ -63,6 +75,7 @@
                                     {{ etiquetaResultadoModulo(estudio, mod) }}
                                 </span>
                             </span>
+                        </div>
                         </div>
                         <button (click)="startEdit(i)"
                             class="flex-shrink-0 flex items-center gap-1 text-xs text-gray-400 hover:text-indigo-600 transition-colors border border-gray-200 hover:border-indigo-300 rounded-md px-2 py-1"
@@ -90,8 +103,48 @@
                             Completa todos los módulos seleccionados
                         </p>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
-                        <label *ngFor="let mod of estudio.allModulos"
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-gray-500 mb-2">¿Has cursado el ciclo completo?</label>
+                        <div class="flex flex-wrap gap-5">
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input
+                                    type="radio"
+                                    [name]="'editCicloCompleto_' + i"
+                                    [value]="true"
+                                    [ngModel]="getDraftCicloCompleto(i)"
+                                    (ngModelChange)="setDraftCicloCompleto(i, $event)"
+                                    class="w-4 h-4 accent-indigo-600"
+                                />
+                                Sí
+                            </label>
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input
+                                    type="radio"
+                                    [name]="'editCicloCompleto_' + i"
+                                    [value]="false"
+                                    [ngModel]="getDraftCicloCompleto(i)"
+                                    (ngModelChange)="setDraftCicloCompleto(i, $event)"
+                                    class="w-4 h-4 accent-indigo-600"
+                                />
+                                No
+                            </label>
+                        </div>
+                    </div>
+                    <div *ngIf="getDraftCicloCompleto(i) === true" class="mb-4 max-w-xs">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5">Nota media del ciclo</label>
+                        <input
+                            type="text"
+                            inputmode="decimal"
+                            [ngModel]="getDraftNotaMediaCiclo(i)"
+                            (ngModelChange)="setDraftNotaMediaCiclo(i, $event)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                            placeholder="Nota media (0-10)"
+                        />
+                    </div>
+                    <div class="space-y-4 mb-4">
+                        <div *ngIf="getEditModulosActivos(i).length > 0">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <label *ngFor="let mod of getEditModulosActivos(i)"
                             class="flex items-start gap-2 p-2.5 rounded-lg border cursor-pointer transition-all text-sm"
                             [class]="isDraftModuloSelected(i, mod.id)
                                  ? 'bg-gray-50 border-gray-300 text-gray-700 ring-1 ring-gray-200'
@@ -125,6 +178,48 @@
                                 </select>
                             </div>
                         </label>
+                            </div>
+                        </div>
+
+                        <div *ngIf="getEditModulosObsoletos(i).length > 0">
+                            <p class="text-[11px] uppercase tracking-wide font-semibold text-gray-500 mb-2">Módulos obsoletos</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <label *ngFor="let mod of getEditModulosObsoletos(i)"
+                            class="flex items-start gap-2 p-2.5 rounded-lg border cursor-pointer transition-all text-sm"
+                            [class]="isDraftModuloSelected(i, mod.id)
+                                 ? 'bg-amber-50 border-amber-300 text-gray-700 ring-1 ring-amber-200'
+                                 : 'bg-white border-amber-200 text-gray-600 hover:border-amber-300 hover:bg-amber-50/50'">
+                            <input type="checkbox" [checked]="isDraftModuloSelected(i, mod.id)"
+                                (change)="toggleDraftModulo(i, mod.id)"
+                                class="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0">
+                            <div class="min-w-0 flex-1">
+                                <span class="leading-snug font-medium block">{{ mod.nombre }}</span>
+                                <input
+                                    *ngIf="isDraftModuloSelected(i, mod.id) && isModuloNumerico(mod)"
+                                    type="text"
+                                    inputmode="decimal"
+                                    [ngModel]="getDraftNotaModulo(i, mod.id)"
+                                    (ngModelChange)="setDraftNotaModulo(i, mod.id, $event)"
+                                    (click)="$event.stopPropagation()"
+                                    class="mt-2 w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                                    placeholder="Nota (0-10)"
+                                />
+                                <select
+                                    *ngIf="isDraftModuloSelected(i, mod.id) && !isModuloNumerico(mod)"
+                                    [ngModel]="getDraftNotaModulo(i, mod.id)"
+                                    (ngModelChange)="setDraftNotaModulo(i, mod.id, $event)"
+                                    (click)="$event.stopPropagation()"
+                                    class="mt-2 w-full border border-gray-300 rounded-lg px-2.5 py-1.5 text-xs text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                                >
+                                    <option value="">Selecciona estado</option>
+                                    <option value="APTO">APTO</option>
+                                    <option value="NO_APTO">NO APTO</option>
+                                    <option value="EXENTO">EXENTO</option>
+                                </select>
+                            </div>
+                        </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-end gap-2 pt-2 border-t border-gray-200">
                         <button (click)="cancelEdit(i)"
@@ -202,14 +297,60 @@
                     </div>
                 </div>
 
+                <div [class]="selectedCicloId ? '' : 'opacity-40 pointer-events-none'" class="mb-5">
+                    <label class="block text-xs font-semibold text-gray-500 mb-2">¿Has cursado el ciclo completo?</label>
+                    <div class="flex flex-wrap gap-5">
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input
+                                type="radio"
+                                name="selectedCicloCompleto"
+                                [value]="true"
+                                [ngModel]="selectedCicloCompleto"
+                                (ngModelChange)="selectedCicloCompleto = $event"
+                                [disabled]="!selectedCicloId"
+                                class="w-4 h-4 accent-indigo-600"
+                            />
+                            Sí
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                            <input
+                                type="radio"
+                                name="selectedCicloCompleto"
+                                [value]="false"
+                                [ngModel]="selectedCicloCompleto"
+                                (ngModelChange)="selectedCicloCompleto = $event; selectedNotaMediaCiclo = ''"
+                                [disabled]="!selectedCicloId"
+                                class="w-4 h-4 accent-indigo-600"
+                            />
+                            No
+                        </label>
+                    </div>
+                    <div *ngIf="selectedCicloCompleto === true" class="mt-3 max-w-xs">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1.5">Nota media del ciclo</label>
+                        <input
+                            type="text"
+                            inputmode="decimal"
+                            [(ngModel)]="selectedNotaMediaCiclo"
+                            placeholder="Nota media (0-10)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all"
+                        />
+                        <p *ngIf="selectedNotaMediaCiclo && !isSelectedNotaMediaCicloValida()" class="mt-1 text-xs text-amber-600 font-medium">
+                            Introduce una nota media válida entre 0 y 10.
+                        </p>
+                    </div>
+                    <p *ngIf="selectedCicloId && selectedCicloCompleto === null" class="mt-2 text-xs text-amber-600 font-medium">
+                        Debes indicar si has cursado el ciclo completo.
+                    </p>
+                </div>
+
                 <!-- Módulos (rejilla 3 columnas) -->
                 <div [class]="selectedCicloId ? '' : 'opacity-40 pointer-events-none'">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-xs font-semibold text-gray-500">Módulos
                             cursados</label>
-                        <button *ngIf="modulos.length > 0" (click)="toggleAll()"
+                        <button *ngIf="modulosActivos.length > 0" (click)="toggleAll()"
                             class="text-xs text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
-                            {{ allSelected ? 'Deseleccionar todos' : 'Seleccionar todos' }}
+                            {{ allSelected ? 'Deseleccionar todos los módulos' : 'Seleccionar todos los módulos' }}
                         </button>
                     </div>
 
@@ -229,9 +370,10 @@
                         No hay módulos para este ciclo.
                     </div>
 
-                    <div *ngIf="!loadingModulos && modulos.length > 0"
-                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-52 overflow-y-auto pr-1">
-                        <label *ngFor="let modulo of modulos"
+                    <div *ngIf="!loadingModulos && modulos.length > 0" class="max-h-52 overflow-y-auto pr-1 space-y-4">
+                        <div *ngIf="modulosActivos.length > 0">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <label *ngFor="let modulo of modulosActivos"
                             class="flex items-start gap-2 p-2.5 rounded-lg border cursor-pointer transition-all text-sm"
                             [class]="isModuloSelected(modulo.id)
                              ? 'bg-gray-50 border-gray-300 text-gray-700 ring-1 ring-gray-200'
@@ -241,6 +383,24 @@
                                 class="mt-0.5 w-4 h-4 rounded accent-gray-500 cursor-pointer flex-shrink-0">
                             <span class="leading-snug font-medium">{{ modulo.nombre }}</span>
                         </label>
+                            </div>
+                        </div>
+
+                        <div *ngIf="modulosObsoletos.length > 0">
+                            <p class="text-[11px] uppercase tracking-wide font-semibold text-gray-500 mb-2">Módulos obsoletos</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <label *ngFor="let modulo of modulosObsoletos"
+                            class="flex items-start gap-2 p-2.5 rounded-lg border cursor-pointer transition-all text-sm"
+                            [class]="isModuloSelected(modulo.id)
+                             ? 'bg-amber-50 border-amber-300 text-gray-700 ring-1 ring-amber-200'
+                             : 'bg-white border-amber-200 text-gray-700 hover:border-amber-300 hover:bg-amber-50/50'">
+                            <input type="checkbox" [checked]="isModuloSelected(modulo.id)"
+                                (change)="toggleModulo(modulo.id)"
+                                class="mt-0.5 w-4 h-4 rounded accent-amber-500 cursor-pointer flex-shrink-0">
+                            <span class="leading-snug font-medium">{{ modulo.nombre }}</span>
+                        </label>
+                            </div>
+                        </div>
                     </div>
 
                     <p *ngIf="selectedModuloIds.size > 0" class="text-xs text-indigo-600 font-medium mt-2">

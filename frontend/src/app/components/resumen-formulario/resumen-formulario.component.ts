@@ -160,6 +160,12 @@ export class ResumenFormularioComponent implements OnInit {
                     nota: estudio.notasPorModulo?.[modulo.id] ?? null,
                 }))
             );
+            const ciclosAportadosDetalle = this.estudios
+                .filter((estudio) => estudio.cicloCompleto === true)
+                .map((estudio) => ({
+                    id_ciclo: Number(estudio.ciclo.id),
+                    nota_media: estudio.notaMediaCiclo ?? null,
+                }));
             const acreditacionesRegistradas = this.acreditaciones
                 .filter(a => a.tipo !== 'otros')
                 .map(a => a.id);
@@ -171,11 +177,13 @@ export class ResumenFormularioComponent implements OnInit {
             const solicitudesRegistradas = this.convalidacionesSolicitadas.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: item.id_convalidacion ?? null,
+                id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                 descripcion: null,
             }));
             const solicitudesRegistradasManuales = this.convalidacionesService.otrosModulosCicloRegistrados.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: null,
+                id_convalidacion_ciclo: null,
                 descripcion: null,
             }));
             const solicitudesRegistradasUnicas = this.deduplicarSolicitudesRegistradas([
@@ -198,6 +206,7 @@ export class ResumenFormularioComponent implements OnInit {
                 anotaciones: null,
                 id_modulos_registrados_aportados: [...new Set(idModulosAportados)],
                 modulos_aportados_detalle: modulosAportadosDetalle,
+                ciclos_aportados_detalle: ciclosAportadosDetalle.length > 0 ? ciclosAportadosDetalle : null,
                 id_acreditaciones_registradas_aportadas: [...new Set(acreditacionesRegistradas)],
                 descripcion_no_registrados: descripcionNoRegistrados.length > 0 ? descripcionNoRegistrados : null,
                 solicitudes_registradas: solicitudesRegistradasUnicas,
@@ -237,9 +246,9 @@ export class ResumenFormularioComponent implements OnInit {
     }
 
     private deduplicarSolicitudesRegistradas(
-        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>
-    ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }> {
-        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; descripcion: null }>();
+        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }>
+    ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }> {
+        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }>();
 
         for (const item of items) {
             const moduloId = Number(item.id_modulo_destino);
@@ -250,16 +259,21 @@ export class ResumenFormularioComponent implements OnInit {
                 byModulo.set(moduloId, {
                     id_modulo_destino: moduloId,
                     id_convalidacion: item.id_convalidacion ?? null,
+                    id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
                 });
                 continue;
             }
 
-            // Priorizamos la solicitud automática (con id_convalidacion) sobre la manual/null.
-            if (current.id_convalidacion === null && item.id_convalidacion !== null) {
+            const currentEsAutomatica = current.id_convalidacion !== null || current.id_convalidacion_ciclo !== null;
+            const itemEsAutomatica = item.id_convalidacion !== null || item.id_convalidacion_ciclo !== null;
+
+            // Priorizamos la solicitud automática sobre la manual/null.
+            if (!currentEsAutomatica && itemEsAutomatica) {
                 byModulo.set(moduloId, {
                     id_modulo_destino: moduloId,
-                    id_convalidacion: item.id_convalidacion,
+                    id_convalidacion: item.id_convalidacion ?? null,
+                    id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
                 });
             }

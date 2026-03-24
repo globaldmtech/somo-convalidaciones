@@ -189,52 +189,106 @@ class ConvalidationQueries:
         conn: sqlite3.Connection,
         modulo_ids: Sequence[int],
         acreditacion_ids: Sequence[int],
+        ciclos_completos: Sequence[object],
         target_ciclo_id: int,
     ) -> Sequence[dict]:
         origen_ids = list(dict.fromkeys([*modulo_ids, *acreditacion_ids]))
-        if not origen_ids:
-            return []
-
-        placeholders = ",".join(["?"] * len(origen_ids))
-        query = f"""
-            SELECT
-                conv.id AS id_convalidacion,
-                m.id,
-                m.nombre,
-                c_target.nombre AS ciclo_nombre,
-                CASE
-                    WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN 'acreditacion_externa'
-                    ELSE 'modulos_fp'
-                END AS origen_tipo,
-                CASE
-                    WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ')
-                    WHEN COUNT(DISTINCT c_source.id) = 1 THEN MIN(c_source.nombre)
-                    ELSE 'Origen mixto'
-                END AS source_nombre,
-                REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen,
-                GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids
-            FROM convalidacion conv
-            JOIN modulos m ON conv.id_modulo_destino = m.id
-            JOIN ciclos c_target ON m.id_ciclo = c_target.id
-            JOIN convalidacion_origen co ON conv.id = co.conv_id
-            JOIN modulos m_source ON co.id_modulo = m_source.id
-            JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
-            WHERE co.id_modulo IN ({placeholders})
-              AND m.id_ciclo = ?
-            GROUP BY conv.id, m.id, m.nombre, c_target.nombre
-            HAVING COUNT(DISTINCT co.id_modulo) = (
-                SELECT COUNT(*)
-                FROM convalidacion_origen co_all
-                WHERE co_all.conv_id = conv.id
+        ciclos_completos_normalizados: list[dict] = []
+        for item in ciclos_completos or []:
+            try:
+                if isinstance(item, dict):
+                    id_ciclo = int(item.get("id_ciclo"))
+                    nota_media_raw = item.get("nota_media")
+                else:
+                    id_ciclo = int(getattr(item, "id_ciclo"))
+                    nota_media_raw = getattr(item, "nota_media", None)
+            except Exception:
+                continue
+            ciclos_completos_normalizados.append(
+                {
+                    "id_ciclo": id_ciclo,
+                    "nota_media": float(nota_media_raw) if nota_media_raw is not None else None,
+                }
             )
-        """
-        params = [
-            CICLO_ACREDITACIONES_EXTERNAS,
-            CICLO_ACREDITACIONES_EXTERNAS,
-            *origen_ids,
-            target_ciclo_id,
-        ]
-        return [dict(row) for row in conn.execute(query, params).fetchall()]
+
+        resultados: list[dict] = []
+
+        if origen_ids:
+            placeholders = ",".join(["?"] * len(origen_ids))
+            query = f"""
+                SELECT
+                    conv.id AS id_convalidacion,
+                    NULL AS id_convalidacion_ciclo,
+                    m.id,
+                    m.nombre,
+                    c_target.nombre AS ciclo_nombre,
+                    CASE
+                        WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN 'acreditacion_externa'
+                        ELSE 'modulos_fp'
+                    END AS origen_tipo,
+                    CASE
+                        WHEN SUM(CASE WHEN c_source.nombre = ? THEN 1 ELSE 0 END) = COUNT(*) THEN REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ')
+                        WHEN COUNT(DISTINCT c_source.id) = 1 THEN MIN(c_source.nombre)
+                        ELSE 'Origen mixto'
+                    END AS source_nombre,
+                    REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen,
+                    GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids,
+                    NULL AS nota_media_origen
+                FROM convalidacion conv
+                JOIN modulos m ON conv.id_modulo_destino = m.id
+                JOIN ciclos c_target ON m.id_ciclo = c_target.id
+                JOIN convalidacion_origen co ON conv.id = co.conv_id
+                JOIN modulos m_source ON co.id_modulo = m_source.id
+                JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
+                WHERE co.id_modulo IN ({placeholders})
+                  AND m.id_ciclo = ?
+                GROUP BY conv.id, m.id, m.nombre, c_target.nombre
+                HAVING COUNT(DISTINCT co.id_modulo) = (
+                    SELECT COUNT(*)
+                    FROM convalidacion_origen co_all
+                    WHERE co_all.conv_id = conv.id
+                )
+            """
+            params = [
+                CICLO_ACREDITACIONES_EXTERNAS,
+                CICLO_ACREDITACIONES_EXTERNAS,
+                *origen_ids,
+                target_ciclo_id,
+            ]
+            resultados.extend(dict(row) for row in conn.execute(query, params).fetchall())
+
+        if ciclos_completos_normalizados:
+            ciclo_ids = [item["id_ciclo"] for item in ciclos_completos_normalizados]
+            nota_media_por_ciclo = {item["id_ciclo"]: item["nota_media"] for item in ciclos_completos_normalizados}
+            placeholders_ciclos = ",".join(["?"] * len(ciclo_ids))
+            query_ciclos = f"""
+                SELECT
+                    NULL AS id_convalidacion,
+                    cc.conv_id_ciclo AS id_convalidacion_ciclo,
+                    m.id,
+                    m.nombre,
+                    c_target.nombre AS ciclo_nombre,
+                    'ciclo_completo' AS origen_tipo,
+                    c_source.nombre AS source_nombre,
+                    NULL AS modulos_origen,
+                    NULL AS modulos_origen_ids,
+                    cc.id_ciclo_origen
+                FROM convalidacion_ciclo cc
+                JOIN modulos m ON cc.id_modulo_destino = m.id
+                JOIN ciclos c_target ON m.id_ciclo = c_target.id
+                JOIN ciclos c_source ON cc.id_ciclo_origen = c_source.id
+                WHERE cc.id_ciclo_origen IN ({placeholders_ciclos})
+                  AND m.id_ciclo = ?
+            """
+            rows_ciclo = conn.execute(query_ciclos, [*ciclo_ids, target_ciclo_id]).fetchall()
+            for row in rows_ciclo:
+                item = dict(row)
+                item["nota_media_origen"] = nota_media_por_ciclo.get(int(item["id_ciclo_origen"]))
+                item["observaciones"] = "Ciclo completo"
+                item.pop("id_ciclo_origen", None)
+                resultados.append(item)
+
+        return resultados
 
 
 class UserQueries:
@@ -365,6 +419,34 @@ class FormularioQueries:
         return "Modulos aportados insertados correctamente"
 
     @staticmethod
+    def insert_ciclo_aportado(
+        conn: sqlite3.Connection,
+        id_formulario: int,
+        ciclos_detalle: Optional[Sequence[object]] = None,
+    ) -> str:
+        if not ciclos_detalle:
+            return "Sin ciclos aportados para insertar"
+
+        ciclos_insertados: set[int] = set()
+        for item in ciclos_detalle:
+            id_ciclo = int(getattr(item, "id_ciclo"))
+            nota_media_raw = getattr(item, "nota_media", None)
+
+            if id_ciclo in ciclos_insertados:
+                continue
+            ciclos_insertados.add(id_ciclo)
+            nota_media = float(nota_media_raw) if nota_media_raw is not None else None
+            conn.execute(
+                """
+                INSERT INTO formulario_ciclos_aportados (id_formulario, id_ciclo, nota_media)
+                VALUES (?, ?, ?)
+                """,
+                (id_formulario, id_ciclo, nota_media),
+            )
+
+        return "Ciclos aportados insertados correctamente"
+
+    @staticmethod
     def insert_formulario_solicitud(
         conn: sqlite3.Connection,
         id_formulario: int,
@@ -372,13 +454,27 @@ class FormularioQueries:
         solicitudes_no_registradas: Sequence[str],
     ) -> str:
         for s_regis in solicitudes_registradas:
-            estado_modulo = 1 if s_regis.id_convalidacion is not None else 0
+            id_convalidacion = getattr(s_regis, "id_convalidacion", None)
+            id_convalidacion_ciclo = getattr(s_regis, "id_convalidacion_ciclo", None)
+            estado_modulo = 1 if (id_convalidacion is not None or id_convalidacion_ciclo is not None) else 0
             conn.execute(
                 """
-                INSERT INTO formulario_solicitudes (id_formulario, id_modulo_destino, id_convalidacion, estado_modulo)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO formulario_solicitudes (
+                    id_formulario,
+                    id_modulo_destino,
+                    id_convalidacion,
+                    id_convalidacion_ciclo,
+                    estado_modulo
+                )
+                VALUES (?, ?, ?, ?, ?)
                 """,
-                (id_formulario, s_regis.id_modulo_destino, s_regis.id_convalidacion, estado_modulo),
+                (
+                    id_formulario,
+                    s_regis.id_modulo_destino,
+                    id_convalidacion,
+                    id_convalidacion_ciclo,
+                    estado_modulo,
+                ),
             )
 
         for s_no_regis in solicitudes_no_registradas:
@@ -514,22 +610,39 @@ class AdminQueries:
                     fs.id,
                     fs.id_modulo_destino,
                     fs.id_convalidacion,
+                    fs.id_convalidacion_ciclo,
                     fs.nota_manual,
                     c.id AS ciclo_id,
                     c.nombre AS ciclo_nombre,
                     m.nombre AS modulo_destino,
                     m.id_oficial AS modulo_destino_codigo,
-                    (
+                    CASE
+                        WHEN fs.id_convalidacion_ciclo IS NOT NULL THEN (
+                            SELECT
+                                'Ciclo completo: ' || COALESCE(ccor.nombre, 'Ciclo origen desconocido')
+                            FROM convalidacion_ciclo cc
+                            LEFT JOIN ciclos ccor ON ccor.id = cc.id_ciclo_origen
+                            WHERE cc.conv_id_ciclo = fs.id_convalidacion_ciclo
+                        )
+                        ELSE (
                         SELECT REPLACE(GROUP_CONCAT(DISTINCT mo.nombre), ',', ', ')
                         FROM convalidacion_origen co
                         JOIN modulos mo ON mo.id = co.id_modulo
                         WHERE co.conv_id = fs.id_convalidacion
-                    ) AS convalidado_por,
-                    (
+                        )
+                    END AS convalidado_por,
+                    CASE
+                        WHEN fs.id_convalidacion_ciclo IS NOT NULL THEN (
+                            SELECT CAST(cc.id_ciclo_origen AS TEXT)
+                            FROM convalidacion_ciclo cc
+                            WHERE cc.conv_id_ciclo = fs.id_convalidacion_ciclo
+                        )
+                        ELSE (
                         SELECT GROUP_CONCAT(DISTINCT co.id_modulo)
                         FROM convalidacion_origen co
                         WHERE co.conv_id = fs.id_convalidacion
-                    ) AS convalidado_por_ids,
+                        )
+                    END AS convalidado_por_ids,
                     fs.descripcion,
                     fs.estado_modulo AS estado_modulo_id,
                     emd.nombre AS estado_modulo
@@ -684,7 +797,8 @@ class AdminQueries:
     ) -> Optional[dict]:
         formulario_row = conn.execute(
             """
-            SELECT fs.id_formulario, f.estado AS formulario_estado, fs.id_convalidacion
+            SELECT fs.id_formulario, f.estado AS formulario_estado, fs.id_convalidacion,
+                   fs.id_convalidacion_ciclo
             FROM formulario_solicitudes fs
             JOIN formularios f ON f.id = fs.id_formulario
             WHERE fs.id = ?
@@ -699,7 +813,7 @@ class AdminQueries:
             UPDATE formulario_solicitudes
             SET estado_modulo = ?,
                 nota_manual = CASE
-                    WHEN id_convalidacion IS NULL AND ? = 1 THEN ?
+                    WHEN id_convalidacion IS NULL AND id_convalidacion_ciclo IS NULL AND ? = 1 THEN ?
                     ELSE nota_manual
                 END
             WHERE id = ?
@@ -721,7 +835,11 @@ class AdminQueries:
             "id": id_solicitud,
             "estado_modulo_id": estado_modulo_id,
             "id_formulario": formulario_row["id_formulario"],
-            "nota_manual": nota_manual if formulario_row["id_convalidacion"] is None else None,
+            "nota_manual": (
+                nota_manual
+                if formulario_row["id_convalidacion"] is None and formulario_row["id_convalidacion_ciclo"] is None
+                else None
+            ),
         }
 
     @staticmethod
@@ -775,7 +893,8 @@ class AdminQueries:
                 m.nombre,
                 m.id_oficial,
                 m.id_ciclo,
-                m.numerico
+                m.numerico,
+                m.deprecated
             FROM modulos m
             ORDER BY m.id_ciclo, m.nombre
             """
@@ -790,6 +909,7 @@ class AdminQueries:
                     "nombre": modulo["nombre"],
                     "id_oficial": modulo["id_oficial"],
                     "numerico": modulo["numerico"],
+                    "deprecated": modulo["deprecated"],
                 }
             )
 
@@ -825,7 +945,7 @@ class AdminQueries:
             params.append(ciclo_id)
         where_sql = f"WHERE {' AND '.join(where)}" if where else ""
 
-        reglas = conn.execute(
+        reglas_modulo = conn.execute(
             f"""
             SELECT
                 cv.id,
@@ -844,10 +964,32 @@ class AdminQueries:
             """,
             params,
         ).fetchall()
-        if not reglas:
+        reglas_ciclo = conn.execute(
+            f"""
+            SELECT
+                cc.conv_id_ciclo,
+                cc.source_link,
+                cc.source_page,
+                md.id AS id_modulo_destino,
+                md.nombre AS modulo_destino_nombre,
+                md.id_oficial AS modulo_destino_codigo,
+                cd.id AS id_ciclo_destino,
+                cd.nombre AS ciclo_destino_nombre,
+                co.id AS id_ciclo_origen,
+                co.nombre AS ciclo_origen_nombre
+            FROM convalidacion_ciclo cc
+            JOIN modulos md ON md.id = cc.id_modulo_destino
+            JOIN ciclos cd ON cd.id = md.id_ciclo
+            JOIN ciclos co ON co.id = cc.id_ciclo_origen
+            {where_sql}
+            ORDER BY cc.conv_id_ciclo DESC
+            """,
+            params,
+        ).fetchall()
+        if not reglas_modulo and not reglas_ciclo:
             return []
 
-        origenes = conn.execute(
+        origenes_modulo = conn.execute(
             f"""
             SELECT
                 co.conv_id,
@@ -869,7 +1011,7 @@ class AdminQueries:
         ).fetchall()
 
         origenes_por_regla: dict[int, list[dict]] = {}
-        for origen in origenes:
+        for origen in origenes_modulo:
             conv_id = origen["conv_id"]
             origenes_por_regla.setdefault(conv_id, []).append(
                 {
@@ -878,12 +1020,14 @@ class AdminQueries:
                     "modulo_origen_codigo": origen["modulo_origen_codigo"],
                     "id_ciclo_origen": origen["id_ciclo_origen"],
                     "ciclo_origen_nombre": origen["ciclo_origen_nombre"],
+                    "es_ciclo_completo": False,
                 }
             )
 
-        return [
+        reglas: list[dict] = [
             {
                 "id": regla["id"],
+                "tipo_regla": "modulo",
                 "source_link": regla["source_link"],
                 "source_page": regla["source_page"],
                 "id_modulo_destino": regla["id_modulo_destino"],
@@ -891,10 +1035,41 @@ class AdminQueries:
                 "modulo_destino_codigo": regla["modulo_destino_codigo"],
                 "id_ciclo_destino": regla["id_ciclo_destino"],
                 "ciclo_destino_nombre": regla["ciclo_destino_nombre"],
+                "id_convalidacion_ciclo": None,
                 "origenes": origenes_por_regla.get(regla["id"], []),
             }
-            for regla in reglas
+            for regla in reglas_modulo
         ]
+        reglas.extend(
+            {
+                "id": -int(regla["conv_id_ciclo"]),
+                "tipo_regla": "ciclo",
+                "source_link": regla["source_link"],
+                "source_page": regla["source_page"],
+                "id_modulo_destino": regla["id_modulo_destino"],
+                "modulo_destino_nombre": regla["modulo_destino_nombre"],
+                "modulo_destino_codigo": regla["modulo_destino_codigo"],
+                "id_ciclo_destino": regla["id_ciclo_destino"],
+                "ciclo_destino_nombre": regla["ciclo_destino_nombre"],
+                "id_convalidacion_ciclo": int(regla["conv_id_ciclo"]),
+                "origenes": [
+                    {
+                        "id_modulo_origen": None,
+                        "modulo_origen_nombre": None,
+                        "modulo_origen_codigo": None,
+                        "id_ciclo_origen": regla["id_ciclo_origen"],
+                        "ciclo_origen_nombre": regla["ciclo_origen_nombre"],
+                        "es_ciclo_completo": True,
+                    }
+                ],
+            }
+            for regla in reglas_ciclo
+        )
+        reglas.sort(
+            key=lambda item: int(item["id_convalidacion_ciclo"] or item["id"]),
+            reverse=True,
+        )
+        return reglas
 
     @staticmethod
     def list_admin_users(conn: sqlite3.Connection) -> list[dict]:
@@ -978,6 +1153,17 @@ class AdminQueries:
         return int(cursor.rowcount)
 
     @staticmethod
+    def delete_convalidacion_ciclo_rule(conn: sqlite3.Connection, convalidacion_ciclo_id: int) -> int:
+        cursor = conn.execute(
+            """
+            DELETE FROM convalidacion_ciclo
+            WHERE conv_id_ciclo = ?
+            """,
+            (convalidacion_ciclo_id,),
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
     def delete_convalidacion_origen(
         conn: sqlite3.Connection,
         convalidacion_id: int,
@@ -1051,4 +1237,59 @@ class AdminQueries:
             "id": id_convalidacion,
             "id_modulo_destino": id_modulo_destino,
             "id_modulos_origen": origenes,
+        }
+
+    @staticmethod
+    def create_convalidacion_ciclo_rule(
+        conn: sqlite3.Connection,
+        id_modulo_destino: int,
+        id_ciclo_origen: int,
+        source_link: Optional[str] = None,
+        source_page: Optional[int] = None,
+    ) -> dict:
+        modulo_destino = conn.execute(
+            """
+            SELECT id
+            FROM modulos
+            WHERE id = ?
+            """,
+            (id_modulo_destino,),
+        ).fetchone()
+        if not modulo_destino:
+            raise ValueError("Módulo destino no encontrado")
+
+        ciclo_origen = conn.execute(
+            """
+            SELECT id
+            FROM ciclos
+            WHERE id = ?
+            """,
+            (id_ciclo_origen,),
+        ).fetchone()
+        if not ciclo_origen:
+            raise ValueError("Ciclo origen no encontrado")
+
+        existente = conn.execute(
+            """
+            SELECT conv_id_ciclo
+            FROM convalidacion_ciclo
+            WHERE id_modulo_destino = ? AND id_ciclo_origen = ?
+            """,
+            (id_modulo_destino, id_ciclo_origen),
+        ).fetchone()
+        if existente:
+            raise ValueError("Ya existe una regla de convalidación para ese módulo destino y ciclo origen")
+
+        cursor = conn.execute(
+            """
+            INSERT INTO convalidacion_ciclo (source_link, source_page, id_modulo_destino, id_ciclo_origen)
+            VALUES (?, ?, ?, ?)
+            """,
+            (source_link, source_page, id_modulo_destino, id_ciclo_origen),
+        )
+
+        return {
+            "id": int(cursor.lastrowid),
+            "id_modulo_destino": id_modulo_destino,
+            "id_ciclo_origen": id_ciclo_origen,
         }

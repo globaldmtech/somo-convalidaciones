@@ -40,6 +40,13 @@ class CrearConvalidacionRequest(BaseModel):
     source_page: int | None = None
 
 
+class CrearConvalidacionCicloRequest(BaseModel):
+    id_modulo_destino: int
+    id_ciclo_origen: int
+    source_link: str | None = None
+    source_page: int | None = None
+
+
 class CrearAdministradorRequest(BaseModel):
     nombre: str
     password: str
