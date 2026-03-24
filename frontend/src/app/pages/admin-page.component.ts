@@ -946,7 +946,11 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                  <article *ngFor="let ciclo of familia.ciclos" class="rounded-xl border border-slate-200 bg-white shadow-sm p-4 h-[210px] flex flex-col">
+                  <article
+                    *ngFor="let ciclo of familia.ciclos"
+                    class="group rounded-xl border border-slate-200 bg-white shadow-sm p-4 min-h-[172px] flex flex-col transition-colors hover:border-slate-300 hover:bg-slate-50/40 cursor-pointer"
+                    (click)="abrirModalModulos(ciclo)"
+                  >
                     <div class="mb-3">
                       <div class="min-w-0">
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">
@@ -954,22 +958,21 @@ type PendingConvalidacionOrigenDelete = {
                         </p>
                         <h4 class="text-sm font-bold text-slate-900 leading-5 line-clamp-2">{{ ciclo.nombre }}</h4>
                         <p class="text-xs text-slate-500 mt-1">{{ ciclo.total_modulos }} modulos</p>
-                        <button
-                          type="button"
-                          class="mt-2 rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1 text-[11px] font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors"
-                          (click)="abrirModalModulos(ciclo)"
-                        >
-                          Mostrar modulos
-                        </button>
                       </div>
                     </div>
 
-                    <div class="border-t border-slate-100 pt-3 mt-auto">
+                    <div class="border-t border-slate-100 pt-3 mt-auto flex items-center justify-between gap-3 rounded-b-lg transition-colors">
+                      <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-indigo-700">
+                        <span class="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1 transition-colors hover:bg-indigo-100">
+                          Mostrar modulos
+                        </span>
+                      </div>
+
                       <div class="flex items-center justify-end gap-2">
                         <button
                           type="button"
                           class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-indigo-600 transition-colors"
-                          (click)="editarCiclo(ciclo)"
+                          (click)="$event.stopPropagation(); editarCiclo(ciclo)"
                           title="Editar ciclo"
                           aria-label="Editar ciclo"
                         >
@@ -980,7 +983,7 @@ type PendingConvalidacionOrigenDelete = {
                         <button
                           type="button"
                           class="inline-flex items-center justify-center w-8 h-8 text-slate-500 hover:text-rose-600 transition-colors"
-                          (click)="eliminarCiclo(ciclo)"
+                          (click)="$event.stopPropagation(); eliminarCiclo(ciclo)"
                           title="Eliminar ciclo"
                           aria-label="Eliminar ciclo"
                         >
@@ -1203,7 +1206,7 @@ type PendingConvalidacionOrigenDelete = {
                           </ng-template>
                           <span class="ml-2">
                             <span class="font-semibold text-slate-700">Página:</span>
-                            <span>{{ getDocumentoPage(fuente.sourcePage) ?? 'sin página' }}</span>
+                            <span>{{ getDocumentoPage(fuente.sourcePage, fuente.sourceLink) ?? 'sin página' }}</span>
                           </span>
                         </li>
                       </ul>
@@ -2330,6 +2333,9 @@ type PendingConvalidacionOrigenDelete = {
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly adminSessionKey = 'somo_admin_session';
   private readonly sourcePageBaseOffset = 124713;
+  private readonly sourcePageBaseOffsetsByLink: Record<string, number> = {
+    'https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf': 106138,
+  };
   private resizeObserver: ResizeObserver | null = null;
   @ViewChild('headerInner') headerInnerRef?: ElementRef<HTMLDivElement>;
   @ViewChild('headerBrand') headerBrandRef?: ElementRef<HTMLDivElement>;
@@ -5159,9 +5165,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return String(nombre || '').trim().toLowerCase() === 'acreditaciones externas';
   }
 
-  getDocumentoPage(sourcePage: number | null): number | null {
+  private getSourcePageBaseOffset(sourceLink: string | null): number {
+    const cleanLink = String(sourceLink || '').trim();
+    return this.sourcePageBaseOffsetsByLink[cleanLink] ?? this.sourcePageBaseOffset;
+  }
+
+  getDocumentoPage(sourcePage: number | null, sourceLink: string | null = null): number | null {
     if (sourcePage === null || sourcePage === undefined) return null;
-    const page = Math.trunc(Number(sourcePage)) - this.sourcePageBaseOffset;
+    const page = Math.trunc(Number(sourcePage)) - this.getSourcePageBaseOffset(sourceLink);
     return Number.isFinite(page) && page > 0 ? page : null;
   }
 
@@ -5169,7 +5180,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const base = (sourceLink || '').trim();
     if (!base) return '';
 
-    const page = this.getDocumentoPage(sourcePage);
+    const page = this.getDocumentoPage(sourcePage, sourceLink);
     if (!page) return base;
 
     const hashIndex = base.indexOf('#');

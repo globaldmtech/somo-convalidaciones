@@ -242,6 +242,7 @@ class ConvalidationQueries:
                 JOIN ciclos c_source ON m_source.id_ciclo = c_source.id
                 WHERE co.id_modulo IN ({placeholders})
                   AND m.id_ciclo = ?
+                  AND COALESCE(m.deprecated, 0) = 0
                 GROUP BY conv.id, m.id, m.nombre, c_target.nombre
                 HAVING COUNT(DISTINCT co.id_modulo) = (
                     SELECT COUNT(*)
@@ -279,6 +280,7 @@ class ConvalidationQueries:
                 JOIN ciclos c_source ON cc.id_ciclo_origen = c_source.id
                 WHERE cc.id_ciclo_origen IN ({placeholders_ciclos})
                   AND m.id_ciclo = ?
+                  AND COALESCE(m.deprecated, 0) = 0
             """
             rows_ciclo = conn.execute(query_ciclos, [*ciclo_ids, target_ciclo_id]).fetchall()
             for row in rows_ciclo:

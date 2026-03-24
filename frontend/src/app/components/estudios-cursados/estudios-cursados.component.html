@@ -370,7 +370,7 @@
                         No hay módulos para este ciclo.
                     </div>
 
-                    <div *ngIf="!loadingModulos && modulos.length > 0" class="max-h-52 overflow-y-auto pr-1 space-y-4">
+                    <div *ngIf="!loadingModulos && modulos.length > 0" class="space-y-4">
                         <div *ngIf="modulosActivos.length > 0">
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                         <label *ngFor="let modulo of modulosActivos"

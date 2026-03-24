@@ -35,6 +35,30 @@ SOURCE_LINK = "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf"
 SOURCE_PAGE = 124839
 
 
+def get_rule_source(regla: dict | None = None) -> tuple[str, int]:
+    source_link = SOURCE_LINK
+    source_page = SOURCE_PAGE
+    if regla:
+        source_link = regla.get("source_link") or source_link
+        source_page = regla.get("source_page") or source_page
+    return source_link, source_page
+
+
+def get_modulo_scope(cursor: sqlite3.Cursor, modulo_id: int) -> tuple[int | None, int | None]:
+    row = cursor.execute(
+        """
+        SELECT c.id_familia, c.id_grado
+        FROM modulos m
+        JOIN ciclos c ON c.id = m.id_ciclo
+        WHERE m.id = ?
+        """,
+        (modulo_id,),
+    ).fetchone()
+    if not row:
+        return None, None
+    return row["id_familia"], row["id_grado"]
+
+
 def get_modulos_by_rule(cursor: sqlite3.Cursor, regla: dict, prefix: str) -> list[int]:
     id_oficial = regla.get(f"id_oficial_{prefix}")
     nombre_modulo = regla.get(f"modulo_{prefix}")
@@ -99,7 +123,18 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
 
     print(f"Generando reglas globales para: {', '.join(MODULOS_GLOBALES)}")
     
-    for nombre_mod in MODULOS_GLOBALES:
+    for modulo_global in MODULOS_GLOBALES:
+        if isinstance(modulo_global, dict):
+            nombre_mod = modulo_global["nombre"]
+            source_link, source_page = get_rule_source(modulo_global)
+            same_family_only = bool(modulo_global.get("same_family_only"))
+            same_grado_only = bool(modulo_global.get("same_grado_only"))
+        else:
+            nombre_mod = modulo_global
+            source_link, source_page = get_rule_source()
+            same_family_only = False
+            same_grado_only = False
+
         # Buscar todos los módulos con este nombre
         # Usamos LIKE para ser más flexibles con mayúsculas/minúsculas si fuera necesario,
         # pero aquí buscamos coincidencia exacta de nombre según la lista.
@@ -110,10 +145,27 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
         
         for m_dest in modulos:
             id_dest = m_dest['id']
+            dest_familia_id, dest_grado_id = get_modulo_scope(cursor, id_dest)
 
             for m_orig in modulos:
                 id_orig = m_orig['id']
                 if id_orig == id_dest:
+                    continue
+
+                orig_familia_id, orig_grado_id = get_modulo_scope(cursor, id_orig)
+                if same_family_only and (
+                    dest_familia_id is None
+                    or orig_familia_id is None
+                    or dest_familia_id != orig_familia_id
+                ):
+                    total_skipped += 1
+                    continue
+                if same_grado_only and (
+                    dest_grado_id is None
+                    or orig_grado_id is None
+                    or dest_grado_id != orig_grado_id
+                ):
+                    total_skipped += 1
                     continue
 
                 # Cada origen tiene su propio conv_id (OR semántico en el modelo de datos)
@@ -124,7 +176,7 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
                 sql_lines.append(f"-- Regla global '{nombre_mod}': destino={id_dest}, origen={id_orig}")
                 sql_lines.append(
                     f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
-                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
+                    f"VALUES ({conv_id}, '{source_link}', {source_page}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "
@@ -147,6 +199,7 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
     for regla in REGLAS_MODULO_A_MODULO:
         origen_label = regla.get("id_oficial_origen") or regla.get("modulo_origen")
         destino_label = regla.get("id_oficial_destino") or regla.get("modulo_destino")
+        source_link, source_page = get_rule_source(regla)
 
         origenes = get_modulos_by_rule(cursor, regla, "origen")
         destinos = get_modulos_by_rule(cursor, regla, "destino")
@@ -167,7 +220,7 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
-                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
+                    f"VALUES ({conv_id}, '{source_link}', {source_page}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "

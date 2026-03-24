@@ -9,8 +9,36 @@
 MODULOS_GLOBALES = [
     "Formación y Orientación Laboral",
     "Empresa e Iniciativa Emprendedora",
-    "Itinerario personal para la empleabilidad I",
-    "Itinerario personal para la empleabilidad II"
+    {
+        "nombre": "Itinerario personal para la empleabilidad I",
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106339,
+    },
+    {
+        "nombre": "Itinerario personal para la empleabilidad II",
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106339,
+    },
+    {
+        "nombre": "Digitalización aplicada al sector productivo",
+        "same_family_only": True,
+        "same_grado_only": True,
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106338,
+    },
+    {
+        "nombre": "Sostenibilidad aplicada al sector productivo",
+        "same_family_only": True,
+        "same_grado_only": True,
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106338,
+    },
+    {
+        "nombre": "Inglés Profesional",
+        "same_grado_only": True,
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106338,
+    },
 ]
 
 # ──────────────────────────────────────────────────────────────────────
@@ -53,17 +81,22 @@ REGLAS_CICLO_A_MODULO_UNIVERSAL = [
 # ──────────────────────────────────────────────────────────────────────
 REGLAS_MODULO_A_MODULO = [
 
-    # 0179 Inglés (aportado) → 0156 Inglés (a convalidar)
     {
         "id_oficial_origen":  "0179",
         "id_oficial_destino": "0156",
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106413,
     },
     {
         "modulo_origen":"Formación y Orientación Laboral",
-        "modulo_destino": "Itinerario personal para la empleabilidad I"
+        "modulo_destino": "Itinerario personal para la empleabilidad I",
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106339,
     },
     {
         "modulo_origen":"Empresa e Iniciativa Emprendedora",
-        "modulo_destino": "Itinerario personal para la empleabilidad II"
+        "modulo_destino": "Itinerario personal para la empleabilidad II",
+        "source_link": "https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf",
+        "source_page": 106339,
     },
 ]
