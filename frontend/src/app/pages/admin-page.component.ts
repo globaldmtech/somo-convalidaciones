@@ -1331,6 +1331,32 @@ type PendingConvalidacionOrigenDelete = {
                     </ng-template>
                   </div>
 
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fuente</p>
+                    <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <label class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-slate-600">URL</span>
+                        <input
+                          type="url"
+                          [(ngModel)]="createMultipleConvalidacionesSourceLink"
+                          class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                          placeholder="https://..."
+                        />
+                      </label>
+                      <label class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold text-slate-600">Página</span>
+                        <input
+                          type="number"
+                          min="1"
+                          step="1"
+                          [(ngModel)]="createMultipleConvalidacionesSourcePage"
+                          class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700"
+                          placeholder="Ej. 147"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
                   <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-3">
                     <p class="text-sm font-semibold text-indigo-900">Resumen</p>
                     <p class="mt-1 text-xs text-indigo-800">
@@ -3005,6 +3031,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   creatingMultipleConvalidaciones = false;
   createMultipleConvalidacionesError: string | null = null;
   createMultipleConvalidacionesSuccess: string | null = null;
+  createMultipleConvalidacionesSourceLink = '';
+  createMultipleConvalidacionesSourcePage: number | null = null;
   createMultipleConvalidacionesResultModalOpen = false;
   createMultipleConvalidacionesResultAction: AdminConvalidacionesMultiplesAction = 'crear';
   createMultipleConvalidacionesResultCreatedCount = 0;
@@ -3229,6 +3257,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.creatingMultipleConvalidaciones = false;
     this.createMultipleConvalidacionesError = null;
     this.createMultipleConvalidacionesSuccess = null;
+    this.createMultipleConvalidacionesSourceLink = '';
+    this.createMultipleConvalidacionesSourcePage = null;
     this.createMultipleConvalidacionesResultModalOpen = false;
     this.createMultipleConvalidacionesResultAction = 'crear';
     this.createMultipleConvalidacionesResultCreatedCount = 0;
@@ -3468,6 +3498,20 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (this.creatingMultipleConvalidaciones) return;
 
+    const sourceLink = this.createMultipleConvalidacionesSourceLink.trim() || null;
+    const rawSourcePage = this.createMultipleConvalidacionesSourcePage;
+    const sourcePage = rawSourcePage === null || rawSourcePage === undefined
+      ? null
+      : Number(rawSourcePage);
+
+    if (this.convalidacionesMultiplesAction === 'crear'
+      && sourcePage !== null
+      && (!Number.isInteger(sourcePage) || sourcePage <= 0)) {
+      this.createMultipleConvalidacionesError = 'La página debe ser un número entero mayor que 0.';
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+
     this.creatingMultipleConvalidaciones = true;
     this.createMultipleConvalidacionesError = null;
     this.createMultipleConvalidacionesSuccess = null;
@@ -3478,8 +3522,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             id_modulo_destino: item.idModuloDestino,
             id_modulo_origen: item.idModuloOrigen,
           })),
-          source_link: null,
-          source_page: null,
+          source_link: sourceLink,
+          source_page: sourcePage,
         })
       : this.convalidacionesService.eliminarConvalidacionesMasivasAdmin({
           reglas: combinaciones.map((item) => ({
@@ -3511,6 +3555,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.deleteMultipleConvalidacionesModalOpen = false;
           this.selectedBusquedaModuloIzquierda.clear();
           this.selectedBusquedaModuloDerecha.clear();
+          this.createMultipleConvalidacionesSourceLink = '';
+          this.createMultipleConvalidacionesSourcePage = null;
           this.errorConvalidaciones = null;
           if (this.hasConvalidacionesFiltroAplicado) {
             this.cargarConvalidaciones(true);
