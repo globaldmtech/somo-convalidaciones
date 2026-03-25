@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -71,7 +71,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Carpintería y Mueble (Madera, mueble y corcho) — módulo específico
@@ -92,7 +92,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Conducción de Vehículos de Transporte por Carretera — módulo específico
@@ -113,7 +113,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Instalación y Amueblamiento (Madera, mueble y corcho) — módulo específico
@@ -134,7 +134,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Mantenimiento Electromecánico (Instalación y Mantenimiento) — Ciclo Completo
@@ -156,7 +156,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Mantenimiento de Material Rodante Ferroviario — Ciclo Completo
@@ -178,7 +178,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # DESTINO: T. Elaboración de Productos Alimenticios (RD 452/2010)
@@ -202,7 +202,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — módulo específico
@@ -223,7 +223,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -245,7 +245,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Carpintería y Mueble (Madera, mueble y corcho) — módulo específico
@@ -266,7 +266,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124856,
+        "source_page": 143,
     },
 
     # Origen: T. Conducción de Vehículos de Transporte por Carretera — módulo específico
@@ -287,7 +287,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Instalación y Amueblamiento (Madera, mueble y corcho) — módulo específico
@@ -308,7 +308,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Mantenimiento Electromecánico (Instalación y Mantenimiento) — Ciclo Completo
@@ -330,7 +330,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Mantenimiento de Material Rodante Ferroviario — Ciclo Completo
@@ -352,7 +352,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # DESTINO: T. Panadería, Repostería y Confitería (RD 1399/2007)
@@ -376,7 +376,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Elaboración de Productos Alimenticios — módulo específico
@@ -397,7 +397,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — módulo específico
@@ -418,7 +418,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -440,7 +440,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Carpintería y Mueble (Madera, mueble y corcho) — módulo específico
@@ -461,7 +461,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Conducción de Vehículos de Transporte por Carretera — módulo específico
@@ -482,7 +482,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # Origen: T. Instalación y Amueblamiento (Madera, mueble y corcho) — módulo específico
@@ -503,7 +503,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124857,
+        "source_page": 144,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -531,7 +531,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Construcciones Metálicas (Fabricación mecánica) — módulo específico
@@ -552,7 +552,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Desarrollo y Fabricación de Productos Cerámicos (Vidrio y cerámica) — módulo específico
@@ -573,7 +573,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Diseño y Producción de Calzado y Complementos (Textil, confección y piel) — módulo específico
@@ -594,7 +594,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -616,7 +616,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Laboratorio de Análisis y de Control de Calidad (Química) — Ciclo Completo
@@ -638,7 +638,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Mantenimiento de Instalaciones Térmicas y de Fluidos — Ciclo Completo
@@ -660,7 +660,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Patronaje y Moda (Textil, confección y piel) — módulo específico
@@ -681,7 +681,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Programación de la Producción en Fabricación Mecánica — módulo específico
@@ -702,7 +702,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124858,
+        "source_page": 145,
     },
 
     # Origen: TS Programación de la Producción en Moldeo de Metales y Polímeros — módulo específico
@@ -723,7 +723,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Transporte y Logística (Comercio y Marketing) — Ciclo Completo
@@ -745,7 +745,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # DESTINO: TS Vitivinicultura (RD 1688/2007)
@@ -769,7 +769,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Construcciones Metálicas (Fabricación mecánica) — módulo específico
@@ -790,7 +790,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Desarrollo y Fabricación de Productos Cerámicos (Vidrio y cerámica) — módulo específico
@@ -811,7 +811,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Diseño y Producción de Calzado y Complementos (Textil, confección y piel) — módulo específico
@@ -832,7 +832,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — Ciclo Completo
@@ -854,7 +854,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Laboratorio de Análisis y de Control de Calidad (Química) — Ciclo Completo
@@ -876,7 +876,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Patronaje y Moda (Textil, confección y piel) — módulo específico
@@ -897,7 +897,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124859,
+        "source_page": 146,
     },
 
     # Origen: TS Programación de la Producción en Fabricación Mecánica — módulo específico
@@ -918,7 +918,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Programación de la Producción en Moldeo de Metales y Polímeros — módulo específico
@@ -939,7 +939,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
     # Origen: TS Transporte y Logística (Comercio y Marketing) — Ciclo Completo
@@ -961,7 +961,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124860,
+        "source_page": 147,
     },
 
 ]

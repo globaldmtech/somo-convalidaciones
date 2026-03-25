@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Mediación Comunicativa — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Educación Infantil — módulo específico
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Integración Social — módulo específico
@@ -91,7 +91,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Integración Social — módulo específico
@@ -112,7 +112,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Mediación Comunicativa — módulo específico
@@ -133,7 +133,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Promoción de Igualdad de Género — módulo específico
@@ -154,7 +154,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Educación y Control Ambiental (Seguridad y Medio Ambiente) — módulo específico
@@ -175,7 +175,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -203,7 +203,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Integración Social — módulo específico
@@ -224,7 +224,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
     # Origen: TS Promoción de Igualdad de Género — módulo específico
@@ -245,7 +245,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124869,
+        "source_page": 156,
     },
 
 ]

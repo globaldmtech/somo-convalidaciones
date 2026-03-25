@@ -35,7 +35,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # Origen: T. Mantenimiento de Material Rodante Ferroviario — Ciclo Completo
@@ -57,7 +57,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # Origen: T. Redes y Estaciones de Tratamientos de Aguas — módulo específico
@@ -78,7 +78,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # Origen: TS Gestión del Agua — módulo específico
@@ -99,7 +99,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # DESTINO: T. Operaciones de Laboratorio (RD 554/2012)
@@ -124,7 +124,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
     {
         "familia_destino": "Química",
@@ -142,7 +142,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # Origen: T. Mantenimiento de Material Rodante Ferroviario — Ciclo Completo
@@ -164,7 +164,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # Origen: TS Laboratorio de Análisis y de Control de Calidad — módulo específico
@@ -185,7 +185,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -214,7 +214,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124867,
+        "source_page": 154,
     },
 
 ]

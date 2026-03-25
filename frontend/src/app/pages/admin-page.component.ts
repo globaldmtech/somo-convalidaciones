@@ -2421,8 +2421,8 @@ type PendingConvalidacionOrigenDelete = {
             </div>
           </div>
 
-          <div *ngIf="createConvalidacionModalOpen" class="fixed inset-0 z-[118] bg-slate-900/45 flex items-center justify-center p-4">
-            <div class="w-full max-w-3xl max-h-[88vh] rounded-xl bg-white border border-slate-200 shadow-xl p-5 flex flex-col overflow-hidden">
+          <div *ngIf="createConvalidacionModalOpen" class="fixed inset-0 z-[118] bg-slate-900/45 overflow-y-auto p-4">
+            <div class="thin-scroll w-full max-w-3xl max-h-[88vh] my-6 mx-auto rounded-xl bg-white border border-slate-200 shadow-xl p-5 overflow-y-auto">
               <div class="flex items-start justify-between gap-3 shrink-0">
                 <div class="min-w-0">
                   <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Añadir regla de convalidación</p>
@@ -2443,8 +2443,8 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
               </div>
 
-              <div class="border-t border-slate-100 mt-4 pt-4 flex-1 min-h-0 overflow-hidden">
-                <div class="thin-scroll h-full overflow-y-auto pr-1 space-y-5">
+              <div class="border-t border-slate-100 mt-4 pt-4">
+                <div class="space-y-5">
                   <section class="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Formación a convalidar</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -2590,13 +2590,40 @@ type PendingConvalidacionOrigenDelete = {
                         </p>
                       </div>
                     </ng-template>
+
                   </section>
+                </div>
+              </div>
+
+              <div class="mt-5 space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Fuente</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-600">URL</label>
+                    <input
+                      type="url"
+                      class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                      [(ngModel)]="createConvalidacionSourceLink"
+                      placeholder="https://..."
+                    />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-600">Página</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-white"
+                      [(ngModel)]="createConvalidacionSourcePage"
+                      placeholder="Ej. 124860"
+                    />
+                  </div>
                 </div>
               </div>
 
               <p *ngIf="createConvalidacionError" class="mt-3 text-sm text-rose-700">{{ createConvalidacionError }}</p>
 
-              <div class="mt-4 flex items-center justify-end gap-2 shrink-0">
+              <div class="mt-4 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
@@ -2825,10 +2852,6 @@ type PendingConvalidacionOrigenDelete = {
 })
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly adminSessionKey = 'somo_admin_session';
-  private readonly sourcePageBaseOffset = 124713;
-  private readonly sourcePageBaseOffsetsByLink: Record<string, number> = {
-    'https://www.boe.es/boe/dias/2023/07/22/pdfs/BOE-A-2023-16889.pdf': 106138,
-  };
   private resizeObserver: ResizeObserver | null = null;
   @ViewChild('headerInner') headerInnerRef?: ElementRef<HTMLDivElement>;
   @ViewChild('headerBrand') headerBrandRef?: ElementRef<HTMLDivElement>;
@@ -2917,6 +2940,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   createConvalidacionOrigenModuloIds: number[] = [];
   createConvalidacionAcreditacionesExternas: Array<{ id: number; nombre: string; tipo: string | null }> = [];
   createConvalidacionOrigenAcreditacionId: number | null = null;
+  createConvalidacionSourceLink = '';
+  createConvalidacionSourcePage: number | null = null;
   loadingCreateConvalidacionDestinoModulos = false;
   loadingCreateConvalidacionCiclosOrigen = false;
   loadingCreateConvalidacionOrigenModulos = false;
@@ -4926,6 +4951,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionAcreditacionesExternas = [];
     this.createConvalidacionOrigenAcreditacionId = null;
+    this.createConvalidacionSourceLink = '';
+    this.createConvalidacionSourcePage = null;
     this.creatingConvalidacion = false;
     this.errorConvalidaciones = null;
 
@@ -4946,6 +4973,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionAcreditacionesExternas = [];
     this.createConvalidacionOrigenAcreditacionId = null;
+    this.createConvalidacionSourceLink = '';
+    this.createConvalidacionSourcePage = null;
     this.loadingCreateConvalidacionDestinoModulos = false;
     this.loadingCreateConvalidacionCiclosOrigen = false;
     this.loadingCreateConvalidacionOrigenModulos = false;
@@ -5146,19 +5175,30 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.creatingConvalidacion = true;
     this.createConvalidacionError = null;
+    const sourceLink = this.createConvalidacionSourceLink.trim() || null;
+    const rawSourcePage = this.createConvalidacionSourcePage;
+    const sourcePage = rawSourcePage === null || rawSourcePage === undefined
+      ? null
+      : Number(rawSourcePage);
+
+    if (sourcePage !== null && (!Number.isInteger(sourcePage) || sourcePage <= 0)) {
+      this.creatingConvalidacion = false;
+      this.createConvalidacionError = 'La página debe ser un número entero mayor que 0.';
+      return;
+    }
 
     const request$ = this.createConvalidacionOrigenTipo === 'ciclo' && this.createConvalidacionOrigenCicloCompleto
       ? this.convalidacionesService.crearConvalidacionCicloAdmin({
           id_modulo_destino: idModuloDestino,
           id_ciclo_origen: idCicloOrigen!,
-          source_link: null,
-          source_page: null,
+          source_link: sourceLink,
+          source_page: sourcePage,
         })
       : this.convalidacionesService.crearConvalidacionAdmin({
           id_modulo_destino: idModuloDestino,
           id_modulos_origen: idModulosOrigen,
-          source_link: null,
-          source_page: null,
+          source_link: sourceLink,
+          source_page: sourcePage,
         });
 
     request$
@@ -6221,14 +6261,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return String(nombre || '').trim().toLowerCase() === 'acreditaciones externas';
   }
 
-  private getSourcePageBaseOffset(sourceLink: string | null): number {
-    const cleanLink = String(sourceLink || '').trim();
-    return this.sourcePageBaseOffsetsByLink[cleanLink] ?? this.sourcePageBaseOffset;
-  }
-
-  getDocumentoPage(sourcePage: number | null, sourceLink: string | null = null): number | null {
+  getDocumentoPage(sourcePage: number | null, _sourceLink: string | null = null): number | null {
     if (sourcePage === null || sourcePage === undefined) return null;
-    const page = Math.trunc(Number(sourcePage)) - this.getSourcePageBaseOffset(sourceLink);
+    const page = Math.trunc(Number(sourcePage));
     return Number.isFinite(page) && page > 0 ? page : null;
   }
 
@@ -6236,7 +6271,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const base = (sourceLink || '').trim();
     if (!base) return '';
 
-    const page = this.getDocumentoPage(sourcePage, sourceLink);
+    const page = this.getDocumentoPage(sourcePage);
     if (!page) return base;
 
     const hashIndex = base.indexOf('#');

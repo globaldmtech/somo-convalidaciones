@@ -34,7 +34,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: TS Gestión del Agua — módulo específico
@@ -55,7 +55,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: TS Eficiencia Energética y Energía Solar Térmica — módulo específico
@@ -76,7 +76,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas (Electricidad y Electrónica) — módulo específico
@@ -97,7 +97,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas (Electricidad y Electrónica) — Ciclo Completo
@@ -119,7 +119,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124847,
+        "source_page": 134,
     },
 
     # Origen: T. Instalaciones de Producción de Calor (Instalación y Mantenimiento) — módulo específico
@@ -140,7 +140,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: T. Instalaciones de Producción de Calor (Instalación y Mantenimiento) — módulo específico
@@ -161,7 +161,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: T. Instalaciones Frigoríficas y de Climatización (Instalación y Mantenimiento) — módulo específico
@@ -182,7 +182,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: T. Instalaciones Frigoríficas y de Climatización (Instalación y Mantenimiento) — módulo específico
@@ -203,7 +203,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: TS Mantenimiento de Instalaciones Térmicas y de Fluidos (Instalación y Mantenimiento) — módulo específico
@@ -224,7 +224,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: TS Desarrollo de Proyectos de Instalaciones Térmicas y de Fluidos (Inst. y Mant.) — módulo específico
@@ -245,7 +245,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: TS Proyectos de Edificación (Edificación y obra civil) — módulo específico
@@ -266,7 +266,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones
@@ -289,7 +289,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: T. Planta química (Química) — módulo específico
@@ -310,7 +310,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: TS Mantenimiento de Instalaciones Térmicas y de Fluidos (Instalación y Mant.) — dos módulos específicos
@@ -338,7 +338,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -373,7 +373,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124848,
+        "source_page": 135,
     },
 
     # Origen: TS Proyectos de Edificación (Edificación y Obra Civil) — módulo específico
@@ -394,7 +394,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # DESTINO: TS Gestión del Agua (RD 113/2017)
@@ -418,7 +418,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Automatización y Robótica Industrial (Electricidad y Electrónica) — Ciclo Completo
@@ -440,7 +440,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Automatización y Robótica Industrial (Electricidad y Electrónica) — Ciclo Completo
@@ -462,7 +462,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Desarrollo de Proyectos de Instalaciones Térmicas y de Fluidos (Inst. y Mant.) — módulo específico
@@ -483,7 +483,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas (Electricidad y Electrónica) — Ciclo Completo
@@ -505,7 +505,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Mantenimiento de Instalaciones Térmicas y de Fluidos (Inst. y Mant.) — módulo específico
@@ -526,7 +526,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones
@@ -548,7 +548,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones
@@ -570,7 +570,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Organización y Control de Obras de Construcción (Edificación y obra civil) — dos módulos específicos
@@ -598,7 +598,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Proyectos de Edificación (Edificación y obra civil) — dos módulos específicos
@@ -626,7 +626,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124849,
+        "source_page": 136,
     },
 
     # Origen: TS Proyectos de Obra Civil (Edificación y obra civil) — dos módulos específicos
@@ -654,7 +654,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados (Electricidad y Electrónica) — Ciclo Completo
@@ -676,7 +676,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Mecatrónica Industrial (Instalación y mantenimiento) — Ciclo Completo
@@ -698,7 +698,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
 ]

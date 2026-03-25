@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Marketing y Publicidad (Comercio y Marketing) — módulo específico
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # DESTINO: TS Dirección de Cocina (RD 687/2010)
@@ -101,7 +101,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # Origen: TS Vitivinicultura (Industrias Alimentarias) — dos módulos específicos
@@ -129,7 +129,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # DESTINO: TS Gestión de Alojamientos Turísticos (RD 1686/2007)
@@ -153,7 +153,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — módulo específico
@@ -174,7 +174,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # Origen: TS Marketing y Publicidad (Comercio y Marketing) — módulo específico
@@ -195,7 +195,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # DESTINO: TS Guía, Información y Asistencias Turísticas (RD 1255/2009)
@@ -219,7 +219,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # Origen: TS Asistencia a la Dirección (Administración y Gestión) — módulo específico
@@ -240,7 +240,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
     # Origen: TS Gestión de Ventas y Espacios Comerciales (Comercio y Marketing) — módulo específico
@@ -261,7 +261,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124853,
+        "source_page": 140,
     },
 
 ]

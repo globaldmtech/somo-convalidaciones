@@ -30,7 +30,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # Origen: TS Transporte y Logística (Comercio y Marketing)
@@ -50,7 +50,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -74,7 +74,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # Origen: TS Gestión de Alojamientos Turísticos (Hostelería y Turismo)
@@ -94,7 +94,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # Origen: TS Guía, Información y Asistencia Turística (Hostelería y Turismo)
@@ -114,7 +114,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
 ]

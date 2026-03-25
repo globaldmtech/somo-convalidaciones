@@ -34,7 +34,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: T. Gestión Administrativa (Administración y Gestión) — Ciclo Completo
@@ -56,7 +56,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Diseño y Gestión de la Producción Gráfica (Artes Gráficas) — módulo específico
@@ -77,7 +77,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Diseño y Edición de Publicaciones Impresas y Multimedia (Artes Gráficas) — módulo específico
@@ -98,7 +98,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -127,7 +127,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Asistencia a la Dirección (Administración y Gestión) — Ciclo Completo
@@ -149,7 +149,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # DESTINO: TS Gestión de Ventas y Espacios Comerciales (RD 1573/2011)
@@ -174,7 +174,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Administración y Finanzas (Administración y Gestión) — Ciclo Completo
@@ -196,7 +196,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Asistencia a la Dirección (Administración y Gestión) — Ciclo Completo
@@ -218,7 +218,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # DESTINO: TS Marketing y Publicidad (RD 1571/2011)
@@ -243,7 +243,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Administración y Finanzas (Administración y Gestión) — Ciclo Completo
@@ -265,7 +265,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124843,
+        "source_page": 130,
     },
 
     # Origen: TS Asistencia a la Dirección (Administración y Gestión) — Ciclo Completo
@@ -287,7 +287,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Producción de Audiovisuales y Espectáculos (Imagen y Sonido) — Ciclo Completo
@@ -309,7 +309,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Producción de Audiovisuales y Espectáculos (Imagen y Sonido) — Ciclo Completo
@@ -331,7 +331,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # DESTINO: TS Transporte y Logística (RD 1572/2011)
@@ -356,7 +356,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Administración y Finanzas (Administración y Gestión) — Ciclo Completo
@@ -378,7 +378,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Asistencia a la Dirección (Administración y Gestión) — Ciclo Completo
@@ -400,7 +400,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
 ]
