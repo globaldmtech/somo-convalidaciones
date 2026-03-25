@@ -61,6 +61,18 @@ CREATE TABLE IF NOT EXISTS convalidacion_ciclo (
   FOREIGN KEY (id_ciclo_origen) REFERENCES ciclos(id) ON DELETE CASCADE
 );
 
+CREATE INDEX IF NOT EXISTS idx_convalidacion_modulo_destino
+  ON convalidacion(id_modulo_destino);
+
+CREATE INDEX IF NOT EXISTS idx_convalidacion_origen_modulo_conv
+  ON convalidacion_origen(id_modulo, conv_id);
+
+CREATE INDEX IF NOT EXISTS idx_convalidacion_ciclo_modulo_destino
+  ON convalidacion_ciclo(id_modulo_destino);
+
+CREATE INDEX IF NOT EXISTS idx_convalidacion_ciclo_origen
+  ON convalidacion_ciclo(id_ciclo_origen);
+
 -- Usuarios, administradores y formularios
 CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY,

@@ -1188,35 +1188,10 @@ class AdminQueries:
         source_link: Optional[str] = None,
         source_page: Optional[int] = None,
     ) -> dict:
-        modulo_destino = conn.execute(
-            """
-            SELECT id
-            FROM modulos
-            WHERE id = ?
-            """,
-            (id_modulo_destino,),
-        ).fetchone()
-        if not modulo_destino:
-            raise ValueError("Módulo destino no encontrado")
 
         origenes = sorted({int(item) for item in id_modulos_origen if int(item) > 0})
         if not origenes:
             raise ValueError("Debes indicar al menos un módulo de origen")
-
-        placeholders = ",".join(["?"] * len(origenes))
-        existentes = conn.execute(
-            f"""
-            SELECT id
-            FROM modulos
-            WHERE id IN ({placeholders})
-            """,
-            origenes,
-        ).fetchall()
-        existentes_set = {int(row["id"]) for row in existentes}
-        faltantes = [id_modulo for id_modulo in origenes if id_modulo not in existentes_set]
-        if faltantes:
-            faltantes_text = ", ".join(str(x) for x in faltantes)
-            raise ValueError(f"Módulos origen no encontrados: {faltantes_text}")
 
         cursor = conn.execute(
             """
@@ -1295,3 +1270,161 @@ class AdminQueries:
             "id_modulo_destino": id_modulo_destino,
             "id_ciclo_origen": id_ciclo_origen,
         }
+
+    @staticmethod
+    def create_convalidacion_rules_batch(
+        conn: sqlite3.Connection,
+        reglas: Sequence[dict],
+        source_link: Optional[str] = None,
+        source_page: Optional[int] = None,
+    ) -> dict:
+        normalizadas: list[tuple[int, int]] = []
+        seen: set[tuple[int, int]] = set()
+        skipped = 0
+
+        for regla in reglas:
+            id_modulo_destino = int(regla["id_modulo_destino"])
+            id_modulo_origen = int(regla["id_modulo_origen"])
+            if id_modulo_destino <= 0 or id_modulo_origen <= 0:
+                raise ValueError("Los módulos origen y destino son obligatorios")
+            if id_modulo_destino == id_modulo_origen:
+                skipped += 1
+                continue
+            key = (id_modulo_destino, id_modulo_origen)
+            if key in seen:
+                skipped += 1
+                continue
+            seen.add(key)
+            normalizadas.append(key)
+
+        if not normalizadas:
+            return {
+                "created": [],
+                "created_count": 0,
+                "skipped_count": skipped,
+            }
+
+        modulo_ids = sorted({item for pair in normalizadas for item in pair})
+
+        placeholders = ",".join(["?"] * len(modulo_ids))
+        pares_existentes_rows = conn.execute(
+            f"""
+            SELECT c.id_modulo_destino AS id_modulo_destino, co.id_modulo AS id_modulo_origen
+            FROM convalidacion c
+            JOIN convalidacion_origen co ON co.conv_id = c.id
+            WHERE c.id_modulo_destino IN ({placeholders})
+              AND co.id_modulo IN ({placeholders})
+            """,
+            [*modulo_ids, *modulo_ids],
+        ).fetchall()
+        pares_existentes = {
+            (int(row["id_modulo_destino"]), int(row["id_modulo_origen"]))
+            for row in pares_existentes_rows
+        }
+
+        created: list[dict] = []
+        skipped_existing = 0
+        for id_modulo_destino, id_modulo_origen in normalizadas:
+            if (id_modulo_destino, id_modulo_origen) in pares_existentes:
+                skipped_existing += 1
+                continue
+            created.append(
+                AdminQueries.create_convalidacion_rule(
+                    conn,
+                    id_modulo_destino=id_modulo_destino,
+                    id_modulos_origen=[id_modulo_origen],
+                    source_link=source_link,
+                    source_page=source_page,
+                )
+            )
+
+        return {
+            "created": created,
+            "created_count": len(created),
+            "skipped_count": skipped + skipped_existing,
+            "skipped_existing_count": skipped_existing,
+        }
+
+    @staticmethod
+    def delete_convalidacion_rules_batch(
+        conn: sqlite3.Connection,
+        reglas: Sequence[dict],
+    ) -> dict:
+        normalizadas: list[tuple[int, int]] = []
+        skipped_invalid = 0
+
+        for regla in reglas:
+            id_modulo_destino = int(regla["id_modulo_destino"])
+            id_modulo_origen = int(regla["id_modulo_origen"])
+            key = (id_modulo_destino, id_modulo_origen)
+            normalizadas.append(key)
+
+        if not normalizadas:
+            return {
+                "deleted_count": 0,
+                "skipped_count": skipped_invalid,
+                "skipped_missing_count": 0,
+            }
+
+        temp_table = "temp_requested_convalidacion_rules"
+
+        conn.execute(f"DROP TABLE IF EXISTS {temp_table}")
+        conn.execute(
+            f"""
+            CREATE TEMP TABLE {temp_table} (
+                id_modulo_destino INTEGER NOT NULL,
+                id_modulo_origen INTEGER NOT NULL,
+                PRIMARY KEY (id_modulo_destino, id_modulo_origen)
+            )
+            """
+        )
+
+        try:
+            conn.executemany(
+                """
+                INSERT OR IGNORE INTO temp_requested_convalidacion_rules (
+                    id_modulo_destino,
+                    id_modulo_origen
+                )
+                VALUES (?, ?)
+                """,
+                normalizadas,
+            )
+
+            matched_pairs_row = conn.execute(
+                f"""
+                SELECT COUNT(*) AS total
+                FROM {temp_table} requested
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM convalidacion c
+                    JOIN convalidacion_origen co ON co.conv_id = c.id
+                    WHERE c.id_modulo_destino = requested.id_modulo_destino
+                      AND co.id_modulo = requested.id_modulo_origen
+                )
+                """
+            ).fetchone()
+            matched_pairs_count = int(matched_pairs_row["total"]) if matched_pairs_row else 0
+
+            deleted_cursor = conn.execute(
+                f"""
+                DELETE FROM convalidacion
+                WHERE id IN (
+                    SELECT DISTINCT c.id
+                    FROM convalidacion c
+                    JOIN convalidacion_origen co ON co.conv_id = c.id
+                    JOIN {temp_table} requested
+                      ON requested.id_modulo_destino = c.id_modulo_destino
+                     AND requested.id_modulo_origen = co.id_modulo
+                )
+                """
+            )
+            deleted_count = int(deleted_cursor.rowcount)
+
+            return {
+                "deleted_count": deleted_count,
+                "skipped_count": skipped_invalid + max(len(set(normalizadas)) - matched_pairs_count, 0),
+                "skipped_missing_count": max(len(set(normalizadas)) - matched_pairs_count, 0),
+            }
+        finally:
+            conn.execute(f"DROP TABLE IF EXISTS {temp_table}")

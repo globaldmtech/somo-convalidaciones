@@ -9,12 +9,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import {
   AdminCicloModulo,
   AdminCicloConModulos,
   AdminConvalidacionRegla,
+  AdminCreateConvalidacionesMasivasResponse,
+  AdminDeleteConvalidacionesMasivasResponse,
   AdminFormulario,
   AdminUser,
   ConvalidacionesService,
@@ -24,6 +27,8 @@ import { Ciclo, Grado, Modulo } from '../models/catalog.models';
 import { finalize, timeout } from 'rxjs/operators';
 
 type AdminTab = 'formularios' | 'modulos' | 'convalidaciones' | 'administradores';
+type AdminConvalidacionesView = 'destino' | 'multiple';
+type AdminBusquedaOrigenTipo = 'ciclos' | 'acreditaciones';
 
 type AdminAlumnoGroup = {
   key: string;
@@ -105,6 +110,33 @@ type AdminConvalidacionOrigenEditable = {
   cicloOrigenNombre: string;
   esCicloCompleto: boolean;
 };
+
+type AdminBusquedaModuloResultado = {
+  key: string;
+  nombre: string;
+  codigo: string | null;
+  totalCiclos: number;
+  ciclos: Array<{
+    moduloId: number;
+    cicloId: number;
+    cicloNombre: string;
+    cicloCodigo: string | null;
+    familiaNombre: string | null;
+    gradoNombre: string | null;
+  }>;
+};
+
+type AdminBusquedaModuloSeleccionItem = {
+  moduloId: number;
+  moduloNombre: string;
+  moduloCodigo: string | null;
+  cicloId: number;
+  cicloNombre: string;
+  gradoNombre: string | null;
+  familiaNombre: string | null;
+};
+
+type AdminConvalidacionesMultiplesAction = 'crear' | 'eliminar';
 
 type PendingConvalidacionOrigenDelete = {
   key: string;
@@ -1030,6 +1062,32 @@ type PendingConvalidacionOrigenDelete = {
           </section>
 
           <section *ngIf="activeTab === 'convalidaciones'" class="space-y-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="inline-flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+                  [ngClass]="convalidacionesView === 'destino'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                  (click)="setConvalidacionesView('destino')"
+                >
+                  Convalidaciones por destino
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg px-4 py-2 text-sm font-semibold transition-colors"
+                  [ngClass]="convalidacionesView === 'multiple'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'"
+                  (click)="setConvalidacionesView('multiple')"
+                >
+                  Edición multiples convalidaciones
+                </button>
+              </div>
+            </div>
+
+            <ng-container *ngIf="convalidacionesView === 'destino'">
             <div class="rounded-2xl border border-slate-200 bg-white p-4">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
@@ -1224,6 +1282,388 @@ type PendingConvalidacionOrigenDelete = {
                 </div>
               </div>
             </article>
+            </ng-container>
+
+            <ng-container *ngIf="convalidacionesView === 'multiple'">
+              <div *ngIf="loadingModulos" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+                Cargando ciclos y modulos...
+              </div>
+              <div *ngIf="!loadingModulos && errorModulos" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {{ errorModulos }}
+              </div>
+
+              <div *ngIf="!loadingModulos && !errorModulos" class="space-y-4">
+                <section class="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 flex flex-col gap-4">
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Crear reglas de convalidación</p>
+                    <p class="mt-1 text-sm text-slate-500">
+                      Selecciona módulos en origen y destino para crear o eliminar reglas en bloque.
+                    </p>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Origen</p>
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      {{ totalBusquedaModuloOrigenSeleccionados }} módulos seleccionados
+                    </p>
+                    <div *ngIf="selectedBusquedaModuloOrigenItems.length > 0; else sinOrigenSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
+                      <p *ngFor="let item of selectedBusquedaModuloOrigenItems" class="text-xs text-slate-600">
+                        {{ formatBusquedaModuloSeleccionItem(item) }}
+                      </p>
+                    </div>
+                    <ng-template #sinOrigenSeleccionado>
+                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado módulos de origen.</p>
+                    </ng-template>
+                  </div>
+
+                  <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Destino</p>
+                    <p class="mt-1 text-sm font-semibold text-slate-900">
+                      {{ totalBusquedaModuloDestinoSeleccionados }} módulos seleccionados
+                    </p>
+                    <div *ngIf="selectedBusquedaModuloDestinoItems.length > 0; else sinDestinoSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
+                      <p *ngFor="let item of selectedBusquedaModuloDestinoItems" class="text-xs text-slate-600">
+                        {{ formatBusquedaModuloSeleccionItem(item) }}
+                      </p>
+                    </div>
+                    <ng-template #sinDestinoSeleccionado>
+                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado módulos de destino.</p>
+                    </ng-template>
+                  </div>
+
+                  <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-3">
+                    <p class="text-sm font-semibold text-indigo-900">Resumen</p>
+                    <p class="mt-1 text-xs text-indigo-800">
+                      Se procesarán {{ totalCombinacionesConvalidacionMultiples }} reglas:
+                      cada módulo de origen con cada módulo de destino.
+                    </p>
+                  </div>
+
+                  <p *ngIf="createMultipleConvalidacionesError" class="text-sm text-rose-700">{{ createMultipleConvalidacionesError }}</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      class="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-indigo-600 hover:bg-indigo-700"
+                      [disabled]="!canCrearConvalidacionesMultiples || creatingMultipleConvalidaciones"
+                      (click)="setConvalidacionesMultiplesAction('crear'); crearConvalidacionesMultiples()"
+                    >
+                      {{ creatingMultipleConvalidaciones && convalidacionesMultiplesAction === 'crear'
+                        ? 'Creando reglas...'
+                        : 'Crear reglas de convalidación' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-slate-600 hover:bg-slate-700"
+                      [disabled]="!canCrearConvalidacionesMultiples || creatingMultipleConvalidaciones"
+                      (click)="abrirModalEliminarConvalidacionesMultiples()"
+                    >
+                      {{ creatingMultipleConvalidaciones && convalidacionesMultiplesAction === 'eliminar'
+                        ? 'Eliminando reglas...'
+                        : 'Eliminar reglas de convalidación' }}
+                    </button>
+                  </div>
+                </section>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div class="border-b border-slate-200 px-4 py-4 bg-slate-50/70">
+                      <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Origen</p>
+                      <div class="mt-3">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de origen</label>
+                        <div class="flex flex-wrap items-center gap-4">
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-2 text-sm text-slate-700"
+                            (click)="setBusquedaModuloIzquierdaOrigenTipo('ciclos')"
+                          >
+                            <span
+                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'border-indigo-600 bg-indigo-600'
+                                : 'border-slate-300 bg-white'"
+                            >
+                              <span
+                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'"
+                                class="h-1.5 w-1.5 rounded-sm bg-white"
+                              ></span>
+                            </span>
+                            <span class="font-medium">Ciclo</span>
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-2 text-sm text-slate-700"
+                            (click)="setBusquedaModuloIzquierdaOrigenTipo('acreditaciones')"
+                          >
+                            <span
+                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                                ? 'border-indigo-600 bg-indigo-600'
+                                : 'border-slate-300 bg-white'"
+                            >
+                              <span
+                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'"
+                                class="h-1.5 w-1.5 rounded-sm bg-white"
+                              ></span>
+                            </span>
+                            <span class="font-medium">Acreditación externa</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                          <select
+                            [(ngModel)]="filtroBusquedaModuloIzquierdaGrado"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                          >
+                            <option value="">Todos los grados</option>
+                            <option *ngFor="let grado of gradosBusquedaModuloIzquierda" [value]="grado">{{ grado }}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                          <select
+                            [(ngModel)]="filtroBusquedaModuloIzquierdaFamilia"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                          >
+                            <option value="">Todas las familias</option>
+                            <option *ngFor="let familia of familiasBusquedaModuloIzquierda" [value]="familia">{{ familia }}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
+                      <input
+                        type="text"
+                        [(ngModel)]="busquedaModuloIzquierda"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                        placeholder="Buscar módulo..."
+                      />
+                      <p class="mt-2 text-xs text-slate-500">
+                        {{ resultadosBusquedaModuloIzquierda.length }} módulos únicos encontrados
+                      </p>
+                    </div>
+
+                    <div class="p-4">
+                      <div *ngIf="!busquedaModuloIzquierdaNormalizada" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                          ? 'Escribe una acreditación para ver las acreditaciones externas disponibles.'
+                          : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.' }}
+                      </div>
+                      <div *ngIf="busquedaModuloIzquierdaNormalizada && resultadosBusquedaModuloIzquierda.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                        No hay módulos que coincidan con esa búsqueda.
+                      </div>
+                      <div *ngIf="resultadosBusquedaModuloIzquierda.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                        <button
+                          type="button"
+                          class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloSeleccion('izquierda')"
+                        >
+                          {{ isBusquedaModuloAllSelected('izquierda')
+                            ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Deseleccionar todas las acreditaciones'
+                              : 'Deseleccionar todos los módulos y ciclos')
+                            : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Seleccionar todas las acreditaciones'
+                              : 'Seleccionar todos los módulos y ciclos') }}
+                        </button>
+                        <article *ngFor="let resultado of resultadosBusquedaModuloIzquierda" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenConDesplegable">
+                            <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                              <input
+                                *ngIf="resultado.ciclos[0] as acreditacion"
+                                type="checkbox"
+                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                [checked]="isBusquedaModuloCicloSelected('izquierda', acreditacion.moduloId)"
+                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', acreditacion.moduloId, $any($event.target).checked)"
+                              />
+                              <span class="min-w-0">
+                                <span class="block font-medium text-slate-900">{{ resultado.nombre }}</span>
+                              </span>
+                            </label>
+                          </ng-container>
+                          <ng-template #resultadoOrigenConDesplegable>
+                          <button
+                            type="button"
+                            class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                            (click)="toggleBusquedaModuloRow('izquierda', resultado.key)"
+                          >
+                            <div class="flex items-start justify-between gap-3">
+                              <div class="min-w-0">
+                                <p class="text-sm font-bold text-slate-900">
+                                  <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones' && resultado.codigo">
+                                    <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                                  </ng-container>
+                                  {{ resultado.nombre }}
+                                </p>
+                                <p
+                                  *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones' && formatBusquedaModuloMeta(resultado)"
+                                  class="text-xs text-slate-500"
+                                >
+                                  {{ formatBusquedaModuloMeta(resultado) }}
+                                </p>
+                              </div>
+                              <div class="flex items-center gap-2 shrink-0">
+                                <span
+                                  *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'"
+                                  class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
+                                >
+                                  {{ resultado.totalCiclos }} ciclos
+                                </span>
+                                <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                                  [class.rotate-180]="isBusquedaModuloRowOpen('izquierda', resultado.key)">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                                  </svg>
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                          <div *ngIf="isBusquedaModuloRowOpen('izquierda', resultado.key)" class="px-2 pt-1">
+                            <button
+                              type="button"
+                              class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                              (click)="toggleBusquedaModuloResultadoSeleccion('izquierda', resultado)"
+                            >
+                              {{ isBusquedaModuloResultadoAllSelected('izquierda', resultado)
+                                ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                                  ? 'Deseleccionar esta acreditación'
+                                  : 'Deseleccionar todos los ciclos de este módulo')
+                                : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                                  ? 'Seleccionar esta acreditación'
+                                  : 'Seleccionar todos los ciclos de este módulo') }}
+                            </button>
+                            <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                              />
+                              <span *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="min-w-0">
+                                <span class="block font-medium text-slate-900">
+                                  {{ ciclo.cicloNombre }}
+                                </span>
+                                <span
+                                  *ngIf="formatBusquedaModuloCicloMeta(ciclo)"
+                                  class="block text-xs text-slate-500"
+                                >
+                                  {{ formatBusquedaModuloCicloMeta(ciclo) }}
+                                </span>
+                              </span>
+                            </label>
+                          </div>
+                          </ng-template>
+                        </article>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div class="border-b border-slate-200 px-4 py-4 bg-slate-50/70">
+                      <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Destino</p>
+                      <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                          <select
+                            [(ngModel)]="filtroBusquedaModuloDerechaGrado"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                          >
+                            <option value="">Todos los grados</option>
+                            <option *ngFor="let grado of gradosBusquedaModuloDerecha" [value]="grado">{{ grado }}</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                          <select
+                            [(ngModel)]="filtroBusquedaModuloDerechaFamilia"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                          >
+                            <option value="">Todas las familias</option>
+                            <option *ngFor="let familia of familiasBusquedaModuloDerecha" [value]="familia">{{ familia }}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
+                      <input
+                        type="text"
+                        [(ngModel)]="busquedaModuloDerecha"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                        placeholder="Buscar módulo..."
+                      />
+                      <p class="mt-2 text-xs text-slate-500">
+                        {{ resultadosBusquedaModuloDerecha.length }} módulos únicos encontrados
+                      </p>
+                    </div>
+
+                    <div class="p-4">
+                      <div *ngIf="!busquedaModuloDerechaNormalizada" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                        Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.
+                      </div>
+                      <div *ngIf="busquedaModuloDerechaNormalizada && resultadosBusquedaModuloDerecha.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                        No hay módulos que coincidan con esa búsqueda.
+                      </div>
+                      <div *ngIf="resultadosBusquedaModuloDerecha.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                        <button
+                          type="button"
+                          class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloSeleccion('derecha')"
+                        >
+                          {{ isBusquedaModuloAllSelected('derecha') ? 'Deseleccionar todos los módulos y ciclos' : 'Seleccionar todos los módulos y ciclos' }}
+                        </button>
+                        <article *ngFor="let resultado of resultadosBusquedaModuloDerecha" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                          <button
+                            type="button"
+                            class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                            (click)="toggleBusquedaModuloRow('derecha', resultado.key)"
+                          >
+                            <div class="flex items-start justify-between gap-3">
+                              <div class="min-w-0">
+                                <p class="text-sm font-bold text-slate-900">
+                                  <span *ngIf="resultado.codigo" class="text-slate-500">{{ resultado.codigo }} · </span>{{ resultado.nombre }}
+                                </p>
+                                <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">{{ formatBusquedaModuloMeta(resultado) }}</p>
+                              </div>
+                              <div class="flex items-center gap-2 shrink-0">
+                                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                                  {{ resultado.totalCiclos }} ciclos
+                                </span>
+                                <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                                  [class.rotate-180]="isBusquedaModuloRowOpen('derecha', resultado.key)">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                                  </svg>
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                          <div *ngIf="isBusquedaModuloRowOpen('derecha', resultado.key)" class="px-2 pt-1">
+                            <button
+                              type="button"
+                              class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                              (click)="toggleBusquedaModuloResultadoSeleccion('derecha', resultado)"
+                            >
+                              {{ isBusquedaModuloResultadoAllSelected('derecha', resultado) ? 'Deseleccionar todos los ciclos de este módulo' : 'Seleccionar todos los ciclos de este módulo' }}
+                            </button>
+                            <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                [checked]="isBusquedaModuloCicloSelected('derecha', ciclo.moduloId)"
+                                (change)="toggleBusquedaModuloCicloSeleccion('derecha', ciclo.moduloId, $any($event.target).checked)"
+                              />
+                              <span class="min-w-0">
+                                <span class="block font-medium text-slate-900">{{ ciclo.cicloNombre }}</span>
+                                <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">{{ formatBusquedaModuloCicloMeta(ciclo) }}</span>
+                              </span>
+                            </label>
+                          </div>
+                        </article>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </ng-container>
           </section>
 
           <section *ngIf="activeTab === 'administradores'" class="space-y-4">
@@ -1434,6 +1874,59 @@ type PendingConvalidacionOrigenDelete = {
                   (click)="confirmarArchivarTrasExportar()"
                 >
                   {{ archivandoTrasExportar ? 'Archivando...' : 'Archivar seleccionados' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="createMultipleConvalidacionesResultModalOpen" class="fixed inset-0 z-[103] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">
+                {{ createMultipleConvalidacionesResultAction === 'crear' ? 'Reglas de convalidación creadas' : 'Reglas de convalidación eliminadas' }}
+              </h3>
+              <p class="mt-3 text-sm text-slate-700">
+                {{ createMultipleConvalidacionesResultAction === 'crear' ? 'Se han creado' : 'Se han eliminado' }}
+                {{ createMultipleConvalidacionesResultCreatedCount }} reglas de convalidación.
+              </p>
+              <p class="mt-2 text-sm text-slate-700">
+                {{ createMultipleConvalidacionesResultSkippedCount }}
+                {{ createMultipleConvalidacionesResultAction === 'crear'
+                  ? 'reglas no se han insertado porque ya existían.'
+                  : 'reglas no se han eliminado porque no existían.' }}
+              </p>
+              <div class="mt-5 flex items-center justify-end">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+                  (click)="cerrarModalResultadoConvalidacionesMultiples()"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="deleteMultipleConvalidacionesModalOpen" class="fixed inset-0 z-[104] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
+              <h3 class="text-base font-bold text-slate-900">Eliminar reglas de convalidación</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                ¿Estás seguro de que quieres eliminar {{ totalCombinacionesConvalidacionMultiples }} reglas?
+              </p>
+              <div class="mt-5 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
+                  (click)="cerrarModalEliminarConvalidacionesMultiples()"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border border-slate-300 bg-slate-700 text-white hover:bg-slate-800 transition-colors disabled:opacity-60"
+                  [disabled]="creatingMultipleConvalidaciones"
+                  (click)="confirmarEliminarConvalidacionesMultiples()"
+                >
+                  Eliminar reglas
                 </button>
               </div>
             </div>
@@ -2469,8 +2962,29 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   filtroFamiliaModulos = '';
   filtroGradoModulos = '';
   filtroCicloModulos = '';
+  convalidacionesView: AdminConvalidacionesView = 'destino';
   filtroConvalidacionesGradoId: number | null = null;
   filtroConvalidacionesCicloId: number | null = null;
+  filtroBusquedaModuloIzquierdaGrado = '';
+  filtroBusquedaModuloIzquierdaFamilia = '';
+  filtroBusquedaModuloIzquierdaOrigenTipo: AdminBusquedaOrigenTipo = 'ciclos';
+  filtroBusquedaModuloDerechaGrado = '';
+  filtroBusquedaModuloDerechaFamilia = '';
+  busquedaModuloIzquierda = '';
+  busquedaModuloDerecha = '';
+  openBusquedaModuloIzquierda = new Set<string>();
+  openBusquedaModuloDerecha = new Set<string>();
+  selectedBusquedaModuloIzquierda = new Set<number>();
+  selectedBusquedaModuloDerecha = new Set<number>();
+  convalidacionesMultiplesAction: AdminConvalidacionesMultiplesAction = 'crear';
+  creatingMultipleConvalidaciones = false;
+  createMultipleConvalidacionesError: string | null = null;
+  createMultipleConvalidacionesSuccess: string | null = null;
+  createMultipleConvalidacionesResultModalOpen = false;
+  createMultipleConvalidacionesResultAction: AdminConvalidacionesMultiplesAction = 'crear';
+  createMultipleConvalidacionesResultCreatedCount = 0;
+  createMultipleConvalidacionesResultSkippedCount = 0;
+  deleteMultipleConvalidacionesModalOpen = false;
   filtroAdministradores = '';
   createAdminNombre = '';
   createAdminPassword = '';
@@ -2670,10 +3184,31 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editConvalidacionOrigenes = [];
     this.deletingConvalidacionOrigenes.clear();
     this.cerrarModalCrearConvalidacion(true);
+    this.convalidacionesView = 'destino';
     this.filtroConvalidacionesGradoId = null;
     this.filtroConvalidacionesCicloId = null;
     this.convalidacionesGrados = [];
     this.convalidacionesCiclos = [];
+    this.filtroBusquedaModuloIzquierdaGrado = '';
+    this.filtroBusquedaModuloIzquierdaFamilia = '';
+    this.filtroBusquedaModuloIzquierdaOrigenTipo = 'ciclos';
+    this.filtroBusquedaModuloDerechaGrado = '';
+    this.filtroBusquedaModuloDerechaFamilia = '';
+    this.busquedaModuloIzquierda = '';
+    this.busquedaModuloDerecha = '';
+    this.openBusquedaModuloIzquierda.clear();
+    this.openBusquedaModuloDerecha.clear();
+    this.selectedBusquedaModuloIzquierda.clear();
+    this.selectedBusquedaModuloDerecha.clear();
+    this.convalidacionesMultiplesAction = 'crear';
+    this.creatingMultipleConvalidaciones = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+    this.createMultipleConvalidacionesResultModalOpen = false;
+    this.createMultipleConvalidacionesResultAction = 'crear';
+    this.createMultipleConvalidacionesResultCreatedCount = 0;
+    this.createMultipleConvalidacionesResultSkippedCount = 0;
+    this.deleteMultipleConvalidacionesModalOpen = false;
   }
 
   private handleAdminUnauthorized(err: any): boolean {
@@ -2712,6 +3247,324 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return 'bg-indigo-50 text-indigo-700';
     }
     return 'text-slate-700 hover:bg-slate-100';
+  }
+
+  setConvalidacionesView(view: AdminConvalidacionesView): void {
+    this.convalidacionesView = view;
+    if (view === 'multiple') {
+      this.cargarCiclosModulos();
+    }
+  }
+
+  setBusquedaModuloIzquierdaOrigenTipo(tipo: AdminBusquedaOrigenTipo): void {
+    if (this.filtroBusquedaModuloIzquierdaOrigenTipo === tipo) return;
+    this.filtroBusquedaModuloIzquierdaOrigenTipo = tipo;
+    this.filtroBusquedaModuloIzquierdaGrado = '';
+    this.filtroBusquedaModuloIzquierdaFamilia = '';
+    this.busquedaModuloIzquierda = '';
+    this.openBusquedaModuloIzquierda.clear();
+    this.selectedBusquedaModuloIzquierda.clear();
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloRow(side: 'izquierda' | 'derecha', key: string): void {
+    const target = side === 'izquierda' ? this.openBusquedaModuloIzquierda : this.openBusquedaModuloDerecha;
+    if (target.has(key)) {
+      target.delete(key);
+      return;
+    }
+    target.add(key);
+  }
+
+  isBusquedaModuloRowOpen(side: 'izquierda' | 'derecha', key: string): boolean {
+    const target = side === 'izquierda' ? this.openBusquedaModuloIzquierda : this.openBusquedaModuloDerecha;
+    return target.has(key);
+  }
+
+  toggleBusquedaModuloCicloSeleccion(
+    side: 'izquierda' | 'derecha',
+    moduloId: number,
+    selected: boolean
+  ): void {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    if (selected) {
+      target.add(Number(moduloId));
+      this.createMultipleConvalidacionesError = null;
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+    target.delete(Number(moduloId));
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  isBusquedaModuloCicloSelected(side: 'izquierda' | 'derecha', moduloId: number): boolean {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    return target.has(Number(moduloId));
+  }
+
+  toggleBusquedaModuloSeleccionTotal(side: 'izquierda' | 'derecha', selected: boolean): void {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
+    for (const cicloId of visibleIds) {
+      if (selected) {
+        target.add(cicloId);
+      } else {
+        target.delete(cicloId);
+      }
+    }
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloSeleccion(side: 'izquierda' | 'derecha'): void {
+    this.toggleBusquedaModuloSeleccionTotal(side, !this.isBusquedaModuloAllSelected(side));
+  }
+
+  isBusquedaModuloAllSelected(side: 'izquierda' | 'derecha'): boolean {
+    const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
+    if (visibleIds.length === 0) return false;
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    return visibleIds.every((cicloId) => target.has(cicloId));
+  }
+
+  totalBusquedaModuloModulosVisibles(side: 'izquierda' | 'derecha'): number {
+    return this.getBusquedaModuloVisibleModuloIds(side).length;
+  }
+
+  toggleBusquedaModuloResultadoSeleccionTotal(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado,
+    selected: boolean
+  ): void {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    for (const ciclo of resultado.ciclos) {
+      const cicloId = Number(ciclo.moduloId);
+      if (!Number.isFinite(cicloId)) continue;
+      if (selected) {
+        target.add(cicloId);
+      } else {
+        target.delete(cicloId);
+      }
+    }
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  toggleBusquedaModuloResultadoSeleccion(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado
+  ): void {
+    this.toggleBusquedaModuloResultadoSeleccionTotal(
+      side,
+      resultado,
+      !this.isBusquedaModuloResultadoAllSelected(side, resultado)
+    );
+  }
+
+  isBusquedaModuloResultadoAllSelected(
+    side: 'izquierda' | 'derecha',
+    resultado: AdminBusquedaModuloResultado
+  ): boolean {
+    if (!resultado.ciclos.length) return false;
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    return resultado.ciclos.every((ciclo) => {
+      const cicloId = Number(ciclo.moduloId);
+      return Number.isFinite(cicloId) && target.has(cicloId);
+    });
+  }
+
+  get selectedBusquedaModuloOrigenItems(): AdminBusquedaModuloSeleccionItem[] {
+    return this.getSelectedBusquedaModuloItems('izquierda', true);
+  }
+
+  get selectedBusquedaModuloDestinoItems(): AdminBusquedaModuloSeleccionItem[] {
+    return this.getSelectedBusquedaModuloItems('derecha', true);
+  }
+
+  get totalBusquedaModuloOrigenSeleccionados(): number {
+    return this.selectedBusquedaModuloOrigenItems.length;
+  }
+
+  get totalBusquedaModuloDestinoSeleccionados(): number {
+    return this.selectedBusquedaModuloDestinoItems.length;
+  }
+
+  get canCrearConvalidacionesMultiples(): boolean {
+    return this.totalCombinacionesConvalidacionMultiples > 0
+      && !this.creatingMultipleConvalidaciones;
+  }
+
+  get totalCombinacionesConvalidacionMultiples(): number {
+    return this.getBusquedaModuloCombinacionesMultiples().length;
+  }
+
+  setConvalidacionesMultiplesAction(action: AdminConvalidacionesMultiplesAction): void {
+    this.convalidacionesMultiplesAction = action;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  abrirModalEliminarConvalidacionesMultiples(): void {
+    if (!this.canCrearConvalidacionesMultiples || this.creatingMultipleConvalidaciones) return;
+    this.setConvalidacionesMultiplesAction('eliminar');
+    this.deleteMultipleConvalidacionesModalOpen = true;
+  }
+
+  cerrarModalEliminarConvalidacionesMultiples(): void {
+    this.deleteMultipleConvalidacionesModalOpen = false;
+  }
+
+  confirmarEliminarConvalidacionesMultiples(): void {
+    if (this.creatingMultipleConvalidaciones) return;
+    this.deleteMultipleConvalidacionesModalOpen = false;
+    this.setConvalidacionesMultiplesAction('eliminar');
+    this.crearConvalidacionesMultiples();
+  }
+
+  formatBusquedaModuloSeleccionItem(item: AdminBusquedaModuloSeleccionItem): string {
+    return [
+      item.moduloCodigo?.trim() || null,
+      item.moduloNombre.trim() || null,
+      item.cicloNombre.trim() || null,
+    ]
+      .filter((value): value is string => !!value)
+      .join(' · ');
+  }
+
+  crearConvalidacionesMultiples(): void {
+    const combinaciones = this.getBusquedaModuloCombinacionesMultiples();
+
+    if (combinaciones.length === 0) {
+      this.createMultipleConvalidacionesError = 'No hay combinaciones válidas para crear reglas de convalidación.';
+      this.createMultipleConvalidacionesSuccess = null;
+      return;
+    }
+    if (this.creatingMultipleConvalidaciones) return;
+
+    this.creatingMultipleConvalidaciones = true;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+    const request$: Observable<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse> =
+      this.convalidacionesMultiplesAction === 'crear'
+      ? this.convalidacionesService.crearConvalidacionesMasivasAdmin({
+          reglas: combinaciones.map((item) => ({
+            id_modulo_destino: item.idModuloDestino,
+            id_modulo_origen: item.idModuloOrigen,
+          })),
+          source_link: null,
+          source_page: null,
+        })
+      : this.convalidacionesService.eliminarConvalidacionesMasivasAdmin({
+          reglas: combinaciones.map((item) => ({
+            id_modulo_destino: item.idModuloDestino,
+            id_modulo_origen: item.idModuloOrigen,
+          })),
+        });
+
+    request$
+      .pipe(
+        finalize(() => {
+          this.creatingMultipleConvalidaciones = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (resp: AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse) => {
+          this.createMultipleConvalidacionesResultAction = this.convalidacionesMultiplesAction;
+          const processedCount = this.convalidacionesMultiplesAction === 'crear'
+            ? Number((resp as any)?.created_count || 0)
+            : Number((resp as any)?.deleted_count || 0);
+          const skippedCount = this.convalidacionesMultiplesAction === 'crear'
+            ? Number((resp as any)?.skipped_existing_count || 0)
+            : Number((resp as any)?.skipped_missing_count || 0);
+          this.createMultipleConvalidacionesResultCreatedCount = processedCount;
+          this.createMultipleConvalidacionesResultSkippedCount = skippedCount;
+          this.createMultipleConvalidacionesResultModalOpen = true;
+          this.createMultipleConvalidacionesSuccess = null;
+          this.deleteMultipleConvalidacionesModalOpen = false;
+          this.selectedBusquedaModuloIzquierda.clear();
+          this.selectedBusquedaModuloDerecha.clear();
+          this.errorConvalidaciones = null;
+          if (this.hasConvalidacionesFiltroAplicado) {
+            this.cargarConvalidaciones(true);
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err: HttpErrorResponse) => {
+          if (this.handleAdminUnauthorized(err)) return;
+          this.deleteMultipleConvalidacionesModalOpen = false;
+          this.createMultipleConvalidacionesError = err?.error?.detail || 'No se pudieron crear las reglas de convalidación.';
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  cerrarModalResultadoConvalidacionesMultiples(): void {
+    this.createMultipleConvalidacionesResultModalOpen = false;
+    this.createMultipleConvalidacionesResultAction = 'crear';
+    this.createMultipleConvalidacionesResultCreatedCount = 0;
+    this.createMultipleConvalidacionesResultSkippedCount = 0;
+  }
+
+  private getBusquedaModuloCombinacionesMultiples(): Array<{ idModuloDestino: number; idModuloOrigen: number }> {
+    const origenItems = this.selectedBusquedaModuloOrigenItems;
+    const destinoItems = this.selectedBusquedaModuloDestinoItems;
+    const combinaciones: Array<{ idModuloDestino: number; idModuloOrigen: number }> = [];
+    const seen = new Set<string>();
+
+    for (const destino of destinoItems) {
+      for (const origen of origenItems) {
+        if (destino.moduloId === origen.moduloId && destino.cicloId === origen.cicloId) {
+          continue;
+        }
+        const key = `${destino.moduloId}::${origen.moduloId}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        combinaciones.push({
+          idModuloDestino: Number(destino.moduloId),
+          idModuloOrigen: Number(origen.moduloId),
+        });
+      }
+    }
+
+    return combinaciones.filter(
+      (item) => Number.isFinite(item.idModuloDestino) && item.idModuloDestino > 0 && Number.isFinite(item.idModuloOrigen) && item.idModuloOrigen > 0
+    );
+  }
+
+  private getSelectedBusquedaModuloItems(
+    side: 'izquierda' | 'derecha',
+    onlyVisible = false
+  ): AdminBusquedaModuloSeleccionItem[] {
+    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const visibleIds = onlyVisible ? new Set(this.getBusquedaModuloVisibleModuloIds(side)) : null;
+    const items: AdminBusquedaModuloSeleccionItem[] = [];
+    for (const ciclo of this.ciclosConModulos) {
+      const cicloNombre = String(ciclo.nombre || '').trim().replace(/\s+/g, ' ');
+      const gradoNombre = ciclo.grado_nombre?.trim() || null;
+      const familiaNombre = ciclo.familia_nombre?.trim() || null;
+      for (const modulo of ciclo.modulos || []) {
+        const moduloId = Number(modulo.id);
+        if (!Number.isFinite(moduloId) || !target.has(moduloId)) continue;
+        if (visibleIds && !visibleIds.has(moduloId)) continue;
+        items.push({
+          moduloId,
+          moduloNombre: String(modulo.nombre || '').trim().replace(/\s+/g, ' '),
+          moduloCodigo: (modulo.id_oficial || '').trim() || null,
+          cicloId: Number(ciclo.id),
+          cicloNombre,
+          gradoNombre,
+          familiaNombre,
+        });
+      }
+    }
+    return items.sort((a, b) => {
+      const byModulo = a.moduloNombre.localeCompare(b.moduloNombre, 'es', { sensitivity: 'base' });
+      if (byModulo !== 0) return byModulo;
+      return a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' });
+    });
   }
 
   private evaluateHeaderLayout(): void {
@@ -2764,6 +3617,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     if (this.activeTab === 'convalidaciones') {
+      this.cargarCiclosModulos();
       this.loadConvalidacionesGrados();
       this.loadConvalidacionesCiclos();
       return;
@@ -3653,6 +4507,47 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.convalidaciones;
   }
 
+  get busquedaModuloIzquierdaNormalizada(): string {
+    return this.normalizeSearchText(this.busquedaModuloIzquierda);
+  }
+
+  get busquedaModuloDerechaNormalizada(): string {
+    return this.normalizeSearchText(this.busquedaModuloDerecha);
+  }
+
+  get gradosBusquedaModuloIzquierda(): string[] {
+    return this.getBusquedaModuloGrados(this.filtroBusquedaModuloIzquierdaFamilia, this.filtroBusquedaModuloIzquierdaOrigenTipo);
+  }
+
+  get familiasBusquedaModuloIzquierda(): string[] {
+    return this.getBusquedaModuloFamilias(this.filtroBusquedaModuloIzquierdaGrado, this.filtroBusquedaModuloIzquierdaOrigenTipo);
+  }
+
+  get gradosBusquedaModuloDerecha(): string[] {
+    return this.getBusquedaModuloGrados(this.filtroBusquedaModuloDerechaFamilia);
+  }
+
+  get familiasBusquedaModuloDerecha(): string[] {
+    return this.getBusquedaModuloFamilias(this.filtroBusquedaModuloDerechaGrado);
+  }
+
+  get resultadosBusquedaModuloIzquierda(): AdminBusquedaModuloResultado[] {
+    return this.buscarModulosEnCiclos(
+      this.busquedaModuloIzquierdaNormalizada,
+      this.filtroBusquedaModuloIzquierdaGrado,
+      this.filtroBusquedaModuloIzquierdaFamilia,
+      this.filtroBusquedaModuloIzquierdaOrigenTipo
+    );
+  }
+
+  get resultadosBusquedaModuloDerecha(): AdminBusquedaModuloResultado[] {
+    return this.buscarModulosEnCiclos(
+      this.busquedaModuloDerechaNormalizada,
+      this.filtroBusquedaModuloDerechaGrado,
+      this.filtroBusquedaModuloDerechaFamilia
+    );
+  }
+
   get convalidacionesAgrupadas(): AdminConvalidacionModuloAgrupado[] {
     const modulosMap = new Map<number, {
       idModuloDestino: number;
@@ -3743,6 +4638,38 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .sort((a, b) => a.moduloDestinoNombre.localeCompare(b.moduloDestinoNombre, 'es'));
   }
 
+  formatBusquedaModuloMeta(resultado: AdminBusquedaModuloResultado): string {
+    const grados = Array.from(
+      new Set(
+        resultado.ciclos
+          .map((ciclo) => ciclo.gradoNombre?.trim() || '')
+          .filter((item) => !!item)
+      )
+    );
+    const familias = Array.from(
+      new Set(
+        resultado.ciclos
+          .map((ciclo) => ciclo.familiaNombre?.trim() || '')
+          .filter((item) => !!item)
+      )
+    );
+
+    const meta: string[] = [];
+    if (grados.length === 1) meta.push(grados[0]);
+    if (familias.length === 1) meta.push(familias[0]);
+    return meta.join(' · ');
+  }
+
+  formatBusquedaModuloCicloMeta(ciclo: AdminBusquedaModuloResultado['ciclos'][number]): string {
+    return [
+      ciclo.gradoNombre?.trim() || null,
+      ciclo.familiaNombre?.trim() || null,
+      ciclo.cicloCodigo?.trim() || null,
+    ]
+      .filter((item): item is string => !!item)
+      .join(' · ');
+  }
+
   get administradoresFiltrados(): AdminUser[] {
     const query = this.filtroAdministradores.trim().toLowerCase();
     if (!query) return this.administradores;
@@ -3763,6 +4690,135 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCatalogCicloOpen(cicloId: number): boolean {
     return this.openCatalogCiclos.has(cicloId);
+  }
+
+  private getBusquedaModuloGrados(familiaFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'ciclos'): string[] {
+    const familiaNormalizada = this.normalizeSearchText(familiaFiltro);
+    const grados = new Set<string>();
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const familia = (ciclo.familia_nombre || '').trim();
+      const grado = (ciclo.grado_nombre || '').trim();
+      if (!grado) continue;
+      if (familiaNormalizada && this.normalizeSearchText(familia) !== familiaNormalizada) continue;
+      grados.add(grado);
+    }
+    return Array.from(grados.values()).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }
+
+  private getBusquedaModuloFamilias(gradoFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'ciclos'): string[] {
+    const gradoNormalizado = this.normalizeSearchText(gradoFiltro);
+    const familias = new Set<string>();
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const familia = (ciclo.familia_nombre || '').trim();
+      const grado = (ciclo.grado_nombre || '').trim();
+      if (!familia) continue;
+      if (gradoNormalizado && this.normalizeSearchText(grado) !== gradoNormalizado) continue;
+      familias.add(familia);
+    }
+    return Array.from(familias.values()).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+  }
+
+  private buscarModulosEnCiclos(
+    query: string,
+    gradoFiltro = '',
+    familiaFiltro = '',
+    origenTipo: AdminBusquedaOrigenTipo = 'ciclos'
+  ): AdminBusquedaModuloResultado[] {
+    if (!query) return [];
+
+    const modulosMap = new Map<string, AdminBusquedaModuloResultado>();
+    const gradoNormalizado = this.normalizeSearchText(gradoFiltro);
+    const familiaNormalizada = this.normalizeSearchText(familiaFiltro);
+
+    for (const ciclo of this.ciclosConModulos) {
+      const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
+      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
+      const gradoNombre = ciclo.grado_nombre?.trim() || null;
+      const familiaNombre = ciclo.familia_nombre?.trim() || null;
+      if (gradoNormalizado && this.normalizeSearchText(gradoNombre) !== gradoNormalizado) continue;
+      if (familiaNormalizada && this.normalizeSearchText(familiaNombre) !== familiaNormalizada) continue;
+
+      const cicloInfo = {
+        moduloId: 0,
+        cicloId: Number(ciclo.id),
+        cicloNombre: String(ciclo.nombre || '').trim().replace(/\s+/g, ' '),
+        cicloCodigo: (ciclo.id_oficial || '').trim() || null,
+        familiaNombre,
+        gradoNombre,
+      };
+
+      for (const modulo of ciclo.modulos || []) {
+        const nombre = String(modulo.nombre || '').trim().replace(/\s+/g, ' ');
+        const codigo = (modulo.id_oficial || '').trim() || null;
+        const text = this.normalizeSearchText(`${nombre} ${codigo || ''}`);
+        if (!text.includes(query)) continue;
+        const moduloId = Number(modulo.id);
+        if (!Number.isFinite(moduloId)) continue;
+
+        const key = `${this.normalizeSearchText(nombre)}::${this.normalizeSearchText(codigo || '')}`;
+        if (!modulosMap.has(key)) {
+          modulosMap.set(key, {
+            key,
+            nombre,
+            codigo,
+            totalCiclos: 0,
+            ciclos: [],
+          });
+        }
+
+        const item = modulosMap.get(key)!;
+        if (!item.ciclos.some((existing) => existing.moduloId === moduloId)) {
+          item.ciclos.push({
+            ...cicloInfo,
+            moduloId,
+          });
+        }
+      }
+    }
+
+    return Array.from(modulosMap.values())
+      .map((item) => ({
+        ...item,
+        ciclos: [...item.ciclos].sort((a, b) => a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' })),
+        totalCiclos: item.ciclos.length,
+      }))
+      .sort((a, b) => {
+        const byNombre = a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+        if (byNombre !== 0) return byNombre;
+        return (a.codigo || '').localeCompare(b.codigo || '', 'es', { sensitivity: 'base' });
+      });
+  }
+
+  private getBusquedaModuloVisibleModuloIds(side: 'izquierda' | 'derecha'): number[] {
+    const resultados = side === 'izquierda'
+      ? this.resultadosBusquedaModuloIzquierda
+      : this.resultadosBusquedaModuloDerecha;
+    const ids = new Set<number>();
+    for (const resultado of resultados) {
+      for (const ciclo of resultado.ciclos) {
+        const moduloId = Number(ciclo.moduloId);
+        if (Number.isFinite(moduloId)) {
+          ids.add(moduloId);
+        }
+      }
+    }
+    return Array.from(ids.values()).sort((a, b) => a - b);
+  }
+
+  private normalizeSearchText(value: string | null | undefined): string {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');
   }
 
   toggleConvalidacion(idModuloDestino: number): void {

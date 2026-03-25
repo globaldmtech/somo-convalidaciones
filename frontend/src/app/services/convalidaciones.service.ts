@@ -150,6 +150,17 @@ export interface AdminCreateConvalidacionRequest {
     source_page?: number | null;
 }
 
+export interface AdminCreateConvalidacionMasivaItemRequest {
+    id_modulo_destino: number;
+    id_modulo_origen: number;
+}
+
+export interface AdminCreateConvalidacionesMasivasRequest {
+    reglas: AdminCreateConvalidacionMasivaItemRequest[];
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
 export interface AdminCreateConvalidacionCicloRequest {
     id_modulo_destino: number;
     id_ciclo_origen: number;
@@ -162,6 +173,25 @@ export interface AdminCreateConvalidacionResponse {
     id: number;
     id_modulo_destino: number;
     id_modulos_origen: number[];
+}
+
+export interface AdminCreateConvalidacionesMasivasResponse {
+    ok: boolean;
+    created_count: number;
+    skipped_count: number;
+    skipped_existing_count: number;
+    created: AdminCreateConvalidacionResponse[];
+}
+
+export interface AdminDeleteConvalidacionesMasivasRequest {
+    reglas: AdminCreateConvalidacionMasivaItemRequest[];
+}
+
+export interface AdminDeleteConvalidacionesMasivasResponse {
+    ok: boolean;
+    deleted_count: number;
+    skipped_count: number;
+    skipped_missing_count: number;
 }
 
 export interface AdminLoginResponse {
@@ -532,6 +562,28 @@ export class ConvalidacionesService {
             `${ADMIN_API_BASE}/crear_convalidaciones`,
             payload,
             this.getAdminAuthHeaders()
+        );
+    }
+
+    crearConvalidacionesMasivasAdmin(
+        payload: AdminCreateConvalidacionesMasivasRequest
+    ): Observable<AdminCreateConvalidacionesMasivasResponse> {
+        return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_masivas`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionesMasivasAdmin(
+        payload: AdminDeleteConvalidacionesMasivasRequest
+    ): Observable<AdminDeleteConvalidacionesMasivasResponse> {
+        return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/convalidaciones_masivas`,
+            {
+                ...this.getAdminAuthHeaders(),
+                body: payload,
+            }
         );
     }
 

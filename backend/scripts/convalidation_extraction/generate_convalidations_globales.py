@@ -35,6 +35,12 @@ SOURCE_LINK = "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf"
 SOURCE_PAGE = 124839
 
 
+def get_modulo_global_nombre(modulo_global: str | dict) -> str:
+    if isinstance(modulo_global, dict):
+        return modulo_global["nombre"]
+    return modulo_global
+
+
 def get_rule_source(regla: dict | None = None) -> tuple[str, int]:
     source_link = SOURCE_LINK
     source_page = SOURCE_PAGE
@@ -121,16 +127,19 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
     total_inserted = 0
     total_skipped = 0
 
-    print(f"Generando reglas globales para: {', '.join(MODULOS_GLOBALES)}")
+    print(
+        "Generando reglas globales para: "
+        f"{', '.join(get_modulo_global_nombre(modulo_global) for modulo_global in MODULOS_GLOBALES)}"
+    )
     
     for modulo_global in MODULOS_GLOBALES:
         if isinstance(modulo_global, dict):
-            nombre_mod = modulo_global["nombre"]
+            nombre_mod = get_modulo_global_nombre(modulo_global)
             source_link, source_page = get_rule_source(modulo_global)
             same_family_only = bool(modulo_global.get("same_family_only"))
             same_grado_only = bool(modulo_global.get("same_grado_only"))
         else:
-            nombre_mod = modulo_global
+            nombre_mod = get_modulo_global_nombre(modulo_global)
             source_link, source_page = get_rule_source()
             same_family_only = False
             same_grado_only = False
@@ -251,13 +260,20 @@ def apply_to_db(sql_lines: list[str]) -> None:
         for line in sql_lines
         if line.strip() and not line.strip().startswith("--")
     ]
-    with sqlite3.connect(DEFAULT_DB) as conn:
-        for stmt in statements:
-            try:
+    index = 0
+    stmt = "<sin ejecutar>"
+    with sqlite3.connect(DEFAULT_DB, timeout=10) as conn:
+        conn.execute("PRAGMA busy_timeout = 10000;")
+        try:
+            conn.execute("BEGIN IMMEDIATE;")
+            for index, stmt in enumerate(statements, start=1):
                 conn.execute(stmt)
-            except sqlite3.Error as e:
-                print(f"  ✗ SQL Error: {e}")
-        conn.commit()
+            conn.commit()
+        except sqlite3.Error as e:
+            conn.rollback()
+            print(f"  ✗ SQL Error en sentencia #{index}: {e}")
+            print(f"    {stmt}")
+            raise
     print(f"\n✔ Cambios aplicados a la BD.")
 
 def main():
