@@ -2261,7 +2261,7 @@ type PendingConvalidacionOrigenDelete = {
                   </p>
                   <h3 class="text-base font-bold text-slate-900">{{ modulosModalCiclo.nombre }}</h3>
                   <p class="text-xs text-slate-500 mt-1">
-                    {{ modulosModalCiclo.total_modulos }} modulos
+                    {{ modulosModalCiclo.total_modulos }} módulos
                   </p>
                   <p *ngIf="modulosModalDeprecated.length > 0" class="text-xs text-slate-500 mt-1">
                     {{ modulosModalActivos.length }} activos · {{ modulosModalDeprecated.length }} obsoletos
@@ -2355,8 +2355,10 @@ type PendingConvalidacionOrigenDelete = {
                 <div class="thin-scroll h-full max-h-[60vh] overflow-y-auto pr-1 space-y-5">
                   <section>
                     <div class="mb-2 flex items-center justify-between gap-2">
-                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Modulos</h4>
-                      <span class="text-[11px] font-semibold text-slate-500">{{ modulosModalActivos.length }}</span>
+                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Módulos activos</h4>
+                      <span class="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                        {{ modulosModalActivos.length }}
+                      </span>
                     </div>
                     <ul class="space-y-2">
                       <li
@@ -2388,8 +2390,10 @@ type PendingConvalidacionOrigenDelete = {
 
                   <section *ngIf="modulosModalDeprecated.length > 0">
                     <div class="mb-2 flex items-center justify-between gap-2">
-                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Modulos obsoletos</h4>
-                      <span class="text-[11px] font-semibold text-slate-500">{{ modulosModalDeprecated.length }}</span>
+                      <h4 class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Módulos obsoletos</h4>
+                      <span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                        {{ modulosModalDeprecated.length }}
+                      </span>
                     </div>
                     <ul class="space-y-2">
                       <li
