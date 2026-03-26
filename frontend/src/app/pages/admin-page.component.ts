@@ -1305,10 +1305,21 @@ type PendingConvalidacionOrigenDelete = {
                   </div>
 
                   <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Origen</p>
-                    <p class="mt-1 text-sm font-semibold text-slate-900">
-                      {{ totalBusquedaModuloOrigenSeleccionados }} orígenes seleccionados
-                    </p>
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Origen</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900">
+                          {{ totalBusquedaModuloOrigenSeleccionados }} orígenes seleccionados
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        (click)="abrirModalBusquedaOrigen()"
+                      >
+                        Seleccionar
+                      </button>
+                    </div>
                     <div *ngIf="selectedBusquedaModuloOrigenItems.length > 0; else sinOrigenSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
                       <p *ngFor="let item of selectedBusquedaModuloOrigenItems" class="text-xs text-slate-600">
                         {{ formatBusquedaModuloSeleccionItem(item) }}
@@ -1320,10 +1331,21 @@ type PendingConvalidacionOrigenDelete = {
                   </div>
 
                   <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
-                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Destino</p>
-                    <p class="mt-1 text-sm font-semibold text-slate-900">
-                      {{ totalBusquedaModuloDestinoSeleccionados }} módulos seleccionados
-                    </p>
+                    <div class="flex items-start justify-between gap-3">
+                      <div class="min-w-0">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Destino</p>
+                        <p class="mt-1 text-sm font-semibold text-slate-900">
+                          {{ totalBusquedaModuloDestinoSeleccionados }} módulos seleccionados
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="shrink-0 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+                        (click)="abrirModalBusquedaDestino()"
+                      >
+                        Seleccionar
+                      </button>
+                    </div>
                     <div *ngIf="selectedBusquedaModuloDestinoItems.length > 0; else sinDestinoSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
                       <p *ngFor="let item of selectedBusquedaModuloDestinoItems" class="text-xs text-slate-600">
                         {{ formatBusquedaModuloSeleccionItem(item) }}
@@ -1364,7 +1386,7 @@ type PendingConvalidacionOrigenDelete = {
                     <p class="text-sm font-semibold text-indigo-900">Resumen</p>
                     <p class="mt-1 text-xs text-indigo-800">
                       Se procesarán {{ totalCombinacionesConvalidacionMultiples }} reglas:
-                      cada módulo de origen con cada módulo de destino.
+                      cada origen seleccionado con cada módulo de destino.
                     </p>
                   </div>
 
@@ -1393,365 +1415,6 @@ type PendingConvalidacionOrigenDelete = {
                   </div>
                 </section>
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-                  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                    <div class="border-b border-slate-200 px-4 py-4 bg-slate-50/70">
-                      <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Origen</p>
-                      <div class="mt-3">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de origen</label>
-                        <div class="flex flex-wrap items-center gap-4">
-                          <button
-                            type="button"
-                            class="inline-flex items-center gap-2 text-sm text-slate-700"
-                            (click)="setBusquedaModuloIzquierdaOrigenTipo('modulos')"
-                          >
-                            <span
-                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
-                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'
-                                ? 'border-indigo-600 bg-indigo-600'
-                                : 'border-slate-300 bg-white'"
-                            >
-                              <span
-                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'"
-                                class="h-1.5 w-1.5 rounded-sm bg-white"
-                              ></span>
-                            </span>
-                            <span class="font-medium">Módulo</span>
-                          </button>
-                          <button
-                            type="button"
-                            class="inline-flex items-center gap-2 text-sm text-slate-700"
-                            (click)="setBusquedaModuloIzquierdaOrigenTipo('ciclos')"
-                          >
-                            <span
-                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
-                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                ? 'border-indigo-600 bg-indigo-600'
-                                : 'border-slate-300 bg-white'"
-                            >
-                              <span
-                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'"
-                                class="h-1.5 w-1.5 rounded-sm bg-white"
-                              ></span>
-                            </span>
-                            <span class="font-medium">Ciclo</span>
-                          </button>
-                          <button
-                            type="button"
-                            class="inline-flex items-center gap-2 text-sm text-slate-700"
-                            (click)="setBusquedaModuloIzquierdaOrigenTipo('acreditaciones')"
-                          >
-                            <span
-                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
-                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                                ? 'border-indigo-600 bg-indigo-600'
-                                : 'border-slate-300 bg-white'"
-                            >
-                              <span
-                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'"
-                                class="h-1.5 w-1.5 rounded-sm bg-white"
-                              ></span>
-                            </span>
-                            <span class="font-medium">Acreditación externa</span>
-                          </button>
-                        </div>
-                      </div>
-                      <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
-                          <select
-                            [(ngModel)]="filtroBusquedaModuloIzquierdaGrado"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Todos los grados</option>
-                            <option *ngFor="let grado of gradosBusquedaModuloIzquierda" [value]="grado">{{ grado }}</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
-                          <select
-                            [(ngModel)]="filtroBusquedaModuloIzquierdaFamilia"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Todas las familias</option>
-                            <option *ngFor="let familia of familiasBusquedaModuloIzquierda" [value]="familia">{{ familia }}</option>
-                          </select>
-                        </div>
-                      </div>
-                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">
-                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscador de ciclos' : 'Buscador de módulos' }}
-                      </label>
-                      <input
-                        type="text"
-                        [(ngModel)]="busquedaModuloIzquierda"
-                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                        [placeholder]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscar ciclo...' : 'Buscar módulo...'"
-                      />
-                      <p class="mt-2 text-xs text-slate-500">
-                        {{ resultadosBusquedaModuloIzquierda.length }}
-                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                          ? (resultadosBusquedaModuloIzquierda.length === 1 ? 'ciclo encontrado' : 'ciclos encontrados')
-                          : (resultadosBusquedaModuloIzquierda.length === 1 ? 'módulo único encontrado' : 'módulos únicos encontrados') }}
-                      </p>
-                    </div>
-
-                    <div class="p-4">
-                      <div *ngIf="!busquedaModuloIzquierdaNormalizada" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                          ? 'Escribe una acreditación para ver las acreditaciones externas disponibles.'
-                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                            ? 'Escribe un ciclo para ver los ciclos disponibles y seleccionar todos sus módulos.'
-                            : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.') }}
-                      </div>
-                      <div *ngIf="busquedaModuloIzquierdaNormalizada && resultadosBusquedaModuloIzquierda.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        No hay {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'ciclos' : 'módulos' }} que coincidan con esa búsqueda.
-                      </div>
-                      <div *ngIf="resultadosBusquedaModuloIzquierda.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
-                        <button
-                          type="button"
-                          class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                          (click)="toggleBusquedaModuloSeleccion('izquierda')"
-                        >
-                          {{ isBusquedaModuloAllSelected('izquierda')
-                            ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                              ? 'Deseleccionar todas las acreditaciones'
-                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                ? 'Deseleccionar todos los ciclos'
-                                : 'Deseleccionar todos los módulos y ciclos'))
-                            : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                              ? 'Seleccionar todas las acreditaciones'
-                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                ? 'Seleccionar todos los ciclos'
-                                : 'Seleccionar todos los módulos y ciclos')) }}
-                        </button>
-                        <article *ngFor="let resultado of resultadosBusquedaModuloIzquierda" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
-                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenNoAcreditacion">
-                            <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
-                              <input
-                                *ngIf="resultado.ciclos[0] as acreditacion"
-                                type="checkbox"
-                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="isBusquedaModuloCicloSelected('izquierda', acreditacion.moduloId)"
-                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', acreditacion.moduloId, $any($event.target).checked)"
-                              />
-                              <span class="min-w-0">
-                                <span class="block font-medium text-slate-900">{{ resultado.nombre }}</span>
-                              </span>
-                            </label>
-                          </ng-container>
-                          <ng-template #resultadoOrigenNoAcreditacion>
-                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'; else resultadoOrigenConDesplegable">
-                            <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
-                              <input
-                                *ngIf="resultado.ciclos[0] as ciclo"
-                                type="checkbox"
-                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
-                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
-                              />
-                              <span class="min-w-0">
-                                <span class="block font-medium text-slate-900">
-                                  <ng-container *ngIf="resultado.codigo">
-                                    <span class="text-slate-500">{{ resultado.codigo }} · </span>
-                                  </ng-container>
-                                  {{ resultado.nombre }}
-                                </span>
-                                <span *ngIf="formatBusquedaModuloMeta(resultado)" class="block text-xs text-slate-500">
-                                  {{ formatBusquedaModuloMeta(resultado) }}
-                                </span>
-                              </span>
-                            </label>
-                          </ng-container>
-                          <ng-template #resultadoOrigenConDesplegable>
-                          <button
-                            type="button"
-                            class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
-                            (click)="toggleBusquedaModuloRow('izquierda', resultado.key)"
-                          >
-                            <div class="flex items-start justify-between gap-3">
-                              <div class="min-w-0">
-                                <p class="text-sm font-bold text-slate-900">
-                                  <ng-container *ngIf="resultado.codigo">
-                                    <span class="text-slate-500">{{ resultado.codigo }} · </span>
-                                  </ng-container>
-                                  {{ resultado.nombre }}
-                                </p>
-                                <p
-                                  *ngIf="formatBusquedaModuloMeta(resultado)"
-                                  class="text-xs text-slate-500"
-                                >
-                                  {{ formatBusquedaModuloMeta(resultado) }}
-                                </p>
-                              </div>
-                              <div class="flex items-center gap-2 shrink-0">
-                                <span
-                                  class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
-                                >
-                                  {{ resultado.totalCiclos }}
-                                  {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                    ? (resultado.totalCiclos === 1 ? 'módulo' : 'módulos')
-                                    : (resultado.totalCiclos === 1 ? 'ciclo' : 'ciclos') }}
-                                </span>
-                                <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
-                                  [class.rotate-180]="isBusquedaModuloRowOpen('izquierda', resultado.key)">
-                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
-                                  </svg>
-                                </span>
-                              </div>
-                            </div>
-                          </button>
-                          <div *ngIf="isBusquedaModuloRowOpen('izquierda', resultado.key)" class="px-2 pt-1">
-                            <button
-                              type="button"
-                              class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                              (click)="toggleBusquedaModuloResultadoSeleccion('izquierda', resultado)"
-                            >
-                              {{ isBusquedaModuloResultadoAllSelected('izquierda', resultado)
-                                ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                                  ? 'Deseleccionar esta acreditación'
-                                  : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                    ? 'Deseleccionar todos los módulos de este ciclo'
-                                    : 'Deseleccionar todos los ciclos de este módulo'))
-                                : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
-                                  ? 'Seleccionar esta acreditación'
-                                  : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                    ? 'Seleccionar todos los módulos de este ciclo'
-                                    : 'Seleccionar todos los ciclos de este módulo')) }}
-                            </button>
-                            <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
-                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
-                              />
-                              <span class="min-w-0">
-                                <span class="block font-medium text-slate-900">
-                                  {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
-                                    ? ((ciclo.moduloCodigo ? (ciclo.moduloCodigo + ' · ') : '') + ciclo.moduloNombre)
-                                    : ciclo.cicloNombre }}
-                                </span>
-                                <span
-                                  *ngIf="formatBusquedaModuloCicloMeta(ciclo)"
-                                  class="block text-xs text-slate-500"
-                                >
-                                  {{ formatBusquedaModuloCicloMeta(ciclo) }}
-                                </span>
-                              </span>
-                            </label>
-                          </div>
-                          </ng-template>
-                          </ng-template>
-                        </article>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                    <div class="border-b border-slate-200 px-4 py-4 bg-slate-50/70">
-                      <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Destino</p>
-                      <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
-                          <select
-                            [(ngModel)]="filtroBusquedaModuloDerechaGrado"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Todos los grados</option>
-                            <option *ngFor="let grado of gradosBusquedaModuloDerecha" [value]="grado">{{ grado }}</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
-                          <select
-                            [(ngModel)]="filtroBusquedaModuloDerechaFamilia"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                          >
-                            <option value="">Todas las familias</option>
-                            <option *ngFor="let familia of familiasBusquedaModuloDerecha" [value]="familia">{{ familia }}</option>
-                          </select>
-                        </div>
-                      </div>
-                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
-                      <input
-                        type="text"
-                        [(ngModel)]="busquedaModuloDerecha"
-                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                        placeholder="Buscar módulo..."
-                      />
-                      <p class="mt-2 text-xs text-slate-500">
-                        {{ resultadosBusquedaModuloDerecha.length }} módulos únicos encontrados
-                      </p>
-                    </div>
-
-                    <div class="p-4">
-                      <div *ngIf="!busquedaModuloDerechaNormalizada" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.
-                      </div>
-                      <div *ngIf="busquedaModuloDerechaNormalizada && resultadosBusquedaModuloDerecha.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        No hay módulos que coincidan con esa búsqueda.
-                      </div>
-                      <div *ngIf="resultadosBusquedaModuloDerecha.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
-                        <button
-                          type="button"
-                          class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                          (click)="toggleBusquedaModuloSeleccion('derecha')"
-                        >
-                          {{ isBusquedaModuloAllSelected('derecha') ? 'Deseleccionar todos los módulos y ciclos' : 'Seleccionar todos los módulos y ciclos' }}
-                        </button>
-                        <article *ngFor="let resultado of resultadosBusquedaModuloDerecha" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
-                          <button
-                            type="button"
-                            class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
-                            (click)="toggleBusquedaModuloRow('derecha', resultado.key)"
-                          >
-                            <div class="flex items-start justify-between gap-3">
-                              <div class="min-w-0">
-                                <p class="text-sm font-bold text-slate-900">
-                                  <span *ngIf="resultado.codigo" class="text-slate-500">{{ resultado.codigo }} · </span>{{ resultado.nombre }}
-                                </p>
-                                <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">{{ formatBusquedaModuloMeta(resultado) }}</p>
-                              </div>
-                              <div class="flex items-center gap-2 shrink-0">
-                                <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
-                                  {{ resultado.totalCiclos }} ciclos
-                                </span>
-                                <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
-                                  [class.rotate-180]="isBusquedaModuloRowOpen('derecha', resultado.key)">
-                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
-                                  </svg>
-                                </span>
-                              </div>
-                            </div>
-                          </button>
-                          <div *ngIf="isBusquedaModuloRowOpen('derecha', resultado.key)" class="px-2 pt-1">
-                            <button
-                              type="button"
-                              class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                              (click)="toggleBusquedaModuloResultadoSeleccion('derecha', resultado)"
-                            >
-                              {{ isBusquedaModuloResultadoAllSelected('derecha', resultado) ? 'Deseleccionar todos los ciclos de este módulo' : 'Seleccionar todos los ciclos de este módulo' }}
-                            </button>
-                            <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
-                              <input
-                                type="checkbox"
-                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="isBusquedaModuloCicloSelected('derecha', ciclo.moduloId)"
-                                (change)="toggleBusquedaModuloCicloSeleccion('derecha', ciclo.moduloId, $any($event.target).checked)"
-                              />
-                              <span class="min-w-0">
-                                <span class="block font-medium text-slate-900">{{ ciclo.cicloNombre }}</span>
-                                <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">{{ formatBusquedaModuloCicloMeta(ciclo) }}</span>
-                              </span>
-                            </label>
-                          </div>
-                        </article>
-                      </div>
-                    </div>
-                  </section>
-                </div>
               </div>
             </ng-container>
           </section>
@@ -2018,6 +1681,412 @@ type PendingConvalidacionOrigenDelete = {
                 >
                   Eliminar reglas
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="busquedaOrigenModalOpen" class="fixed inset-0 z-[124] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-3xl max-h-[85vh] rounded-xl bg-white border border-slate-200 shadow-xl flex flex-col overflow-hidden">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-4 bg-white shrink-0">
+                <div>
+                  <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Origen</p>
+                  <p class="mt-1 text-sm text-slate-500">Selecciona los orígenes que se aplicarán a las reglas.</p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center w-8 h-8 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+                  (click)="cerrarModalBusquedaOrigen()"
+                  aria-label="Cerrar"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="flex-1 min-h-0 overflow-y-auto">
+                <div class="border-b border-slate-200 px-4 py-4 bg-white">
+                  <div class="mt-3">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Tipo de origen</label>
+                    <div class="flex flex-wrap items-center gap-4">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('modulos')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Módulo</span>
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('ciclos')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Ciclo</span>
+                      </button>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 text-sm text-slate-700"
+                        (click)="setBusquedaModuloIzquierdaOrigenTipo('acreditaciones')"
+                      >
+                        <span
+                          class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                          [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                            ? 'border-indigo-600 bg-indigo-600'
+                            : 'border-slate-300 bg-white'"
+                        >
+                          <span
+                            *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'"
+                            class="h-1.5 w-1.5 rounded-sm bg-white"
+                          ></span>
+                        </span>
+                        <span class="font-medium">Acreditación externa</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloIzquierdaGrado"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todos los grados</option>
+                        <option *ngFor="let grado of gradosBusquedaModuloIzquierda" [value]="grado">{{ grado }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloIzquierdaFamilia"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todas las familias</option>
+                        <option *ngFor="let familia of familiasBusquedaModuloIzquierda" [value]="familia">{{ familia }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscador de ciclos' : 'Buscador de módulos' }}
+                  </label>
+                  <input
+                    type="text"
+                    [(ngModel)]="busquedaModuloIzquierda"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    [placeholder]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscar ciclo...' : 'Buscar módulo...'"
+                  />
+                  <p class="mt-2 text-xs text-slate-500">
+                    {{ resultadosBusquedaModuloIzquierda.length }}
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                      ? (resultadosBusquedaModuloIzquierda.length === 1 ? 'ciclo encontrado' : 'ciclos encontrados')
+                      : (resultadosBusquedaModuloIzquierda.length === 1 ? 'módulo único encontrado' : 'módulos únicos encontrados') }}
+                  </p>
+                </div>
+
+                <div class="p-4">
+                  <p *ngIf="!busquedaModuloIzquierdaNormalizada" class="px-2 py-1 text-sm text-slate-500">
+                    {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                      ? 'Escribe una acreditación para ver las acreditaciones externas disponibles.'
+                      : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                        ? 'Escribe un ciclo para ver los ciclos disponibles y seleccionar todos sus módulos.'
+                        : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.') }}
+                  </p>
+                  <p *ngIf="busquedaModuloIzquierdaNormalizada && resultadosBusquedaModuloIzquierda.length === 0" class="px-2 py-1 text-sm text-slate-500">
+                    No hay {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'ciclos' : 'módulos' }} que coincidan con esa búsqueda.
+                  </p>
+                  <div *ngIf="resultadosBusquedaModuloIzquierda.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                    <button
+                      type="button"
+                      class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                      (click)="toggleBusquedaModuloSeleccion('izquierda')"
+                    >
+                      {{ isBusquedaModuloAllSelected('izquierda')
+                        ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                          ? 'Deseleccionar todas las acreditaciones'
+                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'Deseleccionar todos los ciclos'
+                            : 'Deseleccionar todos los módulos y ciclos'))
+                        : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                          ? 'Seleccionar todas las acreditaciones'
+                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'Seleccionar todos los ciclos'
+                            : 'Seleccionar todos los módulos y ciclos')) }}
+                    </button>
+                    <article *ngFor="let resultado of resultadosBusquedaModuloIzquierda" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                      <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenNoAcreditacion">
+                        <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                          <input
+                            *ngIf="resultado.ciclos[0] as acreditacion"
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', acreditacion.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', acreditacion.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">{{ resultado.nombre }}</span>
+                          </span>
+                        </label>
+                      </ng-container>
+                      <ng-template #resultadoOrigenNoAcreditacion>
+                      <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'; else resultadoOrigenConDesplegable">
+                        <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                          <input
+                            *ngIf="resultado.ciclos[0] as ciclo"
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">
+                              <ng-container *ngIf="resultado.codigo">
+                                <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                              </ng-container>
+                              {{ resultado.nombre }}
+                            </span>
+                            <span *ngIf="formatBusquedaModuloMeta(resultado)" class="block text-xs text-slate-500">
+                              {{ formatBusquedaModuloMeta(resultado) }}
+                            </span>
+                          </span>
+                        </label>
+                      </ng-container>
+                      <ng-template #resultadoOrigenConDesplegable>
+                      <button
+                        type="button"
+                        class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                        (click)="toggleBusquedaModuloRow('izquierda', resultado.key)"
+                      >
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-900">
+                              <ng-container *ngIf="resultado.codigo">
+                                <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                              </ng-container>
+                              {{ resultado.nombre }}
+                            </p>
+                            <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">
+                              {{ formatBusquedaModuloMeta(resultado) }}
+                            </p>
+                          </div>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                              {{ resultado.totalCiclos }}
+                              {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? (resultado.totalCiclos === 1 ? 'módulo' : 'módulos')
+                                : (resultado.totalCiclos === 1 ? 'ciclo' : 'ciclos') }}
+                            </span>
+                            <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                              [class.rotate-180]="isBusquedaModuloRowOpen('izquierda', resultado.key)">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                      <div *ngIf="isBusquedaModuloRowOpen('izquierda', resultado.key)" class="px-2 pt-1">
+                        <button
+                          type="button"
+                          class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloResultadoSeleccion('izquierda', resultado)"
+                        >
+                          {{ isBusquedaModuloResultadoAllSelected('izquierda', resultado)
+                            ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Deseleccionar esta acreditación'
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Deseleccionar todos los módulos de este ciclo'
+                                : 'Deseleccionar todos los ciclos de este módulo'))
+                            : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
+                              ? 'Seleccionar esta acreditación'
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Seleccionar todos los módulos de este ciclo'
+                                : 'Seleccionar todos los ciclos de este módulo')) }}
+                        </button>
+                        <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">
+                              {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? ((ciclo.moduloCodigo ? (ciclo.moduloCodigo + ' · ') : '') + ciclo.moduloNombre)
+                                : ciclo.cicloNombre }}
+                            </span>
+                            <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">
+                              {{ formatBusquedaModuloCicloMeta(ciclo) }}
+                            </span>
+                          </span>
+                        </label>
+                      </div>
+                      </ng-template>
+                      </ng-template>
+                    </article>
+                  </div>
+                </div>
+                <div class="border-t border-slate-200 px-4 py-4 bg-white flex justify-end">
+                  <button
+                    type="button"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                    (click)="guardarModalBusquedaOrigen()"
+                  >
+                    Guardar selección
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="busquedaDestinoModalOpen" class="fixed inset-0 z-[125] bg-slate-900/45 flex items-center justify-center p-4">
+            <div class="w-full max-w-3xl max-h-[85vh] rounded-xl bg-white border border-slate-200 shadow-xl flex flex-col overflow-hidden">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-4 bg-white shrink-0">
+                <div>
+                  <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Destino</p>
+                  <p class="mt-1 text-sm text-slate-500">Selecciona los módulos destino que se usarán en bloque.</p>
+                </div>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center w-8 h-8 rounded border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors shrink-0"
+                  (click)="cerrarModalBusquedaDestino()"
+                  aria-label="Cerrar"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="flex-1 min-h-0 overflow-y-auto">
+                <div class="border-b border-slate-200 px-4 py-4 bg-white">
+                  <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloDerechaGrado"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todos los grados</option>
+                        <option *ngFor="let grado of gradosBusquedaModuloDerecha" [value]="grado">{{ grado }}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-slate-600 mb-1">Familia</label>
+                      <select
+                        [(ngModel)]="filtroBusquedaModuloDerechaFamilia"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                      >
+                        <option value="">Todas las familias</option>
+                        <option *ngFor="let familia of familiasBusquedaModuloDerecha" [value]="familia">{{ familia }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="busquedaModuloDerecha"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                    placeholder="Buscar módulo..."
+                  />
+                  <p class="mt-2 text-xs text-slate-500">
+                    {{ resultadosBusquedaModuloDerecha.length }} módulos únicos encontrados
+                  </p>
+                </div>
+
+                <div class="p-4">
+                  <p *ngIf="!busquedaModuloDerechaNormalizada" class="px-2 py-1 text-sm text-slate-500">
+                    Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.
+                  </p>
+                  <p *ngIf="busquedaModuloDerechaNormalizada && resultadosBusquedaModuloDerecha.length === 0" class="px-2 py-1 text-sm text-slate-500">
+                    No hay módulos que coincidan con esa búsqueda.
+                  </p>
+                  <div *ngIf="resultadosBusquedaModuloDerecha.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
+                    <button
+                      type="button"
+                      class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                      (click)="toggleBusquedaModuloSeleccion('derecha')"
+                    >
+                      {{ isBusquedaModuloAllSelected('derecha') ? 'Deseleccionar todos los módulos y ciclos' : 'Seleccionar todos los módulos y ciclos' }}
+                    </button>
+                    <article *ngFor="let resultado of resultadosBusquedaModuloDerecha" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
+                      <button
+                        type="button"
+                        class="w-full text-left rounded-lg px-2 py-2 hover:bg-slate-50 transition-colors"
+                        (click)="toggleBusquedaModuloRow('derecha', resultado.key)"
+                      >
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="min-w-0">
+                            <p class="text-sm font-bold text-slate-900">
+                              <span *ngIf="resultado.codigo" class="text-slate-500">{{ resultado.codigo }} · </span>{{ resultado.nombre }}
+                            </p>
+                            <p *ngIf="formatBusquedaModuloMeta(resultado)" class="text-xs text-slate-500">{{ formatBusquedaModuloMeta(resultado) }}</p>
+                          </div>
+                          <div class="flex items-center gap-2 shrink-0">
+                            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
+                              {{ resultado.totalCiclos }} ciclos
+                            </span>
+                            <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
+                              [class.rotate-180]="isBusquedaModuloRowOpen('derecha', resultado.key)">
+                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 9l6 6 6-6"></path>
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                      <div *ngIf="isBusquedaModuloRowOpen('derecha', resultado.key)" class="px-2 pt-1">
+                        <button
+                          type="button"
+                          class="mb-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                          (click)="toggleBusquedaModuloResultadoSeleccion('derecha', resultado)"
+                        >
+                          {{ isBusquedaModuloResultadoAllSelected('derecha', resultado) ? 'Deseleccionar todos los ciclos de este módulo' : 'Seleccionar todos los ciclos de este módulo' }}
+                        </button>
+                        <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [checked]="isBusquedaModuloCicloSelected('derecha', ciclo.moduloId)"
+                            (change)="toggleBusquedaModuloCicloSeleccion('derecha', ciclo.moduloId, $any($event.target).checked)"
+                          />
+                          <span class="min-w-0">
+                            <span class="block font-medium text-slate-900">{{ ciclo.cicloNombre }}</span>
+                            <span *ngIf="formatBusquedaModuloCicloMeta(ciclo)" class="block text-xs text-slate-500">{{ formatBusquedaModuloCicloMeta(ciclo) }}</span>
+                          </span>
+                        </label>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <div class="border-t border-slate-200 px-4 py-4 bg-white flex justify-end">
+                  <button
+                    type="button"
+                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors"
+                    (click)="guardarModalBusquedaDestino()"
+                  >
+                    Guardar selección
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -3098,6 +3167,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   openBusquedaModuloDerecha = new Set<string>();
   selectedBusquedaModuloIzquierda = new Set<number>();
   selectedBusquedaModuloDerecha = new Set<number>();
+  draftSelectedBusquedaModuloIzquierda = new Set<number>();
+  draftSelectedBusquedaModuloDerecha = new Set<number>();
   convalidacionesMultiplesAction: AdminConvalidacionesMultiplesAction = 'crear';
   creatingMultipleConvalidaciones = false;
   createMultipleConvalidacionesError: string | null = null;
@@ -3109,6 +3180,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   createMultipleConvalidacionesResultCreatedCount = 0;
   createMultipleConvalidacionesResultSkippedCount = 0;
   deleteMultipleConvalidacionesModalOpen = false;
+  busquedaOrigenModalOpen = false;
+  busquedaDestinoModalOpen = false;
   filtroAdministradores = '';
   createAdminNombre = '';
   createAdminPassword = '';
@@ -3324,6 +3397,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openBusquedaModuloDerecha.clear();
     this.selectedBusquedaModuloIzquierda.clear();
     this.selectedBusquedaModuloDerecha.clear();
+    this.draftSelectedBusquedaModuloIzquierda.clear();
+    this.draftSelectedBusquedaModuloDerecha.clear();
     this.convalidacionesMultiplesAction = 'crear';
     this.creatingMultipleConvalidaciones = false;
     this.createMultipleConvalidacionesError = null;
@@ -3335,6 +3410,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createMultipleConvalidacionesResultCreatedCount = 0;
     this.createMultipleConvalidacionesResultSkippedCount = 0;
     this.deleteMultipleConvalidacionesModalOpen = false;
+    this.busquedaOrigenModalOpen = false;
+    this.busquedaDestinoModalOpen = false;
   }
 
   private handleAdminUnauthorized(err: any): boolean {
@@ -3413,7 +3490,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     moduloId: number,
     selected: boolean
   ): void {
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     if (selected) {
       target.add(Number(moduloId));
       this.createMultipleConvalidacionesError = null;
@@ -3426,12 +3503,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isBusquedaModuloCicloSelected(side: 'izquierda' | 'derecha', moduloId: number): boolean {
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     return target.has(Number(moduloId));
   }
 
   toggleBusquedaModuloSeleccionTotal(side: 'izquierda' | 'derecha', selected: boolean): void {
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
     for (const cicloId of visibleIds) {
       if (selected) {
@@ -3451,7 +3528,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   isBusquedaModuloAllSelected(side: 'izquierda' | 'derecha'): boolean {
     const visibleIds = this.getBusquedaModuloVisibleModuloIds(side);
     if (visibleIds.length === 0) return false;
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     return visibleIds.every((cicloId) => target.has(cicloId));
   }
 
@@ -3464,7 +3541,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     resultado: AdminBusquedaModuloResultado,
     selected: boolean
   ): void {
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     for (const ciclo of resultado.ciclos) {
       const cicloId = Number(ciclo.moduloId);
       if (!Number.isFinite(cicloId)) continue;
@@ -3494,7 +3571,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     resultado: AdminBusquedaModuloResultado
   ): boolean {
     if (!resultado.ciclos.length) return false;
-    const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
+    const target = this.getBusquedaModuloEditableSelectionTarget(side);
     return resultado.ciclos.every((ciclo) => {
       const cicloId = Number(ciclo.moduloId);
       return Number.isFinite(cicloId) && target.has(cicloId);
@@ -3689,6 +3766,47 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createMultipleConvalidacionesResultAction = 'crear';
     this.createMultipleConvalidacionesResultCreatedCount = 0;
     this.createMultipleConvalidacionesResultSkippedCount = 0;
+  }
+
+  abrirModalBusquedaOrigen(): void {
+    this.draftSelectedBusquedaModuloIzquierda = new Set(this.selectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = true;
+  }
+
+  cerrarModalBusquedaOrigen(): void {
+    this.draftSelectedBusquedaModuloIzquierda = new Set(this.selectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = false;
+  }
+
+  guardarModalBusquedaOrigen(): void {
+    this.selectedBusquedaModuloIzquierda = new Set(this.draftSelectedBusquedaModuloIzquierda);
+    this.busquedaOrigenModalOpen = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  abrirModalBusquedaDestino(): void {
+    this.draftSelectedBusquedaModuloDerecha = new Set(this.selectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = true;
+  }
+
+  cerrarModalBusquedaDestino(): void {
+    this.draftSelectedBusquedaModuloDerecha = new Set(this.selectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = false;
+  }
+
+  guardarModalBusquedaDestino(): void {
+    this.selectedBusquedaModuloDerecha = new Set(this.draftSelectedBusquedaModuloDerecha);
+    this.busquedaDestinoModalOpen = false;
+    this.createMultipleConvalidacionesError = null;
+    this.createMultipleConvalidacionesSuccess = null;
+  }
+
+  private getBusquedaModuloEditableSelectionTarget(side: 'izquierda' | 'derecha'): Set<number> {
+    if (side === 'izquierda') {
+      return this.busquedaOrigenModalOpen ? this.draftSelectedBusquedaModuloIzquierda : this.selectedBusquedaModuloIzquierda;
+    }
+    return this.busquedaDestinoModalOpen ? this.draftSelectedBusquedaModuloDerecha : this.selectedBusquedaModuloDerecha;
   }
 
   private getBusquedaModuloCombinacionesMultiples(): Array<
