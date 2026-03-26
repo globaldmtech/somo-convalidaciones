@@ -98,6 +98,7 @@ import { ConvalidacionesService } from '../services/convalidaciones.service';
 export class FormularioPageComponent {
   activeStep: 'personal' | 'input' | 'results' | 'docs' | 'resumen' = 'personal';
   formularioEnviado = false;
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   constructor(private convalidacionesService: ConvalidacionesService) {}
 
@@ -141,7 +142,10 @@ export class FormularioPageComponent {
 
   private hasPersonalData(): boolean {
     const data = this.convalidacionesService.getPersonalData();
-    return !!(data.nombre?.trim() || data.apellidos?.trim() || data.dni?.trim() || data.email?.trim());
+    return !!data.nombre?.trim()
+      && !!data.apellidos?.trim()
+      && !!data.dni?.trim()
+      && this.emailPattern.test(data.email?.trim() ?? '');
   }
 
   private hasInputData(): boolean {

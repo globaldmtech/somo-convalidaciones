@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 
 
@@ -49,7 +49,7 @@ class FormularioCompletoRequest(BaseModel):
     nombre: str
     apellidos: Optional[str] = None
     dni: str
-    email: str
+    email: EmailStr
 
     # Datos del formulario
     estado: Optional[int] = 1

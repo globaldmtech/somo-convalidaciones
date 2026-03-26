@@ -587,6 +587,35 @@ export class EstudiosCursadosComponent implements OnInit {
         return this.parseNotaNumerica(this.selectedNotaMediaCiclo) !== null;
     }
 
+    showSelectedNotaMediaCicloError(): boolean {
+        return this.selectedCicloCompleto === true
+            && this.selectedNotaMediaCiclo.trim().length > 0
+            && !this.isSelectedNotaMediaCicloValida();
+    }
+
+    showSelectedModuloError(modulo: Modulo): boolean {
+        const value = this.getNotaModuloSeleccionado(modulo.id);
+        return value.trim().length > 0 && this.parseNotaByModulo(modulo, value) === null;
+    }
+
+    showDraftNotaMediaCicloError(index: number): boolean {
+        const value = this.getDraftNotaMediaCiclo(index);
+        return this.getDraftCicloCompleto(index) === true
+            && value.trim().length > 0
+            && this.parseNotaNumerica(value) === null;
+    }
+
+    showDraftModuloError(index: number, modulo: Modulo): boolean {
+        const value = this.getDraftNotaModulo(index, modulo.id);
+        return value.trim().length > 0 && this.parseNotaByModulo(modulo, value) === null;
+    }
+
+    getModuloErrorMessage(modulo: Modulo): string {
+        return this.isModuloNumerico(modulo)
+            ? 'Introduce una nota válida entre 0 y 10.'
+            : 'Selecciona un estado valido.';
+    }
+
     isModuloNumerico(modulo: Modulo): boolean {
         return modulo.numerico !== 0;
     }

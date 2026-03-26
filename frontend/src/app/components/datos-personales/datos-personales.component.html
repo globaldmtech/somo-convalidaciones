@@ -32,8 +32,17 @@
             <div class="space-y-2">
                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Correo electrónico <span
                         class="text-red-500">*</span></label>
-                <input type="email" [(ngModel)]="email" required placeholder="Ej: juan.perez@email.com"
+                <input type="email" [(ngModel)]="email" (blur)="onEmailBlur()" required placeholder="Ej: juan.perez@email.com"
+                    [class.border-red-400]="showEmailError"
+                    [class.focus:ring-red-500]="showEmailError"
+                    [class.focus:border-red-500]="showEmailError"
                     class="block w-full px-4 py-3 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-gray-50/50">
+                <p *ngIf="showEmailError" class="flex items-center gap-2 text-sm text-red-600">
+                    <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
+                    </svg>
+                    El formato del correo electrónico no es correcto.
+                </p>
             </div>
 
         </div>
