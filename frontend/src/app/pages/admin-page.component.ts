@@ -28,7 +28,7 @@ import { finalize, timeout } from 'rxjs/operators';
 
 type AdminTab = 'formularios' | 'modulos' | 'convalidaciones' | 'administradores';
 type AdminConvalidacionesView = 'destino' | 'multiple';
-type AdminBusquedaOrigenTipo = 'ciclos' | 'acreditaciones';
+type AdminBusquedaOrigenTipo = 'modulos' | 'ciclos' | 'acreditaciones';
 
 type AdminAlumnoGroup = {
   key: string;
@@ -118,6 +118,8 @@ type AdminBusquedaModuloResultado = {
   totalCiclos: number;
   ciclos: Array<{
     moduloId: number;
+    moduloNombre: string;
+    moduloCodigo: string | null;
     cicloId: number;
     cicloNombre: string;
     cicloCodigo: string | null;
@@ -127,8 +129,9 @@ type AdminBusquedaModuloResultado = {
 };
 
 type AdminBusquedaModuloSeleccionItem = {
-  moduloId: number;
-  moduloNombre: string;
+  origenTipo: 'modulo' | 'ciclo' | 'acreditacion_externa' | 'destino';
+  moduloId: number | null;
+  moduloNombre: string | null;
   moduloCodigo: string | null;
   cicloId: number;
   cicloNombre: string;
@@ -1297,14 +1300,14 @@ type PendingConvalidacionOrigenDelete = {
                   <div>
                     <p class="text-[11px] uppercase tracking-wide font-bold text-indigo-700">Crear reglas de convalidación</p>
                     <p class="mt-1 text-sm text-slate-500">
-                      Selecciona módulos en origen y destino para crear o eliminar reglas en bloque.
+                      Selecciona orígenes y módulos destino para crear o eliminar reglas en bloque.
                     </p>
                   </div>
 
                   <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Origen</p>
                     <p class="mt-1 text-sm font-semibold text-slate-900">
-                      {{ totalBusquedaModuloOrigenSeleccionados }} módulos seleccionados
+                      {{ totalBusquedaModuloOrigenSeleccionados }} orígenes seleccionados
                     </p>
                     <div *ngIf="selectedBusquedaModuloOrigenItems.length > 0; else sinOrigenSeleccionado" class="mt-2 max-h-40 overflow-y-auto pr-1 space-y-1">
                       <p *ngFor="let item of selectedBusquedaModuloOrigenItems" class="text-xs text-slate-600">
@@ -1312,7 +1315,7 @@ type PendingConvalidacionOrigenDelete = {
                       </p>
                     </div>
                     <ng-template #sinOrigenSeleccionado>
-                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado módulos de origen.</p>
+                      <p class="mt-2 text-xs text-slate-500">Todavía no has seleccionado orígenes.</p>
                     </ng-template>
                   </div>
 
@@ -1400,6 +1403,24 @@ type PendingConvalidacionOrigenDelete = {
                           <button
                             type="button"
                             class="inline-flex items-center gap-2 text-sm text-slate-700"
+                            (click)="setBusquedaModuloIzquierdaOrigenTipo('modulos')"
+                          >
+                            <span
+                              class="inline-flex h-4 w-4 items-center justify-center rounded border transition-colors"
+                              [ngClass]="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'
+                                ? 'border-indigo-600 bg-indigo-600'
+                                : 'border-slate-300 bg-white'"
+                            >
+                              <span
+                                *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'modulos'"
+                                class="h-1.5 w-1.5 rounded-sm bg-white"
+                              ></span>
+                            </span>
+                            <span class="font-medium">Módulo</span>
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-2 text-sm text-slate-700"
                             (click)="setBusquedaModuloIzquierdaOrigenTipo('ciclos')"
                           >
                             <span
@@ -1435,7 +1456,7 @@ type PendingConvalidacionOrigenDelete = {
                           </button>
                         </div>
                       </div>
-                      <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                           <label class="block text-xs font-semibold text-slate-600 mb-1">Grado</label>
                           <select
@@ -1457,15 +1478,20 @@ type PendingConvalidacionOrigenDelete = {
                           </select>
                         </div>
                       </div>
-                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">Buscador de módulos</label>
+                      <label class="block text-xs font-semibold text-slate-600 mt-4 mb-1">
+                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscador de ciclos' : 'Buscador de módulos' }}
+                      </label>
                       <input
                         type="text"
                         [(ngModel)]="busquedaModuloIzquierda"
                         class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                        placeholder="Buscar módulo..."
+                        [placeholder]="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'Buscar ciclo...' : 'Buscar módulo...'"
                       />
                       <p class="mt-2 text-xs text-slate-500">
-                        {{ resultadosBusquedaModuloIzquierda.length }} módulos únicos encontrados
+                        {{ resultadosBusquedaModuloIzquierda.length }}
+                        {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                          ? (resultadosBusquedaModuloIzquierda.length === 1 ? 'ciclo encontrado' : 'ciclos encontrados')
+                          : (resultadosBusquedaModuloIzquierda.length === 1 ? 'módulo único encontrado' : 'módulos únicos encontrados') }}
                       </p>
                     </div>
 
@@ -1473,10 +1499,12 @@ type PendingConvalidacionOrigenDelete = {
                       <div *ngIf="!busquedaModuloIzquierdaNormalizada" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
                         {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
                           ? 'Escribe una acreditación para ver las acreditaciones externas disponibles.'
-                          : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.' }}
+                          : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                            ? 'Escribe un ciclo para ver los ciclos disponibles y seleccionar todos sus módulos.'
+                            : 'Escribe un módulo para ver cada módulo único y los ciclos que lo contienen.') }}
                       </div>
                       <div *ngIf="busquedaModuloIzquierdaNormalizada && resultadosBusquedaModuloIzquierda.length === 0" class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-                        No hay módulos que coincidan con esa búsqueda.
+                        No hay {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos' ? 'ciclos' : 'módulos' }} que coincidan con esa búsqueda.
                       </div>
                       <div *ngIf="resultadosBusquedaModuloIzquierda.length > 0" class="thin-scroll max-h-[60vh] overflow-y-auto pr-1 space-y-2">
                         <button
@@ -1487,13 +1515,17 @@ type PendingConvalidacionOrigenDelete = {
                           {{ isBusquedaModuloAllSelected('izquierda')
                             ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
                               ? 'Deseleccionar todas las acreditaciones'
-                              : 'Deseleccionar todos los módulos y ciclos')
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Deseleccionar todos los ciclos'
+                                : 'Deseleccionar todos los módulos y ciclos'))
                             : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
                               ? 'Seleccionar todas las acreditaciones'
-                              : 'Seleccionar todos los módulos y ciclos') }}
+                              : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                ? 'Seleccionar todos los ciclos'
+                                : 'Seleccionar todos los módulos y ciclos')) }}
                         </button>
                         <article *ngFor="let resultado of resultadosBusquedaModuloIzquierda" class="border-b border-slate-200 pb-2 last:border-b-0 last:pb-0">
-                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenConDesplegable">
+                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'; else resultadoOrigenNoAcreditacion">
                             <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
                               <input
                                 *ngIf="resultado.ciclos[0] as acreditacion"
@@ -1507,6 +1539,29 @@ type PendingConvalidacionOrigenDelete = {
                               </span>
                             </label>
                           </ng-container>
+                          <ng-template #resultadoOrigenNoAcreditacion>
+                          <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'; else resultadoOrigenConDesplegable">
+                            <label class="flex items-start gap-3 rounded-lg px-2 py-2 text-sm text-slate-700 cursor-pointer hover:bg-slate-50 transition-colors">
+                              <input
+                                *ngIf="resultado.ciclos[0] as ciclo"
+                                type="checkbox"
+                                class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
+                                (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
+                              />
+                              <span class="min-w-0">
+                                <span class="block font-medium text-slate-900">
+                                  <ng-container *ngIf="resultado.codigo">
+                                    <span class="text-slate-500">{{ resultado.codigo }} · </span>
+                                  </ng-container>
+                                  {{ resultado.nombre }}
+                                </span>
+                                <span *ngIf="formatBusquedaModuloMeta(resultado)" class="block text-xs text-slate-500">
+                                  {{ formatBusquedaModuloMeta(resultado) }}
+                                </span>
+                              </span>
+                            </label>
+                          </ng-container>
                           <ng-template #resultadoOrigenConDesplegable>
                           <button
                             type="button"
@@ -1516,13 +1571,13 @@ type PendingConvalidacionOrigenDelete = {
                             <div class="flex items-start justify-between gap-3">
                               <div class="min-w-0">
                                 <p class="text-sm font-bold text-slate-900">
-                                  <ng-container *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones' && resultado.codigo">
+                                  <ng-container *ngIf="resultado.codigo">
                                     <span class="text-slate-500">{{ resultado.codigo }} · </span>
                                   </ng-container>
                                   {{ resultado.nombre }}
                                 </p>
                                 <p
-                                  *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones' && formatBusquedaModuloMeta(resultado)"
+                                  *ngIf="formatBusquedaModuloMeta(resultado)"
                                   class="text-xs text-slate-500"
                                 >
                                   {{ formatBusquedaModuloMeta(resultado) }}
@@ -1530,10 +1585,12 @@ type PendingConvalidacionOrigenDelete = {
                               </div>
                               <div class="flex items-center gap-2 shrink-0">
                                 <span
-                                  *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'"
                                   class="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-700"
                                 >
-                                  {{ resultado.totalCiclos }} ciclos
+                                  {{ resultado.totalCiclos }}
+                                  {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                    ? (resultado.totalCiclos === 1 ? 'módulo' : 'módulos')
+                                    : (resultado.totalCiclos === 1 ? 'ciclo' : 'ciclos') }}
                                 </span>
                                 <span class="inline-flex items-center justify-center w-5 h-5 text-slate-400 transition-transform"
                                   [class.rotate-180]="isBusquedaModuloRowOpen('izquierda', resultado.key)">
@@ -1553,10 +1610,14 @@ type PendingConvalidacionOrigenDelete = {
                               {{ isBusquedaModuloResultadoAllSelected('izquierda', resultado)
                                 ? (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
                                   ? 'Deseleccionar esta acreditación'
-                                  : 'Deseleccionar todos los ciclos de este módulo')
+                                  : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                    ? 'Deseleccionar todos los módulos de este ciclo'
+                                    : 'Deseleccionar todos los ciclos de este módulo'))
                                 : (filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones'
                                   ? 'Seleccionar esta acreditación'
-                                  : 'Seleccionar todos los ciclos de este módulo') }}
+                                  : (filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                    ? 'Seleccionar todos los módulos de este ciclo'
+                                    : 'Seleccionar todos los ciclos de este módulo')) }}
                             </button>
                             <label *ngFor="let ciclo of resultado.ciclos" class="flex items-start gap-3 py-1.5 text-sm text-slate-700 cursor-pointer">
                               <input
@@ -1565,9 +1626,11 @@ type PendingConvalidacionOrigenDelete = {
                                 [checked]="isBusquedaModuloCicloSelected('izquierda', ciclo.moduloId)"
                                 (change)="toggleBusquedaModuloCicloSeleccion('izquierda', ciclo.moduloId, $any($event.target).checked)"
                               />
-                              <span *ngIf="filtroBusquedaModuloIzquierdaOrigenTipo !== 'acreditaciones'" class="min-w-0">
+                              <span class="min-w-0">
                                 <span class="block font-medium text-slate-900">
-                                  {{ ciclo.cicloNombre }}
+                                  {{ filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+                                    ? ((ciclo.moduloCodigo ? (ciclo.moduloCodigo + ' · ') : '') + ciclo.moduloNombre)
+                                    : ciclo.cicloNombre }}
                                 </span>
                                 <span
                                   *ngIf="formatBusquedaModuloCicloMeta(ciclo)"
@@ -1578,6 +1641,7 @@ type PendingConvalidacionOrigenDelete = {
                               </span>
                             </label>
                           </div>
+                          </ng-template>
                           </ng-template>
                         </article>
                       </div>
@@ -2510,6 +2574,17 @@ type PendingConvalidacionOrigenDelete = {
                             name="createConvalidacionOrigenTipo"
                             class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
                             [(ngModel)]="createConvalidacionOrigenTipo"
+                            [value]="'modulo'"
+                            (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
+                          />
+                          Módulo
+                        </label>
+                        <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                          <input
+                            type="radio"
+                            name="createConvalidacionOrigenTipo"
+                            class="border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                            [(ngModel)]="createConvalidacionOrigenTipo"
                             [value]="'ciclo'"
                             (ngModelChange)="onCrearConvalidacionOrigenTipoChange()"
                           />
@@ -2529,8 +2604,8 @@ type PendingConvalidacionOrigenDelete = {
                       </div>
                     </div>
 
-                    <ng-container *ngIf="createConvalidacionOrigenTipo === 'ciclo'; else createConvalidacionAcreditacionExternaBlock">
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <ng-container *ngIf="createConvalidacionOrigenTipo !== 'acreditacion_externa'; else createConvalidacionAcreditacionExternaBlock">
+                      <div>
                         <div>
                           <label class="text-xs font-semibold text-slate-600">Ciclo origen</label>
                           <select
@@ -2548,45 +2623,41 @@ type PendingConvalidacionOrigenDelete = {
                             Cargando ciclos...
                           </p>
                         </div>
-                        <div class="flex items-end">
-                          <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-                            <input
-                              type="checkbox"
-                              class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                              [(ngModel)]="createConvalidacionOrigenCicloCompleto"
-                              (ngModelChange)="onCrearConvalidacionOrigenCicloCompletoChange()"
-                              [disabled]="!createConvalidacionOrigenCicloId"
-                            />
-                            Seleccionar ciclo completo
-                          </label>
-                        </div>
                       </div>
 
                       <div *ngIf="createConvalidacionOrigenCicloId" class="rounded-md border border-slate-200 bg-slate-50 p-3">
                         <div class="flex items-center justify-between gap-2 mb-2">
-                          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Módulos origen</p>
+                          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            {{ createConvalidacionOrigenTipo === 'ciclo' ? 'Ciclo origen' : 'Módulos origen' }}
+                          </p>
                           <span class="text-xs text-slate-500">
-                            {{ createConvalidacionOrigenCicloCompleto ? createConvalidacionOrigenModulos.length : createConvalidacionOrigenModuloIds.length }} seleccionados
+                            {{ createConvalidacionOrigenTipo === 'ciclo'
+                              ? '1 seleccionado'
+                              : (createConvalidacionOrigenModuloIds.length + ' seleccionados') }}
                           </span>
                         </div>
                         <p
                           class="mb-2 text-xs min-h-[16px]"
-                          [class.text-indigo-700]="createConvalidacionOrigenCicloCompleto"
-                          [class.text-slate-500]="!createConvalidacionOrigenCicloCompleto"
+                          [class.text-indigo-700]="createConvalidacionOrigenTipo === 'ciclo'"
+                          [class.text-slate-500]="createConvalidacionOrigenTipo !== 'ciclo'"
                         >
-                          {{ createConvalidacionOrigenCicloCompleto ? 'Ciclo completo seleccionado: se incluyen todos los módulos.' : 'Seleccione los módulos.' }}
+                          {{ createConvalidacionOrigenTipo === 'ciclo'
+                            ? 'Se utilizará el ciclo completo como origen.'
+                            : 'Seleccione los módulos.' }}
                         </p>
                         <p *ngIf="loadingCreateConvalidacionOrigenModulos" class="text-xs text-slate-500">
                           Cargando módulos origen...
                         </p>
-                        <ul *ngIf="!loadingCreateConvalidacionOrigenModulos" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
+                        <div *ngIf="!loadingCreateConvalidacionOrigenModulos && createConvalidacionOrigenTipo === 'ciclo'" class="text-sm text-slate-700">
+                          {{ createConvalidacionOrigenCicloNombreSeleccionado || 'Ciclo completo seleccionado' }}
+                        </div>
+                        <ul *ngIf="!loadingCreateConvalidacionOrigenModulos && createConvalidacionOrigenTipo === 'modulo'" class="thin-scroll max-h-44 overflow-y-auto space-y-1 pr-1">
                           <li *ngFor="let modulo of createConvalidacionOrigenModulos">
                             <label class="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-white">
                               <input
                                 type="checkbox"
                                 class="mt-0.5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                                [checked]="createConvalidacionOrigenCicloCompleto || createConvalidacionOrigenModuloIds.includes(modulo.id)"
-                                [disabled]="createConvalidacionOrigenCicloCompleto"
+                                [checked]="createConvalidacionOrigenModuloIds.includes(modulo.id)"
                                 (change)="toggleCrearConvalidacionOrigenModulo(modulo.id, $any($event.target).checked)"
                               />
                               <span class="text-sm text-slate-700">
@@ -2957,7 +3028,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   deletingConvalidacionOrigenes = new Set<string>();
   createConvalidacionModalOpen = false;
   createConvalidacionDestinoModuloId: number | null = null;
-  createConvalidacionOrigenTipo: 'ciclo' | 'acreditacion_externa' = 'ciclo';
+  createConvalidacionOrigenTipo: 'modulo' | 'ciclo' | 'acreditacion_externa' = 'modulo';
   createConvalidacionDestinoModulos: Modulo[] = [];
   createConvalidacionCiclosOrigen: Ciclo[] = [];
   createConvalidacionOrigenCicloId: number | null = null;
@@ -3018,7 +3089,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   filtroConvalidacionesCicloId: number | null = null;
   filtroBusquedaModuloIzquierdaGrado = '';
   filtroBusquedaModuloIzquierdaFamilia = '';
-  filtroBusquedaModuloIzquierdaOrigenTipo: AdminBusquedaOrigenTipo = 'ciclos';
+  filtroBusquedaModuloIzquierdaOrigenTipo: AdminBusquedaOrigenTipo = 'modulos';
   filtroBusquedaModuloDerechaGrado = '';
   filtroBusquedaModuloDerechaFamilia = '';
   busquedaModuloIzquierda = '';
@@ -3244,7 +3315,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.convalidacionesCiclos = [];
     this.filtroBusquedaModuloIzquierdaGrado = '';
     this.filtroBusquedaModuloIzquierdaFamilia = '';
-    this.filtroBusquedaModuloIzquierdaOrigenTipo = 'ciclos';
+    this.filtroBusquedaModuloIzquierdaOrigenTipo = 'modulos';
     this.filtroBusquedaModuloDerechaGrado = '';
     this.filtroBusquedaModuloDerechaFamilia = '';
     this.busquedaModuloIzquierda = '';
@@ -3479,9 +3550,21 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   formatBusquedaModuloSeleccionItem(item: AdminBusquedaModuloSeleccionItem): string {
+    if (item.origenTipo === 'ciclo') {
+      return [
+        item.cicloNombre.trim() || null,
+        item.gradoNombre?.trim() || null,
+        item.familiaNombre?.trim() || null,
+      ]
+        .filter((value): value is string => !!value)
+        .join(' · ');
+    }
+    if (item.origenTipo === 'acreditacion_externa') {
+      return item.moduloNombre?.trim() || item.cicloNombre.trim();
+    }
     return [
       item.moduloCodigo?.trim() || null,
-      item.moduloNombre.trim() || null,
+      item.moduloNombre?.trim() || null,
       item.cicloNombre.trim() || null,
     ]
       .filter((value): value is string => !!value)
@@ -3515,22 +3598,51 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.creatingMultipleConvalidaciones = true;
     this.createMultipleConvalidacionesError = null;
     this.createMultipleConvalidacionesSuccess = null;
-    const request$: Observable<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse> =
-      this.convalidacionesMultiplesAction === 'crear'
-      ? this.convalidacionesService.crearConvalidacionesMasivasAdmin({
-          reglas: combinaciones.map((item) => ({
-            id_modulo_destino: item.idModuloDestino,
-            id_modulo_origen: item.idModuloOrigen,
-          })),
-          source_link: sourceLink,
-          source_page: sourcePage,
-        })
-      : this.convalidacionesService.eliminarConvalidacionesMasivasAdmin({
-          reglas: combinaciones.map((item) => ({
-            id_modulo_destino: item.idModuloDestino,
-            id_modulo_origen: item.idModuloOrigen,
-          })),
-        });
+    const combinacionesModulo = combinaciones.filter((item): item is { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number } => item.tipo === 'modulo');
+    const combinacionesCiclo = combinaciones.filter((item): item is { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number } => item.tipo === 'ciclo');
+    const requests: Array<Observable<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse>> = [];
+
+    if (combinacionesModulo.length > 0) {
+      requests.push(
+        this.convalidacionesMultiplesAction === 'crear'
+          ? this.convalidacionesService.crearConvalidacionesMasivasAdmin({
+              reglas: combinacionesModulo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_modulo_origen: item.idModuloOrigen,
+              })),
+              source_link: sourceLink,
+              source_page: sourcePage,
+            })
+          : this.convalidacionesService.eliminarConvalidacionesMasivasAdmin({
+              reglas: combinacionesModulo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_modulo_origen: item.idModuloOrigen,
+              })),
+            })
+      );
+    }
+
+    if (combinacionesCiclo.length > 0) {
+      requests.push(
+        this.convalidacionesMultiplesAction === 'crear'
+          ? this.convalidacionesService.crearConvalidacionesCicloMasivasAdmin({
+              reglas: combinacionesCiclo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_ciclo_origen: item.idCicloOrigen,
+              })),
+              source_link: sourceLink,
+              source_page: sourcePage,
+            })
+          : this.convalidacionesService.eliminarConvalidacionesCicloMasivasAdmin({
+              reglas: combinacionesCiclo.map((item) => ({
+                id_modulo_destino: item.idModuloDestino,
+                id_ciclo_origen: item.idCicloOrigen,
+              })),
+            })
+      );
+    }
+
+    const request$ = forkJoin(requests);
 
     request$
       .pipe(
@@ -3540,14 +3652,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (resp: AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse) => {
+        next: (responses: Array<AdminCreateConvalidacionesMasivasResponse | AdminDeleteConvalidacionesMasivasResponse>) => {
           this.createMultipleConvalidacionesResultAction = this.convalidacionesMultiplesAction;
-          const processedCount = this.convalidacionesMultiplesAction === 'crear'
-            ? Number((resp as any)?.created_count || 0)
-            : Number((resp as any)?.deleted_count || 0);
-          const skippedCount = this.convalidacionesMultiplesAction === 'crear'
-            ? Number((resp as any)?.skipped_existing_count || 0)
-            : Number((resp as any)?.skipped_missing_count || 0);
+          const processedCount = responses.reduce((acc, resp) => acc + Number(this.convalidacionesMultiplesAction === 'crear'
+            ? (resp as any)?.created_count || 0
+            : (resp as any)?.deleted_count || 0), 0);
+          const skippedCount = responses.reduce((acc, resp) => acc + Number(this.convalidacionesMultiplesAction === 'crear'
+            ? (resp as any)?.skipped_existing_count || 0
+            : (resp as any)?.skipped_missing_count || 0), 0);
           this.createMultipleConvalidacionesResultCreatedCount = processedCount;
           this.createMultipleConvalidacionesResultSkippedCount = skippedCount;
           this.createMultipleConvalidacionesResultModalOpen = true;
@@ -3579,29 +3691,53 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createMultipleConvalidacionesResultSkippedCount = 0;
   }
 
-  private getBusquedaModuloCombinacionesMultiples(): Array<{ idModuloDestino: number; idModuloOrigen: number }> {
+  private getBusquedaModuloCombinacionesMultiples(): Array<
+    | { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number }
+    | { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number }
+  > {
     const origenItems = this.selectedBusquedaModuloOrigenItems;
     const destinoItems = this.selectedBusquedaModuloDestinoItems;
-    const combinaciones: Array<{ idModuloDestino: number; idModuloOrigen: number }> = [];
+    const combinaciones: Array<
+      | { tipo: 'modulo'; idModuloDestino: number; idModuloOrigen: number }
+      | { tipo: 'ciclo'; idModuloDestino: number; idCicloOrigen: number }
+    > = [];
     const seen = new Set<string>();
 
     for (const destino of destinoItems) {
       for (const origen of origenItems) {
-        if (destino.moduloId === origen.moduloId && destino.cicloId === origen.cicloId) {
+        if (origen.origenTipo === 'modulo' || origen.origenTipo === 'acreditacion_externa') {
+          if (destino.moduloId === origen.moduloId && destino.cicloId === origen.cicloId) {
+            continue;
+          }
+          const key = `modulo::${destino.moduloId}::${origen.moduloId}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          combinaciones.push({
+            tipo: 'modulo',
+            idModuloDestino: Number(destino.moduloId),
+            idModuloOrigen: Number(origen.moduloId),
+          });
           continue;
         }
-        const key = `${destino.moduloId}::${origen.moduloId}`;
+
+        const key = `ciclo::${destino.moduloId}::${origen.cicloId}`;
         if (seen.has(key)) continue;
         seen.add(key);
         combinaciones.push({
+          tipo: 'ciclo',
           idModuloDestino: Number(destino.moduloId),
-          idModuloOrigen: Number(origen.moduloId),
+          idCicloOrigen: Number(origen.cicloId),
         });
       }
     }
 
     return combinaciones.filter(
-      (item) => Number.isFinite(item.idModuloDestino) && item.idModuloDestino > 0 && Number.isFinite(item.idModuloOrigen) && item.idModuloOrigen > 0
+      (item) => Number.isFinite(item.idModuloDestino)
+        && item.idModuloDestino > 0
+        && (
+          (item.tipo === 'modulo' && Number.isFinite(item.idModuloOrigen) && item.idModuloOrigen > 0)
+          || (item.tipo === 'ciclo' && Number.isFinite(item.idCicloOrigen) && item.idCicloOrigen > 0)
+        )
     );
   }
 
@@ -3612,6 +3748,26 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const target = side === 'izquierda' ? this.selectedBusquedaModuloIzquierda : this.selectedBusquedaModuloDerecha;
     const visibleIds = onlyVisible ? new Set(this.getBusquedaModuloVisibleModuloIds(side)) : null;
     const items: AdminBusquedaModuloSeleccionItem[] = [];
+    if (side === 'izquierda' && this.filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos') {
+      for (const ciclo of this.ciclosConModulos) {
+        const cicloId = Number(ciclo.id);
+        const selectableId = -cicloId;
+        if (!Number.isFinite(cicloId) || !target.has(selectableId)) continue;
+        if (visibleIds && !visibleIds.has(selectableId)) continue;
+        items.push({
+          origenTipo: 'ciclo',
+          moduloId: null,
+          moduloNombre: null,
+          moduloCodigo: null,
+          cicloId,
+          cicloNombre: String(ciclo.nombre || '').trim().replace(/\s+/g, ' '),
+          gradoNombre: ciclo.grado_nombre?.trim() || null,
+          familiaNombre: ciclo.familia_nombre?.trim() || null,
+        });
+      }
+      return items.sort((a, b) => a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' }));
+    }
+
     for (const ciclo of this.ciclosConModulos) {
       const cicloNombre = String(ciclo.nombre || '').trim().replace(/\s+/g, ' ');
       const gradoNombre = ciclo.grado_nombre?.trim() || null;
@@ -3621,6 +3777,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!Number.isFinite(moduloId) || !target.has(moduloId)) continue;
         if (visibleIds && !visibleIds.has(moduloId)) continue;
         items.push({
+          origenTipo: side === 'derecha'
+            ? 'destino'
+            : (this.filtroBusquedaModuloIzquierdaOrigenTipo === 'acreditaciones' ? 'acreditacion_externa' : 'modulo'),
           moduloId,
           moduloNombre: String(modulo.nombre || '').trim().replace(/\s+/g, ' '),
           moduloCodigo: (modulo.id_oficial || '').trim() || null,
@@ -3632,7 +3791,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return items.sort((a, b) => {
-      const byModulo = a.moduloNombre.localeCompare(b.moduloNombre, 'es', { sensitivity: 'base' });
+      const byModulo = (a.moduloNombre || '').localeCompare(b.moduloNombre || '', 'es', { sensitivity: 'base' });
       if (byModulo !== 0) return byModulo;
       return a.cicloNombre.localeCompare(b.cicloNombre, 'es', { sensitivity: 'base' });
     });
@@ -4763,12 +4922,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.openCatalogCiclos.has(cicloId);
   }
 
-  private getBusquedaModuloGrados(familiaFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'ciclos'): string[] {
+  private getBusquedaModuloGrados(familiaFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'modulos'): string[] {
     const familiaNormalizada = this.normalizeSearchText(familiaFiltro);
     const grados = new Set<string>();
     for (const ciclo of this.ciclosConModulos) {
       const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
-      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
       if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
       const familia = (ciclo.familia_nombre || '').trim();
       const grado = (ciclo.grado_nombre || '').trim();
@@ -4779,12 +4938,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     return Array.from(grados.values()).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
   }
 
-  private getBusquedaModuloFamilias(gradoFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'ciclos'): string[] {
+  private getBusquedaModuloFamilias(gradoFiltro: string, origenTipo: AdminBusquedaOrigenTipo = 'modulos'): string[] {
     const gradoNormalizado = this.normalizeSearchText(gradoFiltro);
     const familias = new Set<string>();
     for (const ciclo of this.ciclosConModulos) {
       const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
-      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
       if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
       const familia = (ciclo.familia_nombre || '').trim();
       const grado = (ciclo.grado_nombre || '').trim();
@@ -4799,7 +4958,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     query: string,
     gradoFiltro = '',
     familiaFiltro = '',
-    origenTipo: AdminBusquedaOrigenTipo = 'ciclos'
+    origenTipo: AdminBusquedaOrigenTipo = 'modulos'
   ): AdminBusquedaModuloResultado[] {
     if (!query) return [];
 
@@ -4809,7 +4968,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for (const ciclo of this.ciclosConModulos) {
       const esAcreditacion = this.isAcreditacionesExternasCiclo(ciclo.nombre);
-      if (origenTipo === 'ciclos' && esAcreditacion) continue;
+      if ((origenTipo === 'modulos' || origenTipo === 'ciclos') && esAcreditacion) continue;
       if (origenTipo === 'acreditaciones' && !esAcreditacion) continue;
       const gradoNombre = ciclo.grado_nombre?.trim() || null;
       const familiaNombre = ciclo.familia_nombre?.trim() || null;
@@ -4818,12 +4977,34 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const cicloInfo = {
         moduloId: 0,
+        moduloNombre: '',
+        moduloCodigo: null,
         cicloId: Number(ciclo.id),
         cicloNombre: String(ciclo.nombre || '').trim().replace(/\s+/g, ' '),
         cicloCodigo: (ciclo.id_oficial || '').trim() || null,
         familiaNombre,
         gradoNombre,
       };
+
+      if (origenTipo === 'ciclos') {
+        const cicloText = this.normalizeSearchText(`${cicloInfo.cicloNombre} ${cicloInfo.cicloCodigo || ''}`);
+        if (!cicloText.includes(query)) continue;
+
+        const key = `ciclo::${cicloInfo.cicloId}`;
+        modulosMap.set(key, {
+          key,
+          nombre: cicloInfo.cicloNombre,
+          codigo: cicloInfo.cicloCodigo,
+          totalCiclos: 1,
+          ciclos: [{
+            ...cicloInfo,
+            moduloId: -cicloInfo.cicloId,
+            moduloNombre: '',
+            moduloCodigo: null,
+          }],
+        });
+        continue;
+      }
 
       for (const modulo of ciclo.modulos || []) {
         const nombre = String(modulo.nombre || '').trim().replace(/\s+/g, ' ');
@@ -4849,6 +5030,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           item.ciclos.push({
             ...cicloInfo,
             moduloId,
+            moduloNombre: nombre,
+            moduloCodigo: codigo,
           });
         }
       }
@@ -4874,9 +5057,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const ids = new Set<number>();
     for (const resultado of resultados) {
       for (const ciclo of resultado.ciclos) {
-        const moduloId = Number(ciclo.moduloId);
-        if (Number.isFinite(moduloId)) {
-          ids.add(moduloId);
+        const selectableId = side === 'izquierda' && this.filtroBusquedaModuloIzquierdaOrigenTipo === 'ciclos'
+          ? -Number(ciclo.cicloId)
+          : Number(ciclo.moduloId);
+        if (Number.isFinite(selectableId)) {
+          ids.add(selectableId);
         }
       }
     }
@@ -4988,7 +5173,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.createConvalidacionModalOpen = true;
     this.createConvalidacionError = null;
     this.createConvalidacionDestinoModuloId = null;
-    this.createConvalidacionOrigenTipo = 'ciclo';
+    this.createConvalidacionOrigenTipo = 'modulo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
@@ -5010,7 +5195,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cerrarModalCrearConvalidacion(_force = false): void {
     this.createConvalidacionModalOpen = false;
     this.createConvalidacionDestinoModuloId = null;
-    this.createConvalidacionOrigenTipo = 'ciclo';
+    this.createConvalidacionOrigenTipo = 'modulo';
     this.createConvalidacionDestinoModulos = [];
     this.createConvalidacionCiclosOrigen = [];
     this.createConvalidacionOrigenCicloId = null;
@@ -5110,14 +5295,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   onCrearConvalidacionOrigenTipoChange(): void {
     this.createConvalidacionError = null;
     this.createConvalidacionOrigenCicloId = null;
-    this.createConvalidacionOrigenCicloCompleto = false;
+    this.createConvalidacionOrigenCicloCompleto = this.createConvalidacionOrigenTipo === 'ciclo';
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionOrigenAcreditacionId = null;
   }
 
   onCrearConvalidacionOrigenCicloChange(): void {
-    this.createConvalidacionOrigenCicloCompleto = false;
+    this.createConvalidacionOrigenCicloCompleto = this.createConvalidacionOrigenTipo === 'ciclo';
     this.createConvalidacionOrigenModuloIds = [];
     this.createConvalidacionOrigenModulos = [];
     this.createConvalidacionError = null;
@@ -5138,6 +5323,12 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+        if (this.createConvalidacionOrigenTipo === 'ciclo') {
+          this.createConvalidacionOrigenModuloIds = this.createConvalidacionOrigenModulos
+            .map((modulo) => Number(modulo.id))
+            .filter((id) => Number.isFinite(id))
+            .sort((a, b) => a - b);
+        }
         this.loadingCreateConvalidacionOrigenModulos = false;
         this.cdr.detectChanges();
       },
@@ -5151,6 +5342,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onCrearConvalidacionOrigenCicloCompletoChange(): void {
+    if (this.createConvalidacionOrigenTipo === 'ciclo') {
+      this.createConvalidacionOrigenCicloCompleto = true;
+    }
     if (this.createConvalidacionOrigenCicloCompleto) {
       this.createConvalidacionOrigenModuloIds = this.createConvalidacionOrigenModulos
         .map((modulo) => Number(modulo.id))
@@ -5162,7 +5356,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleCrearConvalidacionOrigenModulo(idModulo: number, selected: boolean): void {
-    if (this.createConvalidacionOrigenCicloCompleto) return;
+    if (this.createConvalidacionOrigenTipo === 'ciclo' || this.createConvalidacionOrigenCicloCompleto) return;
     const id = Number(idModulo);
     if (!Number.isFinite(id)) return;
 
@@ -5181,8 +5375,17 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return !!this.createConvalidacionOrigenAcreditacionId;
     }
     if (!this.createConvalidacionOrigenCicloId) return false;
-    if (this.createConvalidacionOrigenCicloCompleto) return this.createConvalidacionOrigenModulos.length > 0;
+    if (this.createConvalidacionOrigenTipo === 'ciclo' || this.createConvalidacionOrigenCicloCompleto) {
+      return this.createConvalidacionOrigenModulos.length > 0;
+    }
     return this.createConvalidacionOrigenModuloIds.length > 0;
+  }
+
+  get createConvalidacionOrigenCicloNombreSeleccionado(): string {
+    const ciclo = this.createConvalidacionCiclosOrigen.find(
+      (item) => Number(item.id) === Number(this.createConvalidacionOrigenCicloId)
+    );
+    return ciclo?.nombre || '';
   }
 
   guardarNuevaConvalidacion(): void {
@@ -5209,7 +5412,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.createConvalidacionError = 'No se ha podido preparar la regla con los datos seleccionados.';
       return;
     }
-    if (this.createConvalidacionOrigenTipo === 'ciclo' && this.createConvalidacionOrigenCicloCompleto) {
+    if (this.createConvalidacionOrigenTipo === 'ciclo') {
       if (!Number.isFinite(idCicloOrigen) || !idCicloOrigen || idCicloOrigen <= 0) {
         this.createConvalidacionError = 'No se ha podido preparar la regla con los datos seleccionados.';
         return;
@@ -5233,7 +5436,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const request$ = this.createConvalidacionOrigenTipo === 'ciclo' && this.createConvalidacionOrigenCicloCompleto
+    const request$ = this.createConvalidacionOrigenTipo === 'ciclo'
       ? this.convalidacionesService.crearConvalidacionCicloAdmin({
           id_modulo_destino: idModuloDestino,
           id_ciclo_origen: idCicloOrigen!,

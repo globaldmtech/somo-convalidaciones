@@ -155,8 +155,19 @@ export interface AdminCreateConvalidacionMasivaItemRequest {
     id_modulo_origen: number;
 }
 
+export interface AdminCreateConvalidacionCicloMasivaItemRequest {
+    id_modulo_destino: number;
+    id_ciclo_origen: number;
+}
+
 export interface AdminCreateConvalidacionesMasivasRequest {
     reglas: AdminCreateConvalidacionMasivaItemRequest[];
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
+export interface AdminCreateConvalidacionesCicloMasivasRequest {
+    reglas: AdminCreateConvalidacionCicloMasivaItemRequest[];
     source_link?: string | null;
     source_page?: number | null;
 }
@@ -185,6 +196,10 @@ export interface AdminCreateConvalidacionesMasivasResponse {
 
 export interface AdminDeleteConvalidacionesMasivasRequest {
     reglas: AdminCreateConvalidacionMasivaItemRequest[];
+}
+
+export interface AdminDeleteConvalidacionesCicloMasivasRequest {
+    reglas: AdminCreateConvalidacionCicloMasivaItemRequest[];
 }
 
 export interface AdminDeleteConvalidacionesMasivasResponse {
@@ -594,6 +609,28 @@ export class ConvalidacionesService {
             `${ADMIN_API_BASE}/crear_convalidaciones_ciclo`,
             payload,
             this.getAdminAuthHeaders()
+        );
+    }
+
+    crearConvalidacionesCicloMasivasAdmin(
+        payload: AdminCreateConvalidacionesCicloMasivasRequest
+    ): Observable<AdminCreateConvalidacionesMasivasResponse> {
+        return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_ciclo_masivas`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionesCicloMasivasAdmin(
+        payload: AdminDeleteConvalidacionesCicloMasivasRequest
+    ): Observable<AdminDeleteConvalidacionesMasivasResponse> {
+        return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/convalidaciones_ciclo_masivas`,
+            {
+                ...this.getAdminAuthHeaders(),
+                body: payload,
+            }
         );
     }
 

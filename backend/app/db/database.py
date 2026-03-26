@@ -1346,6 +1346,55 @@ class AdminQueries:
         }
 
     @staticmethod
+    def create_convalidacion_ciclo_rules_batch(
+        conn: sqlite3.Connection,
+        reglas: Sequence[dict],
+        source_link: Optional[str] = None,
+        source_page: Optional[int] = None,
+    ) -> dict:
+        normalizadas: list[tuple[int, int]] = []
+        seen: set[tuple[int, int]] = set()
+        skipped = 0
+
+        for regla in reglas:
+            id_modulo_destino = int(regla["id_modulo_destino"])
+            id_ciclo_origen = int(regla["id_ciclo_origen"])
+            key = (id_modulo_destino, id_ciclo_origen)
+            normalizadas.append(key)
+
+        if not normalizadas:
+            return {
+                "created": [],
+                "created_count": 0,
+                "skipped_count": skipped,
+            }
+
+        created: list[dict] = []
+        skipped_existing = 0
+        for id_modulo_destino, id_ciclo_origen in normalizadas:
+            try:
+                created.append(
+                    AdminQueries.create_convalidacion_ciclo_rule(
+                        conn,
+                        id_modulo_destino=id_modulo_destino,
+                        id_ciclo_origen=id_ciclo_origen,
+                        source_link=source_link,
+                        source_page=source_page,
+                    )
+                )
+            except ValueError as exc:
+                if "Ya existe una regla de convalidación" not in str(exc):
+                    raise
+                skipped_existing += 1
+
+        return {
+            "created": created,
+            "created_count": len(created),
+            "skipped_count": skipped + skipped_existing,
+            "skipped_existing_count": skipped_existing,
+        }
+
+    @staticmethod
     def delete_convalidacion_rules_batch(
         conn: sqlite3.Connection,
         reglas: Sequence[dict],
@@ -1428,3 +1477,44 @@ class AdminQueries:
             }
         finally:
             conn.execute(f"DROP TABLE IF EXISTS {temp_table}")
+
+    @staticmethod
+    def delete_convalidacion_ciclo_rules_batch(
+        conn: sqlite3.Connection,
+        reglas: Sequence[dict],
+    ) -> dict:
+        normalizadas = [(int(regla["id_modulo_destino"]), int(regla["id_ciclo_origen"])) for regla in reglas]
+        if not normalizadas:
+            return {
+                "deleted_count": 0,
+                "skipped_count": 0,
+                "skipped_missing_count": 0,
+            }
+
+        deleted_count = 0
+        skipped_missing = 0
+        seen: set[tuple[int, int]] = set()
+
+        for id_modulo_destino, id_ciclo_origen in normalizadas:
+            if id_modulo_destino <= 0 or id_ciclo_origen <= 0 or (id_modulo_destino, id_ciclo_origen) in seen:
+                skipped_missing += 1
+                continue
+            seen.add((id_modulo_destino, id_ciclo_origen))
+            row = conn.execute(
+                """
+                SELECT conv_id_ciclo
+                FROM convalidacion_ciclo
+                WHERE id_modulo_destino = ? AND id_ciclo_origen = ?
+                """,
+                (id_modulo_destino, id_ciclo_origen),
+            ).fetchone()
+            if not row:
+                skipped_missing += 1
+                continue
+            deleted_count += AdminQueries.delete_convalidacion_ciclo_rule(conn, int(row["conv_id_ciclo"]))
+
+        return {
+            "deleted_count": deleted_count,
+            "skipped_count": skipped_missing,
+            "skipped_missing_count": skipped_missing,
+        }

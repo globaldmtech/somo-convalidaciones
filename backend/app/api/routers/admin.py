@@ -23,10 +23,12 @@ from model.admin import (
     CambiarEstadoFormularioRequest,
     CambiarEstadoSolicitudRequest,
     EliminarConvalidacionesMasivasRequest,
+    EliminarConvalidacionesCicloMasivasRequest,
     CrearAdministradorRequest,
     CrearCicloRequest,
     CrearConvalidacionRequest,
     CrearConvalidacionesMasivasRequest,
+    CrearConvalidacionesCicloMasivasRequest,
     CrearConvalidacionCicloRequest,
     CrearModulosRequest,
 )
@@ -691,6 +693,83 @@ async def crear_convalidacion_ciclo(
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     except sqlite3.IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/crear_convalidaciones_ciclo_masivas")
+async def crear_convalidaciones_ciclo_masivas(
+    request: CrearConvalidacionesCicloMasivasRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    try:
+        source_link = (request.source_link or "").strip() or None
+        source_page = int(request.source_page) if request.source_page is not None else None
+
+        created = database.AdminQueries.create_convalidacion_ciclo_rules_batch(
+            db,
+            reglas=[
+                {
+                    "id_modulo_destino": int(item.id_modulo_destino),
+                    "id_ciclo_origen": int(item.id_ciclo_origen),
+                }
+                for item in (request.reglas or [])
+            ],
+            source_link=source_link,
+            source_page=source_page,
+        )
+
+        db.commit()
+        return {
+            "ok": True,
+            "created_count": int(created["created_count"]),
+            "skipped_count": int(created["skipped_count"]),
+            "skipped_existing_count": int(created.get("skipped_existing_count", 0)),
+            "created": [
+                {
+                    "id": int(item["id"]),
+                    "id_modulo_destino": int(item["id_modulo_destino"]),
+                    "id_modulos_origen": [],
+                }
+                for item in created["created"]
+            ],
+        }
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/convalidaciones_ciclo_masivas")
+async def eliminar_convalidaciones_ciclo_masivas(
+    request: EliminarConvalidacionesCicloMasivasRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    try:
+        deleted = database.AdminQueries.delete_convalidacion_ciclo_rules_batch(
+            db,
+            reglas=[
+                {
+                    "id_modulo_destino": int(item.id_modulo_destino),
+                    "id_ciclo_origen": int(item.id_ciclo_origen),
+                }
+                for item in (request.reglas or [])
+            ],
+        )
+
+        db.commit()
+        return {
+            "ok": True,
+            "deleted_count": int(deleted["deleted_count"]),
+            "skipped_count": int(deleted["skipped_count"]),
+            "skipped_missing_count": int(deleted.get("skipped_missing_count", 0)),
+        }
+    except ValueError as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     except sqlite3.Error as e:

@@ -45,14 +45,29 @@ class CrearConvalidacionMasivaItemRequest(BaseModel):
     id_modulo_origen: int
 
 
+class CrearConvalidacionCicloMasivaItemRequest(BaseModel):
+    id_modulo_destino: int
+    id_ciclo_origen: int
+
+
 class CrearConvalidacionesMasivasRequest(BaseModel):
     reglas: list[CrearConvalidacionMasivaItemRequest]
     source_link: str | None = None
     source_page: int | None = None
 
 
+class CrearConvalidacionesCicloMasivasRequest(BaseModel):
+    reglas: list[CrearConvalidacionCicloMasivaItemRequest]
+    source_link: str | None = None
+    source_page: int | None = None
+
+
 class EliminarConvalidacionesMasivasRequest(BaseModel):
     reglas: list[CrearConvalidacionMasivaItemRequest]
+
+
+class EliminarConvalidacionesCicloMasivasRequest(BaseModel):
+    reglas: list[CrearConvalidacionCicloMasivaItemRequest]
 
 
 class CrearConvalidacionCicloRequest(BaseModel):
