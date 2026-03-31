@@ -98,6 +98,69 @@ export class ResumenFormularioComponent implements OnInit {
         return modulo ? modulo.numerico !== 0 : true;
     }
 
+    notaConvalidacionSolicitada(item: SelectedConvalidation): number | null {
+        const notaMediaOrigen = this.parseNotaFlexible(item.nota_media_origen);
+        if (notaMediaOrigen !== null) {
+            return this.redondearNotaConvalidacion(notaMediaOrigen);
+        }
+
+        const origenIds = this.getModulosOrigenIds(item.modulos_origen_ids);
+        if (origenIds.length === 0) return null;
+
+        const notasPorId = this.getNotasPorIdModulo();
+        const notas = origenIds
+            .map((id) => notasPorId.get(id))
+            .filter((nota): nota is number => typeof nota === 'number' && Number.isFinite(nota));
+
+        if (notas.length !== origenIds.length) return null;
+
+        const media = notas.reduce((acc, current) => acc + current, 0) / notas.length;
+        return this.redondearNotaConvalidacion(media);
+    }
+
+    viaConvalidacion(item: SelectedConvalidation): string {
+        const ciclo = (item.ciclo_origen || item.source || '').trim();
+        if (item.origen_tipo === 'ciclo_completo') {
+            return ciclo ? `${ciclo} · Ciclo completo` : 'Ciclo completo';
+        }
+        const modulos = (item.modulos_origen || '').trim();
+        if (ciclo && modulos) {
+            return `${ciclo} · ${modulos}`;
+        }
+        return ciclo || modulos || '—';
+    }
+
+    private redondearNotaConvalidacion(value: number): number {
+        return Math.floor(value + 0.5);
+    }
+
+    private getModulosOrigenIds(rawIds: unknown): number[] {
+        if (!rawIds) return [];
+        return String(rawIds)
+            .split(',')
+            .map((token) => token.trim())
+            .filter(Boolean)
+            .map((token) => Number(token))
+            .filter((id) => Number.isFinite(id));
+    }
+
+    private getNotasPorIdModulo(): Map<number, number> {
+        const map = new Map<number, number>();
+        for (const estudio of this.estudios || []) {
+            for (const modulo of estudio.modulos || []) {
+                const nota = this.parseNotaFlexible(estudio.notasPorModulo?.[modulo.id]);
+                if (nota === null) continue;
+                const idModulo = Number(modulo.id);
+                if (!Number.isFinite(idModulo)) continue;
+                const actual = map.get(idModulo);
+                if (actual === undefined || nota > actual) {
+                    map.set(idModulo, nota);
+                }
+            }
+        }
+        return map;
+    }
+
     private parseNotaFlexible(value: unknown): number | null {
         if (typeof value === 'number') {
             return Number.isFinite(value) ? value : null;

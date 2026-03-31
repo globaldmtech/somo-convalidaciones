@@ -16,6 +16,11 @@ export interface SelectedConvalidation {
     id: number;
     nombre: string;
     source: string;
+    ciclo_origen?: string | null;
+    origen_tipo?: string | null;
+    modulos_origen?: string | null;
+    modulos_origen_ids?: string | null;
+    nota_media_origen?: number | null;
     id_convalidacion?: number | null;
     id_convalidacion_ciclo?: number | null;
 }
@@ -39,6 +44,7 @@ export interface AdminFormularioSolicitud {
     id_convalidacion?: number | null;
     id_convalidacion_ciclo?: number | null;
     nota_manual?: number | null;
+    nota_media_origen?: number | null;
     ciclo_id?: number | null;
     ciclo_nombre?: string | null;
     modulo_destino: string | null;

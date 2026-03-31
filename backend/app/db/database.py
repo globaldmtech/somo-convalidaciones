@@ -614,6 +614,32 @@ class AdminQueries:
                     fs.id_convalidacion,
                     fs.id_convalidacion_ciclo,
                     fs.nota_manual,
+                    CASE
+                        WHEN fs.nota_manual IS NOT NULL THEN fs.nota_manual
+                        WHEN fs.id_convalidacion_ciclo IS NOT NULL THEN (
+                            SELECT fca.nota_media
+                            FROM convalidacion_ciclo cc
+                            LEFT JOIN formulario_ciclos_aportados fca
+                                ON fca.id_formulario = fs.id_formulario
+                               AND fca.id_ciclo = cc.id_ciclo_origen
+                            WHERE cc.conv_id_ciclo = fs.id_convalidacion_ciclo
+                            LIMIT 1
+                        )
+                        WHEN fs.id_convalidacion IS NOT NULL THEN (
+                            SELECT CASE
+                                WHEN COUNT(*) = COUNT(fma_origen.nota) THEN AVG(fma_origen.nota)
+                                ELSE NULL
+                            END
+                            FROM convalidacion_origen co_origen
+                            JOIN modulos mo_origen ON mo_origen.id = co_origen.id_modulo
+                            LEFT JOIN formulario_modulos_aportados fma_origen
+                                ON fma_origen.id_formulario = fs.id_formulario
+                               AND fma_origen.id_modulo = co_origen.id_modulo
+                            WHERE co_origen.conv_id = fs.id_convalidacion
+                              AND mo_origen.numerico = 1
+                        )
+                        ELSE NULL
+                    END AS nota_media_origen,
                     c.id AS ciclo_id,
                     c.nombre AS ciclo_nombre,
                     m.nombre AS modulo_destino,
@@ -731,7 +757,13 @@ class AdminQueries:
                     WHEN COUNT(DISTINCT mo.id) > 2 THEN 'Ciclo completo'
                     ELSE COALESCE(REPLACE(GROUP_CONCAT(DISTINCT mo.nombre), ',', CHAR(10)), '')
                 END AS modulo_cursado,
-                COALESCE(AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END), fs.nota_manual) AS nota_modulo,
+                CASE
+                    WHEN COALESCE(AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END), fs.nota_manual) IS NULL THEN NULL
+                    ELSE CAST(
+                        COALESCE(AVG(CASE WHEN mo.numerico = 1 THEN fma.nota END), fs.nota_manual) + 0.5
+                        AS INTEGER
+                    )
+                END AS nota_modulo,
                 COALESCE(f.anotaciones, '') AS observaciones
             FROM formularios f
             JOIN usuarios u ON u.id = f.id_alumno

@@ -227,7 +227,7 @@ async def exportar_solicitudes_convalidacion(
                     row.get("resolucion") or "",
                     row.get("ciclo_cursado") or "",
                     row.get("modulo_cursado") or "",
-                    None if nota is None else float(nota),
+                    None if nota is None else int(nota),
                     row.get("observaciones") or "",
                 ]
             )

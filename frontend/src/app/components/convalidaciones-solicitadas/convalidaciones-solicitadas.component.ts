@@ -102,6 +102,11 @@ export class ConvalidacionesSolicitadasComponent implements OnInit {
             id: Number(mod.id),
             nombre: mod.nombre,
             source: mod.source_nombre,
+            ciclo_origen: mod.source_nombre ?? null,
+            origen_tipo: mod.origen_tipo ?? null,
+            modulos_origen: mod.modulos_origen ?? null,
+            modulos_origen_ids: mod.modulos_origen_ids ?? null,
+            nota_media_origen: mod.nota_media_origen ?? null,
             id_convalidacion: mod.id_convalidacion ?? null,
             id_convalidacion_ciclo: mod.id_convalidacion_ciclo ?? null,
         }));

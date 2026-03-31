@@ -55,18 +55,18 @@
         <!-- Opciones -->
         <div class="flex flex-col h-full">
             <!-- Header -->
-            <div class="flex items-center justify-between gap-3 py-1 px-1 mb-4 flex-shrink-0">
-                <div class="flex-1">
-                    <h2 class="text-sm font-bold text-gray-800 mb-0 flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-1 px-1 mb-4 flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-sm font-bold text-gray-800 mb-0 flex items-start sm:items-center gap-2">
                         <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
-                        <span>Opciones de convalidación{{ selectedCicloName ? ' en ' + selectedCicloName : ''
+                        <span class="break-words">Opciones de convalidación{{ selectedCicloName ? ' en ' + selectedCicloName : ''
                             }}</span>
                     </h2>
                     <p class="text-xs text-gray-500 mt-1">
                         A continuación se muestran las posibles convalidaciones teniendo en cuenta los cursos aportados.
                     </p>
                 </div>
-                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Automáticas</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold sm:text-right">Automáticas</span>
             </div>
 
             <!-- Main Card -->
@@ -130,11 +130,11 @@
 
                             <div class="flex-1 min-w-0">
                                 <h4
-                                    class="text-sm font-semibold text-gray-800 truncate group-hover:text-indigo-600 transition-colors">
+                                    class="text-sm font-semibold text-gray-800 break-words group-hover:text-indigo-600 transition-colors">
                                     {{ result.nombre }}
                                 </h4>
                                 <ng-container *ngIf="result.origen_tipo === 'ciclo_completo'; else origenPorModulos">
-                                    <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-1 italic">
+                                    <p class="text-[10px] text-gray-500 mt-0.5 italic break-words sm:line-clamp-1">
                                         Convalidado por: ciclo completo de {{ result.source_nombre }}
                                         <span *ngIf="result.nota_media_origen !== null && result.nota_media_origen !== undefined">
                                             (nota media: {{ result.nota_media_origen | number:'1.0-2' }})
@@ -154,7 +154,7 @@
                                         </p>
                                     </details>
                                     <ng-template #modulosOrigenSimple>
-                                        <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-1 italic">
+                                        <p class="text-[10px] text-gray-500 mt-0.5 italic break-words sm:line-clamp-1">
                                             Convalidado por: {{ getModulosOrigenConNota(modulosOrigen).join(', ') }}
                                         </p>
                                     </ng-template>

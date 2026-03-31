@@ -57,6 +57,7 @@ type AdminCicloSolicitudesGroup = {
     convalidadoPor?: string | null;
     convalidadoPorIds?: number[];
     nota_manual?: number | null;
+    nota_media_origen?: number | null;
     estadoModuloId: number | null;
     estadoModulo: string | null;
   }>;
@@ -698,6 +699,9 @@ type PendingConvalidacionOrigenDelete = {
                                             Nota del módulo convalidado: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
                                           </p>
                                         </ng-template>
+                                        <p *ngIf="getNotaConvalidadaRedondeada(solicitud.nota_media_origen) !== null" class="text-[11px] italic text-slate-500 mt-0.5">
+                                          Nota convalidada: {{ getNotaConvalidadaRedondeada(solicitud.nota_media_origen) }}
+                                        </p>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -748,12 +752,15 @@ type PendingConvalidacionOrigenDelete = {
                                               {{ getConvalidadoPorConNota(f, solicitud).join('\n') }}
                                             </p>
                                           </details>
-                                          <ng-template #convalidadoSimpleRechazadas>
-                                            <p class="text-[11px] italic text-slate-500 mt-0.5">
-                                              Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
-                                            </p>
-                                          </ng-template>
+                                        <ng-template #convalidadoSimpleRechazadas>
+                                          <p class="text-[11px] italic text-slate-500 mt-0.5">
+                                            Convalidado por: {{ getConvalidadoPorConNota(f, solicitud).join(', ') }}
+                                          </p>
+                                        </ng-template>
                                         </ng-container>
+                                        <p *ngIf="getNotaConvalidadaRedondeada(solicitud.nota_media_origen) !== null" class="text-[11px] italic text-slate-500 mt-0.5">
+                                          Nota convalidada: {{ getNotaConvalidadaRedondeada(solicitud.nota_media_origen) }}
+                                        </p>
                                       </div>
                                       <button
                                         *ngIf="f.estado_id === 0"
@@ -6128,6 +6135,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  getNotaConvalidadaRedondeada(nota: number | null | undefined): number | null {
+    if (nota === null || nota === undefined || !Number.isFinite(nota)) return null;
+    return Math.floor(nota + 0.5);
+  }
+
   private parseManualNotaInput(value: string): number | null | undefined {
     const normalized = String(value || '').trim().replace(',', '.');
     if (!normalized) return null;
@@ -6232,6 +6244,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         convalidadoPor: solicitud.convalidado_por ?? solicitud.convalidadoPor ?? null,
         convalidadoPorIds: this.parseConvalidadoPorIds(solicitud.convalidado_por_ids ?? solicitud.convalidadoPorIds ?? null),
         nota_manual: solicitud.nota_manual ?? null,
+        nota_media_origen: solicitud.nota_media_origen ?? null,
         estadoModuloId: solicitud.estado_modulo_id ?? null,
         estadoModulo: solicitud.estado_modulo ?? null,
       });
