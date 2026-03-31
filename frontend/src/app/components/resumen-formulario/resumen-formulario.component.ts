@@ -45,7 +45,9 @@ export class ResumenFormularioComponent implements OnInit {
         this.acreditaciones = this.convalidacionesService.getAcreditaciones();
         this.otrosCiclosModulosCursados = this.convalidacionesService.getOtrosCiclosModulos();
         this.personalData = this.convalidacionesService.getPersonalData();
-        this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
+        this.convalidacionesSolicitadas = this.deduplicarConvalidacionesSolicitadasPorMejorNota(
+            this.convalidacionesService.sharedSelectedConvalidations
+        );
     }
 
     get totalModulos(): number {
@@ -186,20 +188,30 @@ export class ResumenFormularioComponent implements OnInit {
         return this.convalidacionesService.documentosOtros;
     }
 
+    get duplicateDocumentNames(): string[] {
+        return this.convalidacionesService.getDuplicateDocumentNames();
+    }
+
     get documentosCompletos(): boolean {
-        return !!this.documentoDni && this.documentosCertificado.length > 0;
+        return !!this.documentoDni
+            && this.documentosCertificado.length > 0
+            && this.duplicateDocumentNames.length === 0;
     }
 
     enviar(): void {
         if (this.enviando) return;
 
         if (!this.documentosCompletos) {
-            this.error = 'Debes subir DNI y certificado académico antes de enviar.';
+            this.error = this.duplicateDocumentNames.length > 0
+                ? `Hay documentos con nombres duplicados: ${this.duplicateDocumentNames.join(', ')}. Cámbialos antes de enviar.`
+                : 'Debes subir DNI y certificado académico antes de enviar.';
             return;
         }
 
         // Releer selección final por si hubo cambios asíncronos tras entrar al resumen.
-        this.convalidacionesSolicitadas = [...this.convalidacionesService.sharedSelectedConvalidations];
+        this.convalidacionesSolicitadas = this.deduplicarConvalidacionesSolicitadasPorMejorNota(
+            this.convalidacionesService.sharedSelectedConvalidations
+        );
 
         this.enviando = true;
         this.error = null;
@@ -242,12 +254,14 @@ export class ResumenFormularioComponent implements OnInit {
                 id_convalidacion: item.id_convalidacion ?? null,
                 id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                 descripcion: null,
+                nota_media_origen: this.parseNotaFlexible(item.nota_media_origen),
             }));
             const solicitudesRegistradasManuales = this.convalidacionesService.otrosModulosCicloRegistrados.map(item => ({
                 id_modulo_destino: Number(item.id),
                 id_convalidacion: null,
                 id_convalidacion_ciclo: null,
                 descripcion: null,
+                nota_media_origen: null,
             }));
             const solicitudesRegistradasUnicas = this.deduplicarSolicitudesRegistradas([
                 ...solicitudesRegistradas,
@@ -309,9 +323,9 @@ export class ResumenFormularioComponent implements OnInit {
     }
 
     private deduplicarSolicitudesRegistradas(
-        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }>
+        items: Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null; nota_media_origen: number | null }>
     ): Array<{ id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }> {
-        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null }>();
+        const byModulo = new Map<number, { id_modulo_destino: number; id_convalidacion: number | null; id_convalidacion_ciclo: number | null; descripcion: null; nota_media_origen: number | null }>();
 
         for (const item of items) {
             const moduloId = Number(item.id_modulo_destino);
@@ -324,24 +338,59 @@ export class ResumenFormularioComponent implements OnInit {
                     id_convalidacion: item.id_convalidacion ?? null,
                     id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
+                    nota_media_origen: item.nota_media_origen ?? null,
                 });
                 continue;
             }
 
             const currentEsAutomatica = current.id_convalidacion !== null || current.id_convalidacion_ciclo !== null;
             const itemEsAutomatica = item.id_convalidacion !== null || item.id_convalidacion_ciclo !== null;
+            const currentNota = this.parseNotaFlexible(current.nota_media_origen);
+            const itemNota = this.parseNotaFlexible(item.nota_media_origen);
+            const itemTieneMejorNota = itemNota !== null && (currentNota === null || itemNota > currentNota);
+            const mismaNaturaleza = currentEsAutomatica === itemEsAutomatica;
 
-            // Priorizamos la solicitud automática sobre la manual/null.
-            if (!currentEsAutomatica && itemEsAutomatica) {
+            if ((!currentEsAutomatica && itemEsAutomatica) || (mismaNaturaleza && itemTieneMejorNota)) {
                 byModulo.set(moduloId, {
                     id_modulo_destino: moduloId,
                     id_convalidacion: item.id_convalidacion ?? null,
                     id_convalidacion_ciclo: item.id_convalidacion_ciclo ?? null,
                     descripcion: null,
+                    nota_media_origen: item.nota_media_origen ?? null,
                 });
             }
         }
 
-        return Array.from(byModulo.values());
+        return Array.from(byModulo.values()).map(({ nota_media_origen: _nota, ...item }) => item);
+    }
+
+    private deduplicarConvalidacionesSolicitadasPorMejorNota(items: SelectedConvalidation[]): SelectedConvalidation[] {
+        const byModulo = new Map<number, SelectedConvalidation>();
+
+        for (const item of items || []) {
+            const moduloId = Number(item.id);
+            if (!Number.isFinite(moduloId)) continue;
+
+            const current = byModulo.get(moduloId);
+            if (!current) {
+                byModulo.set(moduloId, item);
+                continue;
+            }
+
+            const currentEsAutomatica = current.id_convalidacion !== null || current.id_convalidacion_ciclo !== null;
+            const itemEsAutomatica = item.id_convalidacion !== null || item.id_convalidacion_ciclo !== null;
+            const currentNota = this.parseNotaFlexible(current.nota_media_origen);
+            const itemNota = this.parseNotaFlexible(item.nota_media_origen);
+            const itemTieneMejorNota = itemNota !== null && (currentNota === null || itemNota > currentNota);
+            const mismaNaturaleza = currentEsAutomatica === itemEsAutomatica;
+
+            if ((!currentEsAutomatica && itemEsAutomatica) || (mismaNaturaleza && itemTieneMejorNota)) {
+                byModulo.set(moduloId, item);
+            }
+        }
+
+        return Array.from(byModulo.values()).sort((a, b) =>
+            String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es')
+        );
     }
 }

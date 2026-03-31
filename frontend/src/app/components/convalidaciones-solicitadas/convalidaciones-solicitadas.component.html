@@ -140,6 +140,9 @@
                                             (nota media: {{ result.nota_media_origen | number:'1.0-2' }})
                                         </span>
                                     </p>
+                                    <p *ngIf="getNotaConvalidadaRedondeada(result.nota_media_origen) !== null" class="text-[10px] text-gray-500 mt-0.5 italic break-words">
+                                        Nota con la que se va a convalidar: {{ getNotaConvalidadaRedondeada(result.nota_media_origen) }}
+                                    </p>
                                 </ng-container>
                                 <ng-template #origenPorModulos>
                                 <ng-container *ngIf="result.modulos_origen as modulosOrigen">
@@ -150,14 +153,17 @@
                                             Convalidado por: Ciclo completo
                                         </summary>
                                         <p class="mt-1 whitespace-pre-line">
-                                            {{ getModulosOrigenConNota(modulosOrigen).join('\n') }}
+                                            {{ getModulosOrigenConNota(modulosOrigen, result.modulos_origen_ids).join('\n') }}
                                         </p>
                                     </details>
                                     <ng-template #modulosOrigenSimple>
                                         <p class="text-[10px] text-gray-500 mt-0.5 italic break-words sm:line-clamp-1">
-                                            Convalidado por: {{ getModulosOrigenConNota(modulosOrigen).join(', ') }}
+                                            Convalidado por: {{ getModulosOrigenConNota(modulosOrigen, result.modulos_origen_ids).join(', ') }}
                                         </p>
                                     </ng-template>
+                                    <p *ngIf="getNotaConvalidadaRedondeada(result.nota_media_origen) !== null" class="text-[10px] text-gray-500 mt-0.5 italic break-words">
+                                        Nota con la que se va a convalidar: {{ getNotaConvalidadaRedondeada(result.nota_media_origen) }}
+                                    </p>
                                 </ng-container>
                                 </ng-template>
                             </div>

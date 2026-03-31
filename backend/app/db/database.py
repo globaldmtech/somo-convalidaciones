@@ -187,35 +187,99 @@ class ConvalidationQueries:
     @staticmethod
     def get_convalidaciones_posibles(
         conn: sqlite3.Connection,
-        modulo_ids: Sequence[int],
+        modulos_aportados: Sequence[object],
         acreditacion_ids: Sequence[int],
         ciclos_completos: Sequence[object],
         target_ciclo_id: int,
     ) -> Sequence[dict]:
-        origen_ids = list(dict.fromkeys([*modulo_ids, *acreditacion_ids]))
-        ciclos_completos_normalizados: list[dict] = []
-        for item in ciclos_completos or []:
+        def _parse_int(value: object) -> int | None:
             try:
-                if isinstance(item, dict):
-                    id_ciclo = int(item.get("id_ciclo"))
-                    nota_media_raw = item.get("nota_media")
-                else:
-                    id_ciclo = int(getattr(item, "id_ciclo"))
-                    nota_media_raw = getattr(item, "nota_media", None)
+                return int(value)
             except Exception:
-                continue
-            ciclos_completos_normalizados.append(
-                {
-                    "id_ciclo": id_ciclo,
-                    "nota_media": float(nota_media_raw) if nota_media_raw is not None else None,
-                }
-            )
+                return None
 
-        resultados: list[dict] = []
+        def _parse_float(value: object) -> float | None:
+            try:
+                return float(value) if value is not None else None
+            except Exception:
+                return None
 
+        def _get_field(item: object, field_name: str) -> object:
+            if isinstance(item, dict):
+                return item.get(field_name)
+            return getattr(item, field_name, None)
+
+        def _normalizar_notas_por_modulo(items: Sequence[object]) -> dict[int, float]:
+            notas: dict[int, float] = {}
+            for item in items or []:
+                id_modulo = _parse_int(_get_field(item, "id_modulo"))
+                nota = _parse_float(_get_field(item, "nota"))
+                if id_modulo is None or nota is None:
+                    continue
+
+                current = notas.get(id_modulo)
+                if current is None or nota > current:
+                    notas[id_modulo] = nota
+            return notas
+
+        def _normalizar_notas_por_ciclo(items: Sequence[object]) -> dict[int, float | None]:
+            notas: dict[int, float | None] = {}
+            for item in items or []:
+                id_ciclo = _parse_int(_get_field(item, "id_ciclo"))
+                if id_ciclo is None:
+                    continue
+                notas[id_ciclo] = _parse_float(_get_field(item, "nota_media"))
+            return notas
+
+        def _parse_modulos_origen_ids(raw_ids: object) -> list[int]:
+            ids: list[int] = []
+            for token in str(raw_ids or "").split(","):
+                id_modulo = _parse_int(token.strip())
+                if id_modulo is not None:
+                    ids.append(id_modulo)
+            return ids
+
+        def _calcular_nota_media_regla_por_modulos(regla: dict, notas_modulo: dict[int, float]) -> float | None:
+            origen_modulo_ids = _parse_modulos_origen_ids(regla.get("modulos_origen_ids"))
+            if not origen_modulo_ids:
+                return None
+
+            notas = [notas_modulo.get(id_modulo) for id_modulo in origen_modulo_ids]
+            if any(nota is None for nota in notas):
+                return None
+
+            notas_validas = [float(nota) for nota in notas if nota is not None]
+            return sum(notas_validas) / len(notas_validas)
+
+        def _es_mejor_regla(candidate: dict, current: dict) -> bool:
+            current_score = _parse_float(current.get("nota_media_origen"))
+            candidate_score = _parse_float(candidate.get("nota_media_origen"))
+            current_score_value = current_score if current_score is not None else float("-inf")
+            candidate_score_value = candidate_score if candidate_score is not None else float("-inf")
+
+            if candidate_score_value != current_score_value:
+                return candidate_score_value > current_score_value
+
+            current_is_ciclo = current.get("id_convalidacion_ciclo") is not None
+            candidate_is_ciclo = candidate.get("id_convalidacion_ciclo") is not None
+            if candidate_is_ciclo != current_is_ciclo:
+                return candidate_is_ciclo
+
+            current_tie_break = _parse_int(current.get("tie_break_id")) or _parse_int(current.get("id")) or 0
+            candidate_tie_break = _parse_int(candidate.get("tie_break_id")) or _parse_int(candidate.get("id")) or 0
+            return candidate_tie_break < current_tie_break
+
+        # 1. Normalizar entrada del alumno.
+        notas_por_modulo = _normalizar_notas_por_modulo(modulos_aportados)
+        notas_media_por_ciclo = _normalizar_notas_por_ciclo(ciclos_completos)
+        origen_ids = list(dict.fromkeys([*notas_por_modulo.keys(), *acreditacion_ids]))
+
+        resultados_posibles: list[dict] = []
+
+        # 2. Reglas cuyo origen son módulos o acreditaciones externas.
         if origen_ids:
             placeholders = ",".join(["?"] * len(origen_ids))
-            query = f"""
+            query_modulos = f"""
                 SELECT
                     conv.id AS id_convalidacion,
                     NULL AS id_convalidacion_ciclo,
@@ -233,7 +297,7 @@ class ConvalidationQueries:
                     END AS source_nombre,
                     REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen,
                     GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids,
-                    NULL AS nota_media_origen
+                    conv.id AS tie_break_id
                 FROM convalidacion conv
                 JOIN modulos m ON conv.id_modulo_destino = m.id
                 JOIN ciclos c_target ON m.id_ciclo = c_target.id
@@ -250,17 +314,20 @@ class ConvalidationQueries:
                     WHERE co_all.conv_id = conv.id
                 )
             """
-            params = [
+            params_modulos = [
                 CICLO_ACREDITACIONES_EXTERNAS,
                 CICLO_ACREDITACIONES_EXTERNAS,
                 *origen_ids,
                 target_ciclo_id,
             ]
-            resultados.extend(dict(row) for row in conn.execute(query, params).fetchall())
+            for row in conn.execute(query_modulos, params_modulos).fetchall():
+                item = dict(row)
+                item["nota_media_origen"] = _calcular_nota_media_regla_por_modulos(item, notas_por_modulo)
+                resultados_posibles.append(item)
 
-        if ciclos_completos_normalizados:
-            ciclo_ids = [item["id_ciclo"] for item in ciclos_completos_normalizados]
-            nota_media_por_ciclo = {item["id_ciclo"]: item["nota_media"] for item in ciclos_completos_normalizados}
+        # 3. Reglas cuyo origen es un ciclo completo aportado por el alumno.
+        if notas_media_por_ciclo:
+            ciclo_ids = list(notas_media_por_ciclo.keys())
             placeholders_ciclos = ",".join(["?"] * len(ciclo_ids))
             query_ciclos = f"""
                 SELECT
@@ -273,7 +340,8 @@ class ConvalidationQueries:
                     c_source.nombre AS source_nombre,
                     NULL AS modulos_origen,
                     NULL AS modulos_origen_ids,
-                    cc.id_ciclo_origen
+                    cc.id_ciclo_origen,
+                    cc.conv_id_ciclo AS tie_break_id
                 FROM convalidacion_ciclo cc
                 JOIN modulos m ON cc.id_modulo_destino = m.id
                 JOIN ciclos c_target ON m.id_ciclo = c_target.id
@@ -282,15 +350,31 @@ class ConvalidationQueries:
                   AND m.id_ciclo = ?
                   AND COALESCE(m.deprecated, 0) = 0
             """
-            rows_ciclo = conn.execute(query_ciclos, [*ciclo_ids, target_ciclo_id]).fetchall()
-            for row in rows_ciclo:
+            params_ciclos = [*ciclo_ids, target_ciclo_id]
+            for row in conn.execute(query_ciclos, params_ciclos).fetchall():
                 item = dict(row)
-                item["nota_media_origen"] = nota_media_por_ciclo.get(int(item["id_ciclo_origen"]))
+                item["nota_media_origen"] = notas_media_por_ciclo.get(int(item["id_ciclo_origen"]))
                 item["observaciones"] = "Ciclo completo"
                 item.pop("id_ciclo_origen", None)
-                resultados.append(item)
+                resultados_posibles.append(item)
 
-        return resultados
+        # 4. De todas las reglas posibles para un mismo módulo destino, nos quedamos con la mejor nota.
+        best_by_modulo: dict[int, dict] = {}
+        for item in resultados_posibles:
+            modulo_id = _parse_int(item.get("id"))
+            if modulo_id is None:
+                continue
+
+            current = best_by_modulo.get(modulo_id)
+            if current is None or _es_mejor_regla(item, current):
+                best_by_modulo[modulo_id] = item
+
+        final_results: list[dict] = []
+        for item in best_by_modulo.values():
+            item.pop("tie_break_id", None)
+            final_results.append(item)
+
+        return sorted(final_results, key=lambda item: str(item.get("nombre") or "").lower())
 
 
 class UserQueries:

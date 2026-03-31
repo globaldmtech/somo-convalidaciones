@@ -13,7 +13,7 @@ class CicloAportadoDetalleItem(BaseModel):
 
 
 class ConvalidationRequest(BaseModel):
-    modulo_ids: List[int]
+    modulos_aportados: List[ModuloAportadoDetalleItem] = []
     acreditacion_ids: List[int]
     ciclos_completos: List[CicloAportadoDetalleItem] = []
     target_ciclo_id: int

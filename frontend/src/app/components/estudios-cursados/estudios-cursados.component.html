@@ -168,13 +168,13 @@
                                         *ngIf="isDraftModuloSelected(i, mod.id) && showDraftModuloError(i, mod)"
                                         type="button"
                                         (click)="$event.stopPropagation()"
-                                        class="group absolute left-0 top-1/2 z-10 -translate-x-6 -translate-y-1/2 text-amber-600"
+                                        class="group absolute left-0 top-1/2 z-[70] -translate-x-6 -translate-y-1/2 text-amber-600 hover:z-[120] focus-visible:z-[120]"
                                         [attr.aria-label]="getModuloErrorMessage(mod)"
                                     >
                                         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
                                         </svg>
-                                        <span class="pointer-events-none absolute left-1 top-full z-20 mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                                        <span class="pointer-events-none absolute left-1 top-full z-[130] mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                                             {{ getModuloErrorMessage(mod) }}
                                         </span>
                                     </button>
@@ -230,13 +230,13 @@
                                         *ngIf="isDraftModuloSelected(i, mod.id) && showDraftModuloError(i, mod)"
                                         type="button"
                                         (click)="$event.stopPropagation()"
-                                        class="group absolute left-0 top-1/2 z-10 -translate-x-6 -translate-y-1/2 text-amber-600"
+                                        class="group absolute left-0 top-1/2 z-[70] -translate-x-6 -translate-y-1/2 text-amber-600 hover:z-[120] focus-visible:z-[120]"
                                         [attr.aria-label]="getModuloErrorMessage(mod)"
                                     >
                                         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
                                         </svg>
-                                        <span class="pointer-events-none absolute left-1 top-full z-20 mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                                        <span class="pointer-events-none absolute left-1 top-full z-[130] mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                                             {{ getModuloErrorMessage(mod) }}
                                         </span>
                                     </button>
@@ -484,13 +484,13 @@
                                     <button
                                         *ngIf="showSelectedModuloError(modulo)"
                                         type="button"
-                                        class="group absolute left-0 top-1/2 z-10 -translate-x-6 -translate-y-1/2 text-amber-600"
+                                        class="group absolute left-0 top-1/2 z-[70] -translate-x-6 -translate-y-1/2 text-amber-600 hover:z-[120] focus-visible:z-[120]"
                                         [attr.aria-label]="getModuloErrorMessage(modulo)"
                                     >
                                         <svg class="h-4 w-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.66 18h16.68a1 1 0 00.87-1.49l-7.5-13a1 1 0 00-1.74 0z"></path>
                                         </svg>
-                                        <span class="pointer-events-none absolute left-1 top-full z-20 mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                                        <span class="pointer-events-none absolute left-1 top-full z-[130] mt-2 w-44 rounded-md bg-slate-900 px-2.5 py-2 text-left text-[11px] font-medium leading-snug text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                                             {{ getModuloErrorMessage(modulo) }}
                                         </span>
                                     </button>

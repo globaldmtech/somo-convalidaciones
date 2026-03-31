@@ -390,7 +390,7 @@ export class ConvalidacionesService {
     }
 
     calcularConvalidaciones(targetCicloId?: number): Observable<any[]> {
-        const modulo_ids = this.getApprovedModuloIds();
+        const modulos_aportados = this.getApprovedModuloDetails();
         const acreditacion_ids = this.acreditacionesSubject.value
             .filter(a => a.tipo !== 'otros')
             .map(a => a.id);
@@ -401,12 +401,12 @@ export class ConvalidacionesService {
                 nota_media: Number(estudio.notaMediaCiclo),
             }));
 
-        if (modulo_ids.length === 0 && acreditacion_ids.length === 0 && ciclos_completos.length === 0) {
+        if (modulos_aportados.length === 0 && acreditacion_ids.length === 0 && ciclos_completos.length === 0) {
             return of([]);
         }
 
         return this.http.post<any[]>(`${API_BASE}/calcular`, {
-            modulo_ids: [...new Set(modulo_ids)],
+            modulos_aportados,
             acreditacion_ids: [...new Set(acreditacion_ids)],
             ciclos_completos,
             target_ciclo_id: targetCicloId || null
@@ -418,17 +418,28 @@ export class ConvalidacionesService {
         );
     }
 
-    private getApprovedModuloIds(): number[] {
-        const approvedIds: number[] = [];
+    private getApprovedModuloDetails(): Array<{ id_modulo: number; nota: number }> {
+        const bestByModulo = new Map<number, number>();
         for (const estudio of this.estudiosSubject.value) {
             for (const modulo of estudio.modulos || []) {
-                if (!this.isModuloApproved(estudio, Number(modulo.id), modulo.numerico !== 0)) {
+                const moduloId = Number(modulo.id);
+                if (!Number.isFinite(moduloId)) {
                     continue;
                 }
-                approvedIds.push(Number(modulo.id));
+                if (!this.isModuloApproved(estudio, moduloId, modulo.numerico !== 0)) {
+                    continue;
+                }
+                const nota = estudio.notasPorModulo?.[moduloId];
+                if (typeof nota !== 'number' || !Number.isFinite(nota)) {
+                    continue;
+                }
+                const current = bestByModulo.get(moduloId);
+                if (current === undefined || nota > current) {
+                    bestByModulo.set(moduloId, nota);
+                }
             }
         }
-        return [...new Set(approvedIds)];
+        return Array.from(bestByModulo.entries()).map(([id_modulo, nota]) => ({ id_modulo, nota }));
     }
 
     private isModuloApproved(estudio: EstudioEntry, moduloId: number, isNumerico: boolean): boolean {
@@ -483,6 +494,64 @@ export class ConvalidacionesService {
             displayName: file.name,
         }));
         this.documentosOtros = [...this.documentosOtros, ...nuevos];
+    }
+
+    hasDuplicateDocumentNames(): boolean {
+        return this.getDuplicateDocumentNames().length > 0;
+    }
+
+    getDuplicateDocumentNames(): string[] {
+        return this.getDuplicateDocumentNamesForDocuments(this.getAllUploadedDocuments());
+    }
+
+    getDuplicateDocumentNamesForDocuments(documents: UploadedDocument[]): string[] {
+        const duplicates = new Map<string, string>();
+        const seen = new Map<string, string>();
+
+        for (const document of documents) {
+            const storageKey = this.buildDocumentStorageKey(document);
+            if (!storageKey) {
+                continue;
+            }
+
+            const currentName = document.displayName.trim() || document.file.name;
+            const existingName = seen.get(storageKey);
+            if (existingName) {
+                duplicates.set(storageKey, existingName || currentName);
+                continue;
+            }
+            seen.set(storageKey, currentName);
+        }
+
+        return Array.from(duplicates.values());
+    }
+
+    private getAllUploadedDocuments(): UploadedDocument[] {
+        return [
+            ...(this.documentoDni ? [this.documentoDni] : []),
+            ...this.documentosCertificado,
+            ...this.documentosOtros,
+        ];
+    }
+
+    private buildDocumentStorageKey(document: UploadedDocument): string {
+        const extension = this.getFileExtension(document.file.name);
+        const safeDescription = this.sanitizeDocumentName(document.displayName.trim() || document.file.name);
+        return `${safeDescription}${extension}`;
+    }
+
+    private getFileExtension(fileName: string): string {
+        const lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex <= 0) {
+            return '';
+        }
+        return fileName.slice(lastDotIndex);
+    }
+
+    private sanitizeDocumentName(value: string): string {
+        const normalized = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+        const sanitized = normalized.replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^[._-]+|[._-]+$/g, '');
+        return sanitized || 'documento';
     }
 
     enviarFormularioCompleto(payload: unknown): Observable<unknown> {

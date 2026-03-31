@@ -55,6 +55,7 @@ async def _persist_uploaded_files(
     documentos_otros_nombres: list[str],
 ) -> list[dict]:
     FORM_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    used_storage_names: set[str] = set()
 
     def build_target_path(file_name: str) -> Path:
         target = (FORM_UPLOAD_DIR / file_name).resolve()
@@ -69,9 +70,18 @@ async def _persist_uploaded_files(
         descripcion: str,
     ) -> None:
         storage_name = _build_storage_name(dni, id_formulario, descripcion, upload.filename or "")
+        if storage_name in used_storage_names:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Ya existe un documento con el nombre '{descripcion}'. "
+                    "Cámbialo antes de enviar el formulario."
+                ),
+            )
         target_path = build_target_path(storage_name)
         content = await upload.read()
         target_path.write_bytes(content)
+        used_storage_names.add(storage_name)
         saved_files.append(
             {
                 "nombre_archivo": storage_name,
@@ -146,7 +156,7 @@ async def calcular_convalidaciones(
     try:
         return database.ConvalidationQueries.get_convalidaciones_posibles(
             db, 
-            request.modulo_ids, 
+            request.modulos_aportados,
             request.acreditacion_ids,
             request.ciclos_completos,
             request.target_ciclo_id
