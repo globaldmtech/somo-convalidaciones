@@ -265,9 +265,7 @@ class ConvalidationQueries:
             if candidate_is_ciclo != current_is_ciclo:
                 return candidate_is_ciclo
 
-            current_tie_break = _parse_int(current.get("tie_break_id")) or _parse_int(current.get("id")) or 0
-            candidate_tie_break = _parse_int(candidate.get("tie_break_id")) or _parse_int(candidate.get("id")) or 0
-            return candidate_tie_break < current_tie_break
+            return False
 
         # 1. Normalizar entrada del alumno.
         notas_por_modulo = _normalizar_notas_por_modulo(modulos_aportados)
@@ -296,8 +294,7 @@ class ConvalidationQueries:
                         ELSE 'Origen mixto'
                     END AS source_nombre,
                     REPLACE(GROUP_CONCAT(DISTINCT m_source.nombre), ',', ', ') AS modulos_origen,
-                    GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids,
-                    conv.id AS tie_break_id
+                    GROUP_CONCAT(DISTINCT co.id_modulo) AS modulos_origen_ids
                 FROM convalidacion conv
                 JOIN modulos m ON conv.id_modulo_destino = m.id
                 JOIN ciclos c_target ON m.id_ciclo = c_target.id
@@ -340,8 +337,7 @@ class ConvalidationQueries:
                     c_source.nombre AS source_nombre,
                     NULL AS modulos_origen,
                     NULL AS modulos_origen_ids,
-                    cc.id_ciclo_origen,
-                    cc.conv_id_ciclo AS tie_break_id
+                    cc.id_ciclo_origen
                 FROM convalidacion_ciclo cc
                 JOIN modulos m ON cc.id_modulo_destino = m.id
                 JOIN ciclos c_target ON m.id_ciclo = c_target.id
@@ -371,7 +367,6 @@ class ConvalidationQueries:
 
         final_results: list[dict] = []
         for item in best_by_modulo.values():
-            item.pop("tie_break_id", None)
             final_results.append(item)
 
         return sorted(final_results, key=lambda item: str(item.get("nombre") or "").lower())
