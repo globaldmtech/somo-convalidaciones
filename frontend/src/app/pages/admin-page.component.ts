@@ -157,7 +157,7 @@ type PendingConvalidacionOrigenDelete = {
   template: `
     <div class="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div #headerInner class="max-w-6xl mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
+        <div #headerInner class="max-w-[1600px] mx-auto px-4 sm:px-6 min-h-16 py-2 flex items-center justify-between gap-4 relative">
           <div #headerBrand class="flex items-center min-w-0">
             <div class="font-black text-lg tracking-tight uppercase shrink-0">SOMO <span class="text-indigo-600">CONVALIDACIONES</span></div>
           </div>
@@ -270,7 +270,7 @@ type PendingConvalidacionOrigenDelete = {
         </div>
       </header>
 
-      <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <main class="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
         <section *ngIf="!isAuthenticated" class="max-w-md mx-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 class="text-2xl font-black text-slate-900">Acceso Admin</h1>
           <p class="text-sm text-slate-500 mt-1">Inicia sesión para visualizar y gestionar formularios.</p>
@@ -438,7 +438,7 @@ type PendingConvalidacionOrigenDelete = {
             </div>
 
             <div *ngIf="!loading && alumnosMostrados.length > 0" class="space-y-4">
-              <article *ngFor="let alumno of alumnosMostrados" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+              <article *ngFor="let alumno of alumnosMostrados; trackBy: trackByAlumno" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <button
                   type="button"
                   class="w-full px-5 py-4 text-left hover:bg-slate-50 transition-colors"
@@ -472,7 +472,7 @@ type PendingConvalidacionOrigenDelete = {
                 </button>
 
                 <div *ngIf="isAlumnoOpen(alumno.key)" class="border-t border-slate-100 bg-slate-50/60 px-4 py-4 space-y-4">
-                  <section *ngFor="let f of alumno.formularios" class="rounded-xl border border-slate-200 bg-white p-4">
+                  <section *ngFor="let f of alumno.formularios; trackBy: trackByFormulario" class="rounded-xl border border-slate-200 bg-white p-4">
                     <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                       <div>
                         <h3 class="text-sm font-bold text-slate-900">Formulario #{{ f.id }}</h3>
@@ -526,50 +526,134 @@ type PendingConvalidacionOrigenDelete = {
                     <p *ngIf="isFormularioUpdating(f.id)" class="mb-2 text-[11px] text-slate-500 text-right">Guardando estado del formulario...</p>
 
                     <div class="space-y-4">
-                      <div class="p-1">
-                        <div class="mb-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
-                          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">MÓDULOS APORTADOS</p>
-                        </div>
-                        <div class="space-y-2" *ngIf="getModulosPorCiclo(f).length > 0; else sinModulos">
-                          <div *ngFor="let ciclo of getModulosPorCiclo(f)" class="rounded-md border border-slate-200 bg-white p-3">
-                            <button
-                              type="button"
-                              class="w-full text-left flex items-center justify-between gap-2"
-                              (click)="toggleCiclo(f.id, ciclo.key)"
-                            >
-                              <p class="text-sm font-semibold text-slate-700">{{ ciclo.cicloNombre }}</p>
-                              <div class="flex items-center gap-2">
-                                <span *ngIf="getNotaMediaCiclo(ciclo) !== null" class="text-xs font-semibold text-indigo-700">
-                                  Nota media ciclo: {{ getNotaMediaCiclo(ciclo) | number:'1.0-2' }}
-                                </span>
-                                <span class="text-xs text-slate-500">{{ ciclo.modulos.length }} módulos</span>
-                                <svg
-                                  class="w-4 h-4 text-slate-500 transition-transform"
-                                  [class.rotate-180]="isCicloOpen(f.id, ciclo.key)"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                              </div>
-                            </button>
-                            <ul *ngIf="isCicloOpen(f.id, ciclo.key)" class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-x-4">
-                              <li
-                                *ngFor="let modulo of ciclo.modulos"
-                                class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
+                      <div class="grid grid-cols-1 xl:grid-cols-[minmax(320px,0.95fr)_minmax(520px,1.55fr)] gap-4 p-1">
+                        <div class="flex flex-col">
+                          <div class="mb-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
+                            <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">MÓDULOS APORTADOS</p>
+                          </div>
+                          <div class="space-y-2 xl:h-[616px]" *ngIf="getModulosPorCiclo(f).length > 0; else sinModulos">
+                            <div *ngFor="let ciclo of getModulosPorCiclo(f)" class="rounded-md border border-slate-200 bg-white p-3 xl:h-full flex flex-col">
+                              <button
+                                type="button"
+                                class="w-full text-left flex items-center justify-between gap-2"
+                                (click)="toggleCiclo(f.id, ciclo.key)"
                               >
-                                <span>{{ modulo.nombre }}</span>
-                                <span *ngIf="getEtiquetaNotaModuloAdmin(modulo) as etiqueta" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
-                                  {{ etiqueta }}
-                                </span>
-                              </li>
-                            </ul>
+                                <p class="text-sm font-semibold text-slate-700">{{ ciclo.cicloNombre }}</p>
+                                <div class="flex items-center gap-2">
+                                  <span *ngIf="getNotaMediaCiclo(ciclo) !== null" class="text-xs font-semibold text-indigo-700">
+                                    Nota media ciclo: {{ getNotaMediaCiclo(ciclo) | number:'1.0-2' }}
+                                  </span>
+                                  <span class="text-xs text-slate-500">{{ ciclo.modulos.length }} módulos</span>
+                                  <svg
+                                    class="w-4 h-4 text-slate-500 transition-transform"
+                                    [class.rotate-180]="isCicloOpen(f.id, ciclo.key)"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                  </svg>
+                                </div>
+                              </button>
+                              <ul *ngIf="isCicloOpen(f.id, ciclo.key)" class="mt-3 xl:flex-1 overflow-y-auto pr-1 max-h-[560px] xl:max-h-none">
+                                <li
+                                  *ngFor="let modulo of ciclo.modulos"
+                                  class="text-sm text-slate-700 py-1.5 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2"
+                                >
+                                  <span>{{ modulo.nombre }}</span>
+                                  <span *ngIf="getEtiquetaNotaModuloAdmin(modulo) as etiqueta" class="text-xs font-semibold text-indigo-700 whitespace-nowrap">
+                                    {{ etiqueta }}
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                          <ng-template #sinModulos>
+                            <p class="text-sm text-slate-500">Sin módulos aportados.</p>
+                          </ng-template>
+                        </div>
+
+                        <div>
+                          <div class="mb-2 flex items-center justify-between gap-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
+                            <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">DOCUMENTOS APORTADOS</p>
+                            <span class="text-xs text-slate-500 font-semibold">
+                              {{ (f.documentos_aportados || []).length }} documentos
+                            </span>
+                          </div>
+                          <div class="rounded-md border border-slate-200 bg-white overflow-hidden">
+                            <div *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="flex flex-col">
+                              <div class="border-b border-slate-200 bg-slate-50 p-2">
+                                <div class="flex items-start gap-2">
+                                  <div class="min-w-0 flex-1">
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                      <button
+                                        *ngFor="let documento of f.documentos_aportados; let i = index"
+                                        type="button"
+                                        class="inline-flex items-center rounded-md border px-2.5 py-1.5 text-sm transition-colors"
+                                        [ngClass]="isDocumentoPreviewSelected(f.id, documento.ruta_almacenamiento)
+                                          ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                                          : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-100'"
+                                        (click)="seleccionarDocumentoPreview(f.id, documento.ruta_almacenamiento)"
+                                      >
+                                        <span class="block">
+                                          {{ getDocumentoDisplayName(documento, i) }}
+                                        </span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                  <div class="shrink-0 flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      class="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                      [disabled]="!getDocumentoPreviewSeleccionado(f)"
+                                      (click)="abrirDocumentoPreviewSeleccionado(f)"
+                                      title="Abrir documento seleccionado"
+                                      aria-label="Abrir documento seleccionado"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7m0 0v7m0-7L10 14"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5h6M5 5v14h14v-6"></path>
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      class="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                      [disabled]="!getDocumentoPreviewSeleccionado(f)"
+                                      (click)="descargarDocumentoPreviewSeleccionado(f)"
+                                      title="Descargar documento seleccionado"
+                                      aria-label="Descargar documento seleccionado"
+                                    >
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path>
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="relative h-[560px] bg-slate-50">
+                                <iframe
+                                  [attr.id]="getDocumentoPreviewFrameId(f.id)"
+                                  class="w-full h-full bg-white"
+                                  [class.hidden]="!hasDocumentoPreviewUrl(f.id)"
+                                  title="Vista previa del documento aportado"
+                                ></iframe>
+                                <div *ngIf="isDocumentoPreviewLoading(f.id)" class="absolute inset-0 flex items-center justify-center text-sm text-slate-500 bg-slate-50/90">
+                                  Cargando documento...
+                                </div>
+                                <div *ngIf="!isDocumentoPreviewLoading(f.id) && getDocumentoPreviewError(f.id) as previewError" class="absolute inset-0 flex items-center justify-center px-4 text-sm text-rose-600 text-center bg-slate-50/90">
+                                  {{ previewError }}
+                                </div>
+                                <div *ngIf="!isDocumentoPreviewLoading(f.id) && !getDocumentoPreviewError(f.id) && !hasDocumentoPreviewUrl(f.id)" class="absolute inset-0 flex items-center justify-center px-4 text-sm text-slate-500 text-center">
+                                  Selecciona un documento para visualizarlo.
+                                </div>
+                              </div>
+                            </div>
+                            <ng-template #sinDocumentosAportados>
+                              <div class="p-4 text-sm text-slate-500">Sin documentos aportados.</div>
+                            </ng-template>
                           </div>
                         </div>
-                        <ng-template #sinModulos>
-                          <p class="text-sm text-slate-500">Sin módulos aportados.</p>
-                        </ng-template>
                       </div>
 
                       <div class="p-1">
@@ -788,44 +872,6 @@ type PendingConvalidacionOrigenDelete = {
                         </ng-template>
                       </div>
 
-                      <div class="p-1">
-                        <div class="mb-2 flex items-center justify-between gap-2 bg-slate-100 border-l-4 border-indigo-600 px-3 py-2">
-                          <p class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">DOCUMENTOS APORTADOS</p>
-                          <span class="text-xs text-slate-500 font-semibold">
-                            {{ (f.documentos_aportados || []).length }} documentos
-                          </span>
-                        </div>
-                        <ul *ngIf="(f.documentos_aportados || []).length > 0; else sinDocumentosAportados" class="space-y-1">
-                          <li
-                            *ngFor="let documento of f.documentos_aportados"
-                            class="py-1 flex items-start justify-between gap-3"
-                          >
-                            <div class="min-w-0">
-                              <button
-                                type="button"
-                                class="text-left text-sm font-semibold text-slate-800 hover:text-indigo-700 hover:underline break-all transition-colors"
-                                (click)="abrirDocumentoAportado(documento.ruta_almacenamiento)"
-                              >
-                                {{ documento.descripcion || documento.nombre_archivo }}
-                              </button>
-                            </div>
-                            <button
-                              type="button"
-                              class="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-md text-slate-500 hover:text-indigo-700 hover:bg-slate-100 transition-colors"
-                              (click)="descargarDocumentoAportado(documento.ruta_almacenamiento, documento.descripcion || documento.nombre_archivo); $event.stopPropagation()"
-                              title="Descargar documento"
-                              aria-label="Descargar documento"
-                            >
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"></path>
-                              </svg>
-                            </button>
-                          </li>
-                        </ul>
-                        <ng-template #sinDocumentosAportados>
-                          <p class="text-sm text-slate-500">Sin documentos aportados.</p>
-                        </ng-template>
-                      </div>
                       <div class="flex flex-wrap justify-end gap-2 pt-1">
                         <button
                           *ngIf="canFormularioDelete(f.estado_id)"
@@ -3214,6 +3260,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   loadingConvalidacionesGrados = false;
   loadingConvalidacionesCiclos = false;
   loadedConvalidacionesGrados = false;
+  documentoPreviewObjectUrls = new Map<number, string>();
+  documentoPreviewSelectedPaths = new Map<number, string>();
+  documentoPreviewLoading = new Set<number>();
+  documentoPreviewErrors = new Map<number, string>();
 
   constructor(
     private convalidacionesService: ConvalidacionesService,
@@ -3265,6 +3315,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
     }
+    this.clearDocumentoPreviews();
   }
 
   @HostListener('window:resize')
@@ -3999,7 +4050,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.convalidacionesService.getFormulariosAdmin(estadoId).subscribe({
       next: (rows) => {
-        this.formularios = Array.isArray(rows)
+        const nextFormularios = Array.isArray(rows)
           ? rows.map((row) => ({
               ...row,
               solicitudes: Array.isArray(row?.solicitudes) ? row.solicitudes : [],
@@ -4007,6 +4058,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
               documentos_aportados: Array.isArray(row?.documentos_aportados) ? row.documentos_aportados : [],
             }))
           : [];
+        this.reconcileDocumentoPreviews(nextFormularios);
+        this.formularios = nextFormularios;
         this.syncCursoAcademicoFiltro();
         this.alumnos = this.groupByAlumno(this.formularios);
         if (!this.loadedModulos && !this.loadingModulos) {
@@ -4014,6 +4067,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.loading = false;
         this.cdr.detectChanges();
+        queueMicrotask(() => this.restoreAllDocumentoPreviewFrames());
       },
       error: (err) => {
         if (this.handleAdminUnauthorized(err)) return;
@@ -4119,6 +4173,14 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get alumnosMostrados(): AdminAlumnoGroup[] {
     return this.groupByAlumno(this.formulariosMostrados);
+  }
+
+  trackByAlumno(_index: number, alumno: AdminAlumnoGroup): string {
+    return alumno.key;
+  }
+
+  trackByFormulario(_index: number, formulario: AdminFormulario): number {
+    return formulario.id;
   }
 
   get formulariosValidadosExportables(): AdminFormulario[] {
@@ -4269,6 +4331,161 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  seleccionarDocumentoPreview(formularioId: number, path: string): void {
+    if (!path || this.documentoPreviewLoading.has(formularioId)) return;
+    if (
+      this.documentoPreviewSelectedPaths.get(formularioId) === path
+      && this.documentoPreviewObjectUrls.has(formularioId)
+    ) {
+      return;
+    }
+
+    this.documentoPreviewSelectedPaths.set(formularioId, path);
+    this.documentoPreviewErrors.delete(formularioId);
+    this.documentoPreviewLoading.add(formularioId);
+
+    this.convalidacionesService.abrirDocumentoAdmin(path).subscribe({
+      next: (blob: Blob) => {
+        const previousUrl = this.documentoPreviewObjectUrls.get(formularioId);
+        if (previousUrl) {
+          URL.revokeObjectURL(previousUrl);
+        }
+
+        const objectUrl = URL.createObjectURL(blob);
+        this.documentoPreviewObjectUrls.set(formularioId, objectUrl);
+        this.documentoPreviewLoading.delete(formularioId);
+        this.cdr.detectChanges();
+        queueMicrotask(() => this.setDocumentoPreviewFrameSrc(formularioId, objectUrl));
+      },
+      error: (err: any) => {
+        if (this.handleAdminUnauthorized(err)) return;
+        const status = err?.status ? ` (HTTP ${err.status})` : '';
+        this.documentoPreviewErrors.set(formularioId, `No se pudo cargar el documento${status}.`);
+        this.documentoPreviewLoading.delete(formularioId);
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  hasDocumentoPreviewUrl(formularioId: number): boolean {
+    return this.documentoPreviewObjectUrls.has(formularioId);
+  }
+
+  isDocumentoPreviewLoading(formularioId: number): boolean {
+    return this.documentoPreviewLoading.has(formularioId);
+  }
+
+  getDocumentoPreviewError(formularioId: number): string | null {
+    return this.documentoPreviewErrors.get(formularioId) ?? null;
+  }
+
+  isDocumentoPreviewSelected(formularioId: number, path: string): boolean {
+    return this.documentoPreviewSelectedPaths.get(formularioId) === path;
+  }
+
+  getDocumentoDisplayName(
+    documento: { descripcion?: string | null; nombre_archivo?: string | null; ruta_almacenamiento?: string | null },
+    index?: number
+  ): string {
+    const descripcion = String(documento.descripcion || '').trim();
+    if (descripcion) return descripcion;
+    const nombreArchivo = String(documento.nombre_archivo || '').trim();
+    if (nombreArchivo) return nombreArchivo;
+
+    const ruta = String(documento.ruta_almacenamiento || '').trim();
+    const rutaNormalizada = ruta.replace(/\\/g, '/');
+    const nombreDesdeRuta = rutaNormalizada.split('/').pop()?.trim() || '';
+    if (nombreDesdeRuta) return nombreDesdeRuta;
+
+    if (typeof index === 'number') {
+      return `Documento ${index + 1}`;
+    }
+    return 'Documento';
+  }
+
+  getDocumentoPreviewSeleccionado(
+    formulario: AdminFormulario
+  ): { ruta_almacenamiento: string; descripcion?: string | null; nombre_archivo: string } | null {
+    const selectedPath = this.documentoPreviewSelectedPaths.get(formulario.id);
+    if (!selectedPath) return null;
+    return (formulario.documentos_aportados || []).find((documento) => documento.ruta_almacenamiento === selectedPath) ?? null;
+  }
+
+  abrirDocumentoPreviewSeleccionado(formulario: AdminFormulario): void {
+    const documento = this.getDocumentoPreviewSeleccionado(formulario);
+    if (!documento) return;
+    this.abrirDocumentoAportado(documento.ruta_almacenamiento);
+  }
+
+  descargarDocumentoPreviewSeleccionado(formulario: AdminFormulario): void {
+    const documento = this.getDocumentoPreviewSeleccionado(formulario);
+    if (!documento) return;
+    this.descargarDocumentoAportado(
+      documento.ruta_almacenamiento,
+      documento.descripcion || documento.nombre_archivo
+    );
+  }
+
+  private clearDocumentoPreviews(): void {
+    this.documentoPreviewObjectUrls.forEach((_, formularioId) => this.setDocumentoPreviewFrameSrc(formularioId, 'about:blank'));
+    this.documentoPreviewObjectUrls.forEach((url) => URL.revokeObjectURL(url));
+    this.documentoPreviewObjectUrls.clear();
+    this.documentoPreviewSelectedPaths.clear();
+    this.documentoPreviewLoading.clear();
+    this.documentoPreviewErrors.clear();
+  }
+
+  getDocumentoPreviewFrameId(formularioId: number): string {
+    return `documento-preview-${formularioId}`;
+  }
+
+  private setDocumentoPreviewFrameSrc(formularioId: number, src: string): void {
+    const iframe = document.getElementById(this.getDocumentoPreviewFrameId(formularioId)) as HTMLIFrameElement | null;
+    if (!iframe) return;
+    if (iframe.src === src) return;
+    iframe.src = src;
+  }
+
+  private restoreDocumentoPreviewFrame(formularioId: number): void {
+    const objectUrl = this.documentoPreviewObjectUrls.get(formularioId);
+    if (!objectUrl) return;
+    this.setDocumentoPreviewFrameSrc(formularioId, objectUrl);
+  }
+
+  private restoreAllDocumentoPreviewFrames(): void {
+    this.documentoPreviewObjectUrls.forEach((_, formularioId) => {
+      this.restoreDocumentoPreviewFrame(formularioId);
+    });
+  }
+
+  private reconcileDocumentoPreviews(formularios: AdminFormulario[]): void {
+    const formulariosMap = new Map<number, AdminFormulario>();
+    for (const formulario of formularios) {
+      formulariosMap.set(formulario.id, formulario);
+    }
+
+    const previewIds = Array.from(this.documentoPreviewObjectUrls.keys());
+    for (const formularioId of previewIds) {
+      const formulario = formulariosMap.get(formularioId);
+      const selectedPath = this.documentoPreviewSelectedPaths.get(formularioId);
+      const shouldKeep = !!formulario
+        && !!selectedPath
+        && (formulario.documentos_aportados || []).some((documento) => documento.ruta_almacenamiento === selectedPath);
+
+      if (shouldKeep) continue;
+
+      this.setDocumentoPreviewFrameSrc(formularioId, 'about:blank');
+      const objectUrl = this.documentoPreviewObjectUrls.get(formularioId);
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+      this.documentoPreviewObjectUrls.delete(formularioId);
+      this.documentoPreviewSelectedPaths.delete(formularioId);
+      this.documentoPreviewLoading.delete(formularioId);
+      this.documentoPreviewErrors.delete(formularioId);
+    }
   }
 
   descargarDocumentoAportado(path: string, fileName: string): void {
@@ -6041,9 +6258,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     const key = `${formularioId}::${cicloKey}`;
     if (this.openCiclos.has(key)) {
       this.openCiclos.delete(key);
-      return;
+    } else {
+      this.openCiclos.add(key);
     }
-    this.openCiclos.add(key);
+    this.cdr.detectChanges();
+    queueMicrotask(() => this.restoreDocumentoPreviewFrame(formularioId));
   }
 
   isCicloOpen(formularioId: number, cicloKey: string): boolean {
