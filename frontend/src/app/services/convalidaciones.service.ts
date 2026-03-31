@@ -5,11 +5,67 @@ import { catchError } from 'rxjs/operators';
 import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursados/estudios-cursados.component';
 import { ADMIN_API_BASE, API_BASE } from '../config/api-paths';
 
+export type PersonalDocumentType = 'dni' | 'nie' | 'otro';
+
 export interface PersonalData {
+    documentType: PersonalDocumentType;
     nombre: string;
     apellidos: string;
     dni: string;
     email: string;
+}
+
+const DNI_LETTERS = 'TRWAGMYFPDXBNJZSQVHLCKE';
+
+export function normalizePersonalDocumentNumber(type: PersonalDocumentType, value: string): string {
+    const upperValue = String(value || '').trim().toUpperCase();
+
+    if (type === 'dni' || type === 'nie') {
+        return upperValue.replace(/[\s-]+/g, '');
+    }
+
+    return upperValue.replace(/\s+/g, ' ');
+}
+
+function isValidDniLetter(number: number, letter: string): boolean {
+    return DNI_LETTERS[number % 23] === letter;
+}
+
+export function isValidPersonalDocumentNumber(type: PersonalDocumentType, value: string): boolean {
+    const normalized = normalizePersonalDocumentNumber(type, value);
+    if (!normalized) {
+        return false;
+    }
+
+    if (type === 'dni') {
+        if (!/^\d{8}[A-Z]$/.test(normalized)) {
+            return false;
+        }
+        return isValidDniLetter(Number(normalized.slice(0, 8)), normalized.slice(-1));
+    }
+
+    if (type === 'nie') {
+        if (!/^[XYZ]\d{7}[A-Z]$/.test(normalized)) {
+            return false;
+        }
+        const prefixMap: Record<string, string> = { X: '0', Y: '1', Z: '2' };
+        const numericValue = `${prefixMap[normalized[0]]}${normalized.slice(1, 8)}`;
+        return isValidDniLetter(Number(numericValue), normalized.slice(-1));
+    }
+
+    return /^[A-Z0-9](?:[A-Z0-9 /.-]{1,28}[A-Z0-9])?$/.test(normalized);
+}
+
+export function getPersonalDocumentTypeLabel(type: PersonalDocumentType): string {
+    switch (type) {
+        case 'nie':
+            return 'NIE';
+        case 'otro':
+            return 'Otro documento';
+        case 'dni':
+        default:
+            return 'DNI';
+    }
 }
 
 export interface SelectedConvalidation {
@@ -311,6 +367,7 @@ export class ConvalidacionesService {
     otrosCiclosModulos$ = this.otrosCiclosModulosSubject.asObservable();
 
     private personalDataSubject = new BehaviorSubject<PersonalData>({
+        documentType: 'dni',
         nombre: '',
         apellidos: '',
         dni: '',

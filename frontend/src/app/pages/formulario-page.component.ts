@@ -5,7 +5,7 @@ import { EstudiosCursadosComponent } from '../components/estudios-cursados/estud
 import { ConvalidacionesSolicitadasComponent } from '../components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
 import { DocumentacionAportarComponent } from '../components/documentacion-aportar/documentacion-aportar.component';
 import { ResumenFormularioComponent } from '../components/resumen-formulario/resumen-formulario.component';
-import { ConvalidacionesService } from '../services/convalidaciones.service';
+import { ConvalidacionesService, isValidPersonalDocumentNumber } from '../services/convalidaciones.service';
 
 @Component({
   selector: 'app-formulario-page',
@@ -144,7 +144,7 @@ export class FormularioPageComponent {
     const data = this.convalidacionesService.getPersonalData();
     return !!data.nombre?.trim()
       && !!data.apellidos?.trim()
-      && !!data.dni?.trim()
+      && isValidPersonalDocumentNumber(data.documentType || 'dni', data.dni || '')
       && this.emailPattern.test(data.email?.trim() ?? '');
   }
 

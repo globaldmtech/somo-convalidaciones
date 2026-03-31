@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { finalize, timeout } from 'rxjs/operators';
 import {
     ConvalidacionesService,
+    getPersonalDocumentTypeLabel,
     PersonalData,
     SelectedConvalidation,
     UploadedDocument,
@@ -24,6 +25,7 @@ export class ResumenFormularioComponent implements OnInit {
     otrosCiclosModulosCursados: string[] = [];
     convalidacionesSolicitadas: SelectedConvalidation[] = [];
     personalData: PersonalData = {
+        documentType: 'dni',
         nombre: '',
         apellidos: '',
         dni: '',
@@ -60,6 +62,10 @@ export class ResumenFormularioComponent implements OnInit {
 
     get gradoDestino(): string {
         return this.convalidacionesService.targetGradoNombre || '—';
+    }
+
+    get documentTypeLabel(): string {
+        return getPersonalDocumentTypeLabel(this.personalData.documentType || 'dni');
     }
 
     get otrosSolicitudes(): string[] {
@@ -274,6 +280,7 @@ export class ResumenFormularioComponent implements OnInit {
             ];
 
             payload = {
+                document_type: this.personalData.documentType,
                 nombre: this.personalData.nombre,
                 apellidos: this.personalData.apellidos,
                 dni: this.personalData.dni,
