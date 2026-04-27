@@ -1,3 +1,8 @@
+networks:
+  proxy_net:
+    external: true
+    name: nginx_proxy_net
+
 services:
   app:
     container_name: somo-convalidaciones
@@ -12,3 +17,5 @@ services:
     volumes:
       - ./backend/scripts/db.sqlite:/app/backend/scripts/db.sqlite
       - ./data/uploads:/app/data/uploads
+    networks:
+      - proxy_net
