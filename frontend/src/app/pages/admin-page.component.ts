@@ -1180,9 +1180,16 @@ type PendingConvalidacionOrigenDelete = {
                     [disabled]="loadingConvalidacionesCiclos"
                   >
                     <option [ngValue]="null">Todos los ciclos</option>
-                    <option *ngFor="let ciclo of convalidacionesCiclos" [ngValue]="ciclo.id">
-                      {{ ciclo.nombre }}
-                    </option>
+                    <optgroup *ngIf="convalidacionesCiclosSomorrostro.length > 0" label="Ciclos Somorrostro">
+                      <option *ngFor="let ciclo of convalidacionesCiclosSomorrostro" [ngValue]="ciclo.id">
+                        {{ ciclo.nombre }}
+                      </option>
+                    </optgroup>
+                    <optgroup *ngIf="convalidacionesCiclosRestantes.length > 0" label="Ciclos restantes">
+                      <option *ngFor="let ciclo of convalidacionesCiclosRestantes" [ngValue]="ciclo.id">
+                        {{ ciclo.nombre }}
+                      </option>
+                    </optgroup>
                   </select>
                 </div>
               </div>
@@ -1191,13 +1198,6 @@ type PendingConvalidacionOrigenDelete = {
                   <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
                     {{ convalidacionesAgrupadas.length }} modulos
                   </span>
-                  <button
-                    type="button"
-                    class="text-xs font-semibold text-slate-600 underline underline-offset-4 decoration-slate-300 hover:text-indigo-600 hover:decoration-indigo-300 transition-colors"
-                    (click)="toggleMostrarTodosLosCiclosConvalidaciones()"
-                  >
-                    {{ mostrarTodosLosCiclosConvalidaciones ? 'Ver ciclos Somorrostro' : 'Ver todos los ciclos' }}
-                  </button>
                 </div>
                 <button
                   type="button"
@@ -2761,9 +2761,16 @@ type PendingConvalidacionOrigenDelete = {
                             [disabled]="loadingCreateConvalidacionCiclosOrigen"
                           >
                             <option [ngValue]="null">Selecciona un ciclo</option>
-                            <option *ngFor="let ciclo of createConvalidacionCiclosOrigen" [ngValue]="ciclo.id">
-                              {{ ciclo.nombre }}
-                            </option>
+                            <optgroup *ngIf="createConvalidacionCiclosOrigenSomorrostro.length > 0" label="Ciclos Somorrostro">
+                              <option *ngFor="let ciclo of createConvalidacionCiclosOrigenSomorrostro" [ngValue]="ciclo.id">
+                                {{ ciclo.nombre }}
+                              </option>
+                            </optgroup>
+                            <optgroup *ngIf="createConvalidacionCiclosOrigenRestantes.length > 0" label="Ciclos restantes">
+                              <option *ngFor="let ciclo of createConvalidacionCiclosOrigenRestantes" [ngValue]="ciclo.id">
+                                {{ ciclo.nombre }}
+                              </option>
+                            </optgroup>
                           </select>
                           <p *ngIf="loadingCreateConvalidacionCiclosOrigen" class="mt-1 text-xs text-slate-500">
                             Cargando ciclos...
@@ -3213,7 +3220,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   ciclosConModulos: AdminCicloConModulos[] = [];
   modulosVistaActiva: 'ciclos' | 'acreditaciones' = 'ciclos';
   mostrarTodosLosCiclos = false;
-  mostrarTodosLosCiclosConvalidaciones = false;
   convalidaciones: AdminConvalidacionRegla[] = [];
   administradores: AdminUser[] = [];
 
@@ -4627,7 +4633,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadConvalidacionesCiclos(gradoId?: number | null): void {
     this.loadingConvalidacionesCiclos = true;
     this.catalogService
-      .getCiclos(gradoId ?? undefined, !this.mostrarTodosLosCiclosConvalidaciones)
+      .getCiclos(gradoId ?? undefined, false)
       .subscribe({
       next: (rows) => {
         this.convalidacionesCiclos = (Array.isArray(rows) ? rows : [])
@@ -4638,6 +4644,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             normativa: item.normativa ?? null,
             id_familia: Number(item.id_familia),
             id_grado: Number(item.id_grado),
+            es_somorrostro: item.es_somorrostro == null ? null : Number(item.es_somorrostro),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }));
@@ -4805,9 +4812,20 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
-  toggleMostrarTodosLosCiclosConvalidaciones(): void {
-    this.mostrarTodosLosCiclosConvalidaciones = !this.mostrarTodosLosCiclosConvalidaciones;
-    this.loadConvalidacionesCiclos(this.filtroConvalidacionesGradoId);
+  get convalidacionesCiclosSomorrostro(): Ciclo[] {
+    return this.convalidacionesCiclos.filter((ciclo) => Number(ciclo.es_somorrostro) === 1);
+  }
+
+  get convalidacionesCiclosRestantes(): Ciclo[] {
+    return this.convalidacionesCiclos.filter((ciclo) => Number(ciclo.es_somorrostro) !== 1);
+  }
+
+  get createConvalidacionCiclosOrigenSomorrostro(): Ciclo[] {
+    return this.createConvalidacionCiclosOrigen.filter((ciclo) => Number(ciclo.es_somorrostro) === 1);
+  }
+
+  get createConvalidacionCiclosOrigenRestantes(): Ciclo[] {
+    return this.createConvalidacionCiclosOrigen.filter((ciclo) => Number(ciclo.es_somorrostro) !== 1);
   }
 
   canGestionarAdministrador(admin: AdminUser): boolean {
@@ -5624,7 +5642,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private cargarCiclosOrigenCrearConvalidacion(): void {
     this.loadingCreateConvalidacionCiclosOrigen = true;
-    this.catalogService.getCiclos().subscribe({
+    this.catalogService.getCiclos(undefined, false).subscribe({
       next: (rows) => {
         this.createConvalidacionCiclosOrigen = (Array.isArray(rows) ? rows : [])
           .map((item) => ({
@@ -5634,6 +5652,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
             normativa: item.normativa ?? null,
             id_familia: Number(item.id_familia),
             id_grado: Number(item.id_grado),
+            es_somorrostro: item.es_somorrostro == null ? null : Number(item.es_somorrostro),
           }))
           .filter((item) => Number.isFinite(item.id) && !!(item.nombre || '').trim())
           .filter((item) => !this.isAcreditacionesExternasCiclo(item.nombre))
