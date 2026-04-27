@@ -71,14 +71,25 @@ class CatalogQueries:
         ]
 
     @staticmethod
-    def list_ciclos(conn: sqlite3.Connection, grado_id: Optional[int] = None) -> Sequence[dict]:
+    def list_ciclos(
+        conn: sqlite3.Connection,
+        grado_id: Optional[int] = None,
+        solo_somorrostro: bool = True,
+    ) -> Sequence[dict]:
+        where: list[str] = []
+        params: list[object] = []
+
         if grado_id:
-            rows = conn.execute(
-                "SELECT * FROM ciclos WHERE id_grado = ? ORDER BY nombre",
-                (grado_id,),
-            ).fetchall()
-        else:
-            rows = conn.execute("SELECT * FROM ciclos ORDER BY nombre").fetchall()
+            where.append("id_grado = ?")
+            params.append(grado_id)
+        if solo_somorrostro:
+            where.append("es_somorrostro = 1")
+
+        where_sql = f"WHERE {' AND '.join(where)}" if where else ""
+        rows = conn.execute(
+            f"SELECT * FROM ciclos {where_sql} ORDER BY nombre",
+            tuple(params),
+        ).fetchall()
         return [dict(row) for row in rows]
 
     @staticmethod
@@ -181,8 +192,6 @@ class CatalogQueries:
             (ciclo_id,),
         ).fetchone()
         return row is not None
-
-
 class ConvalidationQueries:
     @staticmethod
     def get_convalidaciones_posibles(
@@ -990,6 +999,7 @@ class AdminQueries:
                 c.normativa,
                 c.id_familia,
                 c.id_grado,
+                c.es_somorrostro,
                 f.nombre AS familia_nombre,
                 g.nombre AS grado_nombre
             FROM ciclos c
@@ -1034,6 +1044,7 @@ class AdminQueries:
                 "normativa": ciclo["normativa"],
                 "id_familia": ciclo["id_familia"],
                 "id_grado": ciclo["id_grado"],
+                "es_somorrostro": ciclo["es_somorrostro"],
                 "familia_nombre": ciclo["familia_nombre"],
                 "grado_nombre": ciclo["grado_nombre"],
                 "total_modulos": len(modulos_por_ciclo.get(ciclo["id"], [])),

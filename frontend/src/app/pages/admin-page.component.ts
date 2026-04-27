@@ -918,22 +918,33 @@ type PendingConvalidacionOrigenDelete = {
           </section>
 
           <section *ngIf="activeTab === 'modulos'" class="space-y-4">
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="modulosVistaActiva === 'ciclos' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="modulosVistaActiva = 'ciclos'"
+                >
+                  Ciclos
+                </button>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
+                  [ngClass]="modulosVistaActiva === 'acreditaciones' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
+                  (click)="modulosVistaActiva = 'acreditaciones'"
+                >
+                  Acreditaciones externas
+                </button>
+              </div>
+
               <button
+                *ngIf="modulosVistaActiva === 'ciclos'"
                 type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="modulosVistaActiva === 'ciclos' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="modulosVistaActiva = 'ciclos'"
+                class="text-sm font-semibold text-slate-600 underline underline-offset-4 decoration-slate-300 hover:text-indigo-600 hover:decoration-indigo-300 transition-colors"
+                (click)="mostrarTodosLosCiclos = !mostrarTodosLosCiclos"
               >
-                Ciclos
-              </button>
-              <button
-                type="button"
-                class="px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors"
-                [ngClass]="modulosVistaActiva === 'acreditaciones' ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'"
-                (click)="modulosVistaActiva = 'acreditaciones'"
-              >
-                Acreditaciones externas
+                {{ mostrarTodosLosCiclos ? 'Ver ciclos Somorrostro' : 'Ver todos los ciclos' }}
               </button>
             </div>
 
@@ -1176,9 +1187,18 @@ type PendingConvalidacionOrigenDelete = {
                 </div>
               </div>
               <div class="mt-3 flex flex-wrap items-center gap-3 justify-between">
-                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                  {{ convalidacionesAgrupadas.length }} modulos
-                </span>
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
+                    {{ convalidacionesAgrupadas.length }} modulos
+                  </span>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-slate-600 underline underline-offset-4 decoration-slate-300 hover:text-indigo-600 hover:decoration-indigo-300 transition-colors"
+                    (click)="toggleMostrarTodosLosCiclosConvalidaciones()"
+                  >
+                    {{ mostrarTodosLosCiclosConvalidaciones ? 'Ver ciclos Somorrostro' : 'Ver todos los ciclos' }}
+                  </button>
+                </div>
                 <button
                   type="button"
                   class="px-3 py-1.5 rounded-md border border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
@@ -3192,6 +3212,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ciclosConModulos: AdminCicloConModulos[] = [];
   modulosVistaActiva: 'ciclos' | 'acreditaciones' = 'ciclos';
+  mostrarTodosLosCiclos = false;
+  mostrarTodosLosCiclosConvalidaciones = false;
   convalidaciones: AdminConvalidacionRegla[] = [];
   administradores: AdminUser[] = [];
 
@@ -4604,7 +4626,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadConvalidacionesCiclos(gradoId?: number | null): void {
     this.loadingConvalidacionesCiclos = true;
-    this.catalogService.getCiclos(gradoId ?? undefined).subscribe({
+    this.catalogService
+      .getCiclos(gradoId ?? undefined, !this.mostrarTodosLosCiclosConvalidaciones)
+      .subscribe({
       next: (rows) => {
         this.convalidacionesCiclos = (Array.isArray(rows) ? rows : [])
           .map((item) => ({
@@ -4623,6 +4647,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           !this.convalidacionesCiclos.some((ciclo) => Number(ciclo.id) === Number(this.filtroConvalidacionesCicloId))
         ) {
           this.filtroConvalidacionesCicloId = null;
+          this.convalidaciones = [];
+          this.loadedConvalidaciones = false;
+          this.openConvalidaciones.clear();
+          this.openConvalidacionCiclos.clear();
         }
         this.cdr.detectChanges();
       },
@@ -4777,6 +4805,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  toggleMostrarTodosLosCiclosConvalidaciones(): void {
+    this.mostrarTodosLosCiclosConvalidaciones = !this.mostrarTodosLosCiclosConvalidaciones;
+    this.loadConvalidacionesCiclos(this.filtroConvalidacionesGradoId);
+  }
+
   canGestionarAdministrador(admin: AdminUser): boolean {
     const filaAdmin = (admin?.nombre || '').trim().toLowerCase() === 'admin';
     return this.isRootAdminSession && !filaAdmin;
@@ -4911,7 +4944,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get ciclosCatalogo(): AdminCicloConModulos[] {
-    return this.ciclosConModulos.filter((ciclo) => !this.isAcreditacionExternaCiclo(ciclo));
+    return this.ciclosConModulos.filter(
+      (ciclo) => !this.isAcreditacionExternaCiclo(ciclo)
+        && (this.mostrarTodosLosCiclos || Number(ciclo.es_somorrostro) === 1)
+    );
   }
 
   get ciclosAcreditacionesExternasCatalogo(): AdminCicloConModulos[] {

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS ciclos (
   normativa TEXT,
   id_familia INTEGER,
   id_grado INTEGER,
+  es_somorrostro INTEGER NOT NULL DEFAULT 0 CHECK (es_somorrostro IN (0, 1)),
   FOREIGN KEY (id_familia) REFERENCES familias(id) ON DELETE SET NULL,
   FOREIGN KEY (id_grado) REFERENCES grados(id) ON DELETE SET NULL
 );

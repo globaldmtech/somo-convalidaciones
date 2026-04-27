@@ -293,6 +293,7 @@ export interface AdminCicloConModulos {
     normativa: string | null;
     id_familia: number | null;
     id_grado: number | null;
+    es_somorrostro: number;
     familia_nombre?: string | null;
     grado_nombre?: string | null;
     total_modulos: number;

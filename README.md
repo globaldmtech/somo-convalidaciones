@@ -56,6 +56,7 @@ cd backend/scripts
 rm -f db.sqlite
 sqlite3 db.sqlite < 1_load_schema.sql
 sqlite3 db.sqlite < 2_load_catalog.sql
+sqlite3 db.sqlite < 2b_mark_somorrostro.sql
 sqlite3 db.sqlite < 3_load_convalidations.sql
 sqlite3 db.sqlite < 4_load_convalidations_global.sql
 sqlite3 db.sqlite < 5_load_convalidations_ciclo_global.sql
@@ -104,4 +105,3 @@ Para parar el servicio:
 ```bash
 docker compose down
 ```
-

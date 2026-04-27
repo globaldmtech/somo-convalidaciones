@@ -121,10 +121,18 @@ async def get_grados(db: sqlite3.Connection = Depends(database.get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/ciclos_existentes")
-async def get_ciclos(grado_id: Optional[int] = None, db: sqlite3.Connection = Depends(database.get_db)):
+async def get_ciclos(
+    grado_id: Optional[int] = None,
+    solo_somorrostro: bool = True,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
     """List cycles, optionally filtered by degree ID."""
     try:
-        return database.CatalogQueries.list_ciclos(db, grado_id=grado_id)
+        return database.CatalogQueries.list_ciclos(
+            db,
+            grado_id=grado_id,
+            solo_somorrostro=solo_somorrostro,
+        )
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
