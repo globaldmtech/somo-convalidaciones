@@ -2227,6 +2227,16 @@ type PendingConvalidacionOrigenDelete = {
                     placeholder="Ej: Desarrollo de Aplicaciones Multiplataforma"
                   />
                 </label>
+                <label class="block">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Centro</span>
+                  <select
+                    [(ngModel)]="createCicloEsSomorrostro"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                  >
+                    <option [ngValue]="true">Somorrostro</option>
+                    <option [ngValue]="false">No Somorrostro</option>
+                  </select>
+                </label>
               </div>
               <p *ngIf="createCicloError" class="mt-3 text-sm text-rose-700">{{ createCicloError }}</p>
               <div class="mt-5 flex items-center justify-end gap-2">
@@ -2242,9 +2252,9 @@ type PendingConvalidacionOrigenDelete = {
                   type="button"
                   class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
                   [disabled]="creatingCiclo || !canCreateCiclo()"
-                  (click)="crearCiclo()"
+                  (click)="guardarCiclo()"
                 >
-                  {{ creatingCiclo ? 'Creando...' : 'Crear ciclo' }}
+                  {{ creatingCiclo ? (editingCicloId !== null ? 'Guardando...' : 'Creando...') : (editingCicloId !== null ? 'Guardar cambios' : 'Crear ciclo') }}
                 </button>
               </div>
             </div>
@@ -3151,9 +3161,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   cicloToDelete: AdminCicloConModulos | null = null;
   deletingCiclo = false;
   createCicloModalOpen = false;
+  editingCicloId: number | null = null;
   createCicloFamiliaId: number | null = null;
   createCicloGradoId: number | null = null;
   createCicloNombre = '';
+  createCicloEsSomorrostro = true;
   createCicloError: string | null = null;
   creatingCiclo = false;
   createAcreditacionExternaModalOpen = false;
@@ -3442,9 +3454,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.deleteCicloModalOpen = false;
     this.cicloToDelete = null;
     this.createCicloModalOpen = false;
+    this.editingCicloId = null;
     this.createCicloFamiliaId = null;
     this.createCicloGradoId = null;
     this.createCicloNombre = '';
+    this.createCicloEsSomorrostro = true;
     this.createCicloError = null;
     this.creatingCiclo = false;
     this.showAddModulosForm = false;
@@ -5999,24 +6013,34 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   editarCiclo(ciclo: AdminCicloConModulos): void {
-    this.abrirModalModulos(ciclo);
+    this.createCicloModalOpen = true;
+    this.editingCicloId = ciclo.id;
+    this.createCicloError = null;
+    this.createCicloNombre = ciclo.nombre;
+    this.createCicloFamiliaId = ciclo.id_familia === null ? null : Number(ciclo.id_familia);
+    this.createCicloGradoId = ciclo.id_grado === null ? null : Number(ciclo.id_grado);
+    this.createCicloEsSomorrostro = Number(ciclo.es_somorrostro) === 1;
   }
 
   abrirModalCrearCiclo(idFamiliaSugerida: number | null): void {
     this.createCicloModalOpen = true;
+    this.editingCicloId = null;
     this.createCicloError = null;
     this.createCicloNombre = '';
     this.createCicloFamiliaId = idFamiliaSugerida;
     this.createCicloGradoId = null;
+    this.createCicloEsSomorrostro = true;
   }
 
-  cerrarModalCrearCiclo(): void {
-    if (this.creatingCiclo) return;
+  cerrarModalCrearCiclo(force = false): void {
+    if (this.creatingCiclo && !force) return;
     this.createCicloModalOpen = false;
+    this.editingCicloId = null;
     this.createCicloError = null;
     this.createCicloNombre = '';
     this.createCicloFamiliaId = null;
     this.createCicloGradoId = null;
+    this.createCicloEsSomorrostro = true;
   }
 
   abrirModalCrearAcreditacionExterna(): void {
@@ -6053,19 +6077,25 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  crearCiclo(): void {
+  guardarCiclo(): void {
     const nombre = this.createCicloNombre.trim();
     if (!this.createCicloFamiliaId || !this.createCicloGradoId || !nombre || this.creatingCiclo) return;
 
     this.creatingCiclo = true;
     this.createCicloError = null;
 
-    this.convalidacionesService
-      .crearCicloAdmin({
-        nombre,
-        id_familia: Number(this.createCicloFamiliaId),
-        id_grado: Number(this.createCicloGradoId),
-      })
+    const payload = {
+      nombre,
+      id_familia: Number(this.createCicloFamiliaId),
+      id_grado: Number(this.createCicloGradoId),
+      es_somorrostro: this.createCicloEsSomorrostro ? 1 : 0,
+    };
+
+    const request$ = this.editingCicloId !== null
+      ? this.convalidacionesService.actualizarCicloAdmin(this.editingCicloId, payload)
+      : this.convalidacionesService.crearCicloAdmin(payload);
+
+    request$
       .pipe(
         timeout(15000),
         finalize(() => {
@@ -6078,11 +6108,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loadedModulos = false;
           this.cargarCiclosModulos();
           this.errorModulos = null;
-          this.cerrarModalCrearCiclo();
+          this.cerrarModalCrearCiclo(true);
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
-          this.createCicloError = err?.error?.detail || 'No se pudo crear el ciclo.';
+          this.createCicloError = err?.error?.detail || (this.editingCicloId !== null
+            ? 'No se pudo actualizar el ciclo.'
+            : 'No se pudo crear el ciclo.');
         },
       });
   }

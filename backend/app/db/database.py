@@ -148,15 +148,35 @@ class CatalogQueries:
         nombre: str,
         id_familia: int,
         id_grado: int,
+        es_somorrostro: int = 1,
     ) -> int:
         cursor = conn.execute(
             """
-            INSERT INTO ciclos (nombre, id_oficial, normativa, id_familia, id_grado)
-            VALUES (?, NULL, NULL, ?, ?)
+            INSERT INTO ciclos (nombre, id_oficial, normativa, id_familia, id_grado, es_somorrostro)
+            VALUES (?, NULL, NULL, ?, ?, ?)
             """,
-            (nombre, id_familia, id_grado),
+            (nombre, id_familia, id_grado, es_somorrostro),
         )
         return int(cursor.lastrowid)
+
+    @staticmethod
+    def update_ciclo(
+        conn: sqlite3.Connection,
+        ciclo_id: int,
+        nombre: str,
+        id_familia: int,
+        id_grado: int,
+        es_somorrostro: int = 1,
+    ) -> int:
+        cursor = conn.execute(
+            """
+            UPDATE ciclos
+            SET nombre = ?, id_familia = ?, id_grado = ?, es_somorrostro = ?
+            WHERE id = ?
+            """,
+            (nombre, id_familia, id_grado, es_somorrostro, ciclo_id),
+        )
+        return int(cursor.rowcount)
 
     @staticmethod
     def create_modulos(

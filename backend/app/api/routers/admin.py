@@ -19,6 +19,7 @@ from fastapi.routing import APIRoute
 from db import database
 from model.admin import (
     ActualizarAdministradorRequest,
+    ActualizarCicloRequest,
     AdminLoginRequest,
     CambiarEstadoFormularioRequest,
     CambiarEstadoSolicitudRequest,
@@ -370,7 +371,45 @@ async def crear_ciclo(
             nombre=nombre,
             id_familia=request.id_familia,
             id_grado=request.id_grado,
+            es_somorrostro=1 if int(request.es_somorrostro) == 1 else 0,
         )
+        db.commit()
+        return {"ok": True}
+    except HTTPException:
+        raise
+    except sqlite3.IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    except sqlite3.Error as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/ciclos/{id_ciclo}")
+async def actualizar_ciclo(
+    id_ciclo: int,
+    request: ActualizarCicloRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Actualiza un ciclo existente en catálogo."""
+    try:
+        nombre = (request.nombre or "").strip()
+        if not nombre:
+            raise HTTPException(status_code=400, detail="El nombre del ciclo es obligatorio")
+        if request.id_familia <= 0 or request.id_grado <= 0:
+            raise HTTPException(status_code=400, detail="Familia y grado son obligatorios")
+
+        updated = database.CatalogQueries.update_ciclo(
+            db,
+            ciclo_id=id_ciclo,
+            nombre=nombre,
+            id_familia=request.id_familia,
+            id_grado=request.id_grado,
+            es_somorrostro=1 if int(request.es_somorrostro) == 1 else 0,
+        )
+        if updated == 0:
+            raise HTTPException(status_code=404, detail="Ciclo no encontrado")
+
         db.commit()
         return {"ok": True}
     except HTTPException:

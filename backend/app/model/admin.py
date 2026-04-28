@@ -21,6 +21,14 @@ class CrearCicloRequest(BaseModel):
     nombre: str
     id_familia: int
     id_grado: int
+    es_somorrostro: int = 1
+
+
+class ActualizarCicloRequest(BaseModel):
+    nombre: str
+    id_familia: int
+    id_grado: int
+    es_somorrostro: int = 1
 
 
 class CrearModuloItemRequest(BaseModel):

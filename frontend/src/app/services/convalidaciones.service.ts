@@ -193,6 +193,7 @@ export interface AdminCreateCicloRequest {
     nombre: string;
     id_familia: number;
     id_grado: number;
+    es_somorrostro: number;
 }
 
 export interface AdminCreateModuloItemRequest {
@@ -693,6 +694,10 @@ export class ConvalidacionesService {
 
     crearCicloAdmin(payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
         return this.http.post<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos`, payload, this.getAdminAuthHeaders());
+    }
+
+    actualizarCicloAdmin(idCiclo: number, payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
+        return this.http.put<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`, payload, this.getAdminAuthHeaders());
     }
 
     crearModulosAdmin(idCiclo: number, payload: AdminCreateModulosRequest): Observable<{ ok: boolean; inserted: number }> {
