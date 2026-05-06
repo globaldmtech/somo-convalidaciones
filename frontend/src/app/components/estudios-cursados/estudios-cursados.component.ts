@@ -154,7 +154,7 @@ export class EstudiosCursadosComponent implements OnInit {
         if (!this.selectedGradoId) return;
         this.loadingCiclos = true;
         this.cdr.detectChanges();
-        this.catalogService.getCiclos(Number(this.selectedGradoId))
+        this.catalogService.getCiclos(Number(this.selectedGradoId), false)
             .pipe(timeout(10000), catchError(() => of([])))
             .subscribe({
                 next: (data) => { this.ciclos = data; this.loadingCiclos = false; this.cdr.detectChanges(); },
