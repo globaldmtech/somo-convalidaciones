@@ -33,13 +33,39 @@ Variables útiles:
 - `FORM_UPLOAD_DIR`: carpeta donde se guardan los adjuntos. Por defecto `/app/data/uploads`
 - `CORS_ALLOWED_ORIGINS`: orígenes permitidos para el frontend en desarrollo. Por defecto `http://localhost:4200`
 - `FRONTEND_DIST_DIR`: ruta del frontend compilado cuando se sirve desde FastAPI.
+- `APP_BASE_PATH`: subruta pública donde se expone la app detrás de `nginx`. Ejemplo: `/convalidaciones`. Por defecto raíz `/`.
+- `TENANT_ID`: identificador del tenant de Microsoft Entra ID para el acceso admin.
+- `CLIENT_ID`: identificador de la aplicación registrada en Microsoft Entra ID.
+- `OBJECT_ID`: identificador del usuario Microsoft autorizado para acceder al admin.
+- `CLIENT_SECRET`: reservado para futuras fases de OAuth servidor-servidor; no se usa en la fase 1.
 
 Ejemplo para Docker:
 
 ```env
 DB_PATH=scripts/db.sqlite
 FORM_UPLOAD_DIR=/app/data/uploads
+APP_BASE_PATH=/convalidaciones
+TENANT_ID=...
+CLIENT_ID=...
+OBJECT_ID=...
 ```
+
+La fase 1 del login Microsoft lee variables tanto desde `backend/.env` como desde `.env` en la raíz del repositorio. Si defines ambas, prevalecerán las variables ya presentes en el entorno del proceso.
+
+## Despliegue bajo subruta
+
+La aplicación puede publicarse detrás de `nginx` en una subruta como `https://host/convalidaciones/`.
+
+Para ello:
+
+- configura `APP_BASE_PATH=/convalidaciones` en el proceso del backend
+- haz que `nginx` publique `/convalidaciones/` contra la app y elimine ese prefijo antes de reenviar la petición al backend
+
+Con esa variable:
+
+- FastAPI genera sus URLs internas con el prefijo correcto
+- el `index.html` servido por el backend ajusta dinámicamente `<base href>`
+- el frontend calcula las rutas API como `/convalidaciones/convalidaciones/...` y `/convalidaciones/admin/...`
 
 ## Inicializar la base de datos
 

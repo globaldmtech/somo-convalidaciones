@@ -31,7 +31,6 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/somo-convalidaciones/",
               "budgets": [
                 {
                   "type": "initial",
