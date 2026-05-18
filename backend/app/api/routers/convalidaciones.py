@@ -8,8 +8,8 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 import sqlite3
 from datetime import datetime, timezone
 from typing import Optional, List
-from db import database
-from model.convalidaciones import (
+from ...db import database
+from ...model.convalidaciones import (
     ConvalidationRequest,
     ConvalidationResult,
     FormularioCompletoRequest,

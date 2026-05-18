@@ -672,6 +672,18 @@ class AdminQueries:
         return {"id": int(row["id"]), "nombre": str(row["nombre"])}
 
     @staticmethod
+    def get_admin_by_nombre(conn: sqlite3.Connection, nombre: str) -> Optional[dict]:
+        row = conn.execute(
+            """
+            SELECT id, nombre
+            FROM administradores
+            WHERE nombre = ?
+            """,
+            (nombre,),
+        ).fetchone()
+        return {"id": int(row["id"]), "nombre": str(row["nombre"])} if row else None
+
+    @staticmethod
     def get_admin_by_id_nombre(conn: sqlite3.Connection, admin_id: int, nombre: str) -> Optional[dict]:
         row = conn.execute(
             """

@@ -7,6 +7,8 @@ import os
 import sqlite3
 import time
 from pathlib import Path
+from requests import RequestException
+from jwt import InvalidTokenError
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
@@ -16,11 +18,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.routing import APIRoute
 
-from db import database
-from model.admin import (
+from ...auth import microsoft
+from ...db import database
+from ...model.admin import (
     ActualizarAdministradorRequest,
     ActualizarCicloRequest,
     AdminLoginRequest,
+    AdminMicrosoftLoginRequest,
     CambiarEstadoFormularioRequest,
     CambiarEstadoSolicitudRequest,
     EliminarConvalidacionesMasivasRequest,
@@ -37,6 +41,7 @@ from model.admin import (
 ADMIN_TOKEN_TTL_SECONDS = int(os.getenv("ADMIN_TOKEN_TTL_SECONDS", "43200"))
 ADMIN_AUTH_SECRET = os.getenv("ADMIN_AUTH_SECRET", "somo-admin-secret")
 ADMIN_UPLOAD_DIR = Path(os.getenv("FORM_UPLOAD_DIR", "/app/data/uploads")).resolve()
+PUBLIC_ADMIN_PATHS = {"/admin/login", "/admin/login/microsoft", "/admin/auth/config"}
 
 
 def _create_admin_token(admin_id: int, nombre: str) -> str:
@@ -108,7 +113,7 @@ class AdminAuthRoute(APIRoute):
         original_route_handler = super().get_route_handler()
 
         async def custom_route_handler(request: Request):
-            if request.url.path.rstrip("/") != "/admin/login":
+            if request.url.path.rstrip("/") not in PUBLIC_ADMIN_PATHS:
                 authorization = request.headers.get("Authorization") or ""
                 scheme, _, token = authorization.partition(" ")
                 if scheme.lower() != "bearer" or not token:
@@ -136,6 +141,11 @@ router = APIRouter(
 )
 
 
+@router.get("/auth/config")
+async def admin_auth_config():
+    return microsoft.public_config()
+
+
 @router.post("/login")
 async def login_admin(
     request: AdminLoginRequest,
@@ -151,6 +161,41 @@ async def login_admin(
     except HTTPException:
         raise
     except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/login/microsoft")
+async def login_admin_microsoft(
+    request: AdminMicrosoftLoginRequest,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    """Valida una sesión Microsoft Entra ID y emite la sesión interna de admin."""
+    try:
+        microsoft_user = microsoft.validate_id_token(request.token)
+        admin = database.AdminQueries.get_admin_by_nombre(db, "admin")
+        if not admin:
+            raise HTTPException(status_code=500, detail="No existe la cuenta local de administrador")
+
+        token = _create_admin_token(admin["id"], admin["nombre"])
+        display_name = microsoft_user["display_name"] or microsoft_user["username"] or admin["nombre"]
+        return {
+            "ok": True,
+            "id": admin["id"],
+            "nombre": admin["nombre"],
+            "display_name": display_name,
+            "token": token,
+        }
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token de Microsoft inválido")
+    except RequestException:
+        raise HTTPException(status_code=502, detail="No se ha podido validar el token con Microsoft")
+    except sqlite3.Error as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 

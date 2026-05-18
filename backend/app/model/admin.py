@@ -17,6 +17,10 @@ class AdminLoginRequest(BaseModel):
     password: str
 
 
+class AdminMicrosoftLoginRequest(BaseModel):
+    token: str
+
+
 class CrearCicloRequest(BaseModel):
     nombre: str
     id_familia: int
