@@ -38,6 +38,15 @@ ADMIN_UPLOAD_DIR = Path(os.getenv("FORM_UPLOAD_DIR", "/app/data/uploads")).resol
 PUBLIC_ADMIN_PATHS = {"/admin/login", "/admin/login/microsoft", "/admin/auth/config"}
 
 
+def _normalized_request_path(request: Request) -> str:
+    path = request.url.path.rstrip("/") or "/"
+    root_path = (request.scope.get("root_path") or "").rstrip("/")
+    if root_path and path.startswith(root_path):
+        stripped = path[len(root_path):]
+        return stripped or "/"
+    return path
+
+
 def _create_admin_token(admin_id: int, nombre: str) -> str:
     payload = {
         "id": int(admin_id),
@@ -107,7 +116,7 @@ class AdminAuthRoute(APIRoute):
         original_route_handler = super().get_route_handler()
 
         async def custom_route_handler(request: Request):
-            if request.url.path.rstrip("/") not in PUBLIC_ADMIN_PATHS:
+            if _normalized_request_path(request) not in PUBLIC_ADMIN_PATHS:
                 authorization = request.headers.get("Authorization") or ""
                 scheme, _, token = authorization.partition(" ")
                 if scheme.lower() != "bearer" or not token:

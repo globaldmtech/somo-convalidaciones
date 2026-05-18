@@ -74,7 +74,9 @@ def _frontend_index_response() -> HTMLResponse:
 
 
 def _should_return_index_for(path: str) -> bool:
-    if path == "admin":
+    normalized_path = path.rstrip("/")
+
+    if normalized_path == "admin":
         return True
 
     restricted_prefixes = ("convalidaciones", "admin/", "alumnos", "docs", "redoc", "openapi.json")
