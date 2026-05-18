@@ -159,7 +159,14 @@ export interface AdminLoginResponse {
     ok: boolean;
     id: number;
     nombre: string;
+    display_name?: string;
     token: string;
+}
+
+export interface AdminMicrosoftAuthConfig {
+    enabled: boolean;
+    tenant_id: string;
+    client_id: string;
 }
 
 export interface AdminCicloModulo {
@@ -487,6 +494,14 @@ export class ConvalidacionesService {
 
     loginAdmin(nombre: string, password: string): Observable<AdminLoginResponse> {
         return this.http.post<AdminLoginResponse>(`${ADMIN_API_BASE}/login`, { nombre, password });
+    }
+
+    getAdminMicrosoftAuthConfig(): Observable<AdminMicrosoftAuthConfig> {
+        return this.http.get<AdminMicrosoftAuthConfig>(`${ADMIN_API_BASE}/auth/config`);
+    }
+
+    loginAdminMicrosoft(token: string): Observable<AdminLoginResponse> {
+        return this.http.post<AdminLoginResponse>(`${ADMIN_API_BASE}/login/microsoft`, { token });
     }
 
     getCiclosModulosAdmin(): Observable<AdminCicloConModulos[]> {

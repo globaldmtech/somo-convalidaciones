@@ -10,12 +10,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { AuthenticationResult, PublicClientApplication } from '@azure/msal-browser';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import {
   AdminCicloModulo,
   AdminCicloConModulos,
   AdminConvalidacionRegla,
   AdminFormulario,
+  AdminMicrosoftAuthConfig,
   AdminUser,
   ConvalidacionesService,
 } from '../services/convalidaciones.service';
@@ -235,39 +237,24 @@ type PendingConvalidacionOrigenDelete = {
       <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <section *ngIf="!isAuthenticated" class="max-w-md mx-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 class="text-2xl font-black text-slate-900">Acceso Admin</h1>
-          <p class="text-sm text-slate-500 mt-1">Inicia sesión para visualizar y gestionar formularios.</p>
+          <p class="text-sm text-slate-500 mt-1">Inicia sesión con la cuenta Microsoft autorizada para gestionar formularios.</p>
 
-          <form class="mt-5 space-y-4" (ngSubmit)="loginAdmin()">
-            <div>
-              <label class="text-xs font-semibold text-slate-600">Usuario</label>
-              <input
-                type="text"
-                [(ngModel)]="adminNombre"
-                name="adminNombre"
-                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
-                placeholder="admin"
-                autocomplete="username"
-              />
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-600">Contraseña</label>
-              <input
-                type="password"
-                [(ngModel)]="adminPassword"
-                name="adminPassword"
-                class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400"
-                placeholder="••••••••••"
-                autocomplete="current-password"
-              />
-            </div>
-            <button
-              type="submit"
-              class="w-full rounded-lg bg-indigo-600 text-white font-semibold text-sm py-2.5 hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-              [disabled]="loginLoading"
-            >
-              {{ loginLoading ? 'Accediendo...' : 'Entrar' }}
-            </button>
-          </form>
+          <button
+            type="button"
+            class="mt-5 w-full rounded-lg bg-indigo-600 text-white font-semibold text-sm py-2.5 hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            [disabled]="loginLoading || microsoftAuthConfigLoading || !microsoftAuthConfig?.enabled"
+            (click)="loginAdmin()"
+          >
+            {{ loginLoading ? 'Accediendo...' : 'Entrar con Microsoft' }}
+          </button>
+
+          <p *ngIf="microsoftAuthConfigLoading" class="mt-4 text-sm text-slate-500">
+            Cargando configuración de acceso...
+          </p>
+
+          <p *ngIf="!microsoftAuthConfigLoading && microsoftAuthConfig && !microsoftAuthConfig.enabled" class="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+            Falta configurar la autenticación de Microsoft en el servidor.
+          </p>
 
           <p *ngIf="loginError" class="mt-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
             {{ loginError }}
@@ -2263,6 +2250,7 @@ type PendingConvalidacionOrigenDelete = {
 })
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly adminSessionKey = 'somo_admin_session';
+  private readonly microsoftLoginPendingKey = 'somo_microsoft_login_pending';
   private readonly sourcePageBaseOffset = 124713;
   private resizeObserver: ResizeObserver | null = null;
   @ViewChild('headerInner') headerInnerRef?: ElementRef<HTMLDivElement>;
@@ -2366,13 +2354,16 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   moduloToDeleteCicloNombre = '';
   deleteModuloEsAcreditacionExterna = false;
 
-  adminNombre = '';
-  adminPassword = '';
+  adminSessionNombre = '';
   loginError: string | null = null;
   loginLoading = false;
   isAuthenticated = false;
   adminDisplayName = '';
   adminId: number | null = null;
+  microsoftAuthConfig: AdminMicrosoftAuthConfig | null = null;
+  microsoftAuthConfigLoading = false;
+  private msalInstance: PublicClientApplication | null = null;
+  private msalInitPromise: Promise<PublicClientApplication> | null = null;
 
   loading = false;
   error: string | null = null;
@@ -2428,6 +2419,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadMicrosoftAuthConfig();
+
     const storedAdmin = localStorage.getItem(this.adminSessionKey);
     if (!storedAdmin) {
       this.isAuthenticated = false;
@@ -2437,10 +2430,11 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isAuthenticated = true;
     try {
       const parsed = JSON.parse(storedAdmin);
-      this.adminDisplayName = parsed?.nombre || '';
+      this.adminSessionNombre = parsed?.nombre || '';
+      this.adminDisplayName = parsed?.display_name || this.adminSessionNombre;
       this.adminId = typeof parsed?.id === 'number' ? parsed.id : null;
       const token = typeof parsed?.token === 'string' ? parsed.token.trim() : '';
-      if (this.adminId === null || !token) {
+      if (this.adminId === null || !token || !this.adminSessionNombre) {
         localStorage.removeItem(this.adminSessionKey);
         this.isAuthenticated = false;
         return;
@@ -2479,44 +2473,46 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loginAdmin(): void {
+    void this.loginAdminWithMicrosoft();
+  }
+
+  private async loginAdminWithMicrosoft(): Promise<void> {
     if (this.loginLoading) return;
     this.loginError = null;
 
-    const nombre = this.adminNombre.trim();
-    if (!nombre || !this.adminPassword) {
-      this.loginError = 'Introduce usuario y contraseña.';
+    if (!this.microsoftAuthConfig?.enabled) {
+      this.loginError = 'La autenticación de Microsoft no está disponible.';
       return;
     }
 
     this.loginLoading = true;
-    this.convalidacionesService.loginAdmin(nombre, this.adminPassword).subscribe({
-      next: (resp) => {
-        this.isAuthenticated = true;
-        this.adminDisplayName = resp.nombre;
-        this.adminId = resp.id;
-        this.formularioEstadoFiltro = 0;
-        localStorage.setItem(this.adminSessionKey, JSON.stringify({ id: resp.id, nombre: resp.nombre, token: resp.token }));
-        this.adminPassword = '';
-        this.loginLoading = false;
-        this.loadActiveTab();
-        setTimeout(() => this.evaluateHeaderLayout());
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.loginLoading = false;
-        this.loginError = 'Credenciales inválidas.';
-        this.cdr.detectChanges();
-      },
-    });
+    try {
+      const msal = await this.getMsalInstance();
+      await this.reconcileMicrosoftInteraction(msal);
+      sessionStorage.setItem(this.microsoftLoginPendingKey, '1');
+
+      const loginResult = await msal.loginPopup({
+        scopes: ['openid', 'profile', 'email'],
+        prompt: 'select_account',
+      });
+      this.clearMicrosoftLoginPending();
+      await this.completeAdminMicrosoftLogin(loginResult);
+    } catch (err: any) {
+      this.clearMicrosoftLoginPending();
+      this.loginLoading = false;
+      this.loginError = this.getMicrosoftLoginErrorMessage(err);
+      this.cdr.detectChanges();
+    }
   }
 
   logoutAdmin(): void {
     localStorage.removeItem(this.adminSessionKey);
     this.isAuthenticated = false;
+    this.adminSessionNombre = '';
     this.adminDisplayName = '';
     this.adminId = null;
-    this.adminPassword = '';
     this.loginError = null;
+    this.clearMicrosoftLoginPending();
 
     this.formularios = [];
     this.alumnos = [];
@@ -2602,6 +2598,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filtroConvalidacionesCicloId = null;
     this.convalidacionesGrados = [];
     this.convalidacionesCiclos = [];
+
+    void this.logoutMicrosoftSession();
   }
 
   private handleAdminUnauthorized(err: any): boolean {
@@ -3222,7 +3220,164 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isRootAdminSession(): boolean {
-    return this.adminDisplayName.trim().toLowerCase() === 'admin';
+    return this.adminSessionNombre.trim().toLowerCase() === 'admin';
+  }
+
+  private loadMicrosoftAuthConfig(): void {
+    if (this.microsoftAuthConfigLoading) return;
+
+    this.microsoftAuthConfigLoading = true;
+    this.convalidacionesService.getAdminMicrosoftAuthConfig().subscribe({
+      next: (config) => {
+        this.microsoftAuthConfig = config;
+        this.microsoftAuthConfigLoading = false;
+        void this.initializeMicrosoftAuth();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.microsoftAuthConfigLoading = false;
+        this.loginError = 'No se ha podido cargar la configuración de Microsoft.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private async initializeMicrosoftAuth(): Promise<void> {
+    try {
+      const msal = await this.getMsalInstance();
+      await this.reconcileMicrosoftInteraction(msal);
+    } catch {
+      // La configuración puede no estar disponible todavía durante el arranque inicial.
+    }
+  }
+
+  private async getMsalInstance(): Promise<PublicClientApplication> {
+    if (this.msalInstance) return this.msalInstance;
+    if (this.msalInitPromise) return this.msalInitPromise;
+    if (!this.microsoftAuthConfig?.enabled) {
+      throw new Error('La autenticación de Microsoft no está configurada.');
+    }
+
+    const redirectUri = `${window.location.origin}${window.location.pathname}`;
+    this.msalInitPromise = (async () => {
+      const msalInstance = new PublicClientApplication({
+        auth: {
+          clientId: this.microsoftAuthConfig!.client_id,
+          authority: `https://login.microsoftonline.com/${this.microsoftAuthConfig!.tenant_id}`,
+          redirectUri,
+        },
+        cache: {
+          cacheLocation: 'sessionStorage',
+        },
+      });
+      await msalInstance.initialize();
+      this.msalInstance = msalInstance;
+      return msalInstance;
+    })();
+
+    try {
+      return await this.msalInitPromise;
+    } finally {
+      this.msalInitPromise = null;
+    }
+  }
+
+  private async reconcileMicrosoftInteraction(msal: PublicClientApplication): Promise<void> {
+    try {
+      const redirectResult = await msal.handleRedirectPromise();
+      if (redirectResult?.account) {
+        msal.setActiveAccount(redirectResult.account);
+      }
+    } catch {
+      this.clearMicrosoftLoginPending();
+      throw new Error('Se ha detectado una sesión de Microsoft incompleta. Recarga la página y vuelve a intentarlo.');
+    }
+
+    const accounts = msal.getAllAccounts();
+    if (!msal.getActiveAccount() && accounts.length > 0) {
+      msal.setActiveAccount(accounts[0]);
+    }
+
+    const pending = sessionStorage.getItem(this.microsoftLoginPendingKey) === '1';
+    if (!pending) return;
+
+    if (accounts.length > 0) {
+      this.clearMicrosoftLoginPending();
+      return;
+    }
+
+    throw new Error('Hay un inicio de sesión de Microsoft pendiente o interrumpido. Recarga la página antes de reintentarlo.');
+  }
+
+  private async completeAdminMicrosoftLogin(loginResult: AuthenticationResult): Promise<void> {
+    if (loginResult.account) {
+      this.msalInstance?.setActiveAccount(loginResult.account);
+    }
+
+    const idToken = loginResult.idToken || '';
+    if (!idToken) {
+      throw new Error('Microsoft no ha devuelto un token válido.');
+    }
+
+    const resp = await firstValueFrom(this.convalidacionesService.loginAdminMicrosoft(idToken));
+    this.isAuthenticated = true;
+    this.adminSessionNombre = resp.nombre;
+    this.adminDisplayName = resp.display_name || resp.nombre;
+    this.adminId = resp.id;
+    this.formularioEstadoFiltro = 0;
+    localStorage.setItem(
+      this.adminSessionKey,
+      JSON.stringify({
+        id: resp.id,
+        nombre: resp.nombre,
+        display_name: resp.display_name || resp.nombre,
+        token: resp.token,
+      })
+    );
+    this.loginLoading = false;
+    this.loadActiveTab();
+    setTimeout(() => this.evaluateHeaderLayout());
+    this.cdr.detectChanges();
+  }
+
+  private getMicrosoftLoginErrorMessage(err: any): string {
+    const backendDetail = err?.error?.detail;
+    if (typeof backendDetail === 'string' && backendDetail.trim()) {
+      return backendDetail;
+    }
+
+    const errorCode = String(err?.errorCode || err?.code || '').trim().toLowerCase();
+    if (errorCode === 'interaction_in_progress') {
+      return 'Ya hay un inicio de sesión de Microsoft en curso o quedó pendiente. Recarga la página y vuelve a intentarlo.';
+    }
+    if (errorCode === 'user_cancelled') {
+      return 'Has cerrado la ventana de Microsoft antes de completar el acceso.';
+    }
+    if (errorCode === 'popup_window_error' || errorCode === 'monitor_window_timeout') {
+      return 'No se ha completado la ventana emergente de Microsoft. Reintenta el acceso.';
+    }
+
+    const message = typeof err?.message === 'string' ? err.message.trim() : '';
+    return message || 'No se ha podido iniciar sesión con Microsoft.';
+  }
+
+  private clearMicrosoftLoginPending(): void {
+    sessionStorage.removeItem(this.microsoftLoginPendingKey);
+  }
+
+  private async logoutMicrosoftSession(): Promise<void> {
+    try {
+      const msal = await this.getMsalInstance();
+      const account = msal.getActiveAccount() || msal.getAllAccounts()[0] || undefined;
+      if (!account) return;
+
+      await msal.logoutPopup({
+        account,
+        mainWindowRedirectUri: `${window.location.origin}${window.location.pathname}`,
+      });
+    } catch {
+      // El logout local ya se ha completado; no bloqueamos la salida si Microsoft falla.
+    }
   }
 
   get canCrearAdministrador(): boolean {
