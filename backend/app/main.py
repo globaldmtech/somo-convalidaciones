@@ -3,13 +3,27 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 
-from api.routers import admin, convalidaciones
+from .api.routers import admin, convalidaciones
+
+
+def _normalize_app_base_path(raw_value: str | None) -> str:
+    value = (raw_value or "").strip()
+    if not value or value == "/":
+        return ""
+    return f"/{value.strip('/')}"
+
+
+APP_BASE_PATH = _normalize_app_base_path(os.getenv("APP_BASE_PATH"))
+INDEX_BASE_HREF = f"{APP_BASE_PATH}/" if APP_BASE_PATH else "/"
+
+
 app = FastAPI(
     title="Somo-Convalidaciones API",
     description="Backend for Somorrostro Convalidaciones system.",
     version="0.1.0",
+    root_path=APP_BASE_PATH,
 )
 
 _default_frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist" / "frontend" / "browser"
@@ -52,6 +66,13 @@ def _index_file() -> Path:
     return index_file
 
 
+def _frontend_index_response() -> HTMLResponse:
+    index_html = _index_file().read_text(encoding="utf-8")
+    if INDEX_BASE_HREF != "/":
+        index_html = index_html.replace('<base href="/">', f'<base href="{INDEX_BASE_HREF}">', 1)
+    return HTMLResponse(content=index_html)
+
+
 def _should_return_index_for(path: str) -> bool:
     if path == "admin":
         return True
@@ -64,7 +85,7 @@ def _should_return_index_for(path: str) -> bool:
 
 @app.get("/", include_in_schema=False)
 async def frontend_index():
-    return FileResponse(_index_file())
+    return _frontend_index_response()
 
 
 @app.get("/{path:path}", include_in_schema=False)
@@ -81,8 +102,8 @@ async def frontend_or_static(path: str):
     if "." in Path(path).name:
         raise HTTPException(status_code=404, detail="Asset not found")
 
-    return FileResponse(_index_file())
+    return _frontend_index_response()
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend.app.main:app", host="0.0.0.0", port=8000, reload=True)
