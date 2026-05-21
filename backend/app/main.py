@@ -1,11 +1,15 @@
 import os
+import logging
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 from .api.routers import admin, convalidaciones
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def _normalize_app_base_path(raw_value: str | None) -> str:
@@ -39,6 +43,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.exception(f"Unhandled exception for {request.method} {request.url.path}: {exc}", exc_info=exc)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {str(exc)[:200]}"},
+    )
 
 # Include Routers
 app.include_router(convalidaciones.router)
