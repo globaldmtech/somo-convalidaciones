@@ -15,11 +15,10 @@ load_dotenv(_BACKEND_DIR / ".env")
 
 TENANT_ID = (os.getenv("TENANT_ID") or "").strip()
 CLIENT_ID = (os.getenv("CLIENT_ID") or "").strip()
-OBJECT_ID = (os.getenv("OBJECT_ID") or "").strip()
 
 
 def is_enabled() -> bool:
-    return bool(TENANT_ID and CLIENT_ID and OBJECT_ID)
+    return bool(TENANT_ID and CLIENT_ID)
 
 
 def public_config() -> dict:
@@ -65,7 +64,7 @@ def _jwks_client() -> jwt.PyJWKClient:
     return jwt.PyJWKClient(jwks_uri)
 
 
-def validate_id_token(token: str, *, allowed_object_ids: set[str] | None = None) -> dict:
+def validate_id_token(token: str) -> dict:
     if not is_enabled():
         raise RuntimeError("Autenticación Microsoft no configurada")
     if not token:
@@ -84,9 +83,6 @@ def validate_id_token(token: str, *, allowed_object_ids: set[str] | None = None)
     oid = str(payload.get("oid") or "").strip()
     if not oid:
         raise ValueError("El token de Microsoft no incluye oid")
-    expected_object_ids = allowed_object_ids if allowed_object_ids is not None else {OBJECT_ID} if OBJECT_ID else set()
-    if expected_object_ids and oid not in expected_object_ids:
-        raise ValueError("La cuenta autenticada no está autorizada")
 
     return {
         "oid": oid,
