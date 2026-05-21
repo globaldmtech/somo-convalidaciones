@@ -300,4 +300,5 @@ async def current_user_session(
     db: sqlite3.Connection = Depends(database.get_db),
 ):
     usuario = require_authenticated_user(request, db)
+    db.commit()
     return {"ok": True, **usuario}
