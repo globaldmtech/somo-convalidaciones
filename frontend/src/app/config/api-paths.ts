@@ -7,6 +7,6 @@ function normalizedBasePath(): string {
 const basePath = normalizedBasePath();
 const withBase = (suffix: string): string => `${basePath}${suffix}` || suffix;
 
-export const API_BASE = withBase('/convalidaciones');
+export const API_BASE = withBase('');
 export const ADMIN_API_BASE = withBase('/admin');
 export const AUTH_API_BASE = '/auth';
