@@ -6,7 +6,8 @@ El proyecto está compuesto por:
 
 - `backend/`: API en FastAPI y acceso a SQLite
 - `frontend/`: cliente Angular
-- `somo_auth/`: servicio FastAPI de autenticación compartida para las SPAs
+
+La autenticación compartida vive ahora en un repositorio separado: `../somo-auth`.
 
 ## Requisitos
 
