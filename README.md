@@ -37,9 +37,7 @@ Variables útiles:
 - `APP_BASE_PATH`: subruta pública donde se expone la app detrás de `nginx`. Ejemplo: `/convalidaciones`. Por defecto raíz `/`.
 - `TENANT_ID`: identificador del tenant de Microsoft Entra ID para el acceso admin.
 - `CLIENT_ID`: identificador de la aplicación registrada en Microsoft Entra ID.
-- `OBJECT_ID`: identificador del usuario Microsoft autorizado para acceder al admin.
 - `CLIENT_SECRET`: secreto de la aplicación registrada en Entra ID; lo usa `somo_auth` para intercambiar el código OAuth.
-- `AUTH_ALLOWED_OBJECT_IDS`: lista separada por comas de `oid` autorizados. Si no se define, se usa `OBJECT_ID`.
 - `AUTH_SESSION_SECRET`: secreto compartido con el que `somo_auth` firma la cookie JWT y `convalidaciones` la valida. Si no se define, se reutiliza `ADMIN_AUTH_SECRET`.
 - `AUTH_SESSION_COOKIE_NAME`: nombre de la cookie compartida. Por defecto `somo_auth_session`.
 
@@ -51,7 +49,6 @@ FORM_UPLOAD_DIR=/app/data/uploads
 APP_BASE_PATH=/convalidaciones
 TENANT_ID=...
 CLIENT_ID=...
-OBJECT_ID=...
 ```
 
 La autenticación Microsoft lee variables tanto desde `backend/.env` como desde `.env` en la raíz del repositorio. Si defines ambas, prevalecerán las variables ya presentes en el entorno del proceso.

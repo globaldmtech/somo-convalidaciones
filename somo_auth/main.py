@@ -18,9 +18,6 @@ from backend.app.auth.shared_session import (
 
 
 AUTH_ROOT_PATH = "/auth"
-AUTH_ALLOWED_OBJECT_IDS = {
-    value.strip() for value in (os.getenv("AUTH_ALLOWED_OBJECT_IDS") or os.getenv("OBJECT_ID") or "").split(",") if value.strip()
-}
 
 app = FastAPI(title="Somo Auth", version="0.1.0", root_path=AUTH_ROOT_PATH)
 
@@ -92,12 +89,6 @@ def _token_endpoint_payload(request: Request, code: str) -> dict[str, str]:
     }
 
 
-def _roles_for_oid(oid: str) -> list[str]:
-    if oid in AUTH_ALLOWED_OBJECT_IDS:
-        return ["admin"]
-    raise ValueError("La cuenta autenticada no está autorizada")
-
-
 @app.get("/login")
 async def login(request: Request, returnTo: str = Query(default="/")):
     if not microsoft.TENANT_ID or not microsoft.CLIENT_ID:
@@ -147,13 +138,13 @@ async def callback(
         token_response.raise_for_status()
         token_payload = token_response.json()
         id_token = str(token_payload.get("id_token") or "").strip()
-        microsoft_user = microsoft.validate_id_token(id_token, allowed_object_ids=AUTH_ALLOWED_OBJECT_IDS)
+        microsoft_user = microsoft.validate_id_token(id_token)
         token = create_session_token(
             subject=microsoft_user["oid"],
             oid=microsoft_user["oid"],
             name=microsoft_user["display_name"] or microsoft_user["username"],
             username=microsoft_user["username"],
-            roles=_roles_for_oid(microsoft_user["oid"]),
+            roles=["admin"],
         )
         return _session_response(return_to, token)
     except ValueError as exc:
