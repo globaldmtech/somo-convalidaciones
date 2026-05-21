@@ -3,9 +3,6 @@ from __future__ import annotations
 
 import os
 import sqlite3
-import hashlib
-import hmac
-import secrets
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,8 +31,108 @@ def connect(config: Optional[DBConfig] = None) -> sqlite3.Connection:
     config.path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(config.path, check_same_thread=False, timeout=30.0)
     conn.row_factory = sqlite3.Row
+    _ensure_runtime_schema(conn)
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
+
+
+def _table_exists(conn: sqlite3.Connection, table_name: str) -> bool:
+    row = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
+        (table_name,),
+    ).fetchone()
+    return row is not None
+
+
+def _ensure_runtime_schema(conn: sqlite3.Connection) -> None:
+    if not _table_exists(conn, "usuarios"):
+        return
+
+    conn.execute("PRAGMA foreign_keys = OFF;")
+    try:
+        _migrate_usuarios_table(conn)
+        _migrate_formularios_table(conn)
+        conn.execute("DROP TABLE IF EXISTS administradores")
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.execute("PRAGMA foreign_keys = ON;")
+
+
+def _migrate_usuarios_table(conn: sqlite3.Connection) -> None:
+    columns = {
+        str(row["name"]): row
+        for row in conn.execute("PRAGMA table_info(usuarios)").fetchall()
+    }
+    has_oid = "oid" in columns
+    dni_not_null = bool(columns["DNI"]["notnull"]) if "DNI" in columns else False
+    if has_oid and not dni_not_null:
+        return
+
+    select_oid = "oid" if has_oid else "NULL"
+    conn.execute(
+        """
+        CREATE TABLE usuarios__new (
+          id INTEGER PRIMARY KEY,
+          oid TEXT UNIQUE,
+          DNI TEXT UNIQUE,
+          nombre TEXT NOT NULL,
+          email TEXT NOT NULL,
+          rol TEXT NOT NULL,
+          created_at TEXT NOT NULL
+        )
+        """
+    )
+    conn.execute(
+        f"""
+        INSERT INTO usuarios__new (id, oid, DNI, nombre, email, rol, created_at)
+        SELECT id, {select_oid}, DNI, nombre, email, COALESCE(NULLIF(TRIM(rol), ''), 'alumno'), created_at
+        FROM usuarios
+        """
+    )
+    conn.execute("DROP TABLE usuarios")
+    conn.execute("ALTER TABLE usuarios__new RENAME TO usuarios")
+
+
+def _migrate_formularios_table(conn: sqlite3.Connection) -> None:
+    if not _table_exists(conn, "formularios"):
+        return
+
+    fks = conn.execute("PRAGMA foreign_key_list(formularios)").fetchall()
+    uses_admin_fk = any(
+        str(row["from"]) == "validado_por" and str(row["table"]) == "administradores"
+        for row in fks
+    )
+    if not uses_admin_fk:
+        return
+
+    conn.execute(
+        """
+        CREATE TABLE formularios__new (
+          id INTEGER PRIMARY KEY,
+          id_alumno INTEGER NOT NULL,
+          enviado_at TEXT,
+          estado INTEGER NOT NULL,
+          validado_por INTEGER,
+          anotaciones TEXT,
+          validado_at TEXT,
+          FOREIGN KEY (id_alumno) REFERENCES usuarios(id),
+          FOREIGN KEY (validado_por) REFERENCES usuarios(id),
+          FOREIGN KEY (estado) REFERENCES estados_formularios(id)
+        )
+        """
+    )
+    conn.execute(
+        """
+        INSERT INTO formularios__new (id, id_alumno, enviado_at, estado, validado_por, anotaciones, validado_at)
+        SELECT id, id_alumno, enviado_at, estado, NULL, anotaciones, validado_at
+        FROM formularios
+        """
+    )
+    conn.execute("DROP TABLE formularios")
+    conn.execute("ALTER TABLE formularios__new RENAME TO formularios")
 
 
 def get_db() -> Generator[sqlite3.Connection, None, None]:
@@ -239,37 +336,157 @@ class ConvalidationQueries:
 
 class UserQueries:
     @staticmethod
-    def get_or_create_usuario_by_dni(
+    def get_user_by_id(conn: sqlite3.Connection, user_id: int) -> Optional[dict]:
+        row = conn.execute(
+            """
+            SELECT id, oid, DNI, nombre, email, rol, created_at
+            FROM usuarios
+            WHERE id = ?
+            """,
+            (user_id,),
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "id": int(row["id"]),
+            "oid": row["oid"],
+            "dni": row["DNI"],
+            "nombre": row["nombre"],
+            "email": row["email"],
+            "rol": row["rol"],
+            "created_at": row["created_at"],
+        }
+
+    @staticmethod
+    def get_user_by_oid(conn: sqlite3.Connection, oid: str) -> Optional[dict]:
+        row = conn.execute(
+            """
+            SELECT id, oid, DNI, nombre, email, rol, created_at
+            FROM usuarios
+            WHERE oid = ?
+            """,
+            (oid,),
+        ).fetchone()
+        if not row:
+            return None
+        return {
+            "id": int(row["id"]),
+            "oid": row["oid"],
+            "dni": row["DNI"],
+            "nombre": row["nombre"],
+            "email": row["email"],
+            "rol": row["rol"],
+            "created_at": row["created_at"],
+        }
+
+    @staticmethod
+    def get_or_create_usuario_by_oid(
         conn: sqlite3.Connection,
-        dni: str,
+        oid: str,
         nombre: str,
-        apellidos: Optional[str],
         email: str,
     ) -> int:
-        existing = conn.execute(
+        normalized_oid = (oid or "").strip()
+        normalized_nombre = (nombre or "").strip() or (email or "").strip() or normalized_oid
+        normalized_email = (email or "").strip() or normalized_oid
+
+        existing = UserQueries.get_user_by_oid(conn, normalized_oid)
+        if existing:
+            conn.execute(
+                """
+                UPDATE usuarios
+                SET nombre = ?, email = ?
+                WHERE id = ?
+                """,
+                (normalized_nombre, normalized_email, existing["id"]),
+            )
+            return int(existing["id"])
+
+        existing_by_email = conn.execute(
             """
             SELECT id
             FROM usuarios
-            WHERE UPPER(DNI) = ?
+            WHERE LOWER(email) = LOWER(?)
+              AND (oid IS NULL OR TRIM(oid) = '')
+            ORDER BY id ASC
+            LIMIT 1
             """,
-            (dni,),
+            (normalized_email,),
         ).fetchone()
-        if existing:
-            return int(existing["id"])
-
-        nombre_full = " ".join(
-            part.strip() for part in [(nombre or ""), (apellidos or "")] if part and part.strip()
-        ).strip()
+        if existing_by_email:
+            user_id = int(existing_by_email["id"])
+            conn.execute(
+                """
+                UPDATE usuarios
+                SET oid = ?, nombre = ?, email = ?
+                WHERE id = ?
+                """,
+                (normalized_oid, normalized_nombre, normalized_email, user_id),
+            )
+            return user_id
 
         created_at = datetime.now(timezone.utc).isoformat()
         cursor = conn.execute(
             """
-            INSERT INTO usuarios (DNI, nombre, email, rol, created_at)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO usuarios (oid, DNI, nombre, email, rol, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
-            (dni, nombre_full, (email or "").strip(), "alumno", created_at),
+            (normalized_oid, None, normalized_nombre, normalized_email, "alumno", created_at),
         )
         return int(cursor.lastrowid)
+
+    @staticmethod
+    def update_user_profile(
+        conn: sqlite3.Connection,
+        user_id: int,
+        *,
+        nombre: str,
+        email: str,
+        dni: Optional[str],
+    ) -> int:
+        cursor = conn.execute(
+            """
+            UPDATE usuarios
+            SET nombre = ?, email = ?, DNI = ?
+            WHERE id = ?
+            """,
+            (nombre, email, dni, user_id),
+        )
+        return int(cursor.rowcount)
+
+    @staticmethod
+    def list_users(conn: sqlite3.Connection) -> list[dict]:
+        rows = conn.execute(
+            """
+            SELECT id, oid, DNI, nombre, email, rol, created_at
+            FROM usuarios
+            ORDER BY LOWER(nombre), id
+            """
+        ).fetchall()
+        return [
+            {
+                "id": int(row["id"]),
+                "oid": row["oid"],
+                "dni": row["DNI"],
+                "nombre": row["nombre"],
+                "email": row["email"],
+                "rol": row["rol"],
+                "created_at": row["created_at"],
+            }
+            for row in rows
+        ]
+
+    @staticmethod
+    def update_user_role(conn: sqlite3.Connection, user_id: int, rol: str) -> int:
+        cursor = conn.execute(
+            """
+            UPDATE usuarios
+            SET rol = ?
+            WHERE id = ?
+            """,
+            (rol, user_id),
+        )
+        return int(cursor.rowcount)
 
 
 class FormularioQueries:
@@ -414,81 +631,6 @@ class FormularioQueries:
 
 
 class AdminQueries:
-    _PASSWORD_SCHEME = "pbkdf2_sha256"
-    _PASSWORD_ITERATIONS = 200000
-
-    @staticmethod
-    def _hash_password(password: str) -> str:
-        salt = secrets.token_hex(16)
-        digest = hashlib.pbkdf2_hmac(
-            "sha256",
-            password.encode("utf-8"),
-            salt.encode("utf-8"),
-            AdminQueries._PASSWORD_ITERATIONS,
-        ).hex()
-        return f"{AdminQueries._PASSWORD_SCHEME}${AdminQueries._PASSWORD_ITERATIONS}${salt}${digest}"
-
-    @staticmethod
-    def _verify_password(password: str, stored_value: str) -> bool:
-        if not stored_value:
-            return False
-
-        parts = stored_value.split("$")
-        if len(parts) == 4 and parts[0] == AdminQueries._PASSWORD_SCHEME:
-            _, iterations_raw, salt, digest_hex = parts
-            try:
-                iterations = int(iterations_raw)
-            except ValueError:
-                return False
-            computed = hashlib.pbkdf2_hmac(
-                "sha256",
-                password.encode("utf-8"),
-                salt.encode("utf-8"),
-                iterations,
-            ).hex()
-            return hmac.compare_digest(computed, digest_hex)
-        return False
-
-    @staticmethod
-    def authenticate_admin(conn: sqlite3.Connection, nombre: str, password: str) -> Optional[dict]:
-        row = conn.execute(
-            """
-            SELECT id, nombre, password
-            FROM administradores
-            WHERE nombre = ?
-            """,
-            (nombre,),
-        ).fetchone()
-        if not row:
-            return None
-        if not AdminQueries._verify_password(password, str(row["password"] or "")):
-            return None
-        return {"id": int(row["id"]), "nombre": str(row["nombre"])}
-
-    @staticmethod
-    def get_admin_by_nombre(conn: sqlite3.Connection, nombre: str) -> Optional[dict]:
-        row = conn.execute(
-            """
-            SELECT id, nombre
-            FROM administradores
-            WHERE nombre = ?
-            """,
-            (nombre,),
-        ).fetchone()
-        return {"id": int(row["id"]), "nombre": str(row["nombre"])} if row else None
-
-    @staticmethod
-    def get_admin_by_id_nombre(conn: sqlite3.Connection, admin_id: int, nombre: str) -> Optional[dict]:
-        row = conn.execute(
-            """
-            SELECT id, nombre
-            FROM administradores
-            WHERE id = ? AND nombre = ?
-            """,
-            (admin_id, nombre),
-        ).fetchone()
-        return dict(row) if row else None
-
     @staticmethod
     def list_admin_formularios(
         conn: sqlite3.Connection,
@@ -907,76 +1049,6 @@ class AdminQueries:
             }
             for regla in reglas
         ]
-
-    @staticmethod
-    def list_admin_users(conn: sqlite3.Connection) -> list[dict]:
-        admins = conn.execute(
-            """
-            SELECT
-                id,
-                nombre,
-                created_at
-            FROM administradores
-            ORDER BY nombre
-            """
-        ).fetchall()
-        return [dict(row) for row in admins]
-
-    @staticmethod
-    def create_admin_user(conn: sqlite3.Connection, nombre: str, password: str) -> dict:
-        created_at = datetime.now(timezone.utc).isoformat()
-        password_hash = AdminQueries._hash_password(password)
-        cursor = conn.execute(
-            """
-            INSERT INTO administradores (nombre, password, created_at)
-            VALUES (?, ?, ?)
-            """,
-            (nombre, password_hash, created_at),
-        )
-        admin_id = int(cursor.lastrowid)
-        return admin_id, created_at
-
-    @staticmethod
-    def update_admin_user(
-        conn: sqlite3.Connection,
-        admin_id: int,
-        nombre: Optional[str] = None,
-        password: Optional[str] = None,
-    ) -> int:
-        updates: list[str] = []
-        params: list[object] = []
-
-        if nombre is not None:
-            updates.append("nombre = ?")
-            params.append(nombre)
-        if password is not None:
-            updates.append("password = ?")
-            params.append(AdminQueries._hash_password(password))
-
-        if not updates:
-            return 0
-
-        params.append(admin_id)
-        cursor = conn.execute(
-            f"""
-            UPDATE administradores
-            SET {", ".join(updates)}
-            WHERE id = ?
-            """,
-            params,
-        )
-        return int(cursor.rowcount)
-
-    @staticmethod
-    def delete_admin_user(conn: sqlite3.Connection, admin_id: int) -> int:
-        cursor = conn.execute(
-            """
-            DELETE FROM administradores
-            WHERE id = ?
-            """,
-            (admin_id,),
-        )
-        return int(cursor.rowcount)
 
     @staticmethod
     def delete_convalidacion_rule(conn: sqlite3.Connection, convalidacion_id: int) -> int:

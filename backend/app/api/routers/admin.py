@@ -2,7 +2,6 @@ import io
 import os
 import sqlite3
 from pathlib import Path
-import jwt
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
@@ -12,21 +11,19 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.routing import APIRoute
 
-from ...auth.shared_session import AUTH_SESSION_COOKIE_NAME, decode_session_token
+from ...auth.session_user import require_admin_user
 from ...db import database
 from ...model.admin import (
-    ActualizarAdministradorRequest,
+    ActualizarUsuarioRolRequest,
     CambiarEstadoFormularioRequest,
     CambiarEstadoSolicitudRequest,
-    CrearAdministradorRequest,
     CrearCicloRequest,
     CrearConvalidacionRequest,
     CrearModulosRequest,
 )
 
 ADMIN_UPLOAD_DIR = Path(os.getenv("FORM_UPLOAD_DIR", "/app/data/uploads")).resolve()
-PUBLIC_ADMIN_PATHS = {"/admin/login", "/admin/login/microsoft", "/admin/auth/config"}
-ADMIN_LOCAL_USER_NAME = (os.getenv("ADMIN_LOCAL_USER_NAME") or "admin").strip() or "admin"
+PUBLIC_ADMIN_PATHS = {"/admin/auth/config"}
 
 
 def _normalized_request_path(request: Request) -> str:
@@ -38,30 +35,6 @@ def _normalized_request_path(request: Request) -> str:
     return path
 
 
-def validate_admin_session(request: Request, db: sqlite3.Connection) -> dict | None:
-    token = (request.cookies.get(AUTH_SESSION_COOKIE_NAME) or "").strip()
-    if not token:
-        return None
-
-    try:
-        payload = decode_session_token(token, required_role="admin")
-    except jwt.InvalidTokenError:
-        return None
-
-    admin = database.AdminQueries.get_admin_by_nombre(db, ADMIN_LOCAL_USER_NAME)
-    if not admin:
-        return None
-
-    return {
-        "id": int(admin["id"]),
-        "nombre": str(admin["nombre"]),
-        "display_name": str(payload.get("name") or admin["nombre"]),
-        "username": str(payload.get("preferred_username") or ""),
-        "oid": str(payload.get("oid") or ""),
-        "roles": payload.get("roles") or [],
-    }
-
-
 class AdminAuthRoute(APIRoute):
     def get_route_handler(self):
         original_route_handler = super().get_route_handler()
@@ -70,12 +43,10 @@ class AdminAuthRoute(APIRoute):
             if _normalized_request_path(request) not in PUBLIC_ADMIN_PATHS:
                 conn = database.connect()
                 try:
-                    admin_user = validate_admin_session(request, conn)
+                    admin_user = require_admin_user(request, conn)
                 finally:
                     conn.close()
 
-                if not admin_user:
-                    raise HTTPException(status_code=401, detail="Sesión de administrador inválida o caducada")
                 request.state.admin = admin_user
 
             return await original_route_handler(request)
@@ -363,123 +334,39 @@ async def listar_convalidaciones(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/listar_administradores")
-async def listar_administradores(
+@router.get("/usuarios")
+async def listar_usuarios(
     db: sqlite3.Connection = Depends(database.get_db),
 ):
-    """Lista administradores registrados (sin exponer contraseña)."""
+    """Lista usuarios registrados y su rol actual."""
     try:
-        return database.AdminQueries.list_admin_users(db)
+        return database.UserQueries.list_users(db)
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/crear_administrador")
-async def crear_administrador(
-    request: CrearAdministradorRequest,
-    http_request: Request,
+@router.put("/usuarios/{id_usuario}/rol")
+async def actualizar_rol_usuario(
+    id_usuario: int,
+    request: ActualizarUsuarioRolRequest,
     db: sqlite3.Connection = Depends(database.get_db),
 ):
-    """Crea un nuevo usuario administrador."""
+    """Actualiza el rol de un usuario existente."""
     try:
-        admin_logueado = getattr(http_request.state, "admin", None) or {}
-        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
-            raise HTTPException(status_code=403, detail="Solo el usuario admin puede crear administradores")
+        rol = (request.rol or "").strip().lower()
+        if rol not in {"admin", "alumno"}:
+            raise HTTPException(status_code=400, detail="El rol debe ser 'admin' o 'alumno'")
 
-        nombre = (request.nombre or "").strip()
-        password = request.password or ""
-        if not nombre:
-            raise HTTPException(status_code=400, detail="El nombre del administrador es obligatorio")
-        if not password:
-            raise HTTPException(status_code=400, detail="La contraseña es obligatoria")
+        updated = database.UserQueries.update_user_role(db, user_id=id_usuario, rol=rol)
+        if updated == 0:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-        created, created_at = database.AdminQueries.create_admin_user(db, nombre=nombre, password=password)
         db.commit()
         return {
             "ok": True,
-            "id": created,
-            "created_at": created_at,
+            "id": id_usuario,
+            "rol": rol,
         }
-    except HTTPException:
-        raise
-    except sqlite3.IntegrityError as e:
-        db.rollback()
-        detail = str(e)
-        if "UNIQUE constraint failed: administradores.nombre" in detail:
-            detail = "Ya existe un administrador con ese nombre"
-        raise HTTPException(status_code=400, detail=detail)
-    except sqlite3.Error as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.put("/actualizar_administrador/{id_admin}")
-async def actualizar_administrador(
-    id_admin: int,
-    request: ActualizarAdministradorRequest,
-    http_request: Request,
-    db: sqlite3.Connection = Depends(database.get_db),
-):
-    """Actualiza nombre y/o contraseña de un administrador."""
-    try:
-        admin_logueado = getattr(http_request.state, "admin", None) or {}
-        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
-            raise HTTPException(status_code=403, detail="Solo el usuario admin puede actualizar administradores")
-
-        nombre = (request.nombre or "").strip() if request.nombre is not None else None
-        password = request.password
-
-        if nombre == "":
-            raise HTTPException(status_code=400, detail="El nombre no puede estar vacío")
-        if password == "":
-            raise HTTPException(status_code=400, detail="La contraseña no puede estar vacía")
-        if nombre is None and password is None:
-            raise HTTPException(
-                status_code=400,
-                detail="Debes enviar al menos un campo para actualizar: nombre o password",
-            )
-
-        updated = database.AdminQueries.update_admin_user(
-            db,
-            admin_id=id_admin,
-            nombre=nombre,
-            password=password,
-        )
-        if updated == 0:
-            raise HTTPException(status_code=404, detail="Administrador no encontrado")
-
-        db.commit()
-        return {"ok": True, "id": id_admin}
-    except HTTPException:
-        raise
-    except sqlite3.IntegrityError as e:
-        db.rollback()
-        detail = str(e)
-        if "UNIQUE constraint failed: administradores.nombre" in detail:
-            detail = "Ya existe un administrador con ese nombre"
-        raise HTTPException(status_code=400, detail=detail)
-    except sqlite3.Error as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.delete("/eliminar_administrador/{id_admin}")
-async def eliminar_administrador(
-    id_admin: int,
-    request: Request,
-    db: sqlite3.Connection = Depends(database.get_db),
-):
-    """Elimina un administrador por ID."""
-    try:
-        admin_logueado = getattr(request.state, "admin", None) or {}
-        if (admin_logueado.get("nombre") or "").strip().lower() != "admin":
-            raise HTTPException(status_code=403, detail="Solo el usuario admin puede eliminar administradores")
-
-        deleted = database.AdminQueries.delete_admin_user(db, admin_id=id_admin)
-        if deleted == 0:
-            raise HTTPException(status_code=404, detail="Administrador no encontrado")
-        db.commit()
-        return {"ok": True, "id": id_admin}
     except HTTPException:
         raise
     except sqlite3.Error as e:

@@ -4,10 +4,11 @@ import re
 import unicodedata
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
 import sqlite3
 from datetime import datetime, timezone
 from typing import Optional, List
+from ...auth.session_user import require_authenticated_user
 from ...db import database
 from ...model.convalidaciones import (
     ConvalidationRequest,
@@ -156,6 +157,7 @@ async def calcular_convalidaciones(
 
 @router.post("/insertar_formulario_completo")
 async def insertar_formulario_completo(
+    http_request: Request,
     request: FormularioCompletoRequest = Depends(_parse_formulario_request),
     documento_dni: UploadFile | None = File(default=None),
     documento_dni_nombre: str | None = Form(default=None),
@@ -176,20 +178,26 @@ async def insertar_formulario_completo(
     """
     archivos_guardados: list[dict] = []
     try:
+        usuario = require_authenticated_user(http_request, db)
         nombres_certificado = json.loads(documentos_certificado_nombres or "[]")
         nombres_otros = json.loads(documentos_otros_nombres or "[]")
 
         estado = request.estado if request.estado is not None else 0
         enviado_at = request.enviado_at if request.enviado_at is not None else datetime.now(timezone.utc).isoformat()
 
-        id_alumno = database.UserQueries.get_or_create_usuario_by_dni(
+        nombre_completo = " ".join(
+            part.strip() for part in [request.nombre, request.apellidos or ""] if part and part.strip()
+        ).strip()
+        updated = database.UserQueries.update_user_profile(
             conn=db,
-            dni=request.dni,
-            nombre=request.nombre,
-            apellidos=request.apellidos,
-            email=request.email,
+            user_id=int(usuario["id"]),
+            nombre=nombre_completo or (request.nombre or "").strip(),
+            email=(request.email or "").strip(),
+            dni=(request.dni or "").strip().upper(),
         )
-        id_alumno = int(id_alumno)
+        if updated == 0:
+            raise HTTPException(status_code=404, detail="Usuario autenticado no encontrado")
+        id_alumno = int(usuario["id"])
         # 1. Insertar formulario
         formulario = database.FormularioQueries.insert_formulario(db,
             id_alumno=id_alumno,
@@ -260,3 +268,12 @@ async def insertar_formulario_completo(
         for archivo in archivos_guardados:
             Path(archivo["ruta_almacenamiento"]).unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/session")
+async def current_user_session(
+    request: Request,
+    db: sqlite3.Connection = Depends(database.get_db),
+):
+    usuario = require_authenticated_user(request, db)
+    return {"ok": True, **usuario}

@@ -12,15 +12,6 @@ class CambiarEstadoSolicitudRequest(BaseModel):
     nota_manual: float | None = None
 
 
-class AdminLoginRequest(BaseModel):
-    nombre: str
-    password: str
-
-
-class AdminMicrosoftLoginRequest(BaseModel):
-    token: str
-
-
 class CrearCicloRequest(BaseModel):
     nombre: str
     id_familia: int
@@ -44,11 +35,5 @@ class CrearConvalidacionRequest(BaseModel):
     source_page: int | None = None
 
 
-class CrearAdministradorRequest(BaseModel):
-    nombre: str
-    password: str
-
-
-class ActualizarAdministradorRequest(BaseModel):
-    nombre: str | None = None
-    password: str | None = None
+class ActualizarUsuarioRolRequest(BaseModel):
+    rol: str

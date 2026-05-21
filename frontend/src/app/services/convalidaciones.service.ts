@@ -159,6 +159,22 @@ export interface AdminSessionResponse {
     ok: boolean;
     id: number;
     nombre: string;
+    email: string;
+    dni?: string | null;
+    rol: string;
+    display_name: string;
+    username: string;
+    oid: string;
+    roles: string[];
+}
+
+export interface UserSessionResponse {
+    ok: boolean;
+    id: number;
+    nombre: string;
+    email: string;
+    dni?: string | null;
+    rol: string;
     display_name: string;
     username: string;
     oid: string;
@@ -207,35 +223,22 @@ export interface AdminConvalidacionRegla {
 
 export interface AdminUser {
     id: number;
+    oid: string | null;
+    dni: string | null;
     nombre: string;
-    created_at: string | null;
-}
-
-export interface AdminCreateUserRequest {
-    nombre: string;
-    password: string;
-}
-
-export interface AdminCreateUserResponse {
-    ok: boolean;
-    id: number;
-    nombre: string;
+    email: string;
+    rol: string;
     created_at: string | null;
 }
 
 export interface AdminUpdateUserRequest {
-    nombre?: string;
-    password?: string;
+    rol: string;
 }
 
 export interface AdminUpdateUserResponse {
     ok: boolean;
     id: number;
-}
-
-export interface AdminDeleteUserResponse {
-    ok: boolean;
-    id: number;
+    rol: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -468,6 +471,10 @@ export class ConvalidacionesService {
         return this.http.get<AdminSessionResponse>(`${ADMIN_API_BASE}/session`);
     }
 
+    getUserSession(): Observable<UserSessionResponse> {
+        return this.http.get<UserSessionResponse>(`${API_BASE}/session`);
+    }
+
     getAuthLoginUrl(returnTo: string): string {
         return `${AUTH_API_BASE}/login?returnTo=${encodeURIComponent(returnTo)}`;
     }
@@ -515,8 +522,8 @@ export class ConvalidacionesService {
         return this.http.get<AdminConvalidacionRegla[]>(url);
     }
 
-    getAdministradoresAdmin(): Observable<AdminUser[]> {
-        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/listar_administradores`);
+    getUsuariosAdmin(): Observable<AdminUser[]> {
+        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/usuarios`);
     }
 
     exportarSolicitudesConvalidacionAdmin(): Observable<Blob> {
@@ -532,25 +539,14 @@ export class ConvalidacionesService {
         });
     }
 
-    crearAdministradorAdmin(payload: AdminCreateUserRequest): Observable<AdminCreateUserResponse> {
-        return this.http.post<AdminCreateUserResponse>(
-            `${ADMIN_API_BASE}/crear_administrador`,
-            payload
-        );
-    }
-
-    actualizarAdministradorAdmin(
-        idAdmin: number,
+    actualizarRolUsuarioAdmin(
+        idUsuario: number,
         payload: AdminUpdateUserRequest
     ): Observable<AdminUpdateUserResponse> {
         return this.http.put<AdminUpdateUserResponse>(
-            `${ADMIN_API_BASE}/actualizar_administrador/${idAdmin}`,
+            `${ADMIN_API_BASE}/usuarios/${idUsuario}/rol`,
             payload
         );
-    }
-
-    eliminarAdministradorAdmin(idAdmin: number): Observable<AdminDeleteUserResponse> {
-        return this.http.delete<AdminDeleteUserResponse>(`${ADMIN_API_BASE}/eliminar_administrador/${idAdmin}`);
     }
 
     eliminarCicloAdmin(idCiclo: number): Observable<AdminDeleteCicloResponse> {
