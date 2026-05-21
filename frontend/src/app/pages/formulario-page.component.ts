@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DatosPersonalesComponent } from '../components/datos-personales/datos-personales.component';
 import { EstudiosCursadosComponent } from '../components/estudios-cursados/estudios-cursados.component';
@@ -32,6 +32,15 @@ import { ConvalidacionesService, isValidPersonalDocumentNumber } from '../servic
 
       <main class="flex-grow py-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
+          <div *ngIf="authChecking" class="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+            Comprobando sesión...
+          </div>
+
+          <div *ngIf="!authChecking && authError" class="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700 shadow-sm">
+            {{ authError }}
+          </div>
+
+          <ng-container *ngIf="!authChecking && !authError">
           <div class="mb-12">
             <div class="md:hidden mb-4 px-1">
               <div class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-indigo-700">
@@ -82,6 +91,7 @@ import { ConvalidacionesService, isValidPersonalDocumentNumber } from '../servic
             (prev)="prevStep()"
             (submitted)="onFormularioEnviado()"
           />
+          </ng-container>
         </div>
       </main>
 
@@ -95,12 +105,18 @@ import { ConvalidacionesService, isValidPersonalDocumentNumber } from '../servic
     </div>
   `,
 })
-export class FormularioPageComponent {
+export class FormularioPageComponent implements OnInit {
   activeStep: 'personal' | 'input' | 'results' | 'docs' | 'resumen' = 'personal';
   formularioEnviado = false;
   private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  authChecking = true;
+  authError: string | null = null;
 
   constructor(private convalidacionesService: ConvalidacionesService) {}
+
+  ngOnInit(): void {
+    this.loadUserSession();
+  }
 
   steps = [
     { id: 'personal', number: 1, label: 'Datos personales' },
@@ -113,6 +129,32 @@ export class FormularioPageComponent {
   isCompleted(stepId: string): boolean {
     const order = ['personal', 'input', 'results', 'docs', 'resumen'];
     return order.indexOf(stepId) < order.indexOf(this.activeStep);
+  }
+
+  private loadUserSession(): void {
+    this.authChecking = true;
+    this.authError = null;
+    this.convalidacionesService.getUserSession().subscribe({
+      next: (session) => {
+        this.authChecking = false;
+        const [nombre, ...resto] = String(session.nombre || '').trim().split(/\s+/).filter(Boolean);
+        this.convalidacionesService.setPersonalData({
+          nombre: nombre || '',
+          apellidos: resto.join(' '),
+          dni: session.dni || '',
+          email: session.email || session.username || '',
+        });
+      },
+      error: (err) => {
+        if (err?.status === 401) {
+          const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+          window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
+          return;
+        }
+        this.authChecking = false;
+        this.authError = err?.error?.detail || 'No se ha podido comprobar tu sesión.';
+      },
+    });
   }
 
   canGoToStep(stepId: string): boolean {

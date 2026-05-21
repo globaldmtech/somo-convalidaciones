@@ -77,17 +77,11 @@ CREATE INDEX IF NOT EXISTS idx_convalidacion_ciclo_origen
 -- Usuarios, administradores y formularios
 CREATE TABLE IF NOT EXISTS usuarios (
   id INTEGER PRIMARY KEY,
-  DNI TEXT NOT NULL UNIQUE,
+  oid TEXT UNIQUE,
+  DNI TEXT UNIQUE,
   nombre TEXT NOT NULL,
   email TEXT NOT NULL,
   rol TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS administradores (
-  id INTEGER PRIMARY KEY,
-  nombre TEXT NOT NULL UNIQUE,
-  password TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
 
@@ -110,7 +104,7 @@ CREATE TABLE IF NOT EXISTS formularios (
   anotaciones TEXT,
   validado_at TEXT,
   FOREIGN KEY (id_alumno) REFERENCES usuarios(id),
-  FOREIGN KEY (validado_por) REFERENCES administradores(id),
+  FOREIGN KEY (validado_por) REFERENCES usuarios(id),
   FOREIGN KEY (estado) REFERENCES estados_formularios(id)
 );
 

@@ -12,15 +12,6 @@ class CambiarEstadoSolicitudRequest(BaseModel):
     nota_manual: float | None = None
 
 
-class AdminLoginRequest(BaseModel):
-    nombre: str
-    password: str
-
-
-class AdminMicrosoftLoginRequest(BaseModel):
-    token: str
-
-
 class CrearCicloRequest(BaseModel):
     nombre: str
     id_familia: int
@@ -50,7 +41,6 @@ class CrearConvalidacionRequest(BaseModel):
     id_modulos_origen: list[int]
     source_link: str | None = None
     source_page: int | None = None
-
 
 class CrearConvalidacionMasivaItemRequest(BaseModel):
     id_modulo_destino: int
@@ -82,18 +72,12 @@ class EliminarConvalidacionesCicloMasivasRequest(BaseModel):
     reglas: list[CrearConvalidacionCicloMasivaItemRequest]
 
 
+class ActualizarUsuarioRolRequest(BaseModel):
+    rol: str
+
+
 class CrearConvalidacionCicloRequest(BaseModel):
     id_modulo_destino: int
     id_ciclo_origen: int
     source_link: str | None = None
     source_page: int | None = None
-
-
-class CrearAdministradorRequest(BaseModel):
-    nombre: str
-    password: str
-
-
-class ActualizarAdministradorRequest(BaseModel):
-    nombre: str | None = None
-    password: str | None = None

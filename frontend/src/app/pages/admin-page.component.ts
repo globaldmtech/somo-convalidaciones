@@ -1479,51 +1479,42 @@ type PendingConvalidacionOrigenDelete = {
               <div class="flex flex-wrap items-start gap-3 justify-between">
                 <div>
                   <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold">
-                    {{ administradores.length }} administradores
+                    {{ totalUsuariosAdmin }} admins · {{ administradores.length }} usuarios
                   </span>
                 </div>
                 <input
                   type="text"
                   [(ngModel)]="filtroAdministradores"
                   class="w-full sm:w-80 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                  placeholder="Filtrar por nombre"
+                  placeholder="Filtrar por nombre, email o DNI"
                 />
               </div>
             </div>
-            <div *ngIf="isRootAdminSession" class="px-1">
-              <button
-                type="button"
-                class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                [disabled]="creatingAdmin"
-                (click)="abrirModalCrearAdministrador()"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                </svg>
-                Añadir administrador
-              </button>
-            </div>
 
             <div *ngIf="loadingAdministradores" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
-              Cargando administradores...
+              Cargando usuarios...
             </div>
             <div *ngIf="!loadingAdministradores && errorAdministradores" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {{ errorAdministradores }}
             </div>
             <div *ngIf="!loadingAdministradores && !errorAdministradores && administradoresFiltrados.length === 0" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
-              No hay administradores para el filtro aplicado.
+              No hay usuarios para el filtro aplicado.
             </div>
 
             <div *ngIf="!loadingAdministradores && !errorAdministradores && administradoresFiltrados.length > 0" class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
               <table class="w-full table-fixed text-sm">
                 <colgroup>
-                  <col class="w-[36%]" />
-                  <col class="w-[34%]" />
-                  <col class="w-[30%]" />
+                  <col class="w-[28%]" />
+                  <col class="w-[26%]" />
+                  <col class="w-[16%]" />
+                  <col class="w-[15%]" />
+                  <col class="w-[15%]" />
                 </colgroup>
                 <thead class="bg-slate-50 border-b border-slate-200">
                   <tr>
                     <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Nombre</th>
+                    <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Email / DNI</th>
+                    <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Rol</th>
                     <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Creado</th>
                     <th class="text-left px-4 py-2.5 font-semibold text-slate-600">Acciones</th>
                   </tr>
@@ -1531,40 +1522,31 @@ type PendingConvalidacionOrigenDelete = {
                 <tbody>
                   <tr *ngFor="let admin of administradoresFiltrados" class="border-b border-slate-100 last:border-b-0">
                     <td class="px-4 py-2.5 font-medium text-slate-800">{{ admin.nombre }}</td>
+                    <td class="px-4 py-2.5 text-slate-600">
+                      <div class="truncate">{{ admin.email || '—' }}</div>
+                      <div class="truncate text-xs text-slate-400">DNI: {{ admin.dni || '—' }}</div>
+                    </td>
+                    <td class="px-4 py-2.5">
+                      <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-semibold"
+                        [ngClass]="(admin.rol || '').toLowerCase() === 'admin' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-slate-100 text-slate-700 border border-slate-200'">
+                        {{ admin.rol || 'alumno' }}
+                      </span>
+                    </td>
                     <td class="px-4 py-2.5 text-slate-600">{{ formatDate(admin.created_at) }}</td>
                     <td class="px-4 py-2.5">
                       <div class="flex items-center gap-1">
                         <button
                           type="button"
-                          class="inline-flex items-center justify-center w-8 h-8 text-slate-400 transition-colors disabled:opacity-100 disabled:cursor-not-allowed"
-                          (click)="abrirModalEditarAdministrador(admin)"
-                          title="Editar administrador"
-                          aria-label="Editar administrador"
-                          [disabled]="!canGestionarAdministrador(admin) || editingAdmin"
-                          [ngClass]="{
-                            'hover:text-indigo-600 text-slate-500': canGestionarAdministrador(admin),
-                            'text-slate-300': !canGestionarAdministrador(admin)
-                          }"
+                          class="inline-flex items-center rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          (click)="toggleAdministradorRol(admin)"
+                          [disabled]="!canGestionarAdministrador(admin) || isUsuarioRoleUpdating(admin.id)"
+                          [ngClass]="(admin.rol || '').toLowerCase() === 'admin'
+                            ? 'border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
+                            : 'border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100'"
                         >
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z"></path>
-                          </svg>
-                        </button>
-                        <button
-                          type="button"
-                          class="inline-flex items-center justify-center w-8 h-8 text-slate-400 transition-colors disabled:opacity-100 disabled:cursor-not-allowed"
-                          (click)="abrirModalEliminarAdministrador(admin)"
-                          title="Eliminar administrador"
-                          aria-label="Eliminar administrador"
-                          [disabled]="!canGestionarAdministrador(admin) || deletingAdmin"
-                          [ngClass]="{
-                            'hover:text-rose-600 text-slate-500': canGestionarAdministrador(admin),
-                            'text-slate-300': !canGestionarAdministrador(admin)
-                          }"
-                        >
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"></path>
-                          </svg>
+                          {{ isUsuarioRoleUpdating(admin.id)
+                            ? 'Guardando...'
+                            : ((admin.rol || '').toLowerCase() === 'admin' ? 'Quitar admin' : 'Hacer admin') }}
                         </button>
                       </div>
                     </td>
@@ -2916,127 +2898,6 @@ type PendingConvalidacionOrigenDelete = {
             </div>
           </div>
 
-          <div *ngIf="editAdminModalOpen && adminToEdit" class="fixed inset-0 z-[120] bg-slate-900/45 flex items-center justify-center p-4">
-            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
-              <h3 class="text-base font-bold text-slate-900">Editar administrador</h3>
-              <div class="mt-4 space-y-3">
-                <label class="block">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Usuario</span>
-                  <input
-                    type="text"
-                    [(ngModel)]="editAdminNombre"
-                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    [disabled]="editingAdmin"
-                  />
-                </label>
-                <label class="block">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contraseña</span>
-                  <input
-                    type="password"
-                    [(ngModel)]="editAdminPassword"
-                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    [disabled]="editingAdmin"
-                  />
-                </label>
-              </div>
-              <p *ngIf="editAdminError" class="mt-3 text-sm text-rose-700">{{ editAdminError }}</p>
-              <div class="mt-5 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
-                  [disabled]="editingAdmin"
-                  (click)="cerrarModalEditarAdministrador()"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
-                  [disabled]="!canActualizarAdministrador || editingAdmin"
-                  (click)="actualizarAdministrador()"
-                >
-                  {{ editingAdmin ? 'Guardando...' : 'Guardar cambios' }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="deleteAdminModalOpen && adminToDelete" class="fixed inset-0 z-[121] bg-slate-900/45 flex items-center justify-center p-4">
-            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
-              <h3 class="text-base font-bold text-slate-900">Eliminar administrador</h3>
-              <p class="mt-2 text-sm text-slate-600">
-                ¿Estás seguro que quieres eliminar este usuario?
-              </p>
-              <p class="mt-1 text-sm font-semibold text-slate-800">{{ adminToDelete.nombre }}</p>
-              <p *ngIf="deleteAdminError" class="mt-3 text-sm text-rose-700">{{ deleteAdminError }}</p>
-              <div class="mt-5 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
-                  [disabled]="deletingAdmin"
-                  (click)="cerrarModalEliminarAdministrador()"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-md border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                  [disabled]="deletingAdmin"
-                  (click)="confirmarEliminarAdministrador()"
-                >
-                  {{ deletingAdmin ? 'Eliminando...' : 'Eliminar' }}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="createAdminModalOpen" class="fixed inset-0 z-[122] bg-slate-900/45 flex items-center justify-center p-4">
-            <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
-              <h3 class="text-base font-bold text-slate-900">Añadir administrador</h3>
-              <div class="mt-4 space-y-3">
-                <label class="block">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Usuario</span>
-                  <input
-                    type="text"
-                    [(ngModel)]="createAdminNombre"
-                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    placeholder="usuario_admin"
-                    [disabled]="creatingAdmin"
-                  />
-                </label>
-                <label class="block">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Contraseña</span>
-                  <input
-                    type="password"
-                    [(ngModel)]="createAdminPassword"
-                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-                    placeholder="••••••••"
-                    [disabled]="creatingAdmin"
-                  />
-                </label>
-              </div>
-              <p *ngIf="createAdminError" class="mt-3 text-sm text-rose-700">{{ createAdminError }}</p>
-              <div class="mt-5 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors"
-                  [disabled]="creatingAdmin"
-                  (click)="cerrarModalCrearAdministrador()"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm font-semibold"
-                  [disabled]="creatingAdmin || !canCrearAdministrador"
-                  (click)="crearAdministrador()"
-                >
-                  {{ creatingAdmin ? 'Creando...' : 'Crear administrador' }}
-                </button>
-              </div>
-            </div>
-          </div>
-
           <div *ngIf="manualNotaModalOpen && manualNotaSolicitud" class="fixed inset-0 z-[123] bg-slate-900/45 flex items-center justify-center p-4">
             <div class="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-xl p-5">
               <h3 class="text-base font-bold text-slate-900">Nota del módulo convalidado</h3>
@@ -3201,6 +3062,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteModuloEsAcreditacionExterna = false;
 
   adminSessionNombre = '';
+  adminSessionRole = '';
   loginError: string | null = null;
   loginLoading = false;
   authChecking = false;
@@ -3262,6 +3124,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   busquedaOrigenModalOpen = false;
   busquedaDestinoModalOpen = false;
   filtroAdministradores = '';
+  updatingUsuarioRoles = new Set<number>();
   createAdminNombre = '';
   createAdminPassword = '';
   createAdminError: string | null = null;
@@ -3335,6 +3198,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private resetAdminState(options?: { preserveLoginError?: boolean }): void {
     this.isAuthenticated = false;
     this.adminSessionNombre = '';
+    this.adminSessionRole = '';
     this.adminDisplayName = '';
     this.adminId = null;
     if (!options?.preserveLoginError) {
@@ -3366,6 +3230,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.errorModulos = null;
     this.errorConvalidaciones = null;
     this.errorAdministradores = null;
+    this.updatingUsuarioRoles.clear();
     this.createAdminNombre = '';
     this.createAdminPassword = '';
     this.createAdminError = null;
@@ -3460,8 +3325,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleAdminUnauthorized(err: any): boolean {
     if (err?.status !== 401) return false;
     this.resetAdminState();
-    this.loginError = 'Sesión de administrador caducada. Inicia sesión de nuevo.';
-    this.cdr.detectChanges();
+    const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
     return true;
   }
 
@@ -4694,7 +4559,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadingAdministradores = true;
     this.errorAdministradores = null;
 
-    this.convalidacionesService.getAdministradoresAdmin().subscribe({
+    this.convalidacionesService.getUsuariosAdmin().subscribe({
       next: (rows) => {
         this.administradores = Array.isArray(rows) ? rows : [];
         this.loadedAdministradores = true;
@@ -4712,7 +4577,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isRootAdminSession(): boolean {
-    return this.adminSessionNombre.trim().toLowerCase() === 'admin';
+    return this.adminSessionRole.trim().toLowerCase() === 'admin';
   }
 
   private loadAdminSession(): void {
@@ -4729,10 +4594,13 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
       error: (err) => {
         this.authChecking = false;
         this.loginLoading = false;
-        this.resetAdminState({ preserveLoginError: err?.status === 401 && !!this.loginError });
-        if (err?.status && err.status !== 401) {
-          this.loginError = err?.error?.detail || 'No se ha podido comprobar la sesión de administrador.';
+        this.resetAdminState({ preserveLoginError: false });
+        if (err?.status === 401) {
+          const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+          window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
+          return;
         }
+        this.loginError = err?.error?.detail || 'No se ha podido comprobar la sesión de administrador.';
         this.cdr.detectChanges();
       },
     });
@@ -4741,6 +4609,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private applyAdminSession(session: AdminSessionResponse): void {
     this.isAuthenticated = true;
     this.adminSessionNombre = session.nombre;
+    this.adminSessionRole = session.rol || '';
     this.adminDisplayName = session.display_name || session.nombre;
     this.adminId = session.id;
     this.formularioEstadoFiltro = 0;
@@ -4754,56 +4623,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loginError = authError;
     url.searchParams.delete('auth_error');
     window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-  }
-
-  get canCrearAdministrador(): boolean {
-    return this.isRootAdminSession && this.createAdminNombre.trim().length > 0 && this.createAdminPassword.length > 0;
-  }
-
-  abrirModalCrearAdministrador(): void {
-    if (!this.isRootAdminSession || this.creatingAdmin) return;
-    this.createAdminModalOpen = true;
-    this.createAdminNombre = '';
-    this.createAdminPassword = '';
-    this.createAdminError = null;
-  }
-
-  cerrarModalCrearAdministrador(): void {
-    if (this.creatingAdmin) return;
-    this.createAdminModalOpen = false;
-    this.createAdminError = null;
-  }
-
-  crearAdministrador(): void {
-    if (!this.canCrearAdministrador || this.creatingAdmin) return;
-
-    const nombre = this.createAdminNombre.trim();
-    const password = this.createAdminPassword;
-    this.creatingAdmin = true;
-    this.createAdminError = null;
-
-    this.convalidacionesService
-      .crearAdministradorAdmin({ nombre, password })
-      .pipe(
-        finalize(() => {
-          this.creatingAdmin = false;
-          this.cdr.detectChanges();
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.createAdminNombre = '';
-          this.createAdminPassword = '';
-          this.createAdminError = null;
-          this.createAdminModalOpen = false;
-          this.loadedAdministradores = false;
-          this.cargarAdministradores();
-        },
-        error: (err) => {
-          if (this.handleAdminUnauthorized(err)) return;
-          this.createAdminError = err?.error?.detail || 'No se pudo crear el administrador.';
-        },
-      });
   }
 
   get convalidacionesCiclosSomorrostro(): Ciclo[] {
@@ -4823,116 +4642,44 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   canGestionarAdministrador(admin: AdminUser): boolean {
-    const filaAdmin = (admin?.nombre || '').trim().toLowerCase() === 'admin';
-    return this.isRootAdminSession && !filaAdmin;
+    const adminId = Number(admin?.id);
+    return Number.isFinite(adminId) && adminId > 0 && !this.updatingUsuarioRoles.has(adminId);
   }
 
-  get canActualizarAdministrador(): boolean {
-    if (!this.adminToEdit) return false;
-    const nombre = this.editAdminNombre.trim();
-    const password = this.editAdminPassword;
-    if (!nombre) return false;
-    const nombreOriginal = (this.adminToEdit.nombre || '').trim();
-    const nombreCambio = nombre !== nombreOriginal;
-    const passwordCambio = password.length > 0;
-    return nombreCambio || passwordCambio;
+  isUsuarioRoleUpdating(userId: number): boolean {
+    return this.updatingUsuarioRoles.has(Number(userId));
   }
 
-  abrirModalEditarAdministrador(admin: AdminUser): void {
-    if (!this.canGestionarAdministrador(admin) || this.editingAdmin) return;
-    this.adminToEdit = admin;
-    this.editAdminNombre = admin.nombre || '';
-    this.editAdminPassword = '';
-    this.editAdminError = null;
-    this.editAdminModalOpen = true;
+  get totalUsuariosAdmin(): number {
+    return this.administradores.filter((user) => (user.rol || '').trim().toLowerCase() === 'admin').length;
   }
 
-  cerrarModalEditarAdministrador(force = false): void {
-    if (!force && this.editingAdmin) return;
-    this.editAdminModalOpen = false;
-    this.adminToEdit = null;
-    this.editAdminNombre = '';
-    this.editAdminPassword = '';
-    this.editAdminError = null;
-  }
+  toggleAdministradorRol(user: AdminUser): void {
+    const userId = Number(user.id);
+    if (!this.canGestionarAdministrador(user) || !Number.isFinite(userId) || userId <= 0) return;
 
-  actualizarAdministrador(): void {
-    if (!this.adminToEdit || !this.canActualizarAdministrador || this.editingAdmin) return;
-    const adminId = Number(this.adminToEdit.id);
-    if (!Number.isFinite(adminId) || adminId <= 0) return;
-
-    const nombre = this.editAdminNombre.trim();
-    const password = this.editAdminPassword;
-    const payload: { nombre?: string; password?: string } = {};
-    if (nombre !== (this.adminToEdit.nombre || '').trim()) {
-      payload.nombre = nombre;
-    }
-    if (password.length > 0) {
-      payload.password = password;
-    }
-    if (!payload.nombre && !payload.password) return;
-
-    this.editingAdmin = true;
-    this.editAdminError = null;
+    const rolActual = (user.rol || '').trim().toLowerCase();
+    const siguienteRol = rolActual === 'admin' ? 'alumno' : 'admin';
+    this.updatingUsuarioRoles.add(userId);
+    this.errorAdministradores = null;
     this.convalidacionesService
-      .actualizarAdministradorAdmin(adminId, payload)
+      .actualizarRolUsuarioAdmin(userId, { rol: siguienteRol })
       .pipe(
         finalize(() => {
-          this.editingAdmin = false;
+          this.updatingUsuarioRoles.delete(userId);
           this.cdr.detectChanges();
         })
       )
       .subscribe({
         next: () => {
-          this.cerrarModalEditarAdministrador(true);
-          this.loadedAdministradores = false;
-          this.cargarAdministradores();
+          this.administradores = this.administradores.map((item) =>
+            Number(item.id) === userId ? { ...item, rol: siguienteRol } : item
+          );
+          this.errorAdministradores = null;
         },
         error: (err) => {
           if (this.handleAdminUnauthorized(err)) return;
-          this.editAdminError = err?.error?.detail || 'No se pudo actualizar el administrador.';
-        },
-      });
-  }
-
-  abrirModalEliminarAdministrador(admin: AdminUser): void {
-    if (!this.canGestionarAdministrador(admin) || this.deletingAdmin) return;
-    this.adminToDelete = admin;
-    this.deleteAdminError = null;
-    this.deleteAdminModalOpen = true;
-  }
-
-  cerrarModalEliminarAdministrador(force = false): void {
-    if (!force && this.deletingAdmin) return;
-    this.deleteAdminModalOpen = false;
-    this.adminToDelete = null;
-    this.deleteAdminError = null;
-  }
-
-  confirmarEliminarAdministrador(): void {
-    if (!this.adminToDelete || this.deletingAdmin) return;
-    const adminId = Number(this.adminToDelete.id);
-    if (!Number.isFinite(adminId) || adminId <= 0) return;
-
-    this.deletingAdmin = true;
-    this.deleteAdminError = null;
-    this.convalidacionesService
-      .eliminarAdministradorAdmin(adminId)
-      .pipe(
-        finalize(() => {
-          this.deletingAdmin = false;
-          this.cdr.detectChanges();
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.cerrarModalEliminarAdministrador(true);
-          this.loadedAdministradores = false;
-          this.cargarAdministradores();
-        },
-        error: (err) => {
-          if (this.handleAdminUnauthorized(err)) return;
-          this.deleteAdminError = err?.error?.detail || 'No se pudo eliminar el administrador.';
+          this.errorAdministradores = err?.error?.detail || 'No se pudo actualizar el rol del usuario.';
         },
       });
   }
@@ -5299,7 +5046,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!query) return this.administradores;
 
     return this.administradores.filter((admin) => {
-      const text = `${admin.id} ${admin.nombre}`.toLowerCase();
+      const text = `${admin.id} ${admin.nombre} ${admin.email || ''} ${admin.dni || ''} ${admin.rol || ''}`.toLowerCase();
       return text.includes(query);
     });
   }
