@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursados/estudios-cursados.component';
-import { ADMIN_API_BASE, API_BASE } from '../config/api-paths';
+import { ADMIN_API_BASE, API_BASE, AUTH_API_BASE } from '../config/api-paths';
 
 export type PersonalDocumentType = 'dni' | 'nie' | 'otro';
 
@@ -276,15 +276,13 @@ export interface AdminLoginResponse {
     ok: boolean;
     id: number;
     nombre: string;
-    display_name?: string;
-    token: string;
+    display_name: string;
+    username: string;
+    oid: string;
+    roles: string[];
 }
 
-export interface AdminMicrosoftAuthConfig {
-    enabled: boolean;
-    tenant_id: string;
-    client_id: string;
-}
+export interface AdminSessionResponse extends AdminLoginResponse {}
 
 export interface AdminCicloModulo {
     id: number;
@@ -399,23 +397,6 @@ export class ConvalidacionesService {
     documentosOtros: UploadedDocument[] = [];
 
     constructor(private http: HttpClient) { }
-
-    private getAdminAuthHeaders(): { headers?: HttpHeaders } {
-        try {
-            const raw = localStorage.getItem('somo_admin_session');
-            if (!raw) return {};
-            const parsed = JSON.parse(raw);
-            const token = typeof parsed?.token === 'string' ? parsed.token.trim() : '';
-            if (!token) return {};
-            return {
-                headers: new HttpHeaders({
-                    Authorization: `Bearer ${token}`,
-                }),
-            };
-        } catch {
-            return {};
-        }
-    }
 
     setEstudios(estudios: EstudioEntry[]): void {
         this.estudiosSubject.next(estudios);
@@ -649,12 +630,10 @@ export class ConvalidacionesService {
     }
 
     getFormulariosAdmin(estadoId?: number | null): Observable<AdminFormulario[]> {
-        const options = this.getAdminAuthHeaders();
         const params = estadoId === null || estadoId === undefined
             ? undefined
             : new HttpParams().set('estado_id', String(estadoId));
         return this.http.get<AdminFormulario[]>(`${ADMIN_API_BASE}/formularios`, {
-            ...options,
             params,
         });
     }
@@ -666,16 +645,12 @@ export class ConvalidacionesService {
     ): Observable<AdminFormularioEstadoUpdateResponse> {
         return this.http.put<AdminFormularioEstadoUpdateResponse>(
             `${ADMIN_API_BASE}/formularios/${idFormulario}/estado`,
-            { estado_id: estadoId, admin_id: adminId ?? null },
-            this.getAdminAuthHeaders()
+            { estado_id: estadoId, admin_id: adminId ?? null }
         );
     }
 
     eliminarFormularioAdmin(idFormulario: number): Observable<AdminDeleteFormularioResponse> {
-        return this.http.delete<AdminDeleteFormularioResponse>(
-            `${ADMIN_API_BASE}/formularios/${idFormulario}`,
-            this.getAdminAuthHeaders()
-        );
+        return this.http.delete<AdminDeleteFormularioResponse>(`${ADMIN_API_BASE}/formularios/${idFormulario}`);
     }
 
     actualizarEstadoSolicitudAdmin(
@@ -686,29 +661,28 @@ export class ConvalidacionesService {
     ): Observable<AdminSolicitudEstadoUpdateResponse> {
         return this.http.put<AdminSolicitudEstadoUpdateResponse>(
             `${ADMIN_API_BASE}/solicitudes/${idSolicitud}/estado`,
-            { estado_modulo_id: estadoModuloId, admin_id: adminId ?? null, nota_manual: notaManual ?? null },
-            this.getAdminAuthHeaders()
+            { estado_modulo_id: estadoModuloId, admin_id: adminId ?? null, nota_manual: notaManual ?? null }
         );
     }
 
-    loginAdmin(nombre: string, password: string): Observable<AdminLoginResponse> {
-        return this.http.post<AdminLoginResponse>(`${ADMIN_API_BASE}/login`, { nombre, password });
+    getAdminSession(): Observable<AdminSessionResponse> {
+        return this.http.get<AdminSessionResponse>(`${ADMIN_API_BASE}/session`);
     }
 
-    getAdminMicrosoftAuthConfig(): Observable<AdminMicrosoftAuthConfig> {
-        return this.http.get<AdminMicrosoftAuthConfig>(`${ADMIN_API_BASE}/auth/config`);
+    getAuthLoginUrl(returnTo: string): string {
+        return `${AUTH_API_BASE}/login?returnTo=${encodeURIComponent(returnTo)}`;
     }
 
-    loginAdminMicrosoft(token: string): Observable<AdminLoginResponse> {
-        return this.http.post<AdminLoginResponse>(`${ADMIN_API_BASE}/login/microsoft`, { token });
+    getAuthLogoutUrl(returnTo: string): string {
+        return `${AUTH_API_BASE}/logout?returnTo=${encodeURIComponent(returnTo)}`;
     }
 
     getCiclosModulosAdmin(): Observable<AdminCicloConModulos[]> {
-        return this.http.get<AdminCicloConModulos[]>(`${ADMIN_API_BASE}/ciclos-modulos`, this.getAdminAuthHeaders());
+        return this.http.get<AdminCicloConModulos[]>(`${ADMIN_API_BASE}/ciclos-modulos`);
     }
 
     crearCicloAdmin(payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
-        return this.http.post<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos`, payload, this.getAdminAuthHeaders());
+        return this.http.post<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos`, payload);
     }
 
     actualizarCicloAdmin(idCiclo: number, payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
@@ -718,8 +692,7 @@ export class ConvalidacionesService {
     crearModulosAdmin(idCiclo: number, payload: AdminCreateModulosRequest): Observable<{ ok: boolean; inserted: number }> {
         return this.http.post<{ ok: boolean; inserted: number }>(
             `${ADMIN_API_BASE}/ciclos/${idCiclo}/modulos`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -728,8 +701,7 @@ export class ConvalidacionesService {
     ): Observable<AdminCreateConvalidacionResponse> {
         return this.http.post<AdminCreateConvalidacionResponse>(
             `${ADMIN_API_BASE}/crear_convalidaciones`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -799,16 +771,15 @@ export class ConvalidacionesService {
         const url = query
             ? `${ADMIN_API_BASE}/convalidaciones?${query}`
             : `${ADMIN_API_BASE}/convalidaciones`;
-        return this.http.get<AdminConvalidacionRegla[]>(url, this.getAdminAuthHeaders());
+        return this.http.get<AdminConvalidacionRegla[]>(url);
     }
 
     getAdministradoresAdmin(): Observable<AdminUser[]> {
-        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/listar_administradores`, this.getAdminAuthHeaders());
+        return this.http.get<AdminUser[]>(`${ADMIN_API_BASE}/listar_administradores`);
     }
 
     exportarSolicitudesConvalidacionAdmin(): Observable<Blob> {
         return this.http.get(`${ADMIN_API_BASE}/exportar_solicitudes_convalidacion`, {
-            ...this.getAdminAuthHeaders(),
             responseType: 'blob',
         });
     }
@@ -816,7 +787,6 @@ export class ConvalidacionesService {
     abrirDocumentoAdmin(path: string): Observable<Blob> {
         const url = `${ADMIN_API_BASE}/documentos/abrir?path=${encodeURIComponent(path)}`;
         return this.http.get(url, {
-            ...this.getAdminAuthHeaders(),
             responseType: 'blob',
         });
     }
@@ -824,8 +794,7 @@ export class ConvalidacionesService {
     crearAdministradorAdmin(payload: AdminCreateUserRequest): Observable<AdminCreateUserResponse> {
         return this.http.post<AdminCreateUserResponse>(
             `${ADMIN_API_BASE}/crear_administrador`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -835,31 +804,24 @@ export class ConvalidacionesService {
     ): Observable<AdminUpdateUserResponse> {
         return this.http.put<AdminUpdateUserResponse>(
             `${ADMIN_API_BASE}/actualizar_administrador/${idAdmin}`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
     eliminarAdministradorAdmin(idAdmin: number): Observable<AdminDeleteUserResponse> {
-        return this.http.delete<AdminDeleteUserResponse>(
-            `${ADMIN_API_BASE}/eliminar_administrador/${idAdmin}`,
-            this.getAdminAuthHeaders()
-        );
+        return this.http.delete<AdminDeleteUserResponse>(`${ADMIN_API_BASE}/eliminar_administrador/${idAdmin}`);
     }
 
     eliminarCicloAdmin(idCiclo: number): Observable<AdminDeleteCicloResponse> {
-        return this.http.delete<AdminDeleteCicloResponse>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`, this.getAdminAuthHeaders());
+        return this.http.delete<AdminDeleteCicloResponse>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`);
     }
 
     eliminarModuloAdmin(idModulo: number): Observable<AdminDeleteModuloResponse> {
-        return this.http.delete<AdminDeleteModuloResponse>(`${ADMIN_API_BASE}/modulos/${idModulo}`, this.getAdminAuthHeaders());
+        return this.http.delete<AdminDeleteModuloResponse>(`${ADMIN_API_BASE}/modulos/${idModulo}`);
     }
 
     eliminarConvalidacionAdmin(idConvalidacion: number): Observable<AdminDeleteConvalidacionResponse> {
-        return this.http.delete<AdminDeleteConvalidacionResponse>(
-            `${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}`,
-            this.getAdminAuthHeaders()
-        );
+        return this.http.delete<AdminDeleteConvalidacionResponse>(`${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}`);
     }
 
     eliminarConvalidacionCicloAdmin(idConvalidacionCiclo: number): Observable<AdminDeleteConvalidacionResponse> {
@@ -874,8 +836,7 @@ export class ConvalidacionesService {
         idModuloOrigen: number
     ): Observable<AdminDeleteConvalidacionOrigenResponse> {
         return this.http.delete<AdminDeleteConvalidacionOrigenResponse>(
-            `${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}/origenes/${idModuloOrigen}`,
-            this.getAdminAuthHeaders()
+            `${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}/origenes/${idModuloOrigen}`
         );
     }
 }

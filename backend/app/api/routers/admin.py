@@ -1,14 +1,8 @@
-import base64
-import hashlib
-import hmac
 import io
-import json
 import os
 import sqlite3
-import time
 from pathlib import Path
-from requests import RequestException
-from jwt import InvalidTokenError
+import jwt
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
@@ -18,7 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.routing import APIRoute
 
-from ...auth import microsoft
+from ...auth.shared_session import AUTH_SESSION_COOKIE_NAME, decode_session_token
 from ...db import database
 from ...model.admin import (
     ActualizarAdministradorRequest,
@@ -38,10 +32,9 @@ from ...model.admin import (
     CrearModulosRequest,
 )
 
-ADMIN_TOKEN_TTL_SECONDS = int(os.getenv("ADMIN_TOKEN_TTL_SECONDS", "43200"))
-ADMIN_AUTH_SECRET = os.getenv("ADMIN_AUTH_SECRET", "somo-admin-secret")
 ADMIN_UPLOAD_DIR = Path(os.getenv("FORM_UPLOAD_DIR", "/app/data/uploads")).resolve()
 PUBLIC_ADMIN_PATHS = {"/admin/login", "/admin/login/microsoft", "/admin/auth/config"}
+ADMIN_LOCAL_USER_NAME = (os.getenv("ADMIN_LOCAL_USER_NAME") or "admin").strip() or "admin"
 
 
 def _normalized_request_path(request: Request) -> str:
@@ -53,68 +46,28 @@ def _normalized_request_path(request: Request) -> str:
     return path
 
 
-def _create_admin_token(admin_id: int, nombre: str) -> str:
-    payload = {
-        "id": int(admin_id),
-        "nombre": nombre,
-        "exp": int(time.time()) + ADMIN_TOKEN_TTL_SECONDS,
-    }
-    payload_json = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    payload_b64 = base64.urlsafe_b64encode(payload_json).decode("ascii").rstrip("=")
-    signature = hmac.new(
-        ADMIN_AUTH_SECRET.encode("utf-8"),
-        payload_b64.encode("utf-8"),
-        hashlib.sha256,
-    ).hexdigest()
-    return f"{payload_b64}.{signature}"
-
-
-def _decode_admin_token(token: str) -> dict | None:
-    try:
-        payload_b64, signature = token.split(".", 1)
-    except ValueError:
-        return None
-
-    expected = hmac.new(
-        ADMIN_AUTH_SECRET.encode("utf-8"),
-        payload_b64.encode("utf-8"),
-        hashlib.sha256,
-    ).hexdigest()
-    if not hmac.compare_digest(signature, expected):
-        return None
-
-    padding = "=" * ((4 - len(payload_b64) % 4) % 4)
-    try:
-        payload_json = base64.urlsafe_b64decode((payload_b64 + padding).encode("ascii"))
-        payload = json.loads(payload_json.decode("utf-8"))
-    except Exception:
-        return None
-
-    exp = int(payload.get("exp", 0))
-    if exp <= int(time.time()):
-        return None
-    if not payload.get("id") or not payload.get("nombre"):
-        return None
-    return payload
-
-
-def validate_admin_token(token: str, db: sqlite3.Connection) -> dict | None:
+def validate_admin_session(request: Request, db: sqlite3.Connection) -> dict | None:
+    token = (request.cookies.get(AUTH_SESSION_COOKIE_NAME) or "").strip()
     if not token:
         return None
 
-    payload = _decode_admin_token(token)
-    if not payload:
+    try:
+        payload = decode_session_token(token, required_role="admin")
+    except jwt.InvalidTokenError:
         return None
 
-    admin = database.AdminQueries.get_admin_by_id_nombre(
-        db,
-        int(payload["id"]),
-        str(payload["nombre"]),
-    )
+    admin = database.AdminQueries.get_admin_by_nombre(db, ADMIN_LOCAL_USER_NAME)
     if not admin:
         return None
 
-    return {"id": int(admin["id"]), "nombre": str(admin["nombre"])}
+    return {
+        "id": int(admin["id"]),
+        "nombre": str(admin["nombre"]),
+        "display_name": str(payload.get("name") or admin["nombre"]),
+        "username": str(payload.get("preferred_username") or ""),
+        "oid": str(payload.get("oid") or ""),
+        "roles": payload.get("roles") or [],
+    }
 
 
 class AdminAuthRoute(APIRoute):
@@ -123,19 +76,14 @@ class AdminAuthRoute(APIRoute):
 
         async def custom_route_handler(request: Request):
             if _normalized_request_path(request) not in PUBLIC_ADMIN_PATHS:
-                authorization = request.headers.get("Authorization") or ""
-                scheme, _, token = authorization.partition(" ")
-                if scheme.lower() != "bearer" or not token:
-                    raise HTTPException(status_code=401, detail="Falta cabecera Authorization válida")
-
                 conn = database.connect()
                 try:
-                    admin_user = validate_admin_token(token, conn)
+                    admin_user = validate_admin_session(request, conn)
                 finally:
                     conn.close()
 
                 if not admin_user:
-                    raise HTTPException(status_code=401, detail="Token de administrador inválido o caducado")
+                    raise HTTPException(status_code=401, detail="Sesión de administrador inválida o caducada")
                 request.state.admin = admin_user
 
             return await original_route_handler(request)
@@ -152,60 +100,28 @@ router = APIRouter(
 
 @router.get("/auth/config")
 async def admin_auth_config():
-    return microsoft.public_config()
+    return {
+        "enabled": True,
+        "auth_path": "/auth",
+    }
+
+
+@router.get("/session")
+async def admin_session(request: Request):
+    admin_user = getattr(request.state, "admin", None)
+    if not admin_user:
+        raise HTTPException(status_code=401, detail="No hay sesión de administrador")
+    return {"ok": True, **admin_user}
 
 
 @router.post("/login")
-async def login_admin(
-    request: AdminLoginRequest,
-    db: sqlite3.Connection = Depends(database.get_db),
-):
-    """Valida credenciales de administrador."""
-    try:
-        admin = database.AdminQueries.authenticate_admin(db, request.nombre, request.password)
-        if not admin:
-            raise HTTPException(status_code=401, detail="Credenciales inválidas")
-        token = _create_admin_token(admin["id"], admin["nombre"])
-        return {"ok": True, "id": admin["id"], "nombre": admin["nombre"], "token": token}
-    except HTTPException:
-        raise
-    except sqlite3.Error as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def login_admin():
+    raise HTTPException(status_code=410, detail="El acceso admin ahora se gestiona desde /auth/login")
 
 
 @router.post("/login/microsoft")
-async def login_admin_microsoft(
-    request: AdminMicrosoftLoginRequest,
-    db: sqlite3.Connection = Depends(database.get_db),
-):
-    """Valida una sesión Microsoft Entra ID y emite la sesión interna de admin."""
-    try:
-        microsoft_user = microsoft.validate_id_token(request.token)
-        admin = database.AdminQueries.get_admin_by_nombre(db, "admin")
-        if not admin:
-            raise HTTPException(status_code=500, detail="No existe la cuenta local de administrador")
-
-        token = _create_admin_token(admin["id"], admin["nombre"])
-        display_name = microsoft_user["display_name"] or microsoft_user["username"] or admin["nombre"]
-        return {
-            "ok": True,
-            "id": admin["id"],
-            "nombre": admin["nombre"],
-            "display_name": display_name,
-            "token": token,
-        }
-    except HTTPException:
-        raise
-    except ValueError as e:
-        raise HTTPException(status_code=401, detail=str(e))
-    except InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Token de Microsoft inválido")
-    except RequestException:
-        raise HTTPException(status_code=502, detail="No se ha podido validar el token con Microsoft")
-    except sqlite3.Error as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def login_admin_microsoft():
+    raise HTTPException(status_code=410, detail="El acceso admin ahora se gestiona desde /auth/login")
 
 
 @router.get("/formularios")

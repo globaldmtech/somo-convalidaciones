@@ -30,6 +30,20 @@ def public_config() -> dict:
     }
 
 
+def authorization_endpoint() -> str:
+    endpoint = _openid_configuration().get("authorization_endpoint")
+    if not endpoint:
+        raise RuntimeError("No se ha podido resolver el endpoint de autorización de Microsoft Entra ID")
+    return endpoint
+
+
+def token_endpoint() -> str:
+    endpoint = _openid_configuration().get("token_endpoint")
+    if not endpoint:
+        raise RuntimeError("No se ha podido resolver el endpoint de token de Microsoft Entra ID")
+    return endpoint
+
+
 @lru_cache(maxsize=1)
 def _openid_configuration() -> dict:
     if not TENANT_ID:
@@ -51,7 +65,7 @@ def _jwks_client() -> jwt.PyJWKClient:
     return jwt.PyJWKClient(jwks_uri)
 
 
-def validate_id_token(token: str) -> dict:
+def validate_id_token(token: str, *, allowed_object_ids: set[str] | None = None) -> dict:
     if not is_enabled():
         raise RuntimeError("Autenticación Microsoft no configurada")
     if not token:
@@ -70,7 +84,8 @@ def validate_id_token(token: str) -> dict:
     oid = str(payload.get("oid") or "").strip()
     if not oid:
         raise ValueError("El token de Microsoft no incluye oid")
-    if oid != OBJECT_ID:
+    expected_object_ids = allowed_object_ids if allowed_object_ids is not None else {OBJECT_ID} if OBJECT_ID else set()
+    if expected_object_ids and oid not in expected_object_ids:
         raise ValueError("La cuenta autenticada no está autorizada")
 
     return {
