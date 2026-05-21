@@ -17,7 +17,7 @@ from ...model.convalidaciones import (
 )
 
 router = APIRouter(
-    prefix="/convalidaciones",
+    prefix="",
     tags=["convalidaciones"],
 )
 
