@@ -44,6 +44,7 @@ class AdminAuthRoute(APIRoute):
                 conn = database.connect()
                 try:
                     admin_user = require_admin_user(request, conn)
+                    conn.commit()
                 finally:
                     conn.close()
 

@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import {
   AdminCicloModulo,
@@ -235,16 +236,11 @@ type PendingConvalidacionOrigenDelete = {
       <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <section *ngIf="!isAuthenticated" class="max-w-md mx-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h1 class="text-2xl font-black text-slate-900">Acceso Admin</h1>
-          <p class="text-sm text-slate-500 mt-1">Inicia sesión con la cuenta Microsoft autorizada para gestionar formularios.</p>
-
-          <button
-            type="button"
-            class="mt-5 w-full rounded-lg bg-indigo-600 text-white font-semibold text-sm py-2.5 hover:bg-indigo-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            [disabled]="loginLoading || authChecking"
-            (click)="loginAdmin()"
-          >
-            {{ loginLoading ? 'Accediendo...' : 'Entrar con Microsoft' }}
-          </button>
+          <p class="text-sm text-slate-500 mt-1">
+            {{ hasUserSessionWithoutAdmin
+              ? 'Tu cuenta ha iniciado sesión, pero no tiene permisos para acceder al panel de administración.'
+              : 'Comprobando sesión de administración.' }}
+          </p>
 
           <p *ngIf="authChecking" class="mt-4 text-sm text-slate-500">
             Comprobando sesión...
@@ -2210,9 +2206,9 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   adminSessionNombre = '';
   adminSessionRole = '';
   loginError: string | null = null;
-  loginLoading = false;
   authChecking = false;
   isAuthenticated = false;
+  hasUserSessionWithoutAdmin = false;
   adminDisplayName = '';
   adminId: number | null = null;
 
@@ -2267,7 +2263,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private convalidacionesService: ConvalidacionesService,
     private catalogService: CatalogService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -2294,14 +2291,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  loginAdmin(): void {
-    if (this.loginLoading) return;
-    this.loginError = null;
-    this.loginLoading = true;
-    const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
-  }
-
   logoutAdmin(): void {
     const returnTo = window.location.pathname;
     this.resetAdminState();
@@ -2310,6 +2299,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private resetAdminState(options?: { preserveLoginError?: boolean }): void {
     this.isAuthenticated = false;
+    this.hasUserSessionWithoutAdmin = false;
     this.adminSessionNombre = '';
     this.adminSessionRole = '';
     this.adminDisplayName = '';
@@ -2408,8 +2398,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private handleAdminUnauthorized(err: any): boolean {
     if (err?.status !== 401) return false;
     this.resetAdminState();
-    const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
+    this.router.navigateByUrl('/');
     return true;
   }
 
@@ -3028,25 +3017,43 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadAdminSession(): void {
     this.authChecking = true;
+    this.hasUserSessionWithoutAdmin = false;
     this.convalidacionesService.getAdminSession().subscribe({
       next: (session) => {
         this.applyAdminSession(session);
         this.authChecking = false;
-        this.loginLoading = false;
         this.loadActiveTab();
         setTimeout(() => this.evaluateHeaderLayout());
         this.cdr.detectChanges();
       },
       error: (err) => {
         this.authChecking = false;
-        this.loginLoading = false;
         this.resetAdminState({ preserveLoginError: false });
         if (err?.status === 401) {
-          const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-          window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
+          this.router.navigateByUrl('/');
+          return;
+        }
+        if (err?.status === 403) {
+          this.resolveNonAdminSessionState();
           return;
         }
         this.loginError = err?.error?.detail || 'No se ha podido comprobar la sesión de administrador.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private resolveNonAdminSessionState(): void {
+    this.convalidacionesService.getUserSession().subscribe({
+      next: (session) => {
+        this.hasUserSessionWithoutAdmin = true;
+        this.adminSessionNombre = session.nombre || '';
+        this.adminDisplayName = session.display_name || session.nombre || '';
+        this.loginError = 'Solo los usuarios con rol admin pueden entrar en esta pantalla.';
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loginError = 'No se ha podido comprobar la sesión de administrador.';
         this.cdr.detectChanges();
       },
     });

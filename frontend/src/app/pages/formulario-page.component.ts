@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DatosPersonalesComponent } from '../components/datos-personales/datos-personales.component';
 import { EstudiosCursadosComponent } from '../components/estudios-cursados/estudios-cursados.component';
 import { ConvalidacionesSolicitadasComponent } from '../components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
@@ -111,7 +112,11 @@ export class FormularioPageComponent implements OnInit {
   authChecking = true;
   authError: string | null = null;
 
-  constructor(private convalidacionesService: ConvalidacionesService) {}
+  constructor(
+    private convalidacionesService: ConvalidacionesService,
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadUserSession();
@@ -143,15 +148,16 @@ export class FormularioPageComponent implements OnInit {
           dni: session.dni || '',
           email: session.email || session.username || '',
         });
+        this.cdr.detectChanges();
       },
       error: (err) => {
         if (err?.status === 401) {
-          const returnTo = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-          window.location.assign(this.convalidacionesService.getAuthLoginUrl(returnTo));
+          this.router.navigateByUrl('/');
           return;
         }
         this.authChecking = false;
         this.authError = err?.error?.detail || 'No se ha podido comprobar tu sesión.';
+        this.cdr.detectChanges();
       },
     });
   }
