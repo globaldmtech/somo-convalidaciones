@@ -6,6 +6,7 @@ El proyecto está compuesto por:
 
 - `backend/`: API en FastAPI y acceso a SQLite
 - `frontend/`: cliente Angular
+- `somo_auth/`: servicio FastAPI de autenticación compartida para las SPAs
 
 ## Requisitos
 
@@ -37,7 +38,10 @@ Variables útiles:
 - `TENANT_ID`: identificador del tenant de Microsoft Entra ID para el acceso admin.
 - `CLIENT_ID`: identificador de la aplicación registrada en Microsoft Entra ID.
 - `OBJECT_ID`: identificador del usuario Microsoft autorizado para acceder al admin.
-- `CLIENT_SECRET`: reservado para futuras fases de OAuth servidor-servidor; no se usa en la fase 1.
+- `CLIENT_SECRET`: secreto de la aplicación registrada en Entra ID; lo usa `somo_auth` para intercambiar el código OAuth.
+- `AUTH_ALLOWED_OBJECT_IDS`: lista separada por comas de `oid` autorizados. Si no se define, se usa `OBJECT_ID`.
+- `AUTH_SESSION_SECRET`: secreto compartido con el que `somo_auth` firma la cookie JWT y `convalidaciones` la valida. Si no se define, se reutiliza `ADMIN_AUTH_SECRET`.
+- `AUTH_SESSION_COOKIE_NAME`: nombre de la cookie compartida. Por defecto `somo_auth_session`.
 
 Ejemplo para Docker:
 
@@ -50,7 +54,23 @@ CLIENT_ID=...
 OBJECT_ID=...
 ```
 
-La fase 1 del login Microsoft lee variables tanto desde `backend/.env` como desde `.env` en la raíz del repositorio. Si defines ambas, prevalecerán las variables ya presentes en el entorno del proceso.
+La autenticación Microsoft lee variables tanto desde `backend/.env` como desde `.env` en la raíz del repositorio. Si defines ambas, prevalecerán las variables ya presentes en el entorno del proceso.
+
+## Autenticación compartida
+
+La sesión de administrador ya no se guarda en `localStorage` ni se negocia desde la SPA con MSAL. El flujo actual es:
+
+- la SPA redirige a `/auth/login?returnTo=/convalidaciones/admin`
+- `somo_auth` completa el login con Microsoft Entra ID en servidor
+- `somo_auth` emite una cookie `HttpOnly` compartida para `webapps.somorrostro.com`
+- `backend/app/api/routers/admin.py` valida esa cookie JWT en cada petición protegida
+
+Endpoints principales del auth server:
+
+- `GET /auth/login`
+- `GET /auth/callback`
+- `GET /auth/me`
+- `GET /auth/logout`
 
 ## Despliegue bajo subruta
 
