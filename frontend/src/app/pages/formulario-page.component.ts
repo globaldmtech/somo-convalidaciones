@@ -5,7 +5,7 @@ import { EstudiosCursadosComponent } from '../components/estudios-cursados/estud
 import { ConvalidacionesSolicitadasComponent } from '../components/convalidaciones-solicitadas/convalidaciones-solicitadas.component';
 import { DocumentacionAportarComponent } from '../components/documentacion-aportar/documentacion-aportar.component';
 import { ResumenFormularioComponent } from '../components/resumen-formulario/resumen-formulario.component';
-import { ConvalidacionesService } from '../services/convalidaciones.service';
+import { ConvalidacionesService, isValidPersonalDocumentNumber } from '../services/convalidaciones.service';
 
 @Component({
   selector: 'app-formulario-page',
@@ -98,6 +98,7 @@ import { ConvalidacionesService } from '../services/convalidaciones.service';
 export class FormularioPageComponent {
   activeStep: 'personal' | 'input' | 'results' | 'docs' | 'resumen' = 'personal';
   formularioEnviado = false;
+  private readonly emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   constructor(private convalidacionesService: ConvalidacionesService) {}
 
@@ -141,7 +142,10 @@ export class FormularioPageComponent {
 
   private hasPersonalData(): boolean {
     const data = this.convalidacionesService.getPersonalData();
-    return !!(data.nombre?.trim() || data.apellidos?.trim() || data.dni?.trim() || data.email?.trim());
+    return !!data.nombre?.trim()
+      && !!data.apellidos?.trim()
+      && isValidPersonalDocumentNumber(data.documentType || 'dni', data.dni || '')
+      && this.emailPattern.test(data.email?.trim() ?? '');
   }
 
   private hasInputData(): boolean {

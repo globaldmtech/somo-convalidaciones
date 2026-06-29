@@ -35,7 +35,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Proyectos de Obra Civil (RD 386/2011) — Ciclo Completo
@@ -57,7 +57,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # DESTINO: T. Obras de Interior, Decoración y Rehabilitación (RD 1689/2011)
@@ -82,7 +82,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # Origen: TS Proyectos de Obra Civil (RD 386/2011) — Ciclo Completo
@@ -104,7 +104,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124844,
+        "source_page": 131,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -132,7 +132,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # Origen: TS Proyectos de Obra Civil — módulo específico
@@ -153,7 +153,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
     # DESTINO: TS Proyectos de Edificación (RD 690/2010)
@@ -177,7 +177,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124845,
+        "source_page": 132,
     },
 
 ]

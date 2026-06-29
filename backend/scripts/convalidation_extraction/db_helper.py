@@ -233,6 +233,25 @@ def convalidacion_exists(
     return False
 
 
+def convalidacion_ciclo_exists(
+    id_modulo_destino: int,
+    id_ciclo_origen: int,
+    db_path: str = DEFAULT_DB,
+) -> bool:
+    """Devuelve True si ya existe una regla de convalidación por ciclo completo."""
+    with get_connection(db_path) as conn:
+        row = conn.execute(
+            """
+            SELECT 1
+            FROM convalidacion_ciclo
+            WHERE id_modulo_destino = ? AND id_ciclo_origen = ?
+            LIMIT 1
+            """,
+            (id_modulo_destino, id_ciclo_origen),
+        ).fetchone()
+    return row is not None
+
+
 # ─────────────────────────────────────────────
 # UTILIDAD DE DIAGNÓSTICO
 # ─────────────────────────────────────────────

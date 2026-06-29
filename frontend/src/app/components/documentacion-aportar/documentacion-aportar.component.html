@@ -12,6 +12,11 @@
         </div>
 
         <div class="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-5">
+            <div *ngIf="hasDuplicateDocumentNames" class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                Hay documentos con el mismo nombre dentro del formulario. Cámbialos antes de continuar:
+                {{ duplicateDocumentNames.join(', ') }}
+            </div>
+
             <label class="block">
                 <span class="block text-[11px] uppercase tracking-wider text-gray-500 font-bold mb-1">DNI <span class="text-red-500">*</span></span>
                 <input
@@ -120,6 +125,10 @@
                     class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                 >
             </div>
+        </div>
+
+        <div *ngIf="modalError" class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {{ modalError }}
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-2">

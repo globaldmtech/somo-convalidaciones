@@ -10,6 +10,7 @@ export interface Ciclo {
     normativa: string | null;
     id_familia: number;
     id_grado: number;
+    es_somorrostro?: number | null;
 }
 
 export interface Modulo {
@@ -18,4 +19,5 @@ export interface Modulo {
     id_oficial: string | null;
     id_ciclo: number;
     numerico: number;
+    deprecated?: number | null;
 }

@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: T. Redes y Estaciones de Tratamientos de Aguas — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas — Ciclo Completo
@@ -71,7 +71,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -93,7 +93,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: TS Gestión del Agua — módulo específico
@@ -114,7 +114,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -136,7 +136,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # DESTINO: T. Instalaciones de Producción de Calor (RD 1792/2010)
@@ -161,7 +161,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124861,
+        "source_page": 148,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -183,7 +183,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -207,7 +207,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -226,7 +226,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -245,7 +245,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: T. Redes y Estaciones de Tratamientos de Aguas — módulo específico
@@ -266,7 +266,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: TS Gestión del Agua — módulo específico
@@ -287,7 +287,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones — Ciclo Completo
@@ -312,7 +312,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -331,7 +331,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -350,7 +350,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -369,7 +369,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # DESTINO: T. Mantenimiento Electromecánico (RD 1589/2011)
@@ -400,7 +400,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: T. Redes y Estaciones de Tratamientos de Aguas — módulo específico
@@ -421,7 +421,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124862,
+        "source_page": 149,
     },
 
     # Origen: TS Gestión del Agua — módulo específico
@@ -442,7 +442,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: T. Instalaciones Eléctricas y Automáticas — Ciclo Completo
@@ -465,7 +465,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -484,7 +484,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: T. Soldadura y Calderería (Fabricación Mecánica) — Ciclo Completo
@@ -507,7 +507,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
     {
         "familia_destino":       "Instalación y mantenimiento",
@@ -526,7 +526,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -555,7 +555,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados (Electricidad y Electrónica) — Ciclo Completo
@@ -577,7 +577,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # DESTINO: TS Mantenimiento de Instalaciones Térmicas y de Fluidos (RD 220/2008)
@@ -608,7 +608,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: TS Desarrollo de Proyectos de Instalaciones Térmicas y de Fluidos — módulo específico
@@ -643,7 +643,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: TS Mecatrónica Industrial — Ciclo Completo
@@ -665,7 +665,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados (Electricidad y Electrónica) — Ciclo Completo
@@ -687,7 +687,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124863,
+        "source_page": 150,
     },
 
     # DESTINO: TS Mecatrónica Industrial (RD 1576/2011)
@@ -725,7 +725,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: TS Sistemas Electrotécnicos y Automatizados (Electricidad y Electrónica) — Ciclo Completo
@@ -747,7 +747,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
 ]

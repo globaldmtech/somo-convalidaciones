@@ -18,6 +18,7 @@ export class DocumentacionAportarComponent {
     modalOpen = false;
     modalTipo: 'certificado' | 'otros' | null = null;
     pendingItems: { file: File; displayName: string }[] = [];
+    modalError: string | null = null;
 
     get documentoDni(): UploadedDocument | null {
         return this.convalidacionesService.documentoDni;
@@ -31,8 +32,16 @@ export class DocumentacionAportarComponent {
         return this.convalidacionesService.documentosOtros;
     }
 
+    get duplicateDocumentNames(): string[] {
+        return this.convalidacionesService.getDuplicateDocumentNames();
+    }
+
+    get hasDuplicateDocumentNames(): boolean {
+        return this.duplicateDocumentNames.length > 0;
+    }
+
     get canContinue(): boolean {
-        return !!this.documentoDni && this.documentosCertificado.length > 0;
+        return !!this.documentoDni && this.documentosCertificado.length > 0 && !this.hasDuplicateDocumentNames;
     }
 
     onDniSelected(event: Event): void {
@@ -93,6 +102,7 @@ export class DocumentacionAportarComponent {
             file,
             displayName: file.name,
         }));
+        this.modalError = null;
         this.modalOpen = true;
     }
 
@@ -100,6 +110,7 @@ export class DocumentacionAportarComponent {
         this.modalOpen = false;
         this.modalTipo = null;
         this.pendingItems = [];
+        this.modalError = null;
     }
 
     addPending(): void {
@@ -112,6 +123,17 @@ export class DocumentacionAportarComponent {
             categoria: this.modalTipo as 'certificado' | 'otros',
             displayName: item.displayName.trim() || item.file.name,
         }));
+
+        const duplicateNames = this.convalidacionesService.getDuplicateDocumentNamesForDocuments([
+            ...(this.documentoDni ? [this.documentoDni] : []),
+            ...this.documentosCertificado,
+            ...this.documentosOtros,
+            ...docs,
+        ]);
+        if (duplicateNames.length > 0) {
+            this.modalError = `Ya existe un documento con ese nombre: ${duplicateNames.join(', ')}. Cámbialo antes de añadirlo.`;
+            return;
+        }
 
         if (this.modalTipo === 'certificado') {
             this.convalidacionesService.documentosCertificado = [

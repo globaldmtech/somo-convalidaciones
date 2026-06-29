@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # Origen: TS en Gestión del Agua (Energía y Agua) — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # DESTINO: T. en Conducción de Vehículos de Transporte por Carretera (RD 555/2012)
@@ -95,7 +95,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # Origen: T. en Electromecánica de Vehículos Automóviles — Ciclo completo
@@ -117,7 +117,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -146,7 +146,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: T. en Mantenimiento de Material Rodante Ferroviario — Ciclo completo
@@ -168,7 +168,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: TS en Automoción — Ciclo completo
@@ -190,7 +190,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: TS en Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — Ciclo completo
@@ -212,7 +212,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # DESTINO: T. en Electromecánica de Maquinaria (RD 255/2011)
@@ -236,7 +236,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -257,7 +257,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -278,7 +278,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: T. en Redes y Estaciones de Tratamiento de Aguas (Energía y Agua) — módulo específico
@@ -299,7 +299,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: TS en Gestión del Agua (Energía y Agua) — módulo específico
@@ -320,7 +320,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # Origen: TS en Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -341,7 +341,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124871,
+        "source_page": 158,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -369,7 +369,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: T. en Mantenimiento de Material Rodante Ferroviario — módulo específico
@@ -390,7 +390,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: T. en Redes y Estaciones de Tratamiento de Aguas (Energía y Agua) — módulo específico
@@ -411,7 +411,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: TS en Gestión del Agua (Energía y Agua) — módulo específico
@@ -432,7 +432,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -453,7 +453,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: TS en Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -474,7 +474,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # DESTINO: T. en Mantenimiento de Material Rodante Ferroviario (RD 1145/2012)
@@ -498,7 +498,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: T. en Electromecánica de Vehículos Automóviles — módulo específico
@@ -519,7 +519,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: T. en Redes y Estaciones de Tratamiento de Aguas (Energía y Agua) — módulo específico
@@ -540,7 +540,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # Origen: TS en Gestión del Agua (Energía y Agua) — módulo específico
@@ -561,7 +561,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124872,
+        "source_page": 159,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -589,7 +589,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124873,
+        "source_page": 160,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -610,7 +610,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124873,
+        "source_page": 160,
     },
 
     # Origen: T. en Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones (Marítimo Pesquera) — módulo específico
@@ -631,7 +631,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124873,
+        "source_page": 160,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -660,7 +660,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124873,
+        "source_page": 160,
     },
 
 ]

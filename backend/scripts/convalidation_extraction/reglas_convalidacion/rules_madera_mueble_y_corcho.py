@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Actividades Comerciales (Comercio y Marketing) — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Aceites de Oliva y Vinos (Industrias Alimentarias) — módulo específico
@@ -70,7 +70,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Conducción de Vehículos de Transporte por Carretera (Transporte y Mantenimiento de Vehículos) — módulo específico
@@ -91,7 +91,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Elaboración de Productos Alimenticios (Industrias Alimentarias) — módulo específico
@@ -112,7 +112,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Mecanizado (Fabricación Mecánica) — módulo específico
@@ -133,7 +133,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124864,
+        "source_page": 151,
     },
 
     # Origen: T. Piedra Natural (Industrias Extractivas) — módulo específico
@@ -154,7 +154,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: T. Panadería, Repostería y Confitería (Industrias Alimentarias) — módulo específico
@@ -175,7 +175,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: TS Diseño y Amueblamiento — Ciclo Completo
@@ -199,7 +199,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
     {
         "familia_destino":       "Madera, mueble y corcho",
@@ -218,7 +218,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
     {
         "familia_destino":       "Madera, mueble y corcho",
@@ -237,7 +237,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # DESTINO: T. Instalación y Amueblamiento (RD 1128/2010?)
@@ -263,7 +263,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: T. Aceites de Oliva y Vinos (Industrias Alimentarias) — módulo específico
@@ -284,7 +284,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: T. Conducción de Vehículos de Transporte por Carretera (Transporte y Mantenimiento de Vehículos) — módulo específico
@@ -305,7 +305,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: T. Elaboración de Productos Alimenticios (Industrias Alimentarias) — módulo específico
@@ -326,7 +326,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: T. Panadería, Repostería y Confitería (Industrias Alimentarias) — módulo específico
@@ -347,7 +347,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
     # Origen: TS Diseño y Amueblamiento — Ciclo Completo
@@ -371,7 +371,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
     {
         "familia_destino":       "Madera, mueble y corcho",
@@ -390,7 +390,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
     {
         "familia_destino":       "Madera, mueble y corcho",
@@ -409,7 +409,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124865,
+        "source_page": 152,
     },
 
 ]

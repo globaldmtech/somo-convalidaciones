@@ -29,7 +29,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124854,
+        "source_page": 141,
     },
 
     # Origen: TS Sonido para Audiovisuales y Espectáculos — Ciclo Completo
@@ -51,7 +51,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: TS Sonido para Audiovisuales y Espectáculos — Ciclo Completo
@@ -73,7 +73,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: TS Sonido para Audiovisuales y Espectáculos — Ciclo Completo
@@ -95,7 +95,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -124,7 +124,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # DESTINO: TS Producción de Audiovisuales y Espectáculos (RD 1681/2011)
@@ -149,7 +149,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: TS Realización de Proyectos Audiovisuales y Espectáculos — Ciclo Completo
@@ -171,7 +171,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
     # Origen: TS Realización de Proyectos Audiovisuales y Espectáculos — Ciclo Completo
@@ -193,7 +193,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124855,
+        "source_page": 142,
     },
 
 ]

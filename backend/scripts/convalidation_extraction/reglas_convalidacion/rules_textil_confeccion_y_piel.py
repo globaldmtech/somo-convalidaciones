@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # Origen: T. en Mantenimiento de Material Rodante Ferroviario (Transporte y Mantenimiento de Vehículos) — Ciclo completo
@@ -50,7 +50,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # DESTINO: T. en Calzado y Complementos de Moda (RD 257/2011)
@@ -75,7 +75,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
     # DESTINO: T. en Fabricación y Ennoblecimiento de Productos Textiles (RD 1591/2011)
@@ -100,7 +100,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124870,
+        "source_page": 157,
     },
 
 ]

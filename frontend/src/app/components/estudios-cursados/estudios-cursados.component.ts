@@ -14,6 +14,7 @@ export interface EstudioEntry {
     modulos: Modulo[];      // selected
     allModulos: Modulo[];   // all available for this ciclo
     allSelected: boolean;
+    cicloCompleto: boolean | null;
     notaMediaCiclo: number | null;
     notasPorModulo: Record<number, number | null>;
     resultadosPorModulo: Record<number, string | null>;
@@ -41,6 +42,8 @@ export class EstudiosCursadosComponent implements OnInit {
 
     selectedGradoId: number | null = null;
     selectedCicloId: number | null = null;
+    selectedCicloCompleto: boolean | null = null;
+    selectedNotaMediaCiclo = '';
     selectedModuloIds: Set<number> = new Set();
     allSelected = false;
     selectedModuloNotas = new Map<number, string>();
@@ -56,6 +59,8 @@ export class EstudiosCursadosComponent implements OnInit {
     editingStudios: Set<number> = new Set();
     editDraft: Map<number, Set<number>> = new Map();
     editDraftNotas: Map<number, Map<number, string>> = new Map();
+    editDraftCicloCompleto: Map<number, boolean | null> = new Map();
+    editDraftNotaMediaCiclo: Map<number, string> = new Map();
     pendingEstudioModalOpen = false;
 
     // ── Acreditaciones externas ───────────────────────────────────────────────
@@ -91,6 +96,7 @@ export class EstudiosCursadosComponent implements OnInit {
         this.estudios = estudiosRaw.map((estudio) => ({
             ...estudio,
             allSelected: Boolean(estudio.allSelected),
+            cicloCompleto: typeof estudio.cicloCompleto === 'boolean' ? estudio.cicloCompleto : null,
             notaMediaCiclo: typeof estudio.notaMediaCiclo === 'number' ? estudio.notaMediaCiclo : null,
             notasPorModulo: this.migrateNotasPorModulo(estudio),
             resultadosPorModulo: this.migrateResultadosPorModulo(estudio),
@@ -140,13 +146,15 @@ export class EstudiosCursadosComponent implements OnInit {
         this.ciclos = [];
         this.modulos = [];
         this.selectedCicloId = null;
+        this.selectedCicloCompleto = null;
+        this.selectedNotaMediaCiclo = '';
         this.selectedModuloIds.clear();
         this.allSelected = false;
 
         if (!this.selectedGradoId) return;
         this.loadingCiclos = true;
         this.cdr.detectChanges();
-        this.catalogService.getCiclos(Number(this.selectedGradoId))
+        this.catalogService.getCiclos(Number(this.selectedGradoId), false)
             .pipe(timeout(10000), catchError(() => of([])))
             .subscribe({
                 next: (data) => { this.ciclos = data; this.loadingCiclos = false; this.cdr.detectChanges(); },
@@ -159,6 +167,8 @@ export class EstudiosCursadosComponent implements OnInit {
         this.selectedModuloIds.clear();
         this.selectedModuloNotas.clear();
         this.allSelected = false;
+        this.selectedCicloCompleto = null;
+        this.selectedNotaMediaCiclo = '';
 
         if (!this.selectedCicloId) return;
         this.loadingModulos = true;
@@ -181,22 +191,25 @@ export class EstudiosCursadosComponent implements OnInit {
                 this.selectedModuloNotas.set(id, '');
             }
         }
-        this.allSelected = this.selectedModuloIds.size === this.modulos.length;
+        this.allSelected = this.modulosActivos.length > 0
+            && this.modulosActivos.every((modulo) => this.selectedModuloIds.has(modulo.id));
     }
 
     toggleAll(): void {
         if (this.allSelected) {
-            this.selectedModuloIds.clear();
-            this.selectedModuloNotas.clear();
+            this.modulosActivos.forEach((modulo) => {
+                this.selectedModuloIds.delete(modulo.id);
+                this.selectedModuloNotas.delete(modulo.id);
+            });
             this.allSelected = false;
         } else {
-            this.modulos.forEach(m => {
+            this.modulosActivos.forEach(m => {
                 this.selectedModuloIds.add(m.id);
                 if (!this.selectedModuloNotas.has(m.id)) {
                     this.selectedModuloNotas.set(m.id, '');
                 }
             });
-            this.allSelected = true;
+            this.allSelected = this.modulosActivos.length > 0;
         }
     }
 
@@ -212,6 +225,7 @@ export class EstudiosCursadosComponent implements OnInit {
         if (!grado || !ciclo || selectedModulos.length === 0 || !this.canAddEstudio()) return;
 
         const esCicloCompleto = selectedModulos.length === this.modulos.length && this.modulos.length > 0;
+        const notaMediaCiclo = this.selectedCicloCompleto ? this.parseNotaNumerica(this.selectedNotaMediaCiclo) : null;
         const notasPorModulo: Record<number, number | null> = {};
         const resultadosPorModulo: Record<number, string | null> = {};
         for (const modulo of selectedModulos) {
@@ -226,7 +240,8 @@ export class EstudiosCursadosComponent implements OnInit {
             modulos: selectedModulos,
             allModulos: [...this.modulos],
             allSelected: esCicloCompleto,
-            notaMediaCiclo: null,
+            cicloCompleto: this.selectedCicloCompleto,
+            notaMediaCiclo,
             notasPorModulo,
             resultadosPorModulo,
         });
@@ -235,6 +250,8 @@ export class EstudiosCursadosComponent implements OnInit {
 
         this.selectedGradoId = null;
         this.selectedCicloId = null;
+        this.selectedCicloCompleto = null;
+        this.selectedNotaMediaCiclo = '';
         this.selectedModuloIds.clear();
         this.selectedModuloNotas.clear();
         this.ciclos = [];
@@ -264,6 +281,11 @@ export class EstudiosCursadosComponent implements OnInit {
         }
         this.editDraft.set(index, draft);
         this.editDraftNotas.set(index, notas);
+        this.editDraftCicloCompleto.set(index, estudio.cicloCompleto);
+        this.editDraftNotaMediaCiclo.set(
+            index,
+            estudio.cicloCompleto === true && estudio.notaMediaCiclo !== null ? String(estudio.notaMediaCiclo) : ''
+        );
         this.editingStudios.add(index);
         this.cdr.detectChanges();
     }
@@ -271,6 +293,8 @@ export class EstudiosCursadosComponent implements OnInit {
     cancelEdit(index: number): void {
         this.editDraft.delete(index);
         this.editDraftNotas.delete(index);
+        this.editDraftCicloCompleto.delete(index);
+        this.editDraftNotaMediaCiclo.delete(index);
         this.editingStudios.delete(index);
         this.cdr.detectChanges();
     }
@@ -278,11 +302,14 @@ export class EstudiosCursadosComponent implements OnInit {
     saveEdit(index: number): void {
         const draft = this.editDraft.get(index);
         const draftNotas = this.editDraftNotas.get(index);
+        const draftCicloCompleto = this.editDraftCicloCompleto.get(index);
+        const draftNotaMediaCiclo = this.editDraftNotaMediaCiclo.get(index) || '';
         if (!draft || !draftNotas || !this.canSaveEdit(index)) return;
         this.estudios[index].modulos = this.estudios[index].allModulos.filter(m => draft.has(m.id));
         const estudio = this.estudios[index];
         const esCicloCompleto = estudio.modulos.length > 0 && estudio.modulos.length === estudio.allModulos.length;
         estudio.allSelected = esCicloCompleto;
+        estudio.cicloCompleto = draftCicloCompleto ?? null;
         const nextNotas: Record<number, number | null> = {};
         const nextResultados: Record<number, string | null> = {};
         for (const modulo of estudio.modulos) {
@@ -292,9 +319,11 @@ export class EstudiosCursadosComponent implements OnInit {
         }
         estudio.notasPorModulo = nextNotas;
         estudio.resultadosPorModulo = nextResultados;
-        estudio.notaMediaCiclo = null;
+        estudio.notaMediaCiclo = estudio.cicloCompleto === true ? this.parseNotaNumerica(draftNotaMediaCiclo) : null;
         this.editDraft.delete(index);
         this.editDraftNotas.delete(index);
+        this.editDraftCicloCompleto.delete(index);
+        this.editDraftNotaMediaCiclo.delete(index);
         this.editingStudios.delete(index);
         this.syncWithService();
         this.cdr.detectChanges();
@@ -332,10 +361,33 @@ export class EstudiosCursadosComponent implements OnInit {
         notas.set(moduloId, value);
     }
 
+    getDraftNotaMediaCiclo(index: number): string {
+        return this.editDraftNotaMediaCiclo.get(index) || '';
+    }
+
+    setDraftNotaMediaCiclo(index: number, value: string): void {
+        this.editDraftNotaMediaCiclo.set(index, value);
+    }
+
+    getDraftCicloCompleto(index: number): boolean | null {
+        return this.editDraftCicloCompleto.get(index) ?? null;
+    }
+
+    setDraftCicloCompleto(index: number, value: boolean | null): void {
+        this.editDraftCicloCompleto.set(index, value);
+        if (value !== true) {
+            this.editDraftNotaMediaCiclo.set(index, '');
+        }
+    }
+
     canSaveEdit(index: number): boolean {
         const draft = this.editDraft.get(index);
         const notas = this.editDraftNotas.get(index);
         if (!draft || !notas || draft.size === 0) return false;
+        if (this.getDraftCicloCompleto(index) === null) return false;
+        if (this.getDraftCicloCompleto(index) === true && this.parseNotaNumerica(this.getDraftNotaMediaCiclo(index)) === null) {
+            return false;
+        }
         for (const moduloId of draft.values()) {
             const modulo = this.estudios[index].allModulos.find((item) => item.id === moduloId);
             if (!modulo) return false;
@@ -362,7 +414,8 @@ export class EstudiosCursadosComponent implements OnInit {
     }
 
     canAddEstudio(): boolean {
-        if (!this.selectedGradoId || !this.selectedCicloId || this.selectedModuloIds.size === 0) return false;
+        if (!this.selectedGradoId || !this.selectedCicloId || this.selectedCicloCompleto === null || this.selectedModuloIds.size === 0) return false;
+        if (this.selectedCicloCompleto && this.parseNotaNumerica(this.selectedNotaMediaCiclo) === null) return false;
         for (const moduloId of this.selectedModuloIds.values()) {
             const modulo = this.modulos.find((item) => item.id === moduloId);
             if (!modulo) return false;
@@ -381,6 +434,8 @@ export class EstudiosCursadosComponent implements OnInit {
         if (this.showForm) {
             if (this.selectedGradoId !== null) return true;
             if (this.selectedCicloId !== null) return true;
+            if (this.selectedCicloCompleto !== null) return true;
+            if (this.selectedNotaMediaCiclo.trim()) return true;
             if (this.selectedModuloIds.size > 0) return true;
             if (this.selectedModuloNotas.size > 0) return true;
         }
@@ -503,12 +558,62 @@ export class EstudiosCursadosComponent implements OnInit {
         return this.modulos.filter((m) => this.selectedModuloIds.has(m.id));
     }
 
+    get modulosActivos(): Modulo[] {
+        return this.modulos.filter((modulo) => !modulo.deprecated);
+    }
+
+    get modulosObsoletos(): Modulo[] {
+        return this.modulos.filter((modulo) => !!modulo.deprecated);
+    }
+
+    getEditModulosActivos(index: number): Modulo[] {
+        return (this.estudios[index]?.allModulos || []).filter((modulo) => !modulo.deprecated);
+    }
+
+    getEditModulosObsoletos(index: number): Modulo[] {
+        return (this.estudios[index]?.allModulos || []).filter((modulo) => !!modulo.deprecated);
+    }
+
     getNotaModuloSeleccionado(moduloId: number): string {
         return this.selectedModuloNotas.get(moduloId) || '';
     }
 
     setNotaModuloSeleccionado(moduloId: number, value: string): void {
         this.selectedModuloNotas.set(moduloId, value);
+    }
+
+    isSelectedNotaMediaCicloValida(): boolean {
+        if (this.selectedCicloCompleto !== true) return true;
+        return this.parseNotaNumerica(this.selectedNotaMediaCiclo) !== null;
+    }
+
+    showSelectedNotaMediaCicloError(): boolean {
+        return this.selectedCicloCompleto === true
+            && this.selectedNotaMediaCiclo.trim().length > 0
+            && !this.isSelectedNotaMediaCicloValida();
+    }
+
+    showSelectedModuloError(modulo: Modulo): boolean {
+        const value = this.getNotaModuloSeleccionado(modulo.id);
+        return value.trim().length > 0 && this.parseNotaByModulo(modulo, value) === null;
+    }
+
+    showDraftNotaMediaCicloError(index: number): boolean {
+        const value = this.getDraftNotaMediaCiclo(index);
+        return this.getDraftCicloCompleto(index) === true
+            && value.trim().length > 0
+            && this.parseNotaNumerica(value) === null;
+    }
+
+    showDraftModuloError(index: number, modulo: Modulo): boolean {
+        const value = this.getDraftNotaModulo(index, modulo.id);
+        return value.trim().length > 0 && this.parseNotaByModulo(modulo, value) === null;
+    }
+
+    getModuloErrorMessage(modulo: Modulo): string {
+        return this.isModuloNumerico(modulo)
+            ? 'Introduce una nota válida entre 0 y 10.'
+            : 'Selecciona un estado valido.';
     }
 
     isModuloNumerico(modulo: Modulo): boolean {

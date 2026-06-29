@@ -19,7 +19,12 @@ sys.path.insert(0, os.path.dirname(__file__))
 from db_helper import (
     get_connection,
     DEFAULT_DB,
-    convalidacion_exists
+    convalidacion_exists,
+    convalidacion_ciclo_exists,
+    get_ciclo_id,
+    get_grado_id,
+    get_familia_id,
+    get_modulos_por_ciclo,
 )
 
 # Importar la lista de módulos globales
@@ -29,9 +34,78 @@ OUTPUT_SQL = os.path.join(os.path.dirname(__file__), "..", "4_load_convalidation
 SOURCE_LINK = "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf"
 SOURCE_PAGE = 124839
 
+
+def get_modulo_global_nombre(modulo_global: str | dict) -> str:
+    if isinstance(modulo_global, dict):
+        return modulo_global["nombre"]
+    return modulo_global
+
+
+def get_rule_source(regla: dict | None = None) -> tuple[str, int]:
+    source_link = SOURCE_LINK
+    source_page = SOURCE_PAGE
+    if regla:
+        source_link = regla.get("source_link") or source_link
+        source_page = regla.get("source_page") or source_page
+    return source_link, source_page
+
+
+def get_modulo_scope(cursor: sqlite3.Cursor, modulo_id: int) -> tuple[int | None, int | None]:
+    row = cursor.execute(
+        """
+        SELECT c.id_familia, c.id_grado
+        FROM modulos m
+        JOIN ciclos c ON c.id = m.id_ciclo
+        WHERE m.id = ?
+        """,
+        (modulo_id,),
+    ).fetchone()
+    if not row:
+        return None, None
+    return row["id_familia"], row["id_grado"]
+
+
+def get_modulos_by_rule(cursor: sqlite3.Cursor, regla: dict, prefix: str) -> list[int]:
+    id_oficial = regla.get(f"id_oficial_{prefix}")
+    nombre_modulo = regla.get(f"modulo_{prefix}")
+
+    if id_oficial:
+        cursor.execute("SELECT id FROM modulos WHERE id_oficial = ?", (id_oficial,))
+    elif nombre_modulo:
+        cursor.execute("SELECT id FROM modulos WHERE LOWER(nombre) = LOWER(?)", (nombre_modulo,))
+    else:
+        raise ValueError(
+            f"La regla debe definir 'id_oficial_{prefix}' o 'modulo_{prefix}': {regla}"
+        )
+
+    return [row["id"] for row in cursor.fetchall()]
+
+
+def load_existing_single_origin_pairs(cursor: sqlite3.Cursor) -> set[tuple[int, int]]:
+    """
+    Precarga las convalidaciones de un único módulo origen para evitar
+    consultar SQLite en cada iteración de los bucles O(n^2).
+    """
+    cursor.execute(
+        """
+        SELECT cv.id_modulo_destino, co.id_modulo
+        FROM convalidacion cv
+        JOIN convalidacion_origen co ON co.conv_id = cv.id
+        GROUP BY cv.id, cv.id_modulo_destino, co.id_modulo
+        HAVING COUNT(*) = 1
+        """
+    )
+    return {(row["id_modulo_destino"], row["id_modulo"]) for row in cursor.fetchall()}
+
 def get_next_conv_id() -> int:
     with sqlite3.connect(DEFAULT_DB) as conn:
         row = conn.execute("SELECT COALESCE(MAX(id), 0) + 1 FROM convalidacion").fetchone()
+    return row[0]
+
+
+def get_next_conv_ciclo_id() -> int:
+    with sqlite3.connect(DEFAULT_DB) as conn:
+        row = conn.execute("SELECT COALESCE(MAX(conv_id_ciclo), 0) + 1 FROM convalidacion_ciclo").fetchone()
     return row[0]
 
 def generate_global_rules(dry_run: bool = False) -> list[str]:
@@ -39,6 +113,8 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
     cursor = conn.cursor()
     
     conv_id = get_next_conv_id()
+    conv_ciclo_id = get_next_conv_ciclo_id()
+    existing_single_origin_pairs = load_existing_single_origin_pairs(cursor)
     sql_lines = []
     
     sql_lines.append("-- ==========================================================")
@@ -51,9 +127,23 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
     total_inserted = 0
     total_skipped = 0
 
-    print(f"Generando reglas globales para: {', '.join(MODULOS_GLOBALES)}")
+    print(
+        "Generando reglas globales para: "
+        f"{', '.join(get_modulo_global_nombre(modulo_global) for modulo_global in MODULOS_GLOBALES)}"
+    )
     
-    for nombre_mod in MODULOS_GLOBALES:
+    for modulo_global in MODULOS_GLOBALES:
+        if isinstance(modulo_global, dict):
+            nombre_mod = get_modulo_global_nombre(modulo_global)
+            source_link, source_page = get_rule_source(modulo_global)
+            same_family_only = bool(modulo_global.get("same_family_only"))
+            same_grado_only = bool(modulo_global.get("same_grado_only"))
+        else:
+            nombre_mod = get_modulo_global_nombre(modulo_global)
+            source_link, source_page = get_rule_source()
+            same_family_only = False
+            same_grado_only = False
+
         # Buscar todos los módulos con este nombre
         # Usamos LIKE para ser más flexibles con mayúsculas/minúsculas si fuera necesario,
         # pero aquí buscamos coincidencia exacta de nombre según la lista.
@@ -64,21 +154,38 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
         
         for m_dest in modulos:
             id_dest = m_dest['id']
+            dest_familia_id, dest_grado_id = get_modulo_scope(cursor, id_dest)
 
             for m_orig in modulos:
                 id_orig = m_orig['id']
                 if id_orig == id_dest:
                     continue
 
+                orig_familia_id, orig_grado_id = get_modulo_scope(cursor, id_orig)
+                if same_family_only and (
+                    dest_familia_id is None
+                    or orig_familia_id is None
+                    or dest_familia_id != orig_familia_id
+                ):
+                    total_skipped += 1
+                    continue
+                if same_grado_only and (
+                    dest_grado_id is None
+                    or orig_grado_id is None
+                    or dest_grado_id != orig_grado_id
+                ):
+                    total_skipped += 1
+                    continue
+
                 # Cada origen tiene su propio conv_id (OR semántico en el modelo de datos)
-                if convalidacion_exists(id_dest, [id_orig]):
+                if (id_dest, id_orig) in existing_single_origin_pairs:
                     total_skipped += 1
                     continue
 
                 sql_lines.append(f"-- Regla global '{nombre_mod}': destino={id_dest}, origen={id_orig}")
                 sql_lines.append(
                     f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
-                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
+                    f"VALUES ({conv_id}, '{source_link}', {source_page}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "
@@ -91,6 +198,7 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
 
                 conv_id += 1
                 total_inserted += 1
+                existing_single_origin_pairs.add((id_dest, id_orig))
             
     sql_lines.append("PRAGMA foreign_keys = ON;")
 
@@ -98,27 +206,30 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
     print(f"\nGenerando reglas TIPO 3 (modulo_a_modulo): {len(REGLAS_MODULO_A_MODULO)} reglas")
 
     for regla in REGLAS_MODULO_A_MODULO:
-        id_of_orig  = regla["id_oficial_origen"]
-        id_of_dest  = regla["id_oficial_destino"]
+        origen_label = regla.get("id_oficial_origen") or regla.get("modulo_origen")
+        destino_label = regla.get("id_oficial_destino") or regla.get("modulo_destino")
+        source_link, source_page = get_rule_source(regla)
 
-        cursor.execute("SELECT id FROM modulos WHERE id_oficial = ?", (id_of_orig,))
-        origenes = [r["id"] for r in cursor.fetchall()]
+        origenes = get_modulos_by_rule(cursor, regla, "origen")
+        destinos = get_modulos_by_rule(cursor, regla, "destino")
 
-        cursor.execute("SELECT id FROM modulos WHERE id_oficial = ?", (id_of_dest,))
-        destinos = [r["id"] for r in cursor.fetchall()]
-
-        print(f"  {id_of_orig} -> {id_of_dest}: {len(origenes)} origenes, {len(destinos)} destinos")
+        print(
+            f"  {origen_label} -> {destino_label}: "
+            f"{len(origenes)} origenes, {len(destinos)} destinos"
+        )
 
         for id_dest in destinos:
             for id_orig in origenes:
-                if convalidacion_exists(id_dest, [id_orig]):
+                if (id_dest, id_orig) in existing_single_origin_pairs:
                     total_skipped += 1
                     continue
 
-                sql_lines.append(f"-- TIPO3: {id_of_orig} -> {id_of_dest}: orig={id_orig}, dest={id_dest}")
+                sql_lines.append(
+                    f"-- TIPO3: {origen_label} -> {destino_label}: orig={id_orig}, dest={id_dest}"
+                )
                 sql_lines.append(
                     f"INSERT INTO convalidacion (id, source_link, source_page, id_modulo_destino) "
-                    f"VALUES ({conv_id}, '{SOURCE_LINK}', {SOURCE_PAGE}, {id_dest});"
+                    f"VALUES ({conv_id}, '{source_link}', {source_page}, {id_dest});"
                 )
                 sql_lines.append(
                     f"INSERT INTO convalidacion_origen (conv_id, id_modulo) "
@@ -127,6 +238,7 @@ def generate_global_rules(dry_run: bool = False) -> list[str]:
                 sql_lines.append("")
                 conv_id += 1
                 total_inserted += 1
+                existing_single_origin_pairs.add((id_dest, id_orig))
 
     sql_lines.append("PRAGMA foreign_keys = ON;")
     
@@ -148,13 +260,20 @@ def apply_to_db(sql_lines: list[str]) -> None:
         for line in sql_lines
         if line.strip() and not line.strip().startswith("--")
     ]
-    with sqlite3.connect(DEFAULT_DB) as conn:
-        for stmt in statements:
-            try:
+    index = 0
+    stmt = "<sin ejecutar>"
+    with sqlite3.connect(DEFAULT_DB, timeout=10) as conn:
+        conn.execute("PRAGMA busy_timeout = 10000;")
+        try:
+            conn.execute("BEGIN IMMEDIATE;")
+            for index, stmt in enumerate(statements, start=1):
                 conn.execute(stmt)
-            except sqlite3.Error as e:
-                print(f"  ✗ SQL Error: {e}")
-        conn.commit()
+            conn.commit()
+        except sqlite3.Error as e:
+            conn.rollback()
+            print(f"  ✗ SQL Error en sentencia #{index}: {e}")
+            print(f"    {stmt}")
+            raise
     print(f"\n✔ Cambios aplicados a la BD.")
 
 def main():

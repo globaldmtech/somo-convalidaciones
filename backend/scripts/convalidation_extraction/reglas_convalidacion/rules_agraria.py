@@ -40,7 +40,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # Origen: T. Electromecánica de Maquinaria (Transporte y Mantenimiento de Vehículos) — Ciclo Completo
@@ -61,7 +61,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # DESTINO: T. Producción Agroecológica (RD 1633/2009)
@@ -85,7 +85,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124841,
+        "source_page": 128,
     },
 
     # Origen: T. Electromecánica de Maquinaria (Transporte y Mantenimiento de Vehículos) — Ciclo Completo
@@ -106,7 +106,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -133,7 +133,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # Origen: TS Educación y Control Ambiental (Seguridad y Medio Ambiente) — Ciclo Completo
@@ -155,7 +155,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
     # Origen: TS Educación y Control Ambiental (Seguridad y Medio Ambiente) — Ciclo Completo
@@ -177,7 +177,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124842,
+        "source_page": 129,
     },
 
 ]

@@ -41,7 +41,7 @@
                     <p class="text-sm font-medium text-gray-800">{{ personalData.apellidos || '—' }}</p>
                 </div>
                 <div>
-                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold">DNI</p>
+                    <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold">{{ documentTypeLabel }}</p>
                     <p class="text-sm font-medium text-gray-800">{{ personalData.dni || '—' }}</p>
                 </div>
                 <div>
@@ -82,6 +82,12 @@
                             </p>
                             <p class="text-[11px] uppercase tracking-wider text-gray-500 mt-1 font-semibold">
                                 {{ estudio.modulos.length }} módulos seleccionados
+                            </p>
+                            <p class="text-[11px] text-indigo-600 mt-1 font-semibold">
+                                {{ estudio.cicloCompleto === true ? 'Ciclo completo cursado' : (estudio.cicloCompleto === false ? 'No ha cursado el ciclo completo' : 'Ciclo completo sin indicar') }}
+                            </p>
+                            <p *ngIf="estudio.cicloCompleto === true && estudio.notaMediaCiclo !== null" class="text-[11px] text-gray-500 mt-1">
+                                Nota media: {{ estudio.notaMediaCiclo | number:'1.0-2' }}
                             </p>
                         </div>
                         <div class="ml-3 flex items-center gap-2 shrink-0">
@@ -174,7 +180,10 @@
                         class="flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 transition-colors">
                         <div>
                             <p class="text-sm font-semibold text-gray-800">{{ item.nombre }}</p>
-                            <p class="text-[11px] text-gray-500 uppercase tracking-wider">Vía: {{ item.source }}</p>
+                            <p class="text-[11px] text-gray-500 mt-0.5">Vía: {{ viaConvalidacion(item) }}</p>
+                            <p *ngIf="notaConvalidacionSolicitada(item) !== null" class="text-[11px] text-gray-500 mt-1">
+                                Nota con la que se va a convalidar: {{ notaConvalidacionSolicitada(item) }}
+                            </p>
                         </div>
                     </div>
                 </div>

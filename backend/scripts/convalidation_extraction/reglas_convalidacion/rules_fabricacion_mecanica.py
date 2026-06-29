@@ -28,7 +28,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Diseño en Fabricación Mecánica (Fabricación mecánica) — módulo específico
@@ -49,7 +49,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: T. Mantenimiento y Control de la Maquinaria de Buques y Embarcaciones
@@ -71,7 +71,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # DESTINO: T. Mecanizado (RD 1398/2007)
@@ -95,7 +95,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Construcciones Metálicas (Fabricación mecánica) — módulo específico
@@ -116,7 +116,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Construcciones Metálicas (Fabricación mecánica) — módulo específico
@@ -137,7 +137,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124850,
+        "source_page": 137,
     },
 
     # Origen: TS Diseño en Fabricación Mecánica (Fabricación mecánica) — módulo específico
@@ -158,7 +158,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Programación de la Producción en Fabricación Mecánica — módulo específico
@@ -179,7 +179,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Programación de la Producción en Moldeo de Metales y Polímeros — módulo específico
@@ -200,7 +200,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # DESTINO: T. Soldadura y Calderería (RD 1692/2007)
@@ -224,7 +224,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: T. Mecanizado (Fabricación mecánica) — Ciclo Completo
@@ -246,7 +246,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Diseño en Fabricación Mecánica (Fabricación mecánica) — módulo específico
@@ -267,7 +267,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # ══════════════════════════════════════════════════════════════════
@@ -296,7 +296,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Patronaje y Moda (Textil, confección y piel) — módulo específico
@@ -317,7 +317,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # DESTINO: TS Programación de la Producción en Fabricación Mecánica (RD 1687/2007)
@@ -341,7 +341,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones
@@ -363,7 +363,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124851,
+        "source_page": 138,
     },
 
     # Origen: TS Patronaje y Moda (Textil, confección y piel) — módulo específico
@@ -384,7 +384,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Diseño en Fabricación Mecánica (Fabricación mecánica) — módulo específico
@@ -405,7 +405,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # DESTINO: TS Programación de la Producción en Moldeo de Metales y Polímeros (RD 882/2011)
@@ -429,7 +429,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Diseño en Fabricación Mecánica (Fabricación mecánica) — módulo específico
@@ -450,7 +450,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Organización del Mantenimiento de Maquinaria de Buques y Embarcaciones
@@ -472,7 +472,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
     # Origen: TS Patronaje y Moda (Textil, confección y piel) — módulo específico
@@ -493,7 +493,7 @@ CONVALIDACIONES: list[dict] = [
             },
         ],
         "source_link": "https://www.boe.es/boe/dias/2020/12/30/pdfs/BOE-A-2020-17274.pdf",
-        "source_page": 124852,
+        "source_page": 139,
     },
 
 ]

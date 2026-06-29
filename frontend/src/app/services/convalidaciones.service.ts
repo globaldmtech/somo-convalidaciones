@@ -5,18 +5,80 @@ import { catchError } from 'rxjs/operators';
 import { EstudioEntry, AcreditacionExterna } from '../components/estudios-cursados/estudios-cursados.component';
 import { ADMIN_API_BASE, API_BASE } from '../config/api-paths';
 
+export type PersonalDocumentType = 'dni' | 'nie' | 'otro';
+
 export interface PersonalData {
+    documentType: PersonalDocumentType;
     nombre: string;
     apellidos: string;
     dni: string;
     email: string;
 }
 
+const DNI_LETTERS = 'TRWAGMYFPDXBNJZSQVHLCKE';
+
+export function normalizePersonalDocumentNumber(type: PersonalDocumentType, value: string): string {
+    const upperValue = String(value || '').trim().toUpperCase();
+
+    if (type === 'dni' || type === 'nie') {
+        return upperValue.replace(/[\s-]+/g, '');
+    }
+
+    return upperValue.replace(/\s+/g, ' ');
+}
+
+function isValidDniLetter(number: number, letter: string): boolean {
+    return DNI_LETTERS[number % 23] === letter;
+}
+
+export function isValidPersonalDocumentNumber(type: PersonalDocumentType, value: string): boolean {
+    const normalized = normalizePersonalDocumentNumber(type, value);
+    if (!normalized) {
+        return false;
+    }
+
+    if (type === 'dni') {
+        if (!/^\d{8}[A-Z]$/.test(normalized)) {
+            return false;
+        }
+        return isValidDniLetter(Number(normalized.slice(0, 8)), normalized.slice(-1));
+    }
+
+    if (type === 'nie') {
+        if (!/^[XYZ]\d{7}[A-Z]$/.test(normalized)) {
+            return false;
+        }
+        const prefixMap: Record<string, string> = { X: '0', Y: '1', Z: '2' };
+        const numericValue = `${prefixMap[normalized[0]]}${normalized.slice(1, 8)}`;
+        return isValidDniLetter(Number(numericValue), normalized.slice(-1));
+    }
+
+    return /^[A-Z0-9](?:[A-Z0-9 /.-]{1,28}[A-Z0-9])?$/.test(normalized);
+}
+
+export function getPersonalDocumentTypeLabel(type: PersonalDocumentType): string {
+    switch (type) {
+        case 'nie':
+            return 'NIE';
+        case 'otro':
+            return 'Otro documento';
+        case 'dni':
+        default:
+            return 'DNI';
+    }
+}
+
 export interface SelectedConvalidation {
     id: number;
     nombre: string;
     source: string;
+    ciclo_origen?: string | null;
+    origen_tipo?: string | null;
+    modulos_origen?: string | null;
+    modulos_origen_ids?: string | null;
+    nota_media_origen?: number | null;
     id_convalidacion?: number | null;
+    id_convalidacion_ciclo?: number | null;
 }
 
 export interface RegisteredManualModule {
@@ -36,7 +98,9 @@ export interface AdminFormularioSolicitud {
     id: number;
     id_modulo_destino: number | null;
     id_convalidacion?: number | null;
+    id_convalidacion_ciclo?: number | null;
     nota_manual?: number | null;
+    nota_media_origen?: number | null;
     ciclo_id?: number | null;
     ciclo_nombre?: string | null;
     modulo_destino: string | null;
@@ -129,6 +193,7 @@ export interface AdminCreateCicloRequest {
     nombre: string;
     id_familia: number;
     id_grado: number;
+    es_somorrostro: number;
 }
 
 export interface AdminCreateModuloItemRequest {
@@ -148,11 +213,63 @@ export interface AdminCreateConvalidacionRequest {
     source_page?: number | null;
 }
 
+export interface AdminCreateConvalidacionMasivaItemRequest {
+    id_modulo_destino: number;
+    id_modulo_origen: number;
+}
+
+export interface AdminCreateConvalidacionCicloMasivaItemRequest {
+    id_modulo_destino: number;
+    id_ciclo_origen: number;
+}
+
+export interface AdminCreateConvalidacionesMasivasRequest {
+    reglas: AdminCreateConvalidacionMasivaItemRequest[];
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
+export interface AdminCreateConvalidacionesCicloMasivasRequest {
+    reglas: AdminCreateConvalidacionCicloMasivaItemRequest[];
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
+export interface AdminCreateConvalidacionCicloRequest {
+    id_modulo_destino: number;
+    id_ciclo_origen: number;
+    source_link?: string | null;
+    source_page?: number | null;
+}
+
 export interface AdminCreateConvalidacionResponse {
     ok: boolean;
     id: number;
     id_modulo_destino: number;
     id_modulos_origen: number[];
+}
+
+export interface AdminCreateConvalidacionesMasivasResponse {
+    ok: boolean;
+    created_count: number;
+    skipped_count: number;
+    skipped_existing_count: number;
+    created: AdminCreateConvalidacionResponse[];
+}
+
+export interface AdminDeleteConvalidacionesMasivasRequest {
+    reglas: AdminCreateConvalidacionMasivaItemRequest[];
+}
+
+export interface AdminDeleteConvalidacionesCicloMasivasRequest {
+    reglas: AdminCreateConvalidacionCicloMasivaItemRequest[];
+}
+
+export interface AdminDeleteConvalidacionesMasivasResponse {
+    ok: boolean;
+    deleted_count: number;
+    skipped_count: number;
+    skipped_missing_count: number;
 }
 
 export interface AdminLoginResponse {
@@ -167,6 +284,7 @@ export interface AdminCicloModulo {
     nombre: string;
     id_oficial: string | null;
     numerico?: number | null;
+    deprecated?: number | null;
 }
 
 export interface AdminCicloConModulos {
@@ -176,6 +294,7 @@ export interface AdminCicloConModulos {
     normativa: string | null;
     id_familia: number | null;
     id_grado: number | null;
+    es_somorrostro: number;
     familia_nombre?: string | null;
     grado_nombre?: string | null;
     total_modulos: number;
@@ -183,15 +302,17 @@ export interface AdminCicloConModulos {
 }
 
 export interface AdminConvalidacionOrigen {
-    id_modulo_origen: number;
-    modulo_origen_nombre: string;
+    id_modulo_origen: number | null;
+    modulo_origen_nombre: string | null;
     modulo_origen_codigo?: string | null;
     id_ciclo_origen: number;
     ciclo_origen_nombre: string;
+    es_ciclo_completo?: boolean;
 }
 
 export interface AdminConvalidacionRegla {
     id: number;
+    tipo_regla?: 'modulo' | 'ciclo';
     source_link: string | null;
     source_page: number | null;
     id_modulo_destino: number;
@@ -199,6 +320,7 @@ export interface AdminConvalidacionRegla {
     modulo_destino_codigo?: string | null;
     id_ciclo_destino: number;
     ciclo_destino_nombre: string;
+    id_convalidacion_ciclo?: number | null;
     origenes: AdminConvalidacionOrigen[];
 }
 
@@ -247,6 +369,7 @@ export class ConvalidacionesService {
     otrosCiclosModulos$ = this.otrosCiclosModulosSubject.asObservable();
 
     private personalDataSubject = new BehaviorSubject<PersonalData>({
+        documentType: 'dni',
         nombre: '',
         apellidos: '',
         dni: '',
@@ -326,18 +449,25 @@ export class ConvalidacionesService {
     }
 
     calcularConvalidaciones(targetCicloId?: number): Observable<any[]> {
-        const modulo_ids = this.getApprovedModuloIds();
+        const modulos_aportados = this.getApprovedModuloDetails();
         const acreditacion_ids = this.acreditacionesSubject.value
             .filter(a => a.tipo !== 'otros')
             .map(a => a.id);
+        const ciclos_completos = this.estudiosSubject.value
+            .filter((estudio) => estudio.cicloCompleto === true && typeof estudio.notaMediaCiclo === 'number' && Number.isFinite(estudio.notaMediaCiclo))
+            .map((estudio) => ({
+                id_ciclo: Number(estudio.ciclo.id),
+                nota_media: Number(estudio.notaMediaCiclo),
+            }));
 
-        if (modulo_ids.length === 0 && acreditacion_ids.length === 0) {
+        if (modulos_aportados.length === 0 && acreditacion_ids.length === 0 && ciclos_completos.length === 0) {
             return of([]);
         }
 
         return this.http.post<any[]>(`${API_BASE}/calcular`, {
-            modulo_ids: [...new Set(modulo_ids)],
+            modulos_aportados,
             acreditacion_ids: [...new Set(acreditacion_ids)],
+            ciclos_completos,
             target_ciclo_id: targetCicloId || null
         }).pipe(
             catchError(err => {
@@ -347,17 +477,28 @@ export class ConvalidacionesService {
         );
     }
 
-    private getApprovedModuloIds(): number[] {
-        const approvedIds: number[] = [];
+    private getApprovedModuloDetails(): Array<{ id_modulo: number; nota: number }> {
+        const bestByModulo = new Map<number, number>();
         for (const estudio of this.estudiosSubject.value) {
             for (const modulo of estudio.modulos || []) {
-                if (!this.isModuloApproved(estudio, Number(modulo.id), modulo.numerico !== 0)) {
+                const moduloId = Number(modulo.id);
+                if (!Number.isFinite(moduloId)) {
                     continue;
                 }
-                approvedIds.push(Number(modulo.id));
+                if (!this.isModuloApproved(estudio, moduloId, modulo.numerico !== 0)) {
+                    continue;
+                }
+                const nota = estudio.notasPorModulo?.[moduloId];
+                if (typeof nota !== 'number' || !Number.isFinite(nota)) {
+                    continue;
+                }
+                const current = bestByModulo.get(moduloId);
+                if (current === undefined || nota > current) {
+                    bestByModulo.set(moduloId, nota);
+                }
             }
         }
-        return [...new Set(approvedIds)];
+        return Array.from(bestByModulo.entries()).map(([id_modulo, nota]) => ({ id_modulo, nota }));
     }
 
     private isModuloApproved(estudio: EstudioEntry, moduloId: number, isNumerico: boolean): boolean {
@@ -412,6 +553,64 @@ export class ConvalidacionesService {
             displayName: file.name,
         }));
         this.documentosOtros = [...this.documentosOtros, ...nuevos];
+    }
+
+    hasDuplicateDocumentNames(): boolean {
+        return this.getDuplicateDocumentNames().length > 0;
+    }
+
+    getDuplicateDocumentNames(): string[] {
+        return this.getDuplicateDocumentNamesForDocuments(this.getAllUploadedDocuments());
+    }
+
+    getDuplicateDocumentNamesForDocuments(documents: UploadedDocument[]): string[] {
+        const duplicates = new Map<string, string>();
+        const seen = new Map<string, string>();
+
+        for (const document of documents) {
+            const storageKey = this.buildDocumentStorageKey(document);
+            if (!storageKey) {
+                continue;
+            }
+
+            const currentName = document.displayName.trim() || document.file.name;
+            const existingName = seen.get(storageKey);
+            if (existingName) {
+                duplicates.set(storageKey, existingName || currentName);
+                continue;
+            }
+            seen.set(storageKey, currentName);
+        }
+
+        return Array.from(duplicates.values());
+    }
+
+    private getAllUploadedDocuments(): UploadedDocument[] {
+        return [
+            ...(this.documentoDni ? [this.documentoDni] : []),
+            ...this.documentosCertificado,
+            ...this.documentosOtros,
+        ];
+    }
+
+    private buildDocumentStorageKey(document: UploadedDocument): string {
+        const extension = this.getFileExtension(document.file.name);
+        const safeDescription = this.sanitizeDocumentName(document.displayName.trim() || document.file.name);
+        return `${safeDescription}${extension}`;
+    }
+
+    private getFileExtension(fileName: string): string {
+        const lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex <= 0) {
+            return '';
+        }
+        return fileName.slice(lastDotIndex);
+    }
+
+    private sanitizeDocumentName(value: string): string {
+        const normalized = value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+        const sanitized = normalized.replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^[._-]+|[._-]+$/g, '');
+        return sanitized || 'documento';
     }
 
     enviarFormularioCompleto(payload: unknown): Observable<unknown> {
@@ -497,6 +696,10 @@ export class ConvalidacionesService {
         return this.http.post<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos`, payload, this.getAdminAuthHeaders());
     }
 
+    actualizarCicloAdmin(idCiclo: number, payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
+        return this.http.put<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`, payload, this.getAdminAuthHeaders());
+    }
+
     crearModulosAdmin(idCiclo: number, payload: AdminCreateModulosRequest): Observable<{ ok: boolean; inserted: number }> {
         return this.http.post<{ ok: boolean; inserted: number }>(
             `${ADMIN_API_BASE}/ciclos/${idCiclo}/modulos`,
@@ -512,6 +715,60 @@ export class ConvalidacionesService {
             `${ADMIN_API_BASE}/crear_convalidaciones`,
             payload,
             this.getAdminAuthHeaders()
+        );
+    }
+
+    crearConvalidacionesMasivasAdmin(
+        payload: AdminCreateConvalidacionesMasivasRequest
+    ): Observable<AdminCreateConvalidacionesMasivasResponse> {
+        return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_masivas`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionesMasivasAdmin(
+        payload: AdminDeleteConvalidacionesMasivasRequest
+    ): Observable<AdminDeleteConvalidacionesMasivasResponse> {
+        return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/convalidaciones_masivas`,
+            {
+                ...this.getAdminAuthHeaders(),
+                body: payload,
+            }
+        );
+    }
+
+    crearConvalidacionCicloAdmin(
+        payload: AdminCreateConvalidacionCicloRequest
+    ): Observable<AdminCreateConvalidacionResponse> {
+        return this.http.post<AdminCreateConvalidacionResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_ciclo`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    crearConvalidacionesCicloMasivasAdmin(
+        payload: AdminCreateConvalidacionesCicloMasivasRequest
+    ): Observable<AdminCreateConvalidacionesMasivasResponse> {
+        return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/crear_convalidaciones_ciclo_masivas`,
+            payload,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionesCicloMasivasAdmin(
+        payload: AdminDeleteConvalidacionesCicloMasivasRequest
+    ): Observable<AdminDeleteConvalidacionesMasivasResponse> {
+        return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
+            `${ADMIN_API_BASE}/convalidaciones_ciclo_masivas`,
+            {
+                ...this.getAdminAuthHeaders(),
+                body: payload,
+            }
         );
     }
 
@@ -586,6 +843,13 @@ export class ConvalidacionesService {
     eliminarConvalidacionAdmin(idConvalidacion: number): Observable<AdminDeleteConvalidacionResponse> {
         return this.http.delete<AdminDeleteConvalidacionResponse>(
             `${ADMIN_API_BASE}/convalidaciones/${idConvalidacion}`,
+            this.getAdminAuthHeaders()
+        );
+    }
+
+    eliminarConvalidacionCicloAdmin(idConvalidacionCiclo: number): Observable<AdminDeleteConvalidacionResponse> {
+        return this.http.delete<AdminDeleteConvalidacionResponse>(
+            `${ADMIN_API_BASE}/convalidaciones-ciclo/${idConvalidacionCiclo}`,
             this.getAdminAuthHeaders()
         );
     }

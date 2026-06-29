@@ -55,18 +55,18 @@
         <!-- Opciones -->
         <div class="flex flex-col h-full">
             <!-- Header -->
-            <div class="flex items-center justify-between gap-3 py-1 px-1 mb-4 flex-shrink-0">
-                <div class="flex-1">
-                    <h2 class="text-sm font-bold text-gray-800 mb-0 flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-1 px-1 mb-4 flex-shrink-0">
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-sm font-bold text-gray-800 mb-0 flex items-start sm:items-center gap-2">
                         <span class="inline-block w-2 h-2 rounded-full bg-indigo-500"></span>
-                        <span>Opciones de convalidación{{ selectedCicloName ? ' en ' + selectedCicloName : ''
+                        <span class="break-words">Opciones de convalidación{{ selectedCicloName ? ' en ' + selectedCicloName : ''
                             }}</span>
                     </h2>
                     <p class="text-xs text-gray-500 mt-1">
                         A continuación se muestran las posibles convalidaciones teniendo en cuenta los cursos aportados.
                     </p>
                 </div>
-                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Automáticas</span>
+                <span class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold sm:text-right">Automáticas</span>
             </div>
 
             <!-- Main Card -->
@@ -130,9 +130,21 @@
 
                             <div class="flex-1 min-w-0">
                                 <h4
-                                    class="text-sm font-semibold text-gray-800 truncate group-hover:text-indigo-600 transition-colors">
+                                    class="text-sm font-semibold text-gray-800 break-words group-hover:text-indigo-600 transition-colors">
                                     {{ result.nombre }}
                                 </h4>
+                                <ng-container *ngIf="result.origen_tipo === 'ciclo_completo'; else origenPorModulos">
+                                    <p class="text-[10px] text-gray-500 mt-0.5 italic break-words sm:line-clamp-1">
+                                        Convalidado por: ciclo completo de {{ result.source_nombre }}
+                                        <span *ngIf="result.nota_media_origen !== null && result.nota_media_origen !== undefined">
+                                            (nota media: {{ result.nota_media_origen | number:'1.0-2' }})
+                                        </span>
+                                    </p>
+                                    <p *ngIf="getNotaConvalidadaRedondeada(result.nota_media_origen) !== null" class="text-[10px] text-gray-500 mt-0.5 italic break-words">
+                                        Nota con la que se va a convalidar: {{ getNotaConvalidadaRedondeada(result.nota_media_origen) }}
+                                    </p>
+                                </ng-container>
+                                <ng-template #origenPorModulos>
                                 <ng-container *ngIf="result.modulos_origen as modulosOrigen">
                                     <details *ngIf="debeMostrarDesplegableModulosOrigen(modulosOrigen); else modulosOrigenSimple"
                                         class="text-[10px] text-gray-500 mt-0.5"
@@ -141,15 +153,19 @@
                                             Convalidado por: Ciclo completo
                                         </summary>
                                         <p class="mt-1 whitespace-pre-line">
-                                            {{ getModulosOrigenConNota(modulosOrigen).join('\n') }}
+                                            {{ getModulosOrigenConNota(modulosOrigen, result.modulos_origen_ids).join('\n') }}
                                         </p>
                                     </details>
                                     <ng-template #modulosOrigenSimple>
-                                        <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-1 italic">
-                                            Convalidado por: {{ getModulosOrigenConNota(modulosOrigen).join(', ') }}
+                                        <p class="text-[10px] text-gray-500 mt-0.5 italic break-words sm:line-clamp-1">
+                                            Convalidado por: {{ getModulosOrigenConNota(modulosOrigen, result.modulos_origen_ids).join(', ') }}
                                         </p>
                                     </ng-template>
+                                    <p *ngIf="getNotaConvalidadaRedondeada(result.nota_media_origen) !== null" class="text-[10px] text-gray-500 mt-0.5 italic break-words">
+                                        Nota con la que se va a convalidar: {{ getNotaConvalidadaRedondeada(result.nota_media_origen) }}
+                                    </p>
                                 </ng-container>
+                                </ng-template>
                             </div>
 
                             <div class="flex-shrink-0 text-gray-300 transition-colors">
@@ -162,48 +178,48 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="border-t border-gray-100 bg-white p-4 space-y-2">
-                        <button type="button" (click)="toggleOtrosModulosCiclo()"
-                            class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Otros
-                        </button>
+                <div *ngIf="!loading && selectedCicloId" class="border-t border-gray-100 bg-white p-4 space-y-2">
+                    <button type="button" (click)="toggleOtrosModulosCiclo()"
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Otros
+                    </button>
 
-                        <div *ngIf="showOtrosModulosCiclo" class="space-y-2">
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <select [(ngModel)]="selectedOtroModuloCicloId"
-                                    class="flex-1 block w-full px-3 py-2.5 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-white">
-                                    <option [ngValue]="null">Selecciona un módulo del ciclo...</option>
-                                    <option *ngFor="let mod of availableOtrosModulosCiclo" [ngValue]="mod.id">{{
-                                        mod.nombre }}</option>
-                                </select>
-                                <button type="button" (click)="addOtroModuloCiclo()"
-                                    [disabled]="!selectedOtroModuloCicloId"
-                                    class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Añadir
-                                </button>
-                            </div>
+                    <div *ngIf="showOtrosModulosCiclo" class="space-y-2">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <select [(ngModel)]="selectedOtroModuloCicloId"
+                                class="flex-1 block w-full px-3 py-2.5 text-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl transition-all bg-white">
+                                <option [ngValue]="null">Selecciona un módulo del ciclo...</option>
+                                <option *ngFor="let mod of availableOtrosModulosCiclo" [ngValue]="mod.id">{{
+                                    mod.nombre }}</option>
+                            </select>
+                            <button type="button" (click)="addOtroModuloCiclo()"
+                                [disabled]="!selectedOtroModuloCicloId"
+                                class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                Añadir
+                            </button>
                         </div>
+                    </div>
 
-                        <div *ngIf="otrosModulosCiclo.length > 0" class="space-y-2">
-                            <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold">
-                                Otros añadidos ({{ otrosModulosCiclo.length }})
-                            </p>
-                            <div *ngFor="let item of otrosModulosCiclo; let i = index"
-                                class="flex items-start justify-between gap-3 rounded-lg border border-indigo-100 bg-indigo-50/50 px-3 py-2">
-                                <p class="text-sm text-gray-700">{{ item }}</p>
-                                <button type="button" (click)="removeOtroModuloCiclo(i)"
-                                    class="text-gray-400 hover:text-red-500 transition-colors" aria-label="Eliminar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
+                    <div *ngIf="otrosModulosCiclo.length > 0" class="space-y-2">
+                        <p class="text-[11px] uppercase tracking-wider text-gray-400 font-bold">
+                            Otros añadidos ({{ otrosModulosCiclo.length }})
+                        </p>
+                        <div *ngFor="let item of otrosModulosCiclo; let i = index"
+                            class="flex items-start justify-between gap-3 rounded-lg border border-indigo-100 bg-indigo-50/50 px-3 py-2">
+                            <p class="text-sm text-gray-700">{{ item }}</p>
+                            <button type="button" (click)="removeOtroModuloCiclo(i)"
+                                class="text-gray-400 hover:text-red-500 transition-colors" aria-label="Eliminar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </div>
