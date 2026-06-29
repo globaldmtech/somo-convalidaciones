@@ -693,7 +693,7 @@ export class ConvalidacionesService {
     }
 
     actualizarCicloAdmin(idCiclo: number, payload: AdminCreateCicloRequest): Observable<{ ok: boolean }> {
-        return this.http.put<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`, payload, this.getAdminAuthHeaders());
+        return this.http.put<{ ok: boolean }>(`${ADMIN_API_BASE}/ciclos/${idCiclo}`, payload);
     }
 
     crearModulosAdmin(idCiclo: number, payload: AdminCreateModulosRequest): Observable<{ ok: boolean; inserted: number }> {
@@ -717,8 +717,7 @@ export class ConvalidacionesService {
     ): Observable<AdminCreateConvalidacionesMasivasResponse> {
         return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
             `${ADMIN_API_BASE}/crear_convalidaciones_masivas`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -728,7 +727,6 @@ export class ConvalidacionesService {
         return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
             `${ADMIN_API_BASE}/convalidaciones_masivas`,
             {
-                ...this.getAdminAuthHeaders(),
                 body: payload,
             }
         );
@@ -739,8 +737,7 @@ export class ConvalidacionesService {
     ): Observable<AdminCreateConvalidacionResponse> {
         return this.http.post<AdminCreateConvalidacionResponse>(
             `${ADMIN_API_BASE}/crear_convalidaciones_ciclo`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -749,8 +746,7 @@ export class ConvalidacionesService {
     ): Observable<AdminCreateConvalidacionesMasivasResponse> {
         return this.http.post<AdminCreateConvalidacionesMasivasResponse>(
             `${ADMIN_API_BASE}/crear_convalidaciones_ciclo_masivas`,
-            payload,
-            this.getAdminAuthHeaders()
+            payload
         );
     }
 
@@ -760,7 +756,6 @@ export class ConvalidacionesService {
         return this.http.delete<AdminDeleteConvalidacionesMasivasResponse>(
             `${ADMIN_API_BASE}/convalidaciones_ciclo_masivas`,
             {
-                ...this.getAdminAuthHeaders(),
                 body: payload,
             }
         );
@@ -822,8 +817,7 @@ export class ConvalidacionesService {
 
     eliminarConvalidacionCicloAdmin(idConvalidacionCiclo: number): Observable<AdminDeleteConvalidacionResponse> {
         return this.http.delete<AdminDeleteConvalidacionResponse>(
-            `${ADMIN_API_BASE}/convalidaciones-ciclo/${idConvalidacionCiclo}`,
-            this.getAdminAuthHeaders()
+            `${ADMIN_API_BASE}/convalidaciones-ciclo/${idConvalidacionCiclo}`
         );
     }
 

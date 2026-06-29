@@ -10,8 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { AuthenticationResult, PublicClientApplication } from '@azure/msal-browser';
-import { firstValueFrom, forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import {
   AdminCicloModulo,
@@ -3309,7 +3308,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
     this.deleteMultipleConvalidacionesModalOpen = false;
     this.busquedaOrigenModalOpen = false;
     this.busquedaDestinoModalOpen = false;
-    void this.logoutMicrosoftSession();
   }
 
   private handleAdminUnauthorized(err: any): boolean {

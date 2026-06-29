@@ -144,6 +144,7 @@ export class FormularioPageComponent implements OnInit {
         this.authChecking = false;
         const [nombre, ...resto] = String(session.nombre || '').trim().split(/\s+/).filter(Boolean);
         this.convalidacionesService.setPersonalData({
+          documentType: 'dni',
           nombre: nombre || '',
           apellidos: resto.join(' '),
           dni: session.dni || '',
