@@ -31,7 +31,6 @@ coverage.xml
 
 # Databases
 *.db
-*.sqlite
 *.sqlite3
 
 # Env files
